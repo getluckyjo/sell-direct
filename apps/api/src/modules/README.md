@@ -13,3 +13,5 @@ business logic.
 | `profiles`      | Buyer & seller profiles                                     | PR 2       |
 | `finance`       | Bond originator referral hand-off (ooba), behind an adapter | PR 5       |
 | `notifications` | Outbound notifications                                      | later      |
+| `auth`          | `AuthProvider` seam (Supabase Auth); concrete adapter       | PR 6       |
+| `storage`       | `StorageProvider` seam (Supabase Storage); concrete adapter | uploads    |

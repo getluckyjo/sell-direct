@@ -14,14 +14,17 @@ Source context: `CLAUDE.md`, `README.md`, `KICKOFFPROMPTS.md` (uploaded). The bu
 
 | Area | Choice |
 |---|---|
-| First step | **Plan the full roadmap; build nothing yet** (this doc) |
 | Backend framework | **Fastify** (TypeScript-first, built-in schema validation) |
 | Package manager | **pnpm** workspaces |
 | ORM / migrations | **Prisma** |
 | Backend lang | Node.js + TypeScript (strict) |
 | Frontend | Next.js (App Router) + React + Tailwind, mobile-first |
 | Database | PostgreSQL |
+| Managed backend | **Supabase** — managed Postgres + Auth + Storage, all behind interfaces (local/CI use a throwaway Postgres) |
+| CI / dev env | **GitHub Actions** PR checks + a **SessionStart hook** to auto-provision web sessions |
 | Locale | en-ZA, ZAR currency, DD/MM/YYYY dates |
+
+**Progress:** PR 1 (scaffold) ✅ · PR 2 (schema + state machine) ✅ — both on `claude/dev-planning-discussion-nik2of`, PR [#1](https://github.com/getluckyjo/sell-direct/pull/1). Next: PR 2.5 (build env + Supabase), then PR 3.
 
 ## Architecture principles (carried into every chunk)
 
@@ -89,6 +92,34 @@ Each chunk = its own short plan → approval → implementation → PR → revie
 - POPIA: mark/encrypt sensitive fields; note each personal field's purpose in the data map.
 - **Done when:** migrations apply to a fresh Postgres; state-machine tests pass; data map updated.
 
+### PR 2.5 — Build environment + Supabase backend (chore — separate from feature PRs)
+
+**Why now:** CI is missing (PR checks currently only run on my machine), and each Claude-on-web session starts with no Postgres and no Prisma engines (manual setup was needed this session). Also lock **Supabase** as the managed backend so config + deploy reflect it. No business logic changes.
+
+**A. Supabase as the managed backend (config + seams; concrete adapters deferred)**
+- `apps/api/prisma/schema.prisma`: add `directUrl = env("DIRECT_URL")` to the datasource — migrations use Supabase's **direct** connection (5432); app runtime uses the **pooled** pgBouncer URL (6543, `?pgbouncer=true`).
+- `.env.example`: split DB URLs + add Supabase keys: `DATABASE_URL` (pooled, runtime), `DIRECT_URL` (direct, migrations), `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY` (server only), `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` (web). Keep plain-Postgres defaults for local dev; Supabase values are deploy-time, sandbox/test only.
+- Define interface seams now (no `@supabase/supabase-js` dependency until used):
+  - `apps/api/src/modules/auth/` — `AuthProvider` interface (`verifyAccessToken`, `getUser`); concrete `SupabaseAuthProvider` lands at **PR 6** (dashboard auth gate).
+  - `apps/api/src/modules/storage/` — `StorageProvider` interface (`getUploadUrl`, `getObjectUrl`); concrete Supabase Storage adapter lands when uploads (listing photos / FICA) arrive.
+- Docs: add `docs/SUPABASE.md` (create project → copy pooled + direct connection strings → set env in host, never in repo); update `README.md`, `docs/ROADMAP.md` to name Supabase; note in `docs/POPIA-data-map.md` that Auth/Storage are Supabase (DPA required).
+
+**B. SessionStart hook (make web sessions build-ready)** — via the `session-start-hook` skill:
+- Idempotent, fast on warm containers; on session start it: (1) ensures Postgres 16 is installed + running and the `sell_direct` dev DB exists; (2) makes Prisma usable under restricted egress — try normal `prisma generate`, and if the engine download is reset, fall back to curl-fetching the engine binaries (the host is allowed; only Prisma's Node downloader fails) and export `PRISMA_QUERY_ENGINE_LIBRARY`/`PRISMA_SCHEMA_ENGINE_BINARY`; (3) runs `pnpm install`, `prisma generate`, `prisma migrate deploy`; (4) sets session `DATABASE_URL`/`DIRECT_URL`.
+- Registered as a SessionStart hook in `settings.json`. Keep `apps/api` `postinstall: prisma generate` but make the hook resilient to its failure.
+
+**C. CI (GitHub Actions)** — `.github/workflows/ci.yml`, on PRs + pushes to `claude/**`:
+- `services: postgres:16` (GH runners have open egress → standard Prisma works, no engine workaround).
+- Steps: checkout → `pnpm/action-setup` → `setup-node@22` (pnpm cache) → `pnpm install --frozen-lockfile` → `prisma generate` → `prisma migrate deploy` → `pnpm lint` → `pnpm typecheck` → `pnpm test` → `pnpm build`, with `DATABASE_URL`/`DIRECT_URL` → the service Postgres.
+- Add `.nvmrc` pinning Node 22.
+
+**Delivery:** stack on `claude/dev-planning-discussion-nik2of` (consistent with PR 1/2); CI runs on PR #1 once the workflow is on the branch.
+
+**Verification:**
+- CI goes green on the PR (lint/typecheck/test/build/migrate).
+- Hook: from a clean state, running it yields Postgres up + `pnpm test`/`pnpm build` passing with zero manual steps.
+- Supabase: `prisma validate` with `directUrl` set; `.env.example` documents pooled vs direct; no secrets committed.
+
 ### PR 3 — WhatsApp messaging adapter + webhook
 - `messaging` module with an **adapter interface** (swap BSP later) + one concrete **WhatsApp Cloud API** adapter.
 - `GET /api/webhooks/whatsapp` (Meta verification handshake) and `POST /api/webhooks/whatsapp` (inbound; verify Meta verify token).
@@ -134,11 +165,14 @@ A seller can list a property over WhatsApp; a buyer can enquire and be captured 
 
 ## Open items / things to confirm before specific chunks
 
-- **`Sell-Direct-Project-Plan.md`** not provided — confirm the deal stages and listing fields above match the strategy before PR 2.
+- **`Sell-Direct-Project-Plan.md`** — provided and reviewed; the deal stages and listing fields were validated against it (exclusivity corrected to days: 60/90/120, default 90).
 - **BSP choice** for the first WhatsApp adapter (Cloud API direct vs Clickatell/360dialog/Twilio) — needed before PR 3; the adapter interface makes it swappable regardless.
-- **Managed auth/storage** (Supabase vs alternative) — needed before PR 6.
+- **Managed auth/storage** — decided: **Supabase** (Postgres + Auth + Storage), behind interfaces; concrete Auth adapter at PR 6, Storage when uploads land.
 - **External accounts** (Meta WhatsApp Business, BSP, ooba referral, Vercel, Railway/Render) — needed before PR 3 and PR 7; these are your sign-ups and I'll guide you step by step.
 
-## Note on next steps
+## Note on progress
 
-This is a **roadmap only** — no code yet, as requested. On approval, the natural next action is to start **PR 1 (Scaffold)** in its own session: I'll produce a short PR-1 plan, get your OK, implement, and open the PR for review before we move to PR 2.
+PR 1 (scaffold) and PR 2 (schema + state machine) are complete and on
+`claude/dev-planning-discussion-nik2of` (PR #1). PR 2.5 (build environment +
+Supabase backend) is in progress. Next feature chunk is **PR 3 (WhatsApp
+messaging adapter + webhook)**.

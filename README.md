@@ -42,12 +42,13 @@ sell-direct/
 
 | Layer | Choice |
 |---|---|
-| Backend | Node.js + TypeScript (Express/Fastify) |
-| Database | PostgreSQL (+ migrations) |
+| Backend | Node.js + TypeScript (**Fastify**), pnpm workspaces |
+| Database | PostgreSQL via **Prisma** (managed by **Supabase** in deploy) |
 | Frontend | Next.js (App Router) + React + Tailwind |
 | WhatsApp | WhatsApp Cloud API via BSP (Clickatell / 360dialog / Twilio) |
-| Auth/storage | Managed (e.g. Supabase) behind an interface |
-| Hosting | Vercel (web), Railway/Render (api + Postgres) |
+| Auth/storage | **Supabase** (Auth + Storage) behind an interface — see `docs/SUPABASE.md` |
+| Hosting | Vercel (web), Railway/Render (api), Supabase (Postgres) |
+| CI | GitHub Actions (lint/typecheck/test/build/migrate on PRs) |
 
 ## Getting started (local / cloud sandbox)
 

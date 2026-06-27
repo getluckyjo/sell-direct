@@ -11,7 +11,11 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+  // Runtime uses the pooled connection (Supabase pgBouncer, port 6543).
   url      = env("DATABASE_URL")
+  // Migrations need a direct connection (Supabase port 5432). Locally both
+  // point at the same plain Postgres.
+  directUrl = env("DIRECT_URL")
 }
 
 /// The South African property transfer journey. This is the heart of the app;

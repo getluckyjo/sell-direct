@@ -40,8 +40,9 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 ## Still to do (later PRs)
 
 - Appoint an **Information Officer** and register as required (Phase 0, business).
-- **Data-processing agreements** with each BSP / originator / conveyancer before
-  sharing any personal data.
+- **Data-processing agreements** with each processor before sharing any personal
+  data — including **Supabase** (managed Postgres + Auth + Storage), plus each
+  BSP / originator / conveyancer.
 - **Encrypt sensitive fields at rest** (`FIELD_ENCRYPTION_KEY`) when ID numbers,
   payslips and bank details are introduced (PR 5).
 - Consent capture UX + retention/erasure policy.
