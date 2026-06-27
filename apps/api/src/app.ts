@@ -13,9 +13,21 @@ import {
   registerLeadRoutes,
   type LeadRepository,
 } from './modules/leads';
+import {
+  createPrismaListingRepository,
+  type ListingRepository,
+} from './modules/listings';
+import {
+  createPrismaDealRepository,
+  type DealRepository,
+} from './modules/deals';
+import { registerDashboardRoutes } from './modules/dashboard';
 
 export type ServerDeps = MessagingRouteDeps & {
   leadRepository: LeadRepository;
+  listingRepository: ListingRepository;
+  dealRepository: DealRepository;
+  internalToken?: string;
 };
 
 /**
@@ -26,8 +38,8 @@ export type ServerDeps = MessagingRouteDeps & {
  * payslip contents). Keep request/response body logging off and redact
  * sensitive fields explicitly as modules are added.
  *
- * `deps` lets tests inject fakes (messaging adapter/repository, lead repository)
- * so endpoints can be exercised without a live BSP or database.
+ * `deps` lets tests inject fakes (messaging, leads, listings, deals) so
+ * endpoints can be exercised without a live BSP or database.
  */
 export function buildServer(deps?: Partial<ServerDeps>) {
   const app = Fastify({
@@ -64,6 +76,15 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const leadRepository =
     deps?.leadRepository ?? createPrismaLeadRepository(prisma);
   registerLeadRoutes(app, { repository: leadRepository });
+
+  const listings =
+    deps?.listingRepository ?? createPrismaListingRepository(prisma);
+  const deals = deps?.dealRepository ?? createPrismaDealRepository(prisma);
+  registerDashboardRoutes(app, {
+    listings,
+    deals,
+    internalToken: deps?.internalToken ?? process.env.INTERNAL_API_TOKEN,
+  });
 
   return app;
 }

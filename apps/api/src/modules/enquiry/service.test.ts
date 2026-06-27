@@ -14,6 +14,8 @@ function makeDeps() {
     createOrGetEnquiryDeal: vi
       .fn()
       .mockResolvedValue({ id: 'deal_1', status: 'enquiry' }),
+    list: vi.fn().mockResolvedValue([]),
+    getWithTimeline: vi.fn().mockResolvedValue(null),
   };
   const finance = {
     submitReferral: vi
