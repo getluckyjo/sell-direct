@@ -1,27 +1,6 @@
-import Fastify from 'fastify';
-import { APP_NAME } from '@sell-direct/shared';
+import { buildServer } from './app';
 
-/**
- * Fastify bootstrap for the Sell Direct API.
- *
- * POPIA note: the logger must never record PII (full ID numbers, bank
- * details, payslip contents). Keep request/response body logging off and
- * redact sensitive fields explicitly as modules are added.
- */
-export function buildServer() {
-  const app = Fastify({
-    logger: {
-      level: process.env.LOG_LEVEL ?? 'info',
-    },
-  });
-
-  app.get('/health', async () => {
-    return { status: 'ok', service: APP_NAME };
-  });
-
-  return app;
-}
-
+// Runtime entry point: build the app and start listening.
 const port = Number(process.env.PORT ?? 4000);
 const host = process.env.HOST ?? '0.0.0.0';
 

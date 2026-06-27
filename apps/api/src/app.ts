@@ -1,0 +1,56 @@
+import Fastify, { type FastifyRequest } from 'fastify';
+import { APP_NAME } from '@sell-direct/shared';
+import { prisma } from './db/client';
+import {
+  WhatsAppCloudAdapter,
+  loadWhatsAppConfigFromEnv,
+  createPrismaMessageRepository,
+  registerWhatsappWebhook,
+  type MessagingRouteDeps,
+} from './modules/messaging';
+
+/**
+ * Build the Sell Direct API (no network side effects — see server.ts for the
+ * runtime entry point that listens).
+ *
+ * POPIA note: the logger must never record PII (full ID numbers, bank details,
+ * payslip contents). Keep request/response body logging off and redact
+ * sensitive fields explicitly as modules are added.
+ *
+ * `deps` lets tests inject a fake messaging adapter/repository so the webhook
+ * can be exercised without a live BSP or database.
+ */
+export function buildServer(deps?: Partial<MessagingRouteDeps>) {
+  const app = Fastify({
+    logger: {
+      level: process.env.LOG_LEVEL ?? 'info',
+    },
+  });
+
+  // Retain the raw request body so the WhatsApp webhook can verify Meta's
+  // HMAC signature (computed over the exact bytes received).
+  app.addContentTypeParser(
+    'application/json',
+    { parseAs: 'string' },
+    (request, body, done) => {
+      (request as FastifyRequest & { rawBody?: string }).rawBody =
+        body as string;
+      try {
+        done(null, body === '' ? {} : JSON.parse(body as string));
+      } catch (err) {
+        done(err as Error, undefined);
+      }
+    },
+  );
+
+  app.get('/health', async () => {
+    return { status: 'ok', service: APP_NAME };
+  });
+
+  const adapter =
+    deps?.adapter ?? new WhatsAppCloudAdapter(loadWhatsAppConfigFromEnv());
+  const repository = deps?.repository ?? createPrismaMessageRepository(prisma);
+  registerWhatsappWebhook(app, { adapter, repository });
+
+  return app;
+}
