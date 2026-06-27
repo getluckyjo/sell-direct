@@ -84,4 +84,4 @@ See `.env.example` for the full list. Never commit `.env`. Use sandbox/test keys
 
 ## Status
 
-🚧 MVP in development. Build order and scope are defined in `CLAUDE.md` → "MVP scope".
+🚀 **MVP feature-complete on `claude/dev-planning-discussion-nik2of`.** Shipped: monorepo scaffold; database + deal state machine; build env (CI + SessionStart hook) + Supabase decision; WhatsApp adapter + webhook; listing intake; buyer enquiry + (stubbed, consented) ooba referral; internal dashboard. Plus a public **marketing** site (waitlist) and an investor **fundraising** site. Remaining: run the actual staging deploy — see `DEPLOYMENT.md`.

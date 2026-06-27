@@ -24,7 +24,7 @@ Source context: `CLAUDE.md`, `README.md`, `KICKOFFPROMPTS.md` (uploaded). The bu
 | CI / dev env | **GitHub Actions** PR checks + a **SessionStart hook** to auto-provision web sessions |
 | Locale | en-ZA, ZAR currency, DD/MM/YYYY dates |
 
-**Progress:** PR 1 (scaffold) ✅ · PR 2 (schema + state machine) ✅ — both on `claude/dev-planning-discussion-nik2of`, PR [#1](https://github.com/getluckyjo/sell-direct/pull/1). Next: PR 2.5 (build env + Supabase), then PR 3.
+**Progress:** PR 1–6 ✅ (scaffold · schema+state machine · build env+Supabase · WhatsApp webhook · listing intake · buyer enquiry+referral · dashboard) + public **marketing** & **fundraising** sites — all on `claude/dev-planning-discussion-nik2of` (PR #1). Remaining: PR 7 deploy (see `DEPLOYMENT.md`).
 
 ## Architecture principles (carried into every chunk)
 
