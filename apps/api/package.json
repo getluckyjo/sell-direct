@@ -3,18 +3,30 @@
   "version": "0.0.0",
   "private": true,
   "type": "module",
+  "prisma": {
+    "schema": "prisma/schema.prisma"
+  },
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "build": "tsc --noEmit",
     "typecheck": "tsc --noEmit",
-    "db:migrate": "echo \"No migrations yet — Prisma is added in PR 2.\""
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:studio": "prisma studio",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@prisma/client": "^6.1.0",
     "@sell-direct/shared": "workspace:*",
     "fastify": "^5.2.0"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
-    "tsx": "^4.19.2"
+    "prisma": "^6.1.0",
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.8"
   }
 }

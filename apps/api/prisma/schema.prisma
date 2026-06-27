@@ -1,0 +1,168 @@
+// Sell Direct — data model (PR 2)
+//
+// Privacy-by-design (POPIA): personal fields are documented in
+// docs/POPIA-data-map.md with their purpose. Heavy PII (ID numbers, payslips,
+// bank details) is intentionally NOT modelled yet — it arrives with the
+// FICA/finance flows (PR 5) and is encrypted at rest then.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The South African property transfer journey. This is the heart of the app;
+/// transitions are governed by the deal state machine (see modules/deals).
+enum DealStatus {
+  enquiry
+  offer_otp
+  bond_application
+  bond_granted
+  documents_fica
+  clearance
+  lodgement
+  registered
+  cancelled
+}
+
+/// Lifecycle of a listing, distinct from a deal's transfer status.
+enum ListingStatus {
+  draft
+  active
+  under_offer
+  sold
+  withdrawn
+}
+
+/// Commercial path: free (conditional 0%) vs flex (low-fee, no lock-in).
+enum DealTier {
+  free
+  flex
+}
+
+enum MessageDirection {
+  inbound
+  outbound
+}
+
+/// Who performed a deal transition (recorded on every event).
+enum ActorType {
+  seller
+  buyer
+  agent
+  system
+}
+
+model Seller {
+  id        String    @id @default(cuid())
+  /// WhatsApp number — the contact key. PII (POPIA): purpose = identity/contact.
+  phone     String    @unique
+  name      String?
+  verified  Boolean   @default(false)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  listings  Listing[]
+
+  @@map("sellers")
+}
+
+model Buyer {
+  id                String    @id @default(cuid())
+  /// WhatsApp number — the contact key. PII (POPIA): purpose = identity/contact.
+  phone             String    @unique
+  name              String?
+  verified          Boolean   @default(false)
+  /// Pre-qualification signal ("approved up to RX"): UX trust + monetisation.
+  bondPrequalified  Boolean   @default(false)
+  approvedAmountZar  Decimal? @db.Decimal(12, 2)
+  /// POPIA: timestamp of explicit consent to capture/share financial data.
+  financialConsentAt DateTime?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deals             Deal[]
+
+  @@map("buyers")
+}
+
+model Listing {
+  id                  String        @id @default(cuid())
+  sellerId            String
+  seller              Seller        @relation(fields: [sellerId], references: [id])
+  title               String
+  description         String?
+  priceZar            Decimal       @db.Decimal(12, 2)
+  suburb              String?
+  city                String        @default("Cape Town")
+  bedrooms            Int?
+  bathrooms           Int?
+  status              ListingStatus @default(draft)
+  tier                DealTier      @default(free)
+  /// SA sole-mandate norm is 90 days (60/90/120 options).
+  exclusivityTermDays Int           @default(90)
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  deals               Deal[]
+
+  @@index([status])
+  @@map("listings")
+}
+
+model Deal {
+  id        String      @id @default(cuid())
+  listingId String
+  listing   Listing     @relation(fields: [listingId], references: [id])
+  buyerId   String
+  buyer     Buyer       @relation(fields: [buyerId], references: [id])
+  status    DealStatus  @default(enquiry)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  events    DealEvent[]
+  messages  Message[]
+
+  // One deal per buyer per listing.
+  @@unique([listingId, buyerId])
+  @@index([status])
+  @@map("deals")
+}
+
+/// Append-only audit log. Every status change writes one row; rows are never
+/// updated or deleted.
+model DealEvent {
+  id         String      @id @default(cuid())
+  dealId     String
+  deal       Deal        @relation(fields: [dealId], references: [id])
+  fromStatus DealStatus?
+  toStatus   DealStatus
+  actorType  ActorType
+  /// Id of the seller/buyer/user who acted; null for system transitions.
+  actorId    String?
+  note       String?
+  createdAt  DateTime    @default(now())
+
+  @@index([dealId, createdAt])
+  @@map("deal_events")
+}
+
+/// Every inbound/outbound WhatsApp message. Never store sensitive financial
+/// documents in `body`; `raw` must be sanitised of secrets before persisting.
+model Message {
+  id          String           @id @default(cuid())
+  direction   MessageDirection
+  /// Provider message id — used for idempotent inbound handling.
+  waMessageId String?          @unique
+  fromPhone   String
+  toPhone     String
+  dealId      String?
+  deal        Deal?            @relation(fields: [dealId], references: [id])
+  type        String           @default("text")
+  body        String?
+  raw         Json?
+  createdAt   DateTime         @default(now())
+
+  @@index([fromPhone, createdAt])
+  @@index([dealId, createdAt])
+  @@map("messages")
+}

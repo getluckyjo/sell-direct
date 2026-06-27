@@ -11,6 +11,7 @@
     "dev": "pnpm -r --parallel --stream --if-present run dev",
     "build": "pnpm -r run build",
     "typecheck": "pnpm -r run typecheck",
+    "test": "pnpm -r --if-present run test",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "db:migrate": "pnpm --filter @sell-direct/api run db:migrate"
