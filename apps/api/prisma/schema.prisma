@@ -203,3 +203,17 @@ model Lead {
   @@index([kind, createdAt])
   @@map("leads")
 }
+
+/// Per-phone WhatsApp conversation state for guided flows (e.g. listing intake).
+/// `data` holds the in-progress answers; cleared when the flow completes.
+model ConversationState {
+  id        String   @id @default(cuid())
+  phone     String   @unique
+  flow      String   @default("listing_intake")
+  step      String
+  data      Json
+  updatedAt DateTime @updatedAt
+  createdAt DateTime @default(now())
+
+  @@map("conversation_states")
+}

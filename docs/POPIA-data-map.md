@@ -26,6 +26,7 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 | `leads`   | `email`              | Yes       | Contact a waitlist signup / investor enquiry from the public sites.         | Stored only with explicit consent (`consentAt`); not logged. |
 | `leads`   | `name` / `phone`     | Yes       | Personalise follow-up with a lead.                                          | Optional; consent-gated; not logged.                      |
 | `leads`   | `message`            | Maybe     | Free-text the lead chose to send.                                           | Consent-gated; not logged.                                |
+| `conversation_states` | `phone` | Yes | Resume a guided WhatsApp flow (e.g. listing intake) for this number. | Cleared when the flow completes; not logged. |
 
 ## Rules applied in code (PR 2)
 
