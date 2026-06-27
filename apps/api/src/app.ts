@@ -8,6 +8,15 @@ import {
   registerWhatsappWebhook,
   type MessagingRouteDeps,
 } from './modules/messaging';
+import {
+  createPrismaLeadRepository,
+  registerLeadRoutes,
+  type LeadRepository,
+} from './modules/leads';
+
+export type ServerDeps = MessagingRouteDeps & {
+  leadRepository: LeadRepository;
+};
 
 /**
  * Build the Sell Direct API (no network side effects — see server.ts for the
@@ -17,10 +26,10 @@ import {
  * payslip contents). Keep request/response body logging off and redact
  * sensitive fields explicitly as modules are added.
  *
- * `deps` lets tests inject a fake messaging adapter/repository so the webhook
- * can be exercised without a live BSP or database.
+ * `deps` lets tests inject fakes (messaging adapter/repository, lead repository)
+ * so endpoints can be exercised without a live BSP or database.
  */
-export function buildServer(deps?: Partial<MessagingRouteDeps>) {
+export function buildServer(deps?: Partial<ServerDeps>) {
   const app = Fastify({
     logger: {
       level: process.env.LOG_LEVEL ?? 'info',
@@ -51,6 +60,10 @@ export function buildServer(deps?: Partial<MessagingRouteDeps>) {
     deps?.adapter ?? new WhatsAppCloudAdapter(loadWhatsAppConfigFromEnv());
   const repository = deps?.repository ?? createPrismaMessageRepository(prisma);
   registerWhatsappWebhook(app, { adapter, repository });
+
+  const leadRepository =
+    deps?.leadRepository ?? createPrismaLeadRepository(prisma);
+  registerLeadRoutes(app, { repository: leadRepository });
 
   return app;
 }

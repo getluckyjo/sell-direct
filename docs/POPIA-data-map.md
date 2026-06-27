@@ -23,6 +23,9 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 | `buyers`  | `financialConsentAt` | No\*      | Proof of explicit, timestamped consent before any financial-data handling.  | Timestamp only. \*Records a consent event, not PII as such. |
 | `messages`| `fromPhone`/`toPhone`| Yes       | Route and audit WhatsApp messages; idempotent inbound handling.             | Not logged in full; `raw` payload sanitised of secrets.   |
 | `messages`| `body`               | Maybe     | The message text exchanged with the user.                                   | Never store sensitive financial documents here.           |
+| `leads`   | `email`              | Yes       | Contact a waitlist signup / investor enquiry from the public sites.         | Stored only with explicit consent (`consentAt`); not logged. |
+| `leads`   | `name` / `phone`     | Yes       | Personalise follow-up with a lead.                                          | Optional; consent-gated; not logged.                      |
+| `leads`   | `message`            | Maybe     | Free-text the lead chose to send.                                           | Consent-gated; not logged.                                |
 
 ## Rules applied in code (PR 2)
 

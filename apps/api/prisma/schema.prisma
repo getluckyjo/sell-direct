@@ -170,3 +170,36 @@ model Message {
   @@index([dealId, createdAt])
   @@map("messages")
 }
+
+/// Where a lead came from / what they want.
+enum LeadKind {
+  waitlist
+  investor
+}
+
+enum LeadRole {
+  seller
+  buyer
+  investor
+  other
+}
+
+/// Inbound leads from the public sites (marketing waitlist + investor interest).
+/// PII (email/phone) captured only with explicit, timestamped consent.
+model Lead {
+  id        String    @id @default(cuid())
+  kind      LeadKind
+  name      String?
+  email     String
+  phone     String?
+  role      LeadRole?
+  message   String?
+  /// Free-text origin (e.g. "marketing:hero", "fundraising:data-room").
+  source    String?
+  /// POPIA: timestamp of the explicit consent given on the form.
+  consentAt DateTime
+  createdAt DateTime  @default(now())
+
+  @@index([kind, createdAt])
+  @@map("leads")
+}
