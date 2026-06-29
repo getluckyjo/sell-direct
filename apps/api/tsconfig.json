@@ -2,6 +2,10 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "types": ["node"],
+    // Include DOM types so the standard `fetch`/`Response` globals are typed
+    // consistently regardless of how @types/node's undici globals resolve on
+    // the build host (Vercel resolved a Response without .ok/.json otherwise).
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "rootDir": "src"
   },
   "include": ["src"]
