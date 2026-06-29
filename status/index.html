@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en-ZA">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Sell Direct — Project Status</title>
+    <style>
+      :root {
+        --bg: #0b1220;
+        --panel: #121a2b;
+        --panel2: #0f1726;
+        --line: #1f2a3d;
+        --text: #e7edf6;
+        --muted: #93a1b7;
+        --emerald: #34d399;
+        --emerald-d: #10b981;
+        --amber: #fbbf24;
+        --slate: #64748b;
+        --blue: #60a5fa;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background: radial-gradient(1200px 600px at 80% -10%, #16233b 0, var(--bg) 55%);
+        color: var(--text);
+        font: 15px/1.5 ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        -webkit-font-smoothing: antialiased;
+      }
+      a { color: var(--emerald); text-decoration: none; }
+      a:hover { text-decoration: underline; }
+      .wrap { max-width: 1040px; margin: 0 auto; padding: 28px 20px 64px; }
+      header.top { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px; }
+      .brand { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; }
+      .brand span { color: var(--emerald); }
+      .brand small { display: block; font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+      .pill { font-size: 12px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: rgba(52, 211, 153, 0.12); color: var(--emerald); border: 1px solid rgba(52, 211, 153, 0.25); }
+      .grid { display: grid; gap: 16px; }
+      .cards { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); margin-top: 22px; }
+      .card { background: linear-gradient(180deg, var(--panel), var(--panel2)); border: 1px solid var(--line); border-radius: 16px; padding: 18px; }
+      .card h3 { margin: 0 0 4px; font-size: 13px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+      .stat { font-size: 30px; font-weight: 800; letter-spacing: -0.02em; }
+      .bar { height: 10px; border-radius: 999px; background: #1b2740; overflow: hidden; margin-top: 10px; }
+      .bar > span { display: block; height: 100%; background: linear-gradient(90deg, var(--emerald-d), var(--emerald)); border-radius: 999px; transition: width 0.6s ease; }
+      section { margin-top: 30px; }
+      h2.sec { font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); margin: 0 0 12px; }
+      .milestones { display: grid; gap: 10px; }
+      .ms { display: flex; align-items: flex-start; gap: 12px; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+      .dot { width: 10px; height: 10px; border-radius: 999px; margin-top: 6px; flex: none; }
+      .ms .body { flex: 1; }
+      .ms .title { font-weight: 600; }
+      .ms .desc { color: var(--muted); font-size: 13px; margin-top: 2px; }
+      .badge { font-size: 11px; font-weight: 700; padding: 4px 9px; border-radius: 999px; white-space: nowrap; }
+      .b-done { background: rgba(52,211,153,0.14); color: var(--emerald); }
+      .b-prog { background: rgba(251,191,36,0.16); color: var(--amber); }
+      .b-pend { background: rgba(100,116,139,0.18); color: #aebacd; }
+      .two { display: grid; gap: 16px; grid-template-columns: 1fr; }
+      @media (min-width: 760px) { .two { grid-template-columns: 1fr 1fr; } }
+      ul.clean { margin: 0; padding-left: 18px; }
+      ul.clean li { margin: 6px 0; }
+      ul.clean li::marker { color: var(--emerald); }
+      .live { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+      .live .k { color: var(--muted); font-size: 12px; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+      .ci { display: inline-flex; align-items: center; gap: 7px; font-weight: 700; }
+      .ci .led { width: 9px; height: 9px; border-radius: 999px; background: var(--slate); }
+      .ci.ok .led { background: var(--emerald); box-shadow: 0 0 10px var(--emerald); }
+      .ci.fail .led { background: #f87171; box-shadow: 0 0 10px #f87171; }
+      .ci.run .led { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+      footer { margin-top: 40px; color: var(--muted); font-size: 12px; display: flex; flex-wrap: wrap; gap: 8px 18px; justify-content: space-between; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="top">
+        <div class="brand">
+          Sell<span>Direct</span>
+          <small>Project status · internal</small>
+        </div>
+        <div class="pill" id="headline">MVP code complete · deploy in progress</div>
+      </header>
+
+      <div class="grid cards">
+        <div class="card">
+          <h3>Overall progress</h3>
+          <div class="stat"><span id="pct">—</span>%</div>
+          <div class="bar"><span id="pctbar" style="width: 0%"></span></div>
+          <div style="color: var(--muted); font-size: 12px; margin-top: 8px;">
+            <span id="doneCount">—</span> of <span id="totalCount">—</span> milestones done
+          </div>
+        </div>
+        <div class="card">
+          <h3>Build (the product)</h3>
+          <div class="stat" style="color: var(--emerald)">Complete</div>
+          <div style="color: var(--muted); font-size: 13px; margin-top: 8px;">
+            7 build chunks + 2 public sites, tested & on CI.
+          </div>
+        </div>
+        <div class="card">
+          <h3>Live build status</h3>
+          <div class="live" style="margin-top: 6px">
+            <span class="ci run" id="ciBadge"><span class="led"></span><span id="ciText">checking…</span></span>
+          </div>
+          <div class="k" style="margin-top: 10px">Latest commit on <span class="mono">main</span></div>
+          <div class="mono" id="commit" style="margin-top: 2px; color: var(--text)">loading…</div>
+        </div>
+      </div>
+
+      <section>
+        <h2 class="sec">Milestones</h2>
+        <div class="milestones" id="milestones"></div>
+      </section>
+
+      <section class="two">
+        <div>
+          <h2 class="sec">Next steps (priority order)</h2>
+          <div class="card">
+            <ul class="clean">
+              <li><b>Go live</b> — sites to Vercel, API + DB to Railway/Supabase <i>(days)</i>.</li>
+              <li><b>WhatsApp</b> — start Meta/BSP onboarding now; longest lead time <i>(1–3 wks)</i>.</li>
+              <li><b>ooba</b> — advance referral partnership → real economics + live hand-off.</li>
+              <li><b>Legal/POPIA</b> — Information Officer, DPAs, counsel sign-off.</li>
+              <li><b>Demand</b> — open the waitlist publicly for signal.</li>
+            </ul>
+          </div>
+          <h2 class="sec" style="margin-top: 22px">Decisions / asks</h2>
+          <div class="card">
+            <ul class="clean">
+              <li>WhatsApp provider: Cloud API direct vs BSP (Clickatell / 360dialog / Twilio)?</li>
+              <li>ooba: commercial partnership, strategic investment, or both?</li>
+              <li>Owner + budget for legal sign-off.</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <h2 class="sec">Top risks → mitigation</h2>
+          <div class="card">
+            <ul class="clean">
+              <li>Bond economics → lock via ooba.</li>
+              <li>WhatsApp onboarding time → start today.</li>
+              <li>Conveyancing kickback rules → software-fee model, not referrals.</li>
+              <li>Conversion → instrument the funnel obsessively.</li>
+            </ul>
+          </div>
+          <h2 class="sec" style="margin-top: 22px">What it does</h2>
+          <div class="card" style="color: var(--muted); font-size: 14px">
+            WhatsApp-first, 0%-commission property marketplace for Cape Town. List a
+            home → buyer enquiry → consented in-chat bond pre-qualification → deal
+            tracked through the SA transfer stages → all visible in an internal
+            dashboard.
+          </div>
+        </div>
+      </section>
+
+      <footer>
+        <span>Repo: <a id="repolink" href="https://github.com/getluckyjo/sell-direct">getluckyjo/sell-direct</a></span>
+        <span>Last refreshed: <span id="updated">—</span></span>
+      </footer>
+    </div>
+
+    <script>
+      const REPO = 'getluckyjo/sell-direct';
+
+      const MILESTONES = [
+        { t: 'Scaffold + tooling', d: 'pnpm monorepo, TS strict, ESLint/Prettier, /health', s: 'done' },
+        { t: 'Database + deal state machine', d: 'Prisma schema, SA transfer stages, append-only events', s: 'done' },
+        { t: 'Build env + Supabase', d: 'GitHub Actions CI + SessionStart hook; Supabase chosen', s: 'done' },
+        { t: 'WhatsApp adapter + webhook', d: 'Signed inbound/outbound, message log (swappable BSP)', s: 'done' },
+        { t: 'Listing intake', d: 'Guided WhatsApp conversation → creates a listing', s: 'done' },
+        { t: 'Buyer enquiry + ooba referral', d: 'Consent-gated bond pre-qual hand-off (stubbed)', s: 'done' },
+        { t: 'Internal dashboard', d: 'Listings, deals, status timeline — access-gated', s: 'done' },
+        { t: 'Marketing site', d: '0% commission brand site + waitlist capture', s: 'done' },
+        { t: 'Investor site', d: 'Public teaser + gated data-room request', s: 'done' },
+        { t: 'Deploy to staging', d: 'Vercel + Railway + Supabase (guide written)', s: 'prog' },
+        { t: 'Live WhatsApp (Meta/BSP)', d: 'Business + number verification, real messaging', s: 'pend' },
+        { t: 'ooba partnership', d: 'Referral terms + live economics', s: 'pend' },
+        { t: 'Legal / POPIA', d: 'Information Officer, DPAs, counsel sign-off', s: 'pend' },
+      ];
+
+      const LABEL = { done: 'Done', prog: 'In progress', pend: 'Pending' };
+      const DOTC = { done: 'var(--emerald)', prog: 'var(--amber)', pend: 'var(--slate)' };
+      const BADGE = { done: 'b-done', prog: 'b-prog', pend: 'b-pend' };
+
+      const el = document.getElementById('milestones');
+      MILESTONES.forEach((m) => {
+        const row = document.createElement('div');
+        row.className = 'ms';
+        row.innerHTML =
+          '<span class="dot" style="background:' + DOTC[m.s] + '"></span>' +
+          '<div class="body"><div class="title">' + m.t + '</div>' +
+          '<div class="desc">' + m.d + '</div></div>' +
+          '<span class="badge ' + BADGE[m.s] + '">' + LABEL[m.s] + '</span>';
+        el.appendChild(row);
+      });
+
+      const done = MILESTONES.filter((m) => m.s === 'done').length;
+      const prog = MILESTONES.filter((m) => m.s === 'prog').length;
+      const total = MILESTONES.length;
+      const pct = Math.round(((done + prog * 0.5) / total) * 100);
+      document.getElementById('pct').textContent = pct;
+      document.getElementById('pctbar').style.width = pct + '%';
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('updated').textContent = new Date().toLocaleString('en-ZA');
+
+      // Live data from the public GitHub API (no auth needed for a public repo).
+      async function loadLive() {
+        try {
+          const c = await fetch('https://api.github.com/repos/' + REPO + '/commits?sha=main&per_page=1');
+          if (c.ok) {
+            const [commit] = await c.json();
+            const sha = commit.sha.slice(0, 7);
+            const msg = commit.commit.message.split('\n')[0];
+            document.getElementById('commit').textContent = sha + ' · ' + msg;
+          }
+        } catch (e) {
+          document.getElementById('commit').textContent = 'live data unavailable (offline?)';
+        }
+        try {
+          const r = await fetch('https://api.github.com/repos/' + REPO + '/actions/runs?branch=main&per_page=1');
+          if (r.ok) {
+            const data = await r.json();
+            const run = (data.workflow_runs || [])[0];
+            const badge = document.getElementById('ciBadge');
+            const text = document.getElementById('ciText');
+            if (!run) { text.textContent = 'no runs'; return; }
+            if (run.status !== 'completed') { badge.className = 'ci run'; text.textContent = 'CI running…'; }
+            else if (run.conclusion === 'success') { badge.className = 'ci ok'; text.textContent = 'CI passing'; }
+            else { badge.className = 'ci fail'; text.textContent = 'CI: ' + run.conclusion; }
+          }
+        } catch (e) {
+          document.getElementById('ciText').textContent = 'CI status unavailable';
+        }
+      }
+      loadLive();
+    </script>
+  </body>
+</html>
