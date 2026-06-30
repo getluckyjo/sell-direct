@@ -5,50 +5,51 @@ All figures **ZAR** unless noted. USD at **~R18.5/$** (illustrative). Built bott
 
 ## 1. Capital requirement (bottom-up)
 
-With the 0.5%-on-every-deal rule, the model turns **EBITDA-positive in Y3** and the **cumulative
-cash low-point is only ≈ −R8.4m (end Y2)**; with a R3m working-capital + contingency buffer, the
-**total capital to reach self-sustaining is ≈ R11m (~$0.6m)** in the base case.
+With the 1% take-rate and the AI-lean cost base, the model turns **EBITDA-positive in Y2** and the
+**cumulative cash low-point is only ≈ −R2.4m (Y1)**; with a R3m buffer, the **total capital to
+reach self-sustaining is ≈ R5m (~$0.3m)** in the base case.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Cumulative cash low-point | ~R7.7m | **~R8.4m** | ~R7.6m |
+| Cumulative cash low-point | ~R2.2m | **~R2.4m** | ~R2.3m |
 | + buffer | R3m | R3m | R3m |
-| **Total capital to breakeven** | **~R10.7m** | **~R11.4m** | **~R10.7m** |
+| **Total capital to breakeven** | **~R5.2m** | **~R5.4m** | **~R5.3m** |
 
-### Recommended raise — a single, comfortable seed
+### Recommended raise — a single seed, raised as growth capital
 
-Breakeven on ~R11m means **a single seed round funds the whole journey to profitability with
-runway to spare** — no forced Series A.
+The modelled *need* is only ~R5m, so a **single ~R15m seed** gives a **~3× buffer** over breakeven
+— pure growth capital, no forced Series A.
 
 | Round | Timing | Amount | Use of funds | Milestone |
 |---|---|---:|---|---|
-| **Seed** | Now | **R15m (~$0.8m)** | CT-prime launch: lean concierge team (6→13), ooba + panel-conveyancer + WhatsApp integrations, brand in prime suburbs, first ~650 deals — with ~R4m buffer above the modelled low-point | EBITDA-positive (Y3) |
-| **Series A** | *Optional, growth* | R40–80m | Only to accelerate national-prime / adjacent segments faster than organic cash allows | Multi-metro prime leadership |
+| **Seed** | Now | **R15m (~$0.8m)** | CT-prime launch: small AI-augmented team, Nedbank + panel-conveyancer + WhatsApp integrations, brand in prime suburbs, first ~650 deals — with a large buffer above the ~R5m low-point | EBITDA-positive (Y2) |
+| **Series A** | *Optional, growth* | R40–80m | Only to accelerate national-prime / adjacent segments | Multi-metro prime leadership |
 
-R15m is **well inside** the African seed band (~$1.6m avg) and the round is **growth capital, not
-survival capital** — the strongest possible position for valuation and terms.
+R15m is **well inside** the African seed band (~$1.6m avg). Because the business breaks even on a
+fraction of it, **almost all of the round is deployable on growth, not survival** — the strongest
+position for valuation and terms.
 
 ## 2. Valuation
 
 ### a) Revenue-multiple (comps)
 
 Global proptech ~**8.8× EV/revenue** (Finro 2025); discount to **~4–6×** for SA early-stage.
-The model's **~50% Y5 EBITDA margin** supports the upper half (quality of earnings) and could
+The model's **~67% Y5 EBITDA margin** supports the upper half (quality of earnings) and could
 alternatively be valued on an EBITDA multiple as profitability matures.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Y5 revenue | R46.0m | **R80.0m** | R143.1m |
-| × 4–6× | R184–276m | **R320–480m** | R572–858m |
+| Y5 revenue | R64.7m | **R112.5m** | R201.1m |
+| × 4–6× | R259–388m | **R450–675m** | R804m–1.2bn |
 
 ### b) VC method (work back from an exit)
 
-- Base Y5 revenue **R80.0m at ~50% EBITDA margin** → target enterprise value **~R400m**
-  (≈5× revenue) in ~5 years; aggressive **~R715m–1.1bn**.
-- A seed investor at **~R50–60m pre-money**, holding to a ~R400m base outcome, models a
-  **~5–7× gross return** before dilution — with strong asymmetry in the aggressive case and in
-  the optionality to broaden beyond prime. The high-margin, capital-light profile is what lifts
-  the return vs. the earlier model.
+- Base Y5 revenue **R112.5m at ~67% EBITDA margin** → target enterprise value **~R560m**
+  (≈5× revenue) in ~5 years; aggressive **~R1.0–1.2bn**.
+- A seed investor at **~R50–60m pre-money**, holding (with dilution) to a ~R560m base outcome,
+  models a **high-multiple return** — the high-margin, capital-light profile drives it. **Temper
+  this in the pitch:** the margin is the assumption most likely to be challenged; lead with the
+  defensible *revenue* line and the modest market share, not the headline margin.
 
 ### c) Why the pre-money is well-supported
 

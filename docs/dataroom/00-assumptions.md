@@ -48,26 +48,26 @@ figure used on the marketing site consistent with the target customer.
 
 ## C. Revenue rates per deal
 
-**Monetisation policy (every deal pays ~0.5% of value).** The free 0% tier is **conditional on a
-qualifying bond (≥80% LTV)** — those deals earn the **bank-paid origination referral** at no cost
-to the consumer. **Cash buyers / sub-80% bonds instead pay a 0.5% facilitation fee** on the price
-(still ~10–14× cheaper than 5–7% agent commission). This **removes the cash-deal revenue gap** —
-bonded-share becomes a minor mix assumption, not a revenue cliff.
+**Monetisation policy.** The free 0% tier is **conditional on a ≥80% bond placed with our partner
+bank (e.g. Nedbank) plus our panel conveyancer** — those deals earn the **bank-paid kickback** at
+no cost to the consumer. **Otherwise a 1% facilitation fee** applies on the price (cash buyers,
+sub-80% bonds, or buyers who won't use our partners) — still **~6× cheaper** than 5–7% agent
+commission. Every deal monetises, and bonded-share becomes a minor mix assumption.
 
 | Line | Rate used | Source | Rel. |
 |---|---|---|---|
-| Bond-origination commission banks pay originators | **1.0%–1.9% of loan** | ooba / realestateinsights | Medium |
-| **Referral-partner share** (Sold Direct is a referrer, not a licensed originator) | **~0.5% of loan** | ooba / IOL ("~0.5% for introducing business") | Medium |
-| Facilitation fee on cash / sub-80% deals | **0.5% of price** (Sold Direct policy) | Policy | n/a |
-| → Bond-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 0.5% × price` ≈ **R31–34k** on a R6.5–7.0m home | Derived | Medium |
-| Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime transfers; exact SA panel-share % not recovered) | Estimate | Low |
+| Bank origination commission (banks pay originators) | **1.0%–1.9% of loan** | ooba / realestateinsights | Medium |
+| Originator referral-partner share (generic) | **~0.5% of loan** | ooba / IOL | Medium |
+| **Nedbank partner kickback** (direct deal — **to be negotiated**, may exceed the 0.5% sub-share) | **0.5% of bond** (base) | Assumption / to confirm | Low |
+| **Facilitation fee** on non-partner deals | **1.0% of price** (Sold Direct policy) | Policy | n/a |
+| → Kickback-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 1% × price` ≈ **R51–54k** on a R6.5–7.0m home | Derived | Medium |
+| Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime; exact SA panel-share % not recovered) | Estimate | Low |
 | Add-ons (premium photography / compliance / insurance), blended | **~R5,000–6,500** | Estimate | Low |
-| Conveyancing transfer-fee context (guideline tariff) | R2m → ~R25k incl VAT; R5m → ~R66k | LSSA 2025 | Medium |
 
-> **Revenue per registered deal ≈ R45k (Y1) → R50k (Y5)** in the base case — robust to the
-> cash/bond mix because **both paths pay ~0.5% of value**. This is the single most important
-> driver and is defensible because the referral leg scales with bond size (which we source) and
-> the fee leg is our own pricing.
+> **Revenue per registered deal ≈ R65k (Y1) → R70k (Y5)** in the base case — the 1% fee on
+> cash/non-partner deals is the largest single component. **Strategic note:** tying 0% to one
+> bank limits buyer rate-choice; secure the Nedbank agreement and legal/PPRA sign-off, and keep
+> a multi-bank (ooba) fallback so buyers aren't forced into a worse rate.
 
 ## D. Cost inputs
 
@@ -75,7 +75,9 @@ bonded-share becomes a minor mix assumption, not a revenue cliff.
 |---|---|---|---|
 | WhatsApp messaging | **Service/utility in 24h window = free; marketing templates = main paid line** (~$0.025–$0.14/msg). Net ≈ negligible per deal | Meta pricing Jul 2025 | Medium |
 | Gross margin (referral model, light COGS) | **~88%** (COGS ~12%: messaging, add-on fulfilment, payments) | Assumption | Medium |
-| Fully-loaded cost per FTE (blended) | **~R700k–780k/yr** (eng intermediate ~R48k/mo, senior ~R100k/mo, ops ~R25–35k/mo, +13th cheque/benefits/payroll ≈ ×1.3) | OfferZen 2025 | Medium |
+| Fully-loaded cost per **human** FTE (blended) | **~R700k–780k/yr** (eng intermediate ~R48k/mo, senior ~R100k/mo, ops ~R25–35k/mo, +13th cheque/benefits/payroll ≈ ×1.3) | OfferZen 2025 | Medium |
+| **AI-agent run cost** (each, replaces a human worker) | **~R0.15m/yr** (~R12.5k/mo: LLM API + tooling + human oversight) | Assumption | Low |
+| **AI-agent share of headcount** | **50%** (concierge/coordination/ops); ~halves people-cost | Assumption / design choice | Low |
 | CAC | **Assumption with wide bands** — no SA property/mortgage CAC found; WhatsApp free-window + portal syndication + referral pulls effective CAC below paid-search proxies (~$84 B2B CPL global) | HubSpot 2025 (proxy) | Low |
 
 ## E. Valuation & funding context
