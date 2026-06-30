@@ -48,19 +48,26 @@ figure used on the marketing site consistent with the target customer.
 
 ## C. Revenue rates per deal
 
+**Monetisation policy (every deal pays ~0.5% of value).** The free 0% tier is **conditional on a
+qualifying bond (≥80% LTV)** — those deals earn the **bank-paid origination referral** at no cost
+to the consumer. **Cash buyers / sub-80% bonds instead pay a 0.5% facilitation fee** on the price
+(still ~10–14× cheaper than 5–7% agent commission). This **removes the cash-deal revenue gap** —
+bonded-share becomes a minor mix assumption, not a revenue cliff.
+
 | Line | Rate used | Source | Rel. |
 |---|---|---|---|
 | Bond-origination commission banks pay originators | **1.0%–1.9% of loan** | ooba / realestateinsights | Medium |
 | **Referral-partner share** (Sold Direct is a referrer, not a licensed originator) | **~0.5% of loan** | ooba / IOL ("~0.5% for introducing business") | Medium |
-| → Bond referral per **bonded** deal | **0.5% × bond size** (e.g. R3.6m bond → R18,000; R1.4m bond → R7,000) | Derived | Medium |
-| Conveyancing referral per deal (negotiated panel rebate) | **~R4,000** base (assumption — exact SA panel-share % not recovered) | Estimate | Low |
-| Add-ons (photography / compliance coordination / insurance), blended per deal | **~R1,200** base | Estimate | Low |
+| Facilitation fee on cash / sub-80% deals | **0.5% of price** (Sold Direct policy) | Policy | n/a |
+| → Bond-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 0.5% × price` ≈ **R31–34k** on a R6.5–7.0m home | Derived | Medium |
+| Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime transfers; exact SA panel-share % not recovered) | Estimate | Low |
+| Add-ons (premium photography / compliance / insurance), blended | **~R5,000–6,500** | Estimate | Low |
 | Conveyancing transfer-fee context (guideline tariff) | R2m → ~R25k incl VAT; R5m → ~R66k | LSSA 2025 | Medium |
 
-> **Blended revenue per registered deal** therefore *declines* over the plan as the mix
-> shifts from prime Cape Town (bigger bonds) to mass-market national: **~R12.7k (Y1) → ~R9.0k
-> (Y5)** in the base case. This is the single most important driver and is **defensible because
-> it scales with bond size, which we source.**
+> **Revenue per registered deal ≈ R45k (Y1) → R50k (Y5)** in the base case — robust to the
+> cash/bond mix because **both paths pay ~0.5% of value**. This is the single most important
+> driver and is defensible because the referral leg scales with bond size (which we source) and
+> the fee leg is our own pricing.
 
 ## D. Cost inputs
 

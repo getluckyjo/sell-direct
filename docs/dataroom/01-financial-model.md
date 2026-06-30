@@ -1,108 +1,98 @@
-# Sold Direct — 5-Year Financial Model (Prime / Upper-Market Focus)
+# Sold Direct — 5-Year Financial Model (Prime Focus + 0.5% Monetisation Rule)
 
 All figures **ZAR**. Y1 = first full year of Cape Town operations. Illustrative; rests on the
-sourced assumptions in `00-assumptions.md`. **Strategy:** deliberately target **prime areas**
-(Atlantic Seaboard, City Bowl, upper Southern Suburbs, Constantia/Bishopscourt; then prime
-Johannesburg north and Umhlanga) where **R6m+ values are normal**. Fewer deals, far larger
-bonds, low-CAC reputation/referral demand, and a **lean concierge operation** — profitable
-sooner on less capital.
+sourced assumptions in `00-assumptions.md`. **Strategy:** target **prime areas** (Atlantic
+Seaboard, City Bowl, upper Southern Suburbs, Constantia; then prime JHB-north and Umhlanga) where
+**R6m+ values are normal**. Lean concierge operation.
 
-## 1. Why prime changes the economics
+## 1. The monetisation rule (closes the cash-deal gap)
 
-The bond-origination referral scales with bond size, so a prime deal is worth **3–4× a
-mass-market deal**:
+Sold Direct earns **~0.5% of value on every deal**, via one of two paths:
 
-| | Mass-market (R2.1m home) | **Prime (R6.5m home)** |
+- **Qualifying bond (≥80% LTV) → free to the consumer.** We earn the **bank-paid origination
+  referral** (~0.5% of the bond). The seller pays 0% commission.
+- **Cash buyer / sub-80% bond → 0.5% facilitation fee** on the purchase price. Still **~10–14×
+  cheaper** than the 5–7% (+VAT) an agent charges.
+
+This makes the **bonded-share assumption almost irrelevant to revenue** — the previous model lost
+all bond income on the ~60% of prime deals that are cash; now every deal pays ~0.5%.
+
+| Per R6.5m prime deal | Bonded (≥80%) path | Cash / sub-80% path |
 |---|---|---|
-| Bond size (90%) | ~R1.9m | **~R5.9m** |
-| Bond referral @0.5% | ~R9,500 | **~R29,250** |
-| Blended (× bonded share) | ~R4,700 | **~R11,700** |
-| Conveyancing referral | ~R4,000 | **~R9,000** |
-| Add-ons (premium attach) | ~R1,200 | **~R5,000** |
-| **Revenue per deal** | **~R10k** | **~R26k** |
-
-Prime buyers are **more often cash** (we model **40% bonded** vs ~50% mass-market), but the
-sheer bond size more than compensates. And prime demand is **referral- and reputation-led**, so
-marketing stays a small line — avoiding the Purplebricks CAC trap by design.
+| Mechanism | Origination referral (bank pays) | 0.5% facilitation fee (buyer pays) |
+| ~0.5% of… | the bond (~R5.85m) → **~R29k** | the price (R6.5m) → **~R33k** |
+| Consumer cost | **R0** | 0.5% (vs 5–7% agent) |
 
 ## 2. The revenue engine (base case drivers)
 
+```
+Revenue/deal = [ bonded% × 0.5% × bond ]  +  [ (1−bonded%) × 0.5% × price ]   ← bond ref OR fee
+             + conveyancing referral (~R9–10k)
+             + add-ons (~R5–6.5k)
+```
+
 | | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---|---|---|---|---|
-| Region focus | CT prime | CT prime | CT prime + early JHB/DBN | Multi-metro prime | Multi-metro prime |
 | Avg transacting price | R6.5m | R6.7m | R6.8m | R6.9m | R7.0m |
-| Bonded share | 40% | 40% | 40% | 42% | 42% |
-| Bond referral / deal (blended) | R11,700 | R12,060 | R12,240 | R13,041 | R13,230 |
-| Conveyancing referral / deal | R9,000 | R9,000 | R9,500 | R10,000 | R10,000 |
+| Bonded share (≥80%) | 40% | 40% | 40% | 42% | 42% |
+| Bond-or-fee / deal (blended) | R31,200 | R32,160 | R32,640 | R33,051 | R33,530 |
+| Conveyancing / deal | R9,000 | R9,000 | R9,500 | R10,000 | R10,000 |
 | Add-ons / deal | R5,000 | R5,000 | R5,500 | R6,000 | R6,500 |
-| **Revenue per deal** | **R25,700** | **R26,060** | **R27,240** | **R29,041** | **R29,730** |
+| **Revenue per deal** | **R45,200** | **R46,160** | **R47,640** | **R49,051** | **R50,030** |
 | **Registered deals** | **40** | **160** | **450** | **900** | **1,600** |
-
-Addressability check: prime (>R5m) is ~8–12% of Cape Town's ~38k annual transfers — roughly
-**~4,000 prime CT deals/yr**, plus prime JHB-north and Umhlanga. **Y5's 1,600 deals** is a
-credible share of a **national prime pool of ~12–15k/yr** — penetration stays modest.
 
 ## 3. Base case — full P&L (R'm)
 
 | Line | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---:|---:|---:|---:|---:|
 | Registered deals | 40 | 160 | 450 | 900 | 1,600 |
-| Revenue/deal (R) | 25,700 | 26,060 | 27,240 | 29,041 | 29,730 |
-| **Revenue** | **1.03** | **4.17** | **12.26** | **26.14** | **47.57** |
-| COGS (~12%) | (0.12) | (0.50) | (1.47) | (3.14) | (5.71) |
-| **Gross profit** | **0.91** | **3.67** | **10.79** | **23.00** | **41.86** |
+| Revenue/deal (R) | 45,200 | 46,160 | 47,640 | 49,051 | 50,030 |
+| **Revenue** | **1.81** | **7.39** | **21.44** | **44.15** | **80.05** |
+| COGS (~12%) | (0.22) | (0.89) | (2.57) | (5.30) | (9.61) |
+| **Gross profit** | **1.59** | **6.50** | **18.87** | **38.85** | **70.44** |
 | Payroll (headcount) | 4.2 (6) | 6.5 (9) | 9.6 (13) | 13.7 (18) | 18.7 (24) |
 | Marketing | 0.5 | 1.2 | 2.5 | 4.0 | 5.5 |
 | Tech & tools | 0.5 | 0.8 | 1.2 | 1.6 | 2.2 |
 | Legal / compliance / insurance | 0.6 | 0.9 | 1.2 | 1.6 | 2.0 |
 | G&A / office / other | 0.5 | 0.8 | 1.2 | 1.8 | 2.4 |
-| **Total operating expenses** | **6.30** | **10.20** | **15.70** | **22.70** | **30.80** |
-| **EBITDA** | **(5.39)** | **(6.53)** | **(4.91)** | **0.30** | **11.06** |
-| EBITDA margin | — | — | — | 1% | **23%** |
-| **Cumulative EBITDA** | (5.39) | (11.92) | **(16.83)** | (16.53) | (5.47) |
+| **Total operating expenses** | **6.30** | **10.20** | **15.69** | **22.70** | **30.80** |
+| **EBITDA** | **(4.71)** | **(3.70)** | **3.17** | **16.15** | **39.65** |
+| EBITDA margin | — | — | 15% | 37% | **50%** |
+| **Cumulative EBITDA** | (4.71) | **(8.41)** | (5.24) | 10.91 | 50.56 |
 
-- **EBITDA-positive in Y4**, **23% margin by Y5** — the lean concierge model and high
-  revenue-per-deal drive operating leverage fast.
-- Asset-light → **cashflow ≈ EBITDA** + a small working-capital buffer (referral income lands
-  ~6–12 weeks after registration).
-- **Cumulative cash low-point ≈ −R16.8m (end Y3)** — see capital plan.
+- **EBITDA-positive in Y3**; the cumulative cash low-point is just **≈ −R8.4m (end Y2)**.
+- The **~50% Y5 margin** is high — characteristic of an asset-light referral model — and gives
+  **optionality**: the founders can run it lean, or **reinvest the margin into faster growth**
+  (more concierge capacity, new prime metros), trading near-term margin for volume.
 
 ## 4. Scenario summary (R'm)
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
 | Y5 registered deals | 1,000 | **1,600** | 2,600 |
-| Y5 revenue | 27.4 | **47.6** | 85.0 |
-| Y5 EBITDA | 1.9 | **11.1** | 34.8 |
-| First EBITDA-positive year | Y5 | **Y4** | Y4 |
-| Cumulative cash low-point | (17.8) | **(16.8)** | (15.6) |
-| Total capital need (incl. buffer) | ~R20.8m | **~R19.8m** | ~R18.6m |
+| Y5 revenue | 46.0 | **80.0** | 143.1 |
+| Y5 EBITDA | 18.3 | **39.6** | 85.9 |
+| First EBITDA-positive year | Y4 | **Y3** | Y3 |
+| Cumulative cash low-point | (7.7) | **(8.4)** | (7.6) |
+| Total capital need (incl. buffer) | ~R10.7m | **~R11.4m** | ~R10.7m |
 
-Note that **all three scenarios cluster around ~R19–21m of capital to breakeven** — high-value
-prime deals turn the business profitable on a similar (small) amount regardless of pace. The
-real constraint is **execution capacity in a concierge model**, not cash. Figures are computed
-in `sold-direct-model.xlsx`.
+All scenarios reach breakeven on **~R11m** — the 0.5% rule makes the business **capital-light and
+fast to profit**. The constraint is **execution capacity in a concierge model**, not cash.
 
-## 5. Versus a mass-market model
-
-| | Mass-market | **Prime focus** |
-|---|---|---|
-| Y5 revenue | R76.5m | R47.6m |
-| Y5 EBITDA margin | ~4% | **~23%** |
-| First profit | Y5 | **Y4** |
-| Capital to breakeven | ~R56m | **~R20m** |
-| Headcount @ Y5 | 52 | **24** |
-| Key risk | CAC at scale | Segment ceiling / concentration |
-
-Prime trades top-line for **margin, capital efficiency, and lower execution risk** — and lets
-the brand land at the top before broadening (optional) later.
-
-## 6. Sensitivities (what moves the answer most)
+## 5. Sensitivities (what moves the answer most)
 
 | Lever | Base | Downside | Upside |
 |---|---|---|---|
-| Bond referral share | 0.5% | 0.35% | 0.8% |
-| Bonded share (prime) | 40% | 30% | 50% |
+| 0.5% rate (referral / fee) | 0.5% | 0.35% | 0.7% |
 | Avg transacting price | R6.5–7.0m | R5.5m | R8m+ (ultra-prime) |
 | Conveyancing referral/deal | R9–10k | R5k | R15k |
 | Deals/year (execution capacity) | as modelled | −30% | +50% |
+| Bonded share | 40% | 20% | 60% (**low impact now** — both paths pay ~0.5%) |
+
+## 6. Marketing-claim consistency
+
+The public sites say **"0% commission."** With this rule that remains true for the **qualifying
+(bonded) path** — the headline case. The **0.5% fee** is the cash-buyer / Flex path and should be
+disclosed as such ("0% when you finance through our partner; otherwise a 0.5% facilitation fee —
+still a fraction of agent commission"). This mirrors the existing **Free vs Flex** tiering on the
+marketing site, so no repositioning is needed — only clear fee disclosure.
