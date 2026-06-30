@@ -105,10 +105,11 @@ export function WhatsAppDemo() {
     return () => clearTimeout(t);
   }, [playing, index, atEnd, scenes.length]);
 
-  // Keep the chat scrolled to the newest bubble
+  // Keep the chat scrolled to the newest bubble. Scroll the inner container
+  // directly (instant) so it never chains out to nudge the whole page.
   useEffect(() => {
     const el = chatRef.current;
-    if (el) el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+    if (el) el.scrollTop = el.scrollHeight;
   }, [index, view]);
 
   const visible = useMemo(() => scenes.slice(0, index), [scenes, index]);
@@ -177,7 +178,7 @@ export function WhatsAppDemo() {
             {/* Chat */}
             <div
               ref={chatRef}
-              className="h-[60vh] min-h-[420px] space-y-2.5 overflow-y-auto bg-[#ECE5DD] px-3 py-4"
+              className="h-[60vh] min-h-[420px] space-y-2.5 overflow-y-auto overscroll-contain bg-[#ECE5DD] px-3 py-4"
             >
               {visible.map((s, i) => (
                 <Bubble key={i} scene={s} isLast={i === visible.length - 1} />
@@ -352,13 +353,13 @@ export function WhatsAppDemo() {
 function Annotation({ note }: { note?: Note }) {
   if (!note) {
     return (
-      <div className="rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
+      <div className="min-h-[156px] rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
         Step through the journey to see what happens behind the scenes.
       </div>
     );
   }
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="min-h-[156px] rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <span
         className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ring-1 ${TAG_STYLES[note.tag]}`}
       >
