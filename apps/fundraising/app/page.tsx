@@ -132,18 +132,18 @@ export default function Investors() {
           width={2000}
           height={1333}
           sizes="100vw"
-          className="h-72 w-full object-cover sm:h-96"
+          className="h-[26rem] w-full object-cover saturate-[1.15] contrast-[1.04] sm:h-[34rem]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/55 to-slate-950/20"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
-          <div className="mx-auto w-full max-w-6xl px-6 pb-10">
-            <h2 className="max-w-2xl text-2xl font-bold text-white drop-shadow sm:text-3xl">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-12">
+            <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
               A multi-billion-rand market, starting with Cape Town.
             </h2>
-            <p className="mt-2 max-w-xl text-slate-200">
+            <p className="mt-3 max-w-xl text-lg text-slate-200 drop-shadow">
               High-value homes, near-universal WhatsApp adoption, and a finance
               ecosystem that already pays to be in every deal.
             </p>

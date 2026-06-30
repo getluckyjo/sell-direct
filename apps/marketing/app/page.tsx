@@ -186,18 +186,18 @@ export default function Home() {
           width={2000}
           height={1333}
           sizes="100vw"
-          className="h-72 w-full object-cover sm:h-96"
+          className="h-[26rem] w-full object-cover saturate-[1.15] contrast-[1.04] sm:h-[34rem]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-slate-900/10"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
-          <div className="mx-auto w-full max-w-6xl px-6 pb-10">
-            <h2 className="max-w-2xl text-2xl font-bold text-white drop-shadow sm:text-3xl">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-12">
+            <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
               Built for Cape Town, from the first listing to registration.
             </h2>
-            <p className="mt-2 max-w-xl text-slate-100">
+            <p className="mt-3 max-w-xl text-lg text-slate-100 drop-shadow">
               A local, mobile-first way to buy and sell property — designed
               around how South African transfers actually work.
             </p>
