@@ -11,9 +11,9 @@ the **total capital to reach self-sustaining is ≈ R20m (~$1.1m)** in the base 
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Cumulative cash low-point | ~R21m | **~R17m** | ~R12m |
-| + buffer | ~R4m | ~R3m | ~R4m |
-| **Total capital to breakeven** | **~R25m** | **~R20m** | **~R16m** |
+| Cumulative cash low-point | ~R17.8m | **~R16.8m** | ~R15.6m |
+| + buffer | R3m | R3m | R3m |
+| **Total capital to breakeven** | **~R20.8m** | **~R19.8m** | **~R18.6m** |
 
 ### Recommended raise — a single seed (low dilution)
 
@@ -38,8 +38,8 @@ earnings), and could alternatively be valued on an EBITDA multiple as profitabil
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Y5 revenue | R27m | **R47.6m** | R83.2m |
-| × 4–6× | R108–162m | **R190–285m** | R333–499m |
+| Y5 revenue | R27.4m | **R47.6m** | R85.0m |
+| × 4–6× | R110–164m | **R190–285m** | R340–510m |
 
 ### b) VC method (work back from an exit)
 

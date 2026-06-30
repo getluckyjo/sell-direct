@@ -72,15 +72,16 @@ credible share of a **national prime pool of ~12–15k/yr** — penetration stay
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
 | Y5 registered deals | 1,000 | **1,600** | 2,600 |
-| Y5 revenue | 27.0 | **47.6** | 83.2 |
-| Y5 EBITDA | 1.8 | **11.1** | 33.2 |
+| Y5 revenue | 27.4 | **47.6** | 85.0 |
+| Y5 EBITDA | 1.9 | **11.1** | 34.8 |
 | First EBITDA-positive year | Y5 | **Y4** | Y4 |
-| Cumulative cash low-point | ~(21) | **~(17)** | ~(12) |
-| Total capital need (incl. buffer) | ~R25m | **~R20m** | ~R16m |
+| Cumulative cash low-point | (17.8) | **(16.8)** | (15.6) |
+| Total capital need (incl. buffer) | ~R20.8m | **~R19.8m** | ~R18.6m |
 
-Note the **inverse capital curve**: the aggressive case needs *less* peak capital because
-high-value prime deals turn it profitable sooner. The constraint is **execution capacity in a
-concierge model**, not cash.
+Note that **all three scenarios cluster around ~R19–21m of capital to breakeven** — high-value
+prime deals turn the business profitable on a similar (small) amount regardless of pace. The
+real constraint is **execution capacity in a concierge model**, not cash. Figures are computed
+in `sold-direct-model.xlsx`.
 
 ## 5. Versus a mass-market model
 

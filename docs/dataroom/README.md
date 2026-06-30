@@ -10,7 +10,8 @@ model-grade (see sourcing caveats in each document).
 | [`00-assumptions.md`](./00-assumptions.md) | Sourced assumption base — market size, prices, bond economics, costs, valuation comps — with reliability flags and confirmed data gaps |
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
 | [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), and valuation (revenue-multiple + VC method) |
-| [`model.csv`](./model.csv) | The numbers in spreadsheet form for auditing |
+| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 6 linked tabs (Assumptions · P&L · Scenarios · Capital & Valuation · Notes). Edit the amber input cells and everything recalculates. |
+| [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 
 ## Strategy: prime / upper-market focus
 
