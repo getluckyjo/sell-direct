@@ -142,9 +142,9 @@ export default function Home() {
               Commission is the biggest, most resented cost in a sale.
             </h2>
             <p className="mt-3 max-w-xl text-slate-600">
-              On a R3.9m Cape Town home, traditional estate-agent commission of
-              5–7% plus VAT is over a quarter of a million rand out of the
-              seller&apos;s pocket — for work many sellers feel they could
+              On an average R6m Cape Town home, traditional estate-agent
+              commission of 5–7% plus VAT approaches half a million rand out of
+              the seller&apos;s pocket — for work many sellers feel they could
               partly do themselves.
             </p>
           </div>
@@ -153,7 +153,7 @@ export default function Home() {
               Typical agent commission (5–7% + VAT)
             </p>
             <p className="mt-1 text-3xl font-extrabold text-slate-400 line-through">
-              R224k–R314k
+              R345k–R483k
             </p>
             <p className="mt-4 text-sm text-slate-500">With Sold Direct</p>
             <p className="mt-1 text-4xl font-extrabold text-emerald-600">R0</p>

@@ -98,7 +98,7 @@ const LISTING: ListingData = {
   photo: '/cape-town-hero.jpg',
   address: '23 Vredehoek Avenue',
   suburb: 'Vredehoek, Cape Town',
-  price: 'R3 950 000',
+  price: 'R6 250 000',
   beds: 3,
   baths: 2,
   erf: '495 m²',
@@ -299,10 +299,10 @@ export const SCENES: Scene[] = [
     from: 'bot',
     kind: 'prequal',
     prequal: {
-      amount: 'R3 600 000',
+      amount: 'R6 200 000',
       rate: 'Prime −0.50%',
-      deposit: 'R400 000',
-      monthly: '≈ R37 800 / month',
+      deposit: 'R600 000',
+      monthly: '≈ R56 800 / month',
       term: '20 years',
     },
     note: {
@@ -352,9 +352,9 @@ export const SCENES: Scene[] = [
     from: 'buyer',
     kind: 'otp',
     otp: {
-      price: 'R3 850 000',
-      deposit: 'R400 000',
-      bondRequired: 'R3 450 000',
+      price: 'R5 900 000',
+      deposit: 'R600 000',
+      bondRequired: 'R5 300 000',
       occupation: '1 September 2026',
       conditions: [
         'Subject to bond approval within 21 days',
@@ -380,14 +380,14 @@ export const SCENES: Scene[] = [
     track: 2,
     from: 'seller',
     kind: 'text',
-    text: "Close! I'll counter at R3 900 000 — everything else fine.",
+    text: "Close! I'll counter at R6 000 000 — everything else fine.",
   },
   {
     chapter: 3,
     track: 2,
     from: 'buyer',
     kind: 'text',
-    text: 'Accepted at R3 900 000 ✅',
+    text: 'Accepted at R6 000 000 ✅',
   },
   {
     chapter: 3,
@@ -397,7 +397,7 @@ export const SCENES: Scene[] = [
     status: {
       title: '📄 Offer to Purchase signed',
       lines: [
-        'Sale price R3 900 000',
+        'Sale price R6 000 000',
         'Both parties e-signed',
         'Sale agreed — subject to bond approval',
       ],
@@ -431,7 +431,7 @@ export const SCENES: Scene[] = [
     status: {
       title: '🏦 Bond approved',
       lines: [
-        'Standard Bank — R3 450 000',
+        'Standard Bank — R5 400 000',
         'Prime −0.50% over 20 years',
         'Suspensive condition met ✅',
       ],
@@ -514,7 +514,7 @@ export const SCENES: Scene[] = [
     status: {
       title: '💰 Transfer costs (illustrative)',
       lines: [
-        'Transfer duty to SARS ≈ R232 000',
+        'Transfer duty to SARS ≈ R458 000',
         'Conveyancing & bond registration fees',
         'Payable by the buyer',
       ],
@@ -617,7 +617,7 @@ export const SCENES: Scene[] = [
       title: '🟢 0% commission',
       lines: [
         'Maria paid R0 agent commission',
-        'Saved ≈ R314 000 vs 7% + VAT',
+        'Saved ≈ R483 000 vs 7% + VAT',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',
