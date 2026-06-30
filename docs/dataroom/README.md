@@ -12,15 +12,22 @@ model-grade (see sourcing caveats in each document).
 | [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), and valuation (revenue-multiple + VC method) |
 | [`model.csv`](./model.csv) | The numbers in spreadsheet form for auditing |
 
+## Strategy: prime / upper-market focus
+
+Target prime areas (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
+JHB-north and Umhlanga) where **R6m+ values are normal**. Fewer deals, much larger bonds,
+low-CAC reputation-led demand, and a lean concierge team — profitable sooner, on less capital.
+
 ## Headlines (base case)
 
-- **Revenue:** R1.5m (Y1) → **R76.5m (Y5)**; EBITDA-positive in Y5.
-- **Model:** 0% to the consumer; we earn **~R9–13k per registered deal** from bond-origination
-  referrals, panel conveyancing, and add-ons — a fraction of the **R225k–R483k** commission a
-  seller would otherwise pay.
-- **Capital:** **~R56m total to breakeven**, staged as **seed ~R18m → Series A ~R40m**.
-- **Valuation:** seed pre-money **~R45–55m**; Year-5 enterprise value **~R306–459m** (4–6×
-  revenue, SA-discounted from the ~8.8× global proptech multiple).
+- **Revenue:** R1.0m (Y1) → **R47.6m (Y5)**; **EBITDA-positive in Y4**, ~23% margin by Y5.
+- **Model:** 0% to the consumer; we earn **~R26–30k per prime deal** from bond-origination
+  referrals (~0.5% of a ~R6m bond), panel conveyancing, and premium add-ons — a fraction of the
+  **R345k–R483k** commission a seller would otherwise pay on a R6m home.
+- **Capital:** **~R20m total to breakeven** — fundable on a **single seed round** (no forced
+  Series A).
+- **Valuation:** seed pre-money **~R45–55m**; Year-5 enterprise value **~R190–285m** (4–6×
+  revenue), with the margin profile supporting the upper half.
 
 ## Before circulating
 

@@ -29,9 +29,13 @@ via snippet. **Low** = global proxy, weak SA fit, or dated.
 | National average price | **~R1.4m** (Q1 2024) | Lightstone | High |
 | First-time-buyer avg purchase | **R1,247,810** (Q1 2025) | oobarometer | Medium |
 
-**Key correction:** ~R6m = **prime** Cape Town (freehold houses), **not** the average. Base
-model uses a blended transacting price that starts upper-CT (~R4.0m) and broadens toward the
-national average (~R1.6m) as Sold Direct expands WC → national.
+**Key correction:** ~R6m = **prime** Cape Town (freehold houses), **not** the average
+(median ~R3.4m, average ~R2.1m). **Strategy decision:** Sold Direct deliberately **targets the
+prime segment** (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
+JHB-north / Umhlanga), where **R6–7m transacting prices are normal**. The model therefore uses a
+**~R6.5–7.0m average transacting price** — defensible *because the target market is prime, not
+the metro average* — with **40% bonded share** (prime buyers skew cash). This makes the R6m
+figure used on the marketing site consistent with the target customer.
 
 ## B. Bond financing (the revenue multiplier)
 

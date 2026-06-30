@@ -1,97 +1,107 @@
-# Sold Direct — 5-Year Financial Model
+# Sold Direct — 5-Year Financial Model (Prime / Upper-Market Focus)
 
-All figures in **ZAR**. Years are operating years from launch (Y1 = first full year of
-Cape Town operations). Figures are illustrative and rest on the sourced assumptions in
-`00-assumptions.md`; several inputs carry a "confirm against primary source" flag.
+All figures **ZAR**. Y1 = first full year of Cape Town operations. Illustrative; rests on the
+sourced assumptions in `00-assumptions.md`. **Strategy:** deliberately target **prime areas**
+(Atlantic Seaboard, City Bowl, upper Southern Suburbs, Constantia/Bishopscourt; then prime
+Johannesburg north and Umhlanga) where **R6m+ values are normal**. Fewer deals, far larger
+bonds, low-CAC reputation/referral demand, and a **lean concierge operation** — profitable
+sooner on less capital.
 
-## 1. The engine: how a registered deal makes money
+## 1. Why prime changes the economics
 
-Sold Direct earns **nothing from the consumer**. Per **registered transaction** it earns:
+The bond-origination referral scales with bond size, so a prime deal is worth **3–4× a
+mass-market deal**:
 
-```
-Revenue/deal  =  (bonded% × 0.5% × bond size)        ← bond-origination referral
-              +  (panel-attach% × ~R4,000)            ← conveyancing referral
-              +  (~R1,200 blended)                     ← add-ons
-```
+| | Mass-market (R2.1m home) | **Prime (R6.5m home)** |
+|---|---|---|
+| Bond size (90%) | ~R1.9m | **~R5.9m** |
+| Bond referral @0.5% | ~R9,500 | **~R29,250** |
+| Blended (× bonded share) | ~R4,700 | **~R11,700** |
+| Conveyancing referral | ~R4,000 | **~R9,000** |
+| Add-ons (premium attach) | ~R1,200 | **~R5,000** |
+| **Revenue per deal** | **~R10k** | **~R26k** |
 
-Because bond referral scales with bond size, **revenue per deal is highest in prime Cape
-Town and falls as the model broadens to the national average** — a deliberate "land at the
-top, expand down" sequence that front-loads revenue quality.
+Prime buyers are **more often cash** (we model **40% bonded** vs ~50% mass-market), but the
+sheer bond size more than compensates. And prime demand is **referral- and reputation-led**, so
+marketing stays a small line — avoiding the Purplebricks CAC trap by design.
+
+## 2. The revenue engine (base case drivers)
 
 | | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---|---|---|---|---|
-| Mix / region | Upper CT | CT | CT + W.Cape | W.Cape + early national | National |
-| Avg transacting price | R4.0m | R3.6m | R2.8m | R2.1m | R1.7m |
-| Bonded share | 45% | 48% | 50% | 52% | 55% |
-| **Revenue per registered deal** | **R12,700** | **R11,800** | **R10,900** | **R9,800** | **R9,000** |
+| Region focus | CT prime | CT prime | CT prime + early JHB/DBN | Multi-metro prime | Multi-metro prime |
+| Avg transacting price | R6.5m | R6.7m | R6.8m | R6.9m | R7.0m |
+| Bonded share | 40% | 40% | 40% | 42% | 42% |
+| Bond referral / deal (blended) | R11,700 | R12,060 | R12,240 | R13,041 | R13,230 |
+| Conveyancing referral / deal | R9,000 | R9,000 | R9,500 | R10,000 | R10,000 |
+| Add-ons / deal | R5,000 | R5,000 | R5,500 | R6,000 | R6,500 |
+| **Revenue per deal** | **R25,700** | **R26,060** | **R27,240** | **R29,041** | **R29,730** |
+| **Registered deals** | **40** | **160** | **450** | **900** | **1,600** |
 
-## 2. Volume ramp (registered deals/year)
-
-Anchored to addressable transfer pools: CT metro ~38k/yr, Western Cape ~55k/yr, SA ~250k/yr.
-Even the aggressive Y5 (14,000 deals) is **<6% of the national pool** and **~2.8% of bonded
-transactions** — penetration stays modest, which is the point.
-
-| Scenario | Y1 | Y2 | Y3 | Y4 | Y5 | Y5 as % of SA transfers |
-|---|---|---|---|---|---|---|
-| Conservative | 60 | 250 | 700 | 1,700 | 3,600 | ~1.4% |
-| **Base** | **120** | **520** | **1,500** | **3,800** | **8,500** | **~3.4%** |
-| Aggressive | 200 | 950 | 2,800 | 6,800 | 14,000 | ~5.6% |
+Addressability check: prime (>R5m) is ~8–12% of Cape Town's ~38k annual transfers — roughly
+**~4,000 prime CT deals/yr**, plus prime JHB-north and Umhlanga. **Y5's 1,600 deals** is a
+credible share of a **national prime pool of ~12–15k/yr** — penetration stays modest.
 
 ## 3. Base case — full P&L (R'm)
 
 | Line | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---:|---:|---:|---:|---:|
-| Registered deals | 120 | 520 | 1,500 | 3,800 | 8,500 |
-| Revenue/deal (R) | 12,700 | 11,800 | 10,900 | 9,800 | 9,000 |
-| **Revenue** | **1.52** | **6.14** | **16.35** | **37.24** | **76.50** |
-| COGS (~12%) | (0.18) | (0.74) | (1.96) | (4.47) | (9.18) |
-| **Gross profit** | **1.34** | **5.40** | **14.39** | **32.77** | **67.32** |
-| Gross margin | 88% | 88% | 88% | 88% | 88% |
-| Payroll (headcount) | 5.6 (8) | 10.8 (15) | 17.8 (24) | 27.0 (36) | 38.0 (52) |
-| Marketing | 1.2 | 3.8 | 7.5 | 12.5 | 16.0 |
-| Tech & tools | 0.6 | 1.0 | 1.8 | 2.6 | 3.6 |
-| Legal / compliance / insurance | 0.8 | 1.2 | 1.8 | 2.4 | 3.0 |
-| G&A / office / other | 0.6 | 1.2 | 2.1 | 3.0 | 4.0 |
-| **Total operating expenses** | **8.8** | **18.0** | **31.0** | **47.5** | **64.6** |
-| **EBITDA** | **(7.46)** | **(12.60)** | **(16.61)** | **(14.73)** | **2.72** |
-| EBITDA margin | — | — | — | — | 4% |
-| **Cumulative EBITDA** | (7.46) | (20.06) | (36.67) | **(51.40)** | (48.68) |
+| Registered deals | 40 | 160 | 450 | 900 | 1,600 |
+| Revenue/deal (R) | 25,700 | 26,060 | 27,240 | 29,041 | 29,730 |
+| **Revenue** | **1.03** | **4.17** | **12.26** | **26.14** | **47.57** |
+| COGS (~12%) | (0.12) | (0.50) | (1.47) | (3.14) | (5.71) |
+| **Gross profit** | **0.91** | **3.67** | **10.79** | **23.00** | **41.86** |
+| Payroll (headcount) | 4.2 (6) | 6.5 (9) | 9.6 (13) | 13.7 (18) | 18.7 (24) |
+| Marketing | 0.5 | 1.2 | 2.5 | 4.0 | 5.5 |
+| Tech & tools | 0.5 | 0.8 | 1.2 | 1.6 | 2.2 |
+| Legal / compliance / insurance | 0.6 | 0.9 | 1.2 | 1.6 | 2.0 |
+| G&A / office / other | 0.5 | 0.8 | 1.2 | 1.8 | 2.4 |
+| **Total operating expenses** | **6.30** | **10.20** | **15.70** | **22.70** | **30.80** |
+| **EBITDA** | **(5.39)** | **(6.53)** | **(4.91)** | **0.30** | **11.06** |
+| EBITDA margin | — | — | — | 1% | **23%** |
+| **Cumulative EBITDA** | (5.39) | (11.92) | **(16.83)** | (16.53) | (5.47) |
 
-- The business is **asset-light** (no inventory, minimal capex), so **cashflow ≈ EBITDA**
-  plus a small working-capital allowance. Referral income is received within the transfer
-  cycle (~6–12 weeks after registration), so a ~R3–5m working-capital buffer is assumed.
-- **EBITDA turns positive in Y5** (base). The **cumulative cash low-point is ≈ −R51.4m at the
-  end of Y4** — this drives the capital requirement (see `02-capital-and-valuation.md`).
+- **EBITDA-positive in Y4**, **23% margin by Y5** — the lean concierge model and high
+  revenue-per-deal drive operating leverage fast.
+- Asset-light → **cashflow ≈ EBITDA** + a small working-capital buffer (referral income lands
+  ~6–12 weeks after registration).
+- **Cumulative cash low-point ≈ −R16.8m (end Y3)** — see capital plan.
 
 ## 4. Scenario summary (R'm)
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Y5 revenue | 27.0 | **76.5** | 140.0 |
-| Y5 EBITDA | (2.8) | **2.7** | 14.6 |
-| First EBITDA-positive year | ~Y6 | **Y5** | Y5 |
-| Cumulative cash low-point | ~(38) | **~(51)** | ~(56) |
-| Implied total capital need (incl. buffer) | ~R42m | **~R56m** | ~R62m |
+| Y5 registered deals | 1,000 | **1,600** | 2,600 |
+| Y5 revenue | 27.0 | **47.6** | 83.2 |
+| Y5 EBITDA | 1.8 | **11.1** | 33.2 |
+| First EBITDA-positive year | Y5 | **Y4** | Y4 |
+| Cumulative cash low-point | ~(21) | **~(17)** | ~(12) |
+| Total capital need (incl. buffer) | ~R25m | **~R20m** | ~R16m |
 
-> **Conservative** assumes throttled growth *and* disciplined spend (management cuts cloth to
-> cash); it reaches breakeven a year later but at a similar capital low-point. **Aggressive**
-> spends more to grow faster and reaches a much larger Y5 revenue base — the upside case for
-> the valuation.
+Note the **inverse capital curve**: the aggressive case needs *less* peak capital because
+high-value prime deals turn it profitable sooner. The constraint is **execution capacity in a
+concierge model**, not cash.
 
-## 5. Sensitivities (what moves the answer most)
+## 5. Versus a mass-market model
 
-| Lever | Base | Downside | Upside | Why it matters |
-|---|---|---|---|---|
-| Referral share of origination commission | 0.5% | 0.35% | 0.8% | Directly scales the largest revenue line |
-| Bonded share of deals | ~50% | 40% | 60% | Half of deals carry **no** bond income |
-| Avg transacting price (segment mix) | R1.7–4.0m | shift mass-market | hold prime-CT longer | Bond referral scales with bond size |
-| CAC / marketing efficiency | as modelled | 2× | 0.5× (organic/WhatsApp) | Purplebricks' failure mode — watch closely |
-| Conveyancing panel share % | R4k/deal | R2k | R8k | Unconfirmed — negotiate up |
+| | Mass-market | **Prime focus** |
+|---|---|---|
+| Y5 revenue | R76.5m | R47.6m |
+| Y5 EBITDA margin | ~4% | **~23%** |
+| First profit | Y5 | **Y4** |
+| Capital to breakeven | ~R56m | **~R20m** |
+| Headcount @ Y5 | 52 | **24** |
+| Key risk | CAC at scale | Segment ceiling / concentration |
 
-## 6. Health checks vs. the disruption baseline
+Prime trades top-line for **margin, capital efficiency, and lower execution risk** — and lets
+the brand land at the top before broadening (optional) later.
 
-- A R3.9–6m Cape Town seller pays **R225k–R483k** in traditional commission (5–7% + VAT).
-  Sold Direct's **total revenue per deal (~R9–13k)** is **a small fraction** of what it saves
-  the consumer — the "0% to you, we earn from the ecosystem" claim holds and is defensible.
-- Sold Direct needs **~8,500 of ~250,000 annual SA transfers (3.4%)** by Y5 to reach the base
-  case — credible for a category-defining channel, conservative vs. portal incumbents.
+## 6. Sensitivities (what moves the answer most)
+
+| Lever | Base | Downside | Upside |
+|---|---|---|---|
+| Bond referral share | 0.5% | 0.35% | 0.8% |
+| Bonded share (prime) | 40% | 30% | 50% |
+| Avg transacting price | R6.5–7.0m | R5.5m | R8m+ (ultra-prime) |
+| Conveyancing referral/deal | R9–10k | R5k | R15k |
+| Deals/year (execution capacity) | as modelled | −30% | +50% |
