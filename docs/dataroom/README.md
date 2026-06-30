@@ -10,26 +10,29 @@ model-grade (see sourcing caveats in each document).
 | [`00-assumptions.md`](./00-assumptions.md) | Sourced assumption base — market size, prices, bond economics, costs, valuation comps — with reliability flags and confirmed data gaps |
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
 | [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), and valuation (revenue-multiple + VC method) |
-| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 6 linked tabs (Assumptions · P&L · Scenarios · Capital & Valuation · Notes). Edit the amber input cells and everything recalculates. |
+| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 7 linked tabs (Assumptions · P&L · Scenarios · Capital & Valuation · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 
-## Strategy: prime · 1% fee · AI-lean · bank sponsor
+## Strategy: prime · reinvest-for-growth · AI-lean · ecosystem revenue
 
 Target prime areas (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
-JHB-north and Umhlanga) where **R6m+ values are normal**, run by a small **AI-augmented** team
-(50% of headcount are AI agents). Three legally-clean revenue lines: (1) the free 0% tier requires
-a **qualifying ≥80% bond via our multi-bank originator (ooba)** — buyer keeps rate choice — earning
-the origination referral; (2) a **1% facilitation fee** on cash / non-partner deals; (3) a **bank
-headline-sponsorship** fee (advertising, not steering).
+JHB-north and Umhlanga), run by a small **AI-augmented** team (50% AI agents), and **reinvest the
+high gross margin into above-the-line (brand) marketing** to drive the deal ramp. Legally-clean
+monetisation: (1) free 0% via a **qualifying ≥80% bond on our multi-bank originator (ooba)** — buyer
+keeps rate choice — earning the origination referral; (2) a **1% facilitation fee** on cash /
+non-partner deals; (3) a **bank headline-sponsorship** fee; (4) an **optional ecosystem-revenue**
+layer (the database value).
 
 ## Headlines (base case)
 
-- **Revenue:** R2.9m (Y1) → **R117.5m (Y5)**; **EBITDA-positive in Y2**, ~68% margin by Y5.
+- **Revenue:** R6.2m (Y1) → **R212.0m (Y5)**; **EBITDA-positive in Y3**, ~48% margin by Y5.
 - **Model:** **~R65–70k per deal** (origination referral *or* 1% fee + conveyancing + add-ons),
-  plus a **R0.3m → R5.0m/yr bank sponsorship** — vs the **R345k–R483k** an agent would charge.
-- **Capital:** need is only **~R5m** to breakeven; raise a **single ~R15m seed** as growth capital.
-- **Valuation:** seed pre-money **~R50–60m**; Year-5 enterprise value **~R470–705m** (4–6×).
-- **⚠ Reality-check the margin:** ~68% is very high — present a reinvest-for-growth variant.
+  plus a **R3m → R8m/yr bank sponsorship**, with ATL marketing at ~24–40% of revenue.
+- **The database:** each customer unlocks **~R50k of ecosystem referral revenue** (insurance,
+  solar, moving, life cover…); modelled optional (~R5k/deal captured, default off).
+- **Capital:** need is only **~R6m** to breakeven; raise a **single ~R15m seed** to fund the brand push.
+- **Valuation:** seed pre-money **~R50–60m**; Year-5 enterprise value **~R848m–1.27bn** (4–6×).
+- **⚠ Validate** the ATL→deals conversion (the central growth assumption) with a pilot.
 
 ## Before circulating
 

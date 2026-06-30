@@ -67,11 +67,24 @@ our partners) — still **~6× cheaper** than 5–7% agent commission. Separatel
 | → Referral-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 1% × price` ≈ **R51–54k** on a R6.5–7.0m home | Derived | Medium |
 | Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime; exact SA panel-share % not recovered) | Estimate | Low |
 | Add-ons (premium photography / compliance / insurance), blended | **~R5,000–6,500** | Estimate | Low |
-| **Bank headline sponsorship** (annual, platform-wide) | **R0.3m (Y1) → R5.0m (Y5)** — scales with audience/reach | Assumption | Low |
+| **Bank headline sponsorship** (annual, platform-wide) | **R3.0m (Y1) → R8.0m (Y5)** — scales with audience/reach | Assumption | Low |
 
 > **Revenue per registered deal ≈ R65k (Y1) → R70k (Y5)**, plus the **annual sponsorship**. The 1%
-> fee on cash/non-partner deals is the largest single component; sponsorship is high-margin but
-> should stay **conservative until real platform reach is proven.**
+> fee on cash/non-partner deals is the largest single component.
+
+**Reinvest-for-growth stance.** The base case **reinvests the high gross margin into above-the-line
+(brand) marketing** — R2.5m (Y1) rising to **R50m (Y5)**, ~40% of revenue early easing to ~24% —
+to drive the deal ramp (50 → 2,900 registered deals by Y5). This trades the lean model's ~68%
+margin for a **~48% margin at ~2× the revenue**, and tests as a deliberate growth choice. The
+ATL→deals conversion is an assumption to **validate with a pilot** before relying on it.
+
+**Ancillary / ecosystem revenue (optional — the database value).** Owning the homeowner
+relationship unlocks a referral menu worth **~R50,000 per customer** (homeowners & contents
+insurance, solar, moving, fibre, security, life cover, estate planning, etc. — full table on the
+workbook's Ancillary Revenue tab). Per-stream **attach rates are illustrative assumptions
+(Low reliability)** to be validated. Modelled **optional (default off)**: ~R5,000 additional
+captured per deal at ~10% blended capture; conveyancing & compliance certs are excluded here as
+they already sit in the core model.
 
 ## D. Cost inputs
 

@@ -5,25 +5,26 @@ All figures **ZAR** unless noted. USD at **~R18.5/$** (illustrative). Built bott
 
 ## 1. Capital requirement (bottom-up)
 
-With the 1% take-rate, the AI-lean cost base and the bank sponsorship line, the model turns
-**EBITDA-positive in Y2** and the **cumulative cash low-point is only ≈ −R2.1m (Y1)**; with a R3m
-buffer, the **total capital to reach self-sustaining is ≈ R5m (~$0.3m)** in the base case.
+Even while **reinvesting into above-the-line marketing**, the model turns **EBITDA-positive in Y3**
+and the **cumulative cash low-point is only ≈ −R3.1m (Y2)**; with a R3m buffer, the **total capital
+to reach self-sustaining is ≈ R6m (~$0.3m)** in the base case. The ATL spend is funded largely from
+the gross margin, not the raise.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Cumulative cash low-point | ~R1.8m | **~R2.1m** | ~R2.0m |
+| Cumulative cash low-point | ~R3.2m | **~R3.1m** | ~R2.5m |
 | + buffer | R3m | R3m | R3m |
-| **Total capital to breakeven** | **~R4.8m** | **~R5.1m** | **~R5.0m** |
+| **Total capital to breakeven** | **~R6.2m** | **~R6.1m** | **~R5.5m** |
 
-### Recommended raise — a single seed, raised as growth capital
+### Recommended raise — a single seed to fund the growth push
 
-The modelled *need* is only ~R5m, so a **single ~R15m seed** gives a **~3× buffer** over breakeven
-— pure growth capital, no forced Series A.
+The modelled *survival* need is only ~R6m, but raise a **single ~R15m seed** to **front-load the
+ATL marketing** and de-risk the deal ramp — most of the round is offence, not survival.
 
 | Round | Timing | Amount | Use of funds | Milestone |
 |---|---|---:|---|---|
-| **Seed** | Now | **R15m (~$0.8m)** | CT-prime launch: small AI-augmented team, Nedbank + panel-conveyancer + WhatsApp integrations, brand in prime suburbs, first ~650 deals — with a large buffer above the ~R5m low-point | EBITDA-positive (Y2) |
-| **Series A** | *Optional, growth* | R40–80m | Only to accelerate national-prime / adjacent segments | Multi-metro prime leadership |
+| **Seed** | Now | **R15m (~$0.8m)** | CT-prime launch + first brand campaign, AI-augmented team, ooba + panel-conveyancer + WhatsApp integrations, secure the bank sponsor | EBITDA-positive (Y3), brand established in prime CT |
+| **Series A** | *Optional, growth* | R50–120m | Pour fuel on a proven ATL→deals engine; national-prime rollout | Multi-metro prime leadership |
 
 R15m is **well inside** the African seed band (~$1.6m avg). Because the business breaks even on a
 fraction of it, **almost all of the round is deployable on growth, not survival** — the strongest
@@ -34,18 +35,18 @@ position for valuation and terms.
 ### a) Revenue-multiple (comps)
 
 Global proptech ~**8.8× EV/revenue** (Finro 2025); discount to **~4–6×** for SA early-stage.
-The model's **~67% Y5 EBITDA margin** supports the upper half (quality of earnings) and could
-alternatively be valued on an EBITDA multiple as profitability matures.
+The model pairs **high growth with a ~48% Y5 EBITDA margin** — the combination (not margin alone)
+supports the upper half of the range.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Y5 revenue | R69.7m | **R117.5m** | R206.1m |
-| × 4–6× | R279–418m | **R470–705m** | R824m–1.2bn |
+| Y5 revenue | R130.9m | **R212.0m** | R379.3m |
+| × 4–6× | R524–786m | **R848m–1.27bn** | R1.5–2.3bn |
 
 ### b) VC method (work back from an exit)
 
-- Base Y5 revenue **R117.5m at ~68% EBITDA margin** → target enterprise value **~R590m**
-  (≈5× revenue) in ~5 years; aggressive **~R1.0–1.2bn**.
+- Base Y5 revenue **R212.0m at ~48% EBITDA margin** → target enterprise value **~R1.06bn**
+  (≈5× revenue) in ~5 years; aggressive **~R1.9bn+**.
 - A seed investor at **~R50–60m pre-money**, holding (with dilution) to a ~R560m base outcome,
   models a **high-multiple return** — the high-margin, capital-light profile drives it. **Temper
   this in the pitch:** the margin is the assumption most likely to be challenged; lead with the
