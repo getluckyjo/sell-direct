@@ -9,31 +9,36 @@ model-grade (see sourcing caveats in each document).
 |---|---|
 | [`00-assumptions.md`](./00-assumptions.md) | Sourced assumption base — market size, prices, bond economics, costs, valuation comps — with reliability flags and confirmed data gaps |
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
-| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), and valuation (revenue-multiple + VC method) |
-| [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied prime-market share (stress test + positioning), and consumer commission saved |
-| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 8 linked tabs (Assumptions · P&L · Scenarios · Market Sizing · Capital & Valuation · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
+| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), valuation, **cap table** (4×25% founders → dilution) and funder growth |
+| [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied upper-market share (stress test + positioning), and consumer commission saved |
+| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 12 linked tabs (Assumptions · P&L · Scenarios · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Funder Growth · Competitive Landscape · Risk Register · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 
-## Strategy: prime · reinvest-for-growth · AI-lean · ecosystem revenue
+## Strategy: land at prime · taper down-market · AI-lean · ecosystem revenue
 
-Target prime areas (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
-JHB-north and Umhlanga), run by a small **AI-augmented** team (50% AI agents), and **reinvest the
-high gross margin into above-the-line (brand) marketing** to drive the deal ramp. Legally-clean
-monetisation: (1) free 0% via a **qualifying ≥80% bond on our multi-bank originator (ooba)** — buyer
-keeps rate choice — earning the origination referral; (2) a **1% facilitation fee** on cash /
-non-partner deals; (3) a **bank headline-sponsorship** fee; (4) an **optional ecosystem-revenue**
-layer (the database value).
+**Land at prime** (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia) and **taper the
+average transacting price down (R6.5m → R4.0m) as the brand scales**, broadening into the
+upper-market to grow from a far larger pool and cut market-share risk. Run by a small
+**AI-augmented** team (50% AI agents), **reinvesting the high gross margin into above-the-line
+(brand) marketing** to drive the deal ramp. Legally-clean monetisation: (1) free 0% via a
+**qualifying ≥80% bond on our multi-bank originator (ooba)** — buyer keeps rate choice — earning
+the origination referral; (2) a **1% facilitation fee** on cash / non-partner deals; (3) a **bank
+headline-sponsorship** fee; (4) an **optional ecosystem-revenue** layer (the database value).
 
 ## Headlines (base case)
 
-- **Revenue:** R6.2m (Y1) → **R212.0m (Y5)**; **EBITDA-positive in Y3**, ~48% margin by Y5.
-- **Model:** **~R65–70k per deal** (origination referral *or* 1% fee + conveyancing + add-ons),
-  plus a **R3m → R8m/yr bank sponsorship**, with ATL marketing at ~24–40% of revenue.
+- **Revenue:** R6.2m (Y1) → **R145.1m (Y5)**; **EBITDA-positive in Y3**, **~30% margin** by Y5.
+- **Model:** **~R47–65k per deal** (origination referral *or* 1% fee + conveyancing + add-ons) on a
+  **tapering price**, plus a **R3m → R8m/yr bank sponsorship**, with ATL marketing at ~34–40% of revenue.
+- **Market share:** the taper drops the implied Y5 share from **~21% (prime-only) to ~8.3% of the
+  upper-market** — a far more defensible ask.
 - **The database:** each customer unlocks **~R50k of ecosystem referral revenue** (insurance,
   solar, moving, life cover…); modelled optional (~R5k/deal captured, default off).
-- **Capital:** need is only **~R6m** to breakeven; raise a **single ~R15m seed** to fund the brand push.
-- **Valuation:** seed pre-money **~R50–60m**; Year-5 enterprise value **~R848m–1.27bn** (4–6×).
-- **⚠ Validate** the ATL→deals conversion (the central growth assumption) with a pilot.
+- **Capital:** need is only **~R7.5m** to breakeven; raise a **single ~R15m seed** to fund the brand push.
+- **Valuation:** seed pre-money **~R50m**; Year-5 enterprise value **~R580–870m** (4–6×).
+- **Cap table:** founders **4×25%** (Johannes/Wilhelm/Dean/Strategic Funder) → **16.0% each** after
+  seed + optional Series A; the **R15m seed returns ~9.3×** to a ~R725m base-case exit.
+- **⚠ Validate** the ATL→deals conversion and the upper-market pool count with a pilot.
 
 ## Before circulating
 
@@ -44,8 +49,10 @@ None changes the model's shape; they sharpen individual lines.
 
 ## To build out next
 
-- Market sizing one-pager (TAM/SAM/SOM) with the regional ramp visualised
-- Cap table + use-of-funds detail
-- Competitive landscape (Property24, Private Property, PropertyFox, traditional agencies)
-- Team, traction (waitlist + investor leads), and the product (the live WhatsApp journey)
-- Risk register (regulatory/PPRA, partner concentration, CAC) and mitigations
+- Team bios + org plan (and the AI-agent operating model in detail)
+- Traction pack: waitlist + investor-lead numbers, and the live WhatsApp journey demo
+- Letters of intent from ooba (referral terms) and a panel conveyancer
+- A signed bank headline-sponsor (the sponsorship line)
+
+*(Market sizing, cap table + use-of-funds, competitive landscape and the risk register are now in
+the workbook and the docs above.)*

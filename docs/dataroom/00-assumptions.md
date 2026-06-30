@@ -30,12 +30,17 @@ via snippet. **Low** = global proxy, weak SA fit, or dated.
 | First-time-buyer avg purchase | **R1,247,810** (Q1 2025) | oobarometer | Medium |
 
 **Key correction:** ~R6m = **prime** Cape Town (freehold houses), **not** the average
-(median ~R3.4m, average ~R2.1m). **Strategy decision:** Sold Direct deliberately **targets the
+(median ~R3.4m, average ~R2.1m). **Strategy decision:** Sold Direct deliberately **lands in the
 prime segment** (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
-JHB-north / Umhlanga), where **R6–7m transacting prices are normal**. The model therefore uses a
-**~R6.5–7.0m average transacting price** — defensible *because the target market is prime, not
-the metro average* — with **40% bonded share** (prime buyers skew cash). This makes the R6m
-figure used on the marketing site consistent with the target customer.
+JHB-north / Umhlanga), where **R6–7m transacting prices are normal**. This makes the R6m figure
+used on the marketing site consistent with the launch customer.
+
+**Price taper (de-risks market share).** Rather than hold a flat prime price, the model **tapers the
+average transacting price from R6.5m (Y1) to R4.0m (Y5)** — landing at prime and **broadening into
+the upper-market (>~R4m)** as the brand scales. This lowers revenue/deal but expands the
+addressable pool from ~14k prime (>R5m) to ~35k upper-market, cutting the implied Y5 share from
+**~21% to ~8.3%** (see `03-market-sizing.md`). Bonded share is held at **~40–42%** (upper-market
+skews cash). Price/bonded inputs are live on the Assumptions tab (C15:G15 / C16:G16).
 
 ## B. Bond financing (the revenue multiplier)
 
