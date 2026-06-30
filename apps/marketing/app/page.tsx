@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { WaitlistForm } from '@/components/WaitlistForm';
 
 const STEPS = [
@@ -85,32 +86,47 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-16 sm:pt-24">
-        <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-          Cape Town • WhatsApp-first • 0% commission
-        </p>
-        <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-          Sell your home.{' '}
-          <span className="text-emerald-600">Keep your money.</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-slate-600">
-          0% commission for buyers and sellers. We get paid by the banks, not by
-          you — and you manage the whole sale from WhatsApp, all the way to
-          transfer.
-        </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            href="#waitlist"
-            className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
-          >
-            Join the waitlist
-          </a>
-          <a
-            href="#how"
-            className="rounded-lg border border-slate-300 px-6 py-3 font-semibold text-slate-700 transition hover:border-slate-400"
-          >
-            See how it works
-          </a>
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/cape-town-hero.jpg"
+          alt="Homes above the bay in Camps Bay, Cape Town, beneath the Twelve Apostles"
+          fill
+          priority
+          sizes="100vw"
+          className="-z-10 object-cover"
+        />
+        {/* Dark gradient so the headline stays legible over the photo */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/55 to-slate-900/25"
+        />
+        <div className="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white ring-1 ring-inset ring-white/30 backdrop-blur">
+            Cape Town • WhatsApp-first • 0% commission
+          </p>
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
+            Sell your home.{' '}
+            <span className="text-emerald-300">Keep your money.</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg text-slate-100">
+            0% commission for buyers and sellers. We get paid by the banks, not
+            by you — and you manage the whole sale from WhatsApp, all the way to
+            transfer.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a
+              href="#waitlist"
+              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
+            >
+              Join the waitlist
+            </a>
+            <a
+              href="#how"
+              className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
+            >
+              See how it works
+            </a>
+          </div>
         </div>
       </section>
 
@@ -160,6 +176,33 @@ export default function Home() {
             </li>
           ))}
         </ol>
+      </section>
+
+      {/* City banner */}
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/cape-town-city.jpg"
+          alt="Aerial view of Cape Town, Table Mountain and the Atlantic seaboard"
+          width={2000}
+          height={1333}
+          sizes="100vw"
+          className="h-72 w-full object-cover sm:h-96"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-slate-950/70 to-slate-900/10"
+        />
+        <div className="absolute inset-0 flex items-end">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-10">
+            <h2 className="max-w-2xl text-2xl font-bold text-white drop-shadow sm:text-3xl">
+              Built for Cape Town, from the first listing to registration.
+            </h2>
+            <p className="mt-2 max-w-xl text-slate-100">
+              A local, mobile-first way to buy and sell property — designed
+              around how South African transfers actually work.
+            </p>
+          </div>
+        </div>
       </section>
 
       {/* Pricing */}
