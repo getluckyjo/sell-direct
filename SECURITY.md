@@ -1,6 +1,6 @@
 # Security & Privacy
 
-Sell Direct handles personal and (later) financial data of South African buyers
+Sold Direct handles personal and (later) financial data of South African buyers
 and sellers. Privacy-by-design is a hard requirement from commit #1. POPIA
 compliance is mandatory.
 

@@ -1,6 +1,6 @@
 # Supabase — managed backend
 
-Sell Direct uses **Supabase** as its managed backend for three things:
+Sold Direct uses **Supabase** as its managed backend for three things:
 
 1. **Postgres** — the production database (Prisma connects to it via `DATABASE_URL` / `DIRECT_URL`).
 2. **Auth** — the dashboard sign-in (wired at PR 6, behind the `AuthProvider` interface in `apps/api/src/modules/auth`).

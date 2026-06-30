@@ -112,7 +112,7 @@ export function WaitlistForm() {
           className="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-200"
         />
         <span>
-          I agree to be contacted about Sell Direct and accept that my details
+          I agree to be contacted about Sold Direct and accept that my details
           are processed per the POPIA privacy notice.
         </span>
       </label>

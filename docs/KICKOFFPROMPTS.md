@@ -1,4 +1,4 @@
-# Claude Code — Kickoff Prompts for Sell Direct
+# Claude Code — Kickoff Prompts for Sold Direct
 
 How to use this file: do the one-time setup, then paste the prompts **in order**, one per session/PR. Review and merge each PR before moving to the next. Keep each chunk small.
 
@@ -23,7 +23,7 @@ How to use this file: do the one-time setup, then paste the prompts **in order**
 ```
 Read CLAUDE.md and README.md in this repo for full context before doing anything.
 
-Scaffold the Sell Direct MVP as a TypeScript monorepo exactly matching the
+Scaffold the Sold Direct MVP as a TypeScript monorepo exactly matching the
 structure in README.md:
 - apps/api  (Node.js + TypeScript backend, Express or Fastify)
 - apps/web  (Next.js App Router + Tailwind)

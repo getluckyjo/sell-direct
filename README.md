@@ -1,4 +1,4 @@
-# Sell Direct
+# Sold Direct
 
 WhatsApp-first property marketplace for Cape Town. **0% commission** to buyers and sellers; revenue from the financial ecosystem (bond origination via partner, conveyancing/insurance upside). This repo is the **lean MVP**.
 

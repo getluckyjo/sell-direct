@@ -36,7 +36,7 @@ export default function Investors() {
       <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-bold tracking-tight">
-            Sell<span className="text-emerald-400">Direct</span>
+            Sold <span className="text-emerald-400">Direct</span>
             <span className="ml-2 text-sm font-normal text-slate-400">
               Investors
             </span>
@@ -60,7 +60,7 @@ export default function Investors() {
           <span className="text-emerald-400">obsolete.</span>
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-slate-300">
-          Sell Direct is a WhatsApp-first property marketplace for South Africa.
+          Sold Direct is a WhatsApp-first property marketplace for South Africa.
           0% commission to buyers and sellers — we earn from the financial
           ecosystem around every deal.
         </p>
@@ -162,7 +162,7 @@ export default function Investors() {
 
       <footer className="border-t border-slate-800">
         <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-slate-500">
-          © {new Date().getFullYear()} Sell Direct. Cape Town, South Africa.
+          © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           Confidential — do not distribute.
         </div>
       </footer>

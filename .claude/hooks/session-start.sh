@@ -16,7 +16,7 @@ if [ "${CLAUDE_CODE_REMOTE:-}" != "true" ]; then
 fi
 
 cd "${CLAUDE_PROJECT_DIR:-$(pwd)}"
-echo "[session-start] Provisioning Sell Direct dev environment…"
+echo "[session-start] Provisioning Sold Direct dev environment…"
 
 DB_NAME=sell_direct
 DB_URL="postgresql://postgres:dev@127.0.0.1:5432/${DB_NAME}?schema=public"

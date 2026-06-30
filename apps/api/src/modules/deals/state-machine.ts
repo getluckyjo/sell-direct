@@ -1,7 +1,7 @@
 import type { DealStage } from '@sell-direct/shared';
 
 /**
- * The deal state machine — the heart of Sell Direct.
+ * The deal state machine — the heart of Sold Direct.
  *
  * Models the South African property transfer journey as an explicit set of
  * allowed transitions. The flow is linear (enquiry → … → registered); a deal

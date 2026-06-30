@@ -1,6 +1,6 @@
 # Deployment guide (staging)
 
-A step-by-step guide to put Sell Direct online. Written for a non-developer —
+A step-by-step guide to put Sold Direct online. Written for a non-developer —
 follow it top to bottom. **You never put secrets in the repo**; every key goes
 into a hosting dashboard.
 
@@ -59,7 +59,7 @@ build, migrate and start commands and a `/health` healthcheck. You only set the
    tables) then boots the server. Under **Settings → Networking** click
    **Generate Domain** to get a public URL.
 6. Visit `https://<your-api>.up.railway.app/health` → it should return
-   `{"status":"ok","service":"Sell Direct"}`.
+   `{"status":"ok","service":"Sold Direct"}`.
 
 > Render is equivalent: a Web Service with Root Directory `apps/api`, same
 > install/build/start commands (copy them from `railway.json`).

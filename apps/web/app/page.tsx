@@ -21,7 +21,7 @@ export default async function Home() {
     <div className="grid gap-6">
       <div>
         <h1 className="text-2xl font-bold">Overview</h1>
-        <p className="text-slate-600">Listings and deals across Sell Direct.</p>
+        <p className="text-slate-600">Listings and deals across Sold Direct.</p>
       </div>
       {error ? (
         <p className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800">

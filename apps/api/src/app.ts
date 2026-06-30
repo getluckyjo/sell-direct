@@ -31,7 +31,7 @@ export type ServerDeps = MessagingRouteDeps & {
 };
 
 /**
- * Build the Sell Direct API (no network side effects — see server.ts for the
+ * Build the Sold Direct API (no network side effects — see server.ts for the
  * runtime entry point that listens).
  *
  * POPIA note: the logger must never record PII (full ID numbers, bank details,

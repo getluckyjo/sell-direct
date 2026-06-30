@@ -1,4 +1,4 @@
-export const APP_NAME = 'Sell Direct';
+export const APP_NAME = 'Sold Direct';
 
 /**
  * Deal stages model the South African property transfer journey.

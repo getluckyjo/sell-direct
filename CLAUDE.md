@@ -1,10 +1,10 @@
-# CLAUDE.md — Sell Direct
+# CLAUDE.md — Sold Direct
 
 > This file gives Claude Code the context to build the *right* thing. Read it fully before writing code. When in doubt, prefer the simplest thing that ships and ask before introducing new dependencies, services, or paid APIs.
 
 ## What we're building
 
-**Sell Direct** is a **WhatsApp-first property marketplace for Cape Town, South Africa.** Sellers and buyers transact with **0% commission**; we make money from the financial ecosystem around the deal (bond origination via a partner, conveyancing/insurance as upside). This repo is the **lean MVP** — prove the loop: *listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to transfer.*
+**Sold Direct** is a **WhatsApp-first property marketplace for Cape Town, South Africa.** Sellers and buyers transact with **0% commission**; we make money from the financial ecosystem around the deal (bond origination via a partner, conveyancing/insurance as upside). This repo is the **lean MVP** — prove the loop: *listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to transfer.*
 
 The full strategy lives in `../Sell-Direct-Project-Plan.md`. Key points that affect the code:
 

@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sell Direct — Investors',
+  title: 'Sold Direct — Investors',
   description:
-    'Sell Direct is rethinking how homes are sold in South Africa: 0% commission to consumers, monetised through the financial ecosystem around every deal.',
+    'Sold Direct is rethinking how homes are sold in South Africa: 0% commission to consumers, monetised through the financial ecosystem around every deal.',
   robots: { index: false, follow: false },
 };
 

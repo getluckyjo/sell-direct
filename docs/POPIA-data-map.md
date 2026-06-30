@@ -1,6 +1,6 @@
 # POPIA Data Map
 
-A running inventory of **personal information** Sell Direct stores, why we store
+A running inventory of **personal information** Sold Direct stores, why we store
 it, and how it is protected. POPIA requires purpose limitation and data
 minimisation — every personal field must justify its existence here. Update this
 file in the same PR whenever a personal field is added, removed, or repurposed.

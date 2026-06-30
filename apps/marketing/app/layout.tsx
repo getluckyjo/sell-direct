@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sell Direct — Sell your home, keep your money',
+  title: 'Sold Direct — Sell your home, keep your money',
   description:
     '0% commission for buyers and sellers in Cape Town. We get paid by the banks, not by you. Manage your whole property sale from WhatsApp.',
 };

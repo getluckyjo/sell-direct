@@ -1,8 +1,8 @@
-# Sell Direct — MVP Development Roadmap
+# Sold Direct — MVP Development Roadmap
 
 ## Context
 
-**Sell Direct** is a WhatsApp-first, **0%-commission** property marketplace for Cape Town, South Africa. Consumers pay nothing; revenue comes from the financial ecosystem around each deal (bond origination referrals to a partner — initially **ooba** — plus conveyancing/insurance upside). This repo is the **lean MVP** whose job is to prove one loop end to end:
+**Sold Direct** is a WhatsApp-first, **0%-commission** property marketplace for Cape Town, South Africa. Consumers pay nothing; revenue comes from the financial ecosystem around each deal (bond origination referrals to a partner — initially **ooba** — plus conveyancing/insurance upside). This repo is the **lean MVP** whose job is to prove one loop end to end:
 
 > listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to property transfer.
 

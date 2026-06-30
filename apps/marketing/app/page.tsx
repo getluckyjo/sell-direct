@@ -66,7 +66,7 @@ export default function Home() {
       <header className="sticky top-0 z-10 border-b border-slate-100 bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-bold tracking-tight">
-            Sell<span className="text-emerald-600">Direct</span>
+            Sold <span className="text-emerald-600">Direct</span>
           </span>
           <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
             <a href="#how" className="hover:text-slate-900">
@@ -149,7 +149,7 @@ export default function Home() {
             <p className="mt-1 text-3xl font-extrabold text-slate-400 line-through">
               R120k–R215k
             </p>
-            <p className="mt-4 text-sm text-slate-500">With Sell Direct</p>
+            <p className="mt-4 text-sm text-slate-500">With Sold Direct</p>
             <p className="mt-1 text-4xl font-extrabold text-emerald-600">R0</p>
           </div>
         </div>
@@ -276,7 +276,7 @@ export default function Home() {
       <footer className="border-t border-slate-100">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <span>
-            © {new Date().getFullYear()} Sell Direct. Cape Town, South Africa.
+            © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           </span>
           <span>
             0% commission · POPIA-compliant · We handle your data with care.

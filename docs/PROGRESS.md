@@ -1,4 +1,4 @@
-# Sell Direct — Progress & Next Steps
+# Sold Direct — Progress & Next Steps
 
 _Internal status update. Refresh weekly._
 
