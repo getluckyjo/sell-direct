@@ -617,7 +617,7 @@ export const SCENES: Scene[] = [
       title: '🟢 0% commission',
       lines: [
         'Maria paid R0 agent commission',
-        'Saved ≈ R230 000 vs 7% + VAT',
+        'Saved ≈ R314 000 vs 7% + VAT',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',
