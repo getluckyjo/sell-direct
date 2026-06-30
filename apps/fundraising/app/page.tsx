@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { InvestorForm } from '@/components/InvestorForm';
+import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const OPPORTUNITY = [
   {
@@ -181,6 +182,27 @@ export default function Investors() {
             Status: building the MVP, Cape Town first. We&apos;re raising to
             accelerate launch.
           </p>
+        </div>
+      </section>
+
+      {/* Interactive journey */}
+      <section className="border-y border-slate-800 bg-slate-900/40">
+        <div className="mx-auto max-w-6xl px-6 py-16">
+          <p className="mb-2 inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300">
+            See it work · interactive
+          </p>
+          <h2 className="text-2xl font-bold sm:text-3xl">
+            The product, end to end.
+          </h2>
+          <p className="mt-2 max-w-2xl text-slate-300">
+            One Cape Town home from listing to registered sale — and every point
+            where we earn from the financial ecosystem instead of the consumer.
+            Press <span className="font-semibold text-white">Play</span>, or
+            step through it.
+          </p>
+          <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
+            <WhatsAppDemo />
+          </div>
         </div>
       </section>
 

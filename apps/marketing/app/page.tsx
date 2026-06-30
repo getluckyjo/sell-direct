@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { WaitlistForm } from '@/components/WaitlistForm';
+import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const STEPS = [
   {
@@ -75,8 +76,8 @@ export default function Home() {
             <a href="#pricing" className="hover:text-slate-900">
               Pricing
             </a>
-            <a href="/demo" className="hover:text-slate-900">
-              Demo
+            <a href="#journey" className="hover:text-slate-900">
+              See it work
             </a>
             <a
               href="#waitlist"
@@ -205,6 +206,26 @@ export default function Home() {
               around how South African transfers actually work.
             </p>
           </div>
+        </div>
+      </section>
+
+      {/* Interactive journey */}
+      <section id="journey" className="mx-auto max-w-6xl px-6 py-16">
+        <p className="mb-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+          See it work · interactive
+        </p>
+        <h2 className="text-2xl font-bold sm:text-3xl">
+          The whole journey, inside WhatsApp.
+        </h2>
+        <p className="mt-2 max-w-2xl text-slate-600">
+          Follow one Cape Town home from listing to registered sale — consent,
+          guided listing, buyer enquiry, in-chat bond pre-qualification, a
+          binding offer, conveyancing and Deeds Office registration. Press{' '}
+          <span className="font-semibold">Play</span>, or step through it
+          yourself.
+        </p>
+        <div className="mt-10">
+          <WhatsAppDemo />
         </div>
       </section>
 
