@@ -124,6 +124,33 @@ export default function Investors() {
         </div>
       </section>
 
+      {/* City banner */}
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/cape-town-city.jpg"
+          alt="Aerial view of Cape Town, Table Mountain and the Atlantic seaboard"
+          width={2000}
+          height={1333}
+          sizes="100vw"
+          className="h-72 w-full object-cover sm:h-96"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/55 to-slate-950/20"
+        />
+        <div className="absolute inset-0 flex items-end">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-10">
+            <h2 className="max-w-2xl text-2xl font-bold text-white drop-shadow sm:text-3xl">
+              A multi-billion-rand market, starting with Cape Town.
+            </h2>
+            <p className="mt-2 max-w-xl text-slate-200">
+              High-value homes, near-universal WhatsApp adoption, and a finance
+              ecosystem that already pays to be in every deal.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Why now */}
       <section className="border-y border-slate-800 bg-slate-900/40">
         <div className="mx-auto max-w-3xl px-6 py-16">
