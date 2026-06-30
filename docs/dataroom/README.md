@@ -13,23 +13,23 @@ model-grade (see sourcing caveats in each document).
 | [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 6 linked tabs (Assumptions · P&L · Scenarios · Capital & Valuation · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 
-## Strategy: prime · Nedbank-0% · 1% fee · AI-lean
+## Strategy: prime · 1% fee · AI-lean · bank sponsor
 
 Target prime areas (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia; then prime
 JHB-north and Umhlanga) where **R6m+ values are normal**, run by a small **AI-augmented** team
-(50% of headcount are AI agents). The free 0% tier requires a **≥80% bond with our partner bank
-(Nedbank) + our conveyancer** → we earn the **Nedbank kickback**; otherwise a **1% facilitation
-fee** applies (still ~6× cheaper than agent commission). Every deal monetises.
+(50% of headcount are AI agents). Three legally-clean revenue lines: (1) the free 0% tier requires
+a **qualifying ≥80% bond via our multi-bank originator (ooba)** — buyer keeps rate choice — earning
+the origination referral; (2) a **1% facilitation fee** on cash / non-partner deals; (3) a **bank
+headline-sponsorship** fee (advertising, not steering).
 
 ## Headlines (base case)
 
-- **Revenue:** R2.6m (Y1) → **R112.5m (Y5)**; **EBITDA-positive in Y2**, ~67% margin by Y5.
-- **Model:** **~R65–70k per deal** — Nedbank kickback (bonded path) *or* a 1% fee (non-partner),
-  plus panel conveyancing and premium add-ons — vs the **R345k–R483k** an agent would charge.
+- **Revenue:** R2.9m (Y1) → **R117.5m (Y5)**; **EBITDA-positive in Y2**, ~68% margin by Y5.
+- **Model:** **~R65–70k per deal** (origination referral *or* 1% fee + conveyancing + add-ons),
+  plus a **R0.3m → R5.0m/yr bank sponsorship** — vs the **R345k–R483k** an agent would charge.
 - **Capital:** need is only **~R5m** to breakeven; raise a **single ~R15m seed** as growth capital.
-- **Valuation:** seed pre-money **~R50–60m**; Year-5 enterprise value **~R450–675m** (4–6×).
-- **⚠ Reality-check the margin:** ~67% is very high — present a reinvest-for-growth variant, and
-  secure the Nedbank agreement + PPRA/legal sign-off for the exclusive-0% mechanic.
+- **Valuation:** seed pre-money **~R50–60m**; Year-5 enterprise value **~R470–705m** (4–6×).
+- **⚠ Reality-check the margin:** ~68% is very high — present a reinvest-for-growth variant.
 
 ## Before circulating
 

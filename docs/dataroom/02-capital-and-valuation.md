@@ -5,15 +5,15 @@ All figures **ZAR** unless noted. USD at **~R18.5/$** (illustrative). Built bott
 
 ## 1. Capital requirement (bottom-up)
 
-With the 1% take-rate and the AI-lean cost base, the model turns **EBITDA-positive in Y2** and the
-**cumulative cash low-point is only ≈ −R2.4m (Y1)**; with a R3m buffer, the **total capital to
-reach self-sustaining is ≈ R5m (~$0.3m)** in the base case.
+With the 1% take-rate, the AI-lean cost base and the bank sponsorship line, the model turns
+**EBITDA-positive in Y2** and the **cumulative cash low-point is only ≈ −R2.1m (Y1)**; with a R3m
+buffer, the **total capital to reach self-sustaining is ≈ R5m (~$0.3m)** in the base case.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Cumulative cash low-point | ~R2.2m | **~R2.4m** | ~R2.3m |
+| Cumulative cash low-point | ~R1.8m | **~R2.1m** | ~R2.0m |
 | + buffer | R3m | R3m | R3m |
-| **Total capital to breakeven** | **~R5.2m** | **~R5.4m** | **~R5.3m** |
+| **Total capital to breakeven** | **~R4.8m** | **~R5.1m** | **~R5.0m** |
 
 ### Recommended raise — a single seed, raised as growth capital
 
@@ -39,12 +39,12 @@ alternatively be valued on an EBITDA multiple as profitability matures.
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
-| Y5 revenue | R64.7m | **R112.5m** | R201.1m |
-| × 4–6× | R259–388m | **R450–675m** | R804m–1.2bn |
+| Y5 revenue | R69.7m | **R117.5m** | R206.1m |
+| × 4–6× | R279–418m | **R470–705m** | R824m–1.2bn |
 
 ### b) VC method (work back from an exit)
 
-- Base Y5 revenue **R112.5m at ~67% EBITDA margin** → target enterprise value **~R560m**
+- Base Y5 revenue **R117.5m at ~68% EBITDA margin** → target enterprise value **~R590m**
   (≈5× revenue) in ~5 years; aggressive **~R1.0–1.2bn**.
 - A seed investor at **~R50–60m pre-money**, holding (with dilution) to a ~R560m base outcome,
   models a **high-multiple return** — the high-margin, capital-light profile drives it. **Temper

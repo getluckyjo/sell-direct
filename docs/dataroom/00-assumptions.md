@@ -48,26 +48,30 @@ figure used on the marketing site consistent with the target customer.
 
 ## C. Revenue rates per deal
 
-**Monetisation policy.** The free 0% tier is **conditional on a ≥80% bond placed with our partner
-bank (e.g. Nedbank) plus our panel conveyancer** — those deals earn the **bank-paid kickback** at
-no cost to the consumer. **Otherwise a 1% facilitation fee** applies on the price (cash buyers,
-sub-80% bonds, or buyers who won't use our partners) — still **~6× cheaper** than 5–7% agent
-commission. Every deal monetises, and bonded-share becomes a minor mix assumption.
+**Monetisation policy (legally clean — no bank exclusivity).** The free 0% tier requires a
+**qualifying ≥80% bond via our multi-bank originator (ooba) + our panel conveyancer** — the buyer
+keeps **full rate-choice across banks**, and we earn the **origination referral** (~0.5% of bond).
+**Otherwise a 1% facilitation fee** applies on the price (cash, sub-80%, or buyers who won't use
+our partners) — still **~6× cheaper** than 5–7% agent commission. Separately, a bank pays a
+**headline-sponsorship fee** to be the featured brand on the platform (advertising, not steering).
+
+> ⚠️ **Why not a single-bank prerequisite:** making one bank a condition of the 0% is legally grey
+> (consumer-steering, competition, PPRA). Replaced by the bank-agnostic referral above + the
+> sponsorship line below.
 
 | Line | Rate used | Source | Rel. |
 |---|---|---|---|
 | Bank origination commission (banks pay originators) | **1.0%–1.9% of loan** | ooba / realestateinsights | Medium |
-| Originator referral-partner share (generic) | **~0.5% of loan** | ooba / IOL | Medium |
-| **Nedbank partner kickback** (direct deal — **to be negotiated**, may exceed the 0.5% sub-share) | **0.5% of bond** (base) | Assumption / to confirm | Low |
+| **Origination referral share** (Sold Direct via ooba, multi-bank) | **~0.5% of bond** | ooba / IOL | Medium |
 | **Facilitation fee** on non-partner deals | **1.0% of price** (Sold Direct policy) | Policy | n/a |
-| → Kickback-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 1% × price` ≈ **R51–54k** on a R6.5–7.0m home | Derived | Medium |
+| → Referral-or-fee per deal, blended | `bonded% × 0.5% × bond + (1−bonded%) × 1% × price` ≈ **R51–54k** on a R6.5–7.0m home | Derived | Medium |
 | Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime; exact SA panel-share % not recovered) | Estimate | Low |
 | Add-ons (premium photography / compliance / insurance), blended | **~R5,000–6,500** | Estimate | Low |
+| **Bank headline sponsorship** (annual, platform-wide) | **R0.3m (Y1) → R5.0m (Y5)** — scales with audience/reach | Assumption | Low |
 
-> **Revenue per registered deal ≈ R65k (Y1) → R70k (Y5)** in the base case — the 1% fee on
-> cash/non-partner deals is the largest single component. **Strategic note:** tying 0% to one
-> bank limits buyer rate-choice; secure the Nedbank agreement and legal/PPRA sign-off, and keep
-> a multi-bank (ooba) fallback so buyers aren't forced into a worse rate.
+> **Revenue per registered deal ≈ R65k (Y1) → R70k (Y5)**, plus the **annual sponsorship**. The 1%
+> fee on cash/non-partner deals is the largest single component; sponsorship is high-margin but
+> should stay **conservative until real platform reach is proven.**
 
 ## D. Cost inputs
 
