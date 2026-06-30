@@ -75,6 +75,9 @@ export default function Home() {
             <a href="#pricing" className="hover:text-slate-900">
               Pricing
             </a>
+            <a href="/demo" className="hover:text-slate-900">
+              Demo
+            </a>
             <a
               href="#waitlist"
               className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
