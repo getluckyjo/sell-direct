@@ -32,24 +32,37 @@ What we deploy:
 
 ## 2. Backend — Railway
 
-1. New project → **Deploy from GitHub repo** → pick this repo.
-2. Settings:
-   - **Install command:** `pnpm install`
-   - **Start command:** `pnpm --filter @sell-direct/api start`
-   - **Pre-deploy / release command:** `pnpm --filter @sell-direct/api db:deploy`
-     (applies database migrations)
-3. **Variables** (Railway dashboard — never the repo):
-   - `DATABASE_URL`, `DIRECT_URL` (from Supabase)
+The repo ships `apps/api/railway.json`, so Railway auto-configures the install,
+build, migrate and start commands and a `/health` healthcheck. You only set the
+**Root Directory** and the **environment variables**.
+
+1. **New Project → Deploy from GitHub repo** → pick `getluckyjo/sell-direct`.
+2. Open the service → **Settings → Source** → set **Root Directory** to
+   `apps/api`. (That's where `railway.json` lives; it `cd`s to the repo root so
+   the pnpm workspace resolves.) Leave the build/start commands blank — they
+   come from `railway.json`.
+3. **Add a database.** Easiest path: in the same project click **New → Database
+   → Add PostgreSQL**. Railway provisions it and exposes `DATABASE_URL`.
+   - In the **API service → Variables**, add `DATABASE_URL` and `DIRECT_URL`
+     both referencing the database, e.g. `${{ Postgres.DATABASE_URL }}` for
+     each (Railway Postgres is a direct connection, so the two are the same —
+     no pgBouncer). *Alternatively use Supabase (see `docs/SUPABASE.md`) — then
+     `DATABASE_URL` is the pooled 6543 string and `DIRECT_URL` the direct 5432.*
+4. **Other variables** (API service → Variables — never the repo):
    - `NODE_ENV=production`
    - `INTERNAL_API_TOKEN` — invent a long random string (the dashboard uses it)
    - WhatsApp (when ready): `WHATSAPP_VERIFY_TOKEN`, `WHATSAPP_ACCESS_TOKEN`,
      `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET`
    - `FIELD_ENCRYPTION_KEY` (for later, when sensitive PII is added)
    - Railway sets `PORT` automatically — the server already reads it.
-4. Deploy. Visit `https://<your-api>.up.railway.app/health` → it should return
+5. **Deploy.** The start command runs `prisma migrate deploy` (creates the
+   tables) then boots the server. Under **Settings → Networking** click
+   **Generate Domain** to get a public URL.
+6. Visit `https://<your-api>.up.railway.app/health` → it should return
    `{"status":"ok","service":"Sell Direct"}`.
 
-> Render is equivalent: a Web Service, same install/start/migrate commands.
+> Render is equivalent: a Web Service with Root Directory `apps/api`, same
+> install/build/start commands (copy them from `railway.json`).
 
 ## 3. Websites — Vercel (three projects)
 
