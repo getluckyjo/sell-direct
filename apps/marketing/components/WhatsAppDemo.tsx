@@ -83,7 +83,9 @@ export function WhatsAppDemo() {
           }
         }
       },
-      { threshold: 0.4 },
+      // Fire when the top of the demo scrolls up into the viewport. (A high
+      // threshold never triggers here — the demo is taller than the screen.)
+      { threshold: 0, rootMargin: '0px 0px -25% 0px' },
     );
     obs.observe(el);
     return () => obs.disconnect();
