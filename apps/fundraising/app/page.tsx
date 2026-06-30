@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { InvestorForm } from '@/components/InvestorForm';
 
 const OPPORTUNITY = [
@@ -51,26 +52,41 @@ export default function Investors() {
       </header>
 
       {/* Hero */}
-      <section className="mx-auto max-w-6xl px-6 pb-12 pt-16 sm:pt-24">
-        <p className="mb-4 inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300">
-          Pre-launch • Cape Town • WhatsApp-first
-        </p>
-        <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight sm:text-6xl">
-          Back the company making estate-agent commission{' '}
-          <span className="text-emerald-400">obsolete.</span>
-        </h1>
-        <p className="mt-6 max-w-2xl text-lg text-slate-300">
-          Sold Direct is a WhatsApp-first property marketplace for South Africa.
-          0% commission to buyers and sellers — we earn from the financial
-          ecosystem around every deal.
-        </p>
-        <div className="mt-8">
-          <a
-            href="#access"
-            className="rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
-          >
-            Request the investor data room
-          </a>
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/cape-town-hero.jpg"
+          alt="Homes above the bay in Camps Bay, Cape Town, beneath the Twelve Apostles"
+          fill
+          priority
+          sizes="100vw"
+          className="-z-10 object-cover"
+        />
+        {/* Dark overlay tuned for the slate theme so text stays legible */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/90 via-slate-950/75 to-slate-900/45"
+        />
+        <div className="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
+          <p className="mb-4 inline-flex rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+            Pre-launch • Cape Town • WhatsApp-first
+          </p>
+          <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
+            Back the company making estate-agent commission{' '}
+            <span className="text-emerald-400">obsolete.</span>
+          </h1>
+          <p className="mt-6 max-w-2xl text-lg text-slate-200">
+            Sold Direct is a WhatsApp-first property marketplace for South
+            Africa. 0% commission to buyers and sellers — we earn from the
+            financial ecosystem around every deal.
+          </p>
+          <div className="mt-8">
+            <a
+              href="#access"
+              className="rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
+            >
+              Request the investor data room
+            </a>
+          </div>
         </div>
       </section>
 
