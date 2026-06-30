@@ -86,4 +86,9 @@ See `.env.example` for the full list. Never commit `.env`. Use sandbox/test keys
 
 🚀 **MVP feature-complete on `claude/dev-planning-discussion-nik2of`.** Shipped: monorepo scaffold; database + deal state machine; build env (CI + SessionStart hook) + Supabase decision; WhatsApp adapter + webhook; listing intake; buyer enquiry + (stubbed, consented) ooba referral; internal dashboard. Plus a public **marketing** site (waitlist) and an investor **fundraising** site.
 
-**Live:** marketing site → https://sell-direct-marketing.vercel.app (Vercel, auto-deploys from `main`). Remaining: deploy `apps/api` (Railway) so the waitlist form captures leads end-to-end; then the dashboard + fundraising site — see `docs/DEPLOYMENT.md`.
+**Live:**
+- Marketing site → https://sell-direct-marketing.vercel.app (Vercel, auto-deploys from `main`)
+- API → https://sell-direct-production.up.railway.app (Railway + Postgres; `/health` green)
+- The waitlist works end-to-end: marketing form → API `/api/leads` → Postgres `Lead` table.
+
+Remaining: deploy the investor **fundraising** site + internal **dashboard** to Vercel (same `API_INTERNAL_URL` wiring); then WhatsApp/BSP go-live — see `docs/DEPLOYMENT.md`.
