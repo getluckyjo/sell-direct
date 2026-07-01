@@ -114,10 +114,31 @@ they already sit in the core model.
 
 ## D. Cost inputs
 
+**COGS — bottom-up (validates the ~12%; gross margin now *derived*).** Rather than assume a flat
+margin, COGS is built up from the direct, per-deal cost of delivering a transaction (full table on
+the workbook's **COGS Build** tab). It blends to **~12% of revenue (~88% gross margin)**, trending
+**7.8% (Y1) → 12.7% (Y5)** — sponsorship carries no COGS so early years are lighter; add-on & media
+fulfilment lift later years.
+
+| COGS line (per registered deal) | Y1 | Y5 | Note | Rel. |
+|---|---:|---:|---|---|
+| Platform & messaging (WhatsApp/BSP, funnel-loaded) | R400 | R300 | Meta conversation fees + BSP markup across the enquiry funnel | Medium |
+| FICA / KYC / AML + affordability checks | R250 | R220 | ID, bank & credit-bureau checks (multi-party) | Low |
+| E-signature & digital documents | R180 | R150 | mandate, OTP, FICA, disclosures | Low |
+| Property data / AVM / deeds / CMA | R300 | R250 | valuation & pricing data, deeds searches | Low |
+| **Listing media & portal syndication** (amortised incl. unsold) | R3,600 | R2,900 | photo/video/floorplan + Property24/PP fees | Low |
+| **Add-on / compliance-cert fulfilment** (resold services) | R3,900 | R3,500 | cost side of the CoC + photography add-ons | Low |
+| Other / contingency & per-deal SaaS | R600 | R500 | buffer + minor tooling | Low |
+| **COGS per deal** | **~R9,230** | **~R7,820** | + payment processing **~0.7%** of transactional revenue | — |
+
+> **Excludes** the in-house bond-origination consultant cost (its own opex line) and the concierge
+> team (payroll). The two biggest lines — **media/syndication** and **add-on/cert fulfilment** — are
+> the ones to firm up against real supplier quotes (photographer, CoC inspectors, portal rates, BSP).
+
 | Input | Value used | Source | Rel. |
 |---|---|---|---|
-| WhatsApp messaging | **Service/utility in 24h window = free; marketing templates = main paid line** (~$0.025–$0.14/msg). Net ≈ negligible per deal | Meta pricing Jul 2025 | Medium |
-| Gross margin (referral model, light COGS) | **~88%** (COGS ~12%: messaging, add-on fulfilment, payments) | Assumption | Medium |
+| WhatsApp messaging | **Service/utility in 24h window = free; marketing templates = main paid line** (~$0.025–$0.14/msg); modelled inside the COGS build | Meta pricing Jul 2025 | Medium |
+| **Gross margin** | **~88% — DERIVED** from the bottom-up COGS build above (not an input) | Bottom-up | Medium |
 | Fully-loaded cost per **human** FTE (blended) | **~R700k–780k/yr** (eng intermediate ~R48k/mo, senior ~R100k/mo, ops ~R25–35k/mo, +13th cheque/benefits/payroll ≈ ×1.3) | OfferZen 2025 | Medium |
 | **AI-agent run cost** (each, replaces a human worker) | **~R0.15m/yr** (~R12.5k/mo: LLM API + tooling + human oversight) | Assumption | Low |
 | **AI-agent share of headcount** | **50%** (concierge/coordination/ops); ~halves people-cost | Assumption / design choice | Low |

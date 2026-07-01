@@ -64,6 +64,12 @@ in-house)**, which lifts revenue per deal from Year 2 even as the price tapers.
   licensing base + a one-off R1.5m Y2 setup) is modelled explicitly and nets against the uplift.
 - The **~39% Y5 margin** sits between the pre-taper ~48% and the taper-only ~30% — the origination
   economics restore margin while the broader-market volume assumption stays de-risked.
+- **COGS is bottom-up, not a flat assumption.** The ~12% line is built up from ~7 direct per-deal
+  costs (messaging, FICA/KYC, e-sign, property data, **listing media & portal syndication**,
+  **add-on/compliance-cert fulfilment**, contingency) + ~0.7% payment processing — **~R9,230/deal
+  (Y1) → ~R7,820/deal (Y5)**, blending to **~12% of revenue (~88% gross margin, now derived)**. It
+  trends 7.8%→12.7% (sponsorship carries no COGS). Full build on the COGS Build tab; see
+  `00-assumptions.md §D`. Excludes in-house origination cost (own line) and the concierge team (opex).
 
 ## 4. Scenario summary (R'm)
 
