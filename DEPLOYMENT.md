@@ -90,6 +90,11 @@ later.
 2. Meta calls `GET` to verify (the API echoes the challenge), then sends inbound
    messages to `POST`. Subscribe to the **messages** field.
 
+> **Going with Twilio instead of Meta direct?** See `docs/WHATSAPP-ARCHITECTURE.md`
+> for the full Twilio onboarding playbook (sender registration, templates, webhook,
+> the required Twilio adapter) and the end-to-end journeys. Twilio uses a different
+> payload and signature (`X-Twilio-Signature`), so it needs its own adapter.
+
 ## 5. Smoke test
 
 - API: `GET /health` is OK.

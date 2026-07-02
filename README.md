@@ -92,3 +92,9 @@ See `.env.example` for the full list. Never commit `.env`. Use sandbox/test keys
 - The waitlist works end-to-end: marketing form → API `/api/leads` → Postgres `Lead` table.
 
 Remaining: deploy the investor **fundraising** site + internal **dashboard** to Vercel (same `API_INTERNAL_URL` wiring); then WhatsApp/BSP go-live — see `docs/DEPLOYMENT.md`.
+
+## WhatsApp architecture & Twilio go-live
+
+The full review of the WhatsApp stack — what's built, the integrations list, the end-to-end
+buyer/seller/external-party journeys, and the step-by-step Twilio onboarding playbook — lives in
+**`docs/WHATSAPP-ARCHITECTURE.md`**.
