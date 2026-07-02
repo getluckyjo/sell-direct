@@ -19,6 +19,7 @@ function fakeDeals(): DealRepository {
       .mockImplementation(async (id: string) =>
         id === 'd1' ? { id: 'd1', status: 'enquiry', events: [] } : null,
       ),
+    getNotificationContext: vi.fn().mockResolvedValue(null),
   };
 }
 

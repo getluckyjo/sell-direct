@@ -68,7 +68,10 @@ const TEMPLATES = [
   {
     key: 'otp_status',
     category: 'UTILITY',
-    variables: { 1: '23 Vredehoek Ave', 2: 'your offer of R5 900 000 was sent to the seller' },
+    variables: {
+      1: '23 Vredehoek Ave',
+      2: 'your offer of R5 900 000 was sent to the seller',
+    },
     text: '📄 Update on {{1}}: {{2}}. Reply here to respond.',
   },
   {
@@ -173,7 +176,9 @@ async function listExisting() {
 
 async function main() {
   console.log(
-    DRY_RUN ? '— DRY RUN (no API calls) —' : `Creating templates on account ${SID}\n`,
+    DRY_RUN
+      ? '— DRY RUN (no API calls) —'
+      : `Creating templates on account ${SID}\n`,
   );
 
   const existing = DRY_RUN ? new Map() : await listExisting();
@@ -185,7 +190,9 @@ async function main() {
 
     if (DRY_RUN) {
       console.log(`\n[${t.category}] ${friendlyName}`);
-      console.log(JSON.stringify({ friendly_name: friendlyName, types }, null, 2));
+      console.log(
+        JSON.stringify({ friendly_name: friendlyName, types }, null, 2),
+      );
       continue;
     }
 
@@ -211,7 +218,9 @@ async function main() {
       });
       console.log(`    ↳ approval submitted (${t.category})`);
     } catch (err) {
-      console.log(`    ↳ approval skipped: ${String(err.message).slice(0, 120)}`);
+      console.log(
+        `    ↳ approval skipped: ${String(err.message).slice(0, 120)}`,
+      );
     }
 
     envLines.push(`TEMPLATE_${t.key.toUpperCase()}=${sid}`);

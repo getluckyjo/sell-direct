@@ -51,7 +51,7 @@ const INBOUND = {
 
 describe('TwilioWhatsAppAdapter.verifyChallenge', () => {
   it('always returns null (Twilio has no GET handshake)', () => {
-    expect(adapter.verifyChallenge({ 'hub.challenge': '42' })).toBeNull();
+    expect(adapter.verifyChallenge()).toBeNull();
   });
 });
 

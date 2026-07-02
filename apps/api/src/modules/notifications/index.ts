@@ -1,6 +1,8 @@
 import type { MessagingAdapter } from '../messaging';
 import type { MessageRepository } from '../messaging';
 
+export * from './templates';
+
 export interface SendOptions {
   /** Send an approved template (Twilio Content SID / Meta template name). */
   templateId?: string;

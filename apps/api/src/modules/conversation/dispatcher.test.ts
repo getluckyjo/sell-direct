@@ -45,6 +45,7 @@ function makeDeps(overrides: { notifierThrows?: boolean } = {}) {
     })),
     list: vi.fn(async () => []),
     getWithTimeline: vi.fn(async () => null),
+    getNotificationContext: vi.fn(async () => null),
   };
 
   const intakeStore = createInMemoryConversationStore();

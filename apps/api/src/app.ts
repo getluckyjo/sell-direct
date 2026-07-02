@@ -8,7 +8,10 @@ import {
   registerWhatsappWebhook,
   type MessagingRouteDeps,
 } from './modules/messaging';
-import { createNotifier } from './modules/notifications';
+import {
+  createNotifier,
+  loadTemplateConfigFromEnv,
+} from './modules/notifications';
 import {
   createDispatcher,
   createPrismaPrequalStore,
@@ -25,6 +28,8 @@ import {
 } from './modules/listings';
 import {
   createPrismaDealRepository,
+  registerDealRoutes,
+  transitionDeal,
   type DealRepository,
 } from './modules/deals';
 import { createPrismaProfileRepository } from './modules/profiles';
@@ -92,6 +97,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
 
   const adapter = deps?.adapter ?? createMessagingAdapter();
   const repository = deps?.repository ?? createPrismaMessageRepository(prisma);
+  // One notifier serves both the conversational replies and stage updates.
+  const notifier = createNotifier(adapter, repository, senderNumber());
 
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
@@ -109,7 +116,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
         finance: new ObaReferralStub((msg) => app.log.info(msg)),
       },
       prequalStore: createPrismaPrequalStore(prisma),
-      notifier: createNotifier(adapter, repository, senderNumber()),
+      notifier,
       log: (msg, err) => app.log.error({ err }, msg),
     });
 
@@ -122,10 +129,17 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const listings =
     deps?.listingRepository ?? createPrismaListingRepository(prisma);
   const deals = deps?.dealRepository ?? createPrismaDealRepository(prisma);
-  registerDashboardRoutes(app, {
-    listings,
+  const internalToken = deps?.internalToken ?? process.env.INTERNAL_API_TOKEN;
+  registerDashboardRoutes(app, { listings, deals, internalToken });
+
+  // Transfer-journey tracker: advance a deal + notify the parties on WhatsApp.
+  registerDealRoutes(app, {
     deals,
-    internalToken: deps?.internalToken ?? process.env.INTERNAL_API_TOKEN,
+    transition: (input) => transitionDeal(prisma, input),
+    notifier,
+    templates: loadTemplateConfigFromEnv(),
+    internalToken,
+    log: (msg, err) => app.log.error({ err }, msg),
   });
 
   return app;

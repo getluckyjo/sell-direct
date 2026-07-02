@@ -51,7 +51,7 @@ flowchart LR
 | Message persistence | `.../messaging/repository.ts` | ✅ | Writes `messages`; idempotent on `waMessageId` (swallows Prisma `P2002`). `recordOutbound` exists but is **never called**. |
 | Server wiring + raw body | `apps/api/src/app.ts` | ✅ | Registers webhook, leads, dashboard; raw-body JSON parser feeds signature check; `GET /health`. |
 | Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_title→suburb→price→bedrooms→bathrooms→exclusivity→completed`; trigger `^(list\|sell)`. **Wired via the dispatcher** (seller flow). |
-| Deal state machine | `.../deals/state-machine.ts`, `service.ts` | 🟡 | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. Enquiry deals are created; **advancing beyond `enquiry` is not yet wired** (external-party flows). |
+| Deal state machine | `.../deals/state-machine.ts`, `service.ts`, `routes.ts` | ✅ | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. **`POST /api/deals/:id/transition`** (internal-token guarded) advances a deal and fires the stage's WhatsApp template to buyer/seller (`stage-notifications.ts`). |
 | Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
 | Finance / ooba referral | `.../finance/ooba-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **ObaReferralStub logs only** (real ooba API pending). |
 | Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
@@ -237,8 +237,11 @@ Each item maps to an existing seam, so it's incremental:
 4. **Approved templates** in Twilio (§5.2) — 🟡 drafted in `docs/whatsapp-templates.md`; submit for
    approval (needs the sender number, in progress).
 5. **Real ooba adapter** — replace `ObaReferralStub` using `ORIGINATOR_*` env. 🟡
-6. **External-party models + actor type** — conveyancer/bank/originator party records; extend
-   `DealEvent.actorType`; deal-advancement beyond `enquiry`; their inbound/outbound templates. ⛔
+6. **Transfer-journey tracker** — ✅ done: `POST /api/deals/:id/transition` advances a deal through
+   the SA stages and fires the stage's approved template (`otp_status`, `bond_approved`,
+   `fica_checklist`, `compliance_certs`, `transfer_status`) to buyer + seller, with plain-text
+   fallback until SIDs are configured (`TEMPLATE_*` env). Still ⛔: dedicated
+   conveyancer/bank/originator party **models** + `DealEvent` actor types + their *inbound* flows. 
 7. **e-sign, syndication, FICA + Storage + field encryption** — the remaining transfer-journey
    integrations; wire `StorageProvider` + `FIELD_ENCRYPTION_KEY`. ⛔
 
