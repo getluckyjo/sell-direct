@@ -27,8 +27,18 @@ function build(overrides: Partial<DealRouteDeps> = {}) {
       id: input.dealId,
       status: input.to,
     })),
+    recordEvent: vi.fn(async (input) => ({
+      id: input.dealId,
+      status: 'bond_application',
+    })),
     notifier: { send: vi.fn(async () => {}) },
     templates: { bond_approved: 'HXbond', transfer_status: 'HXtransfer' },
+    deadlines: {
+      createIfAbsent: vi.fn(async () => {}),
+      listUnresolvedDueBefore: vi.fn(async () => []),
+      markReminded: vi.fn(async () => {}),
+      resolve: vi.fn(async () => {}),
+    },
     internalToken: 'secret',
     ...overrides,
   };
@@ -137,6 +147,68 @@ describe('POST /api/deals/:id/transition', () => {
     const res = await post(app, { to: 'lodgement' }, 'secret');
     expect(res.statusCode).toBe(200);
     expect(res.json().notified).toBe(0);
+    await app.close();
+  });
+
+  it('creates the stage deadline on offer_otp and resolves it on bond_granted', async () => {
+    const { app, deps } = build();
+    await post(app, { to: 'offer_otp' }, 'secret');
+    expect(deps.deadlines?.createIfAbsent).toHaveBeenCalledWith(
+      expect.objectContaining({ dealId: 'd1', kind: 'bond_condition' }),
+    );
+    await post(app, { to: 'bond_granted' }, 'secret');
+    expect(deps.deadlines?.resolve).toHaveBeenCalledWith('d1', [
+      'bond_condition',
+    ]);
+    await app.close();
+  });
+});
+
+describe('POST /api/deals/:id/bond-declined', () => {
+  const decline = (
+    app: ReturnType<typeof Fastify>,
+    body: unknown,
+    token?: string,
+  ) =>
+    app.inject({
+      method: 'POST',
+      url: '/api/deals/d1/bond-declined',
+      headers: token ? { 'x-internal-token': token } : {},
+      payload: body as Record<string, unknown>,
+    });
+
+  it('records the event (no transition) and reassures both parties', async () => {
+    const { app, deps } = build();
+    const res = await decline(app, { bank: 'FNB' }, 'secret');
+
+    expect(res.statusCode).toBe(200);
+    expect(res.json().notified).toBe(2);
+    expect(deps.transition).not.toHaveBeenCalled();
+    expect(deps.recordEvent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dealId: 'd1',
+        actorType: 'system',
+        note: expect.stringContaining('FNB'),
+      }),
+    );
+    const sendMock = deps.notifier.send as ReturnType<typeof vi.fn>;
+    const buyerCall = sendMock.mock.calls.find(
+      (c) => c[0] === CONTEXT.buyerPhone,
+    );
+    // the multi-bank reassurance rides the transfer_status template
+    expect(buyerCall?.[2].templateId).toBe('HXtransfer');
+    expect(buyerCall?.[2].variables?.['3']).toMatch(/nearly half/i);
+    await app.close();
+  });
+
+  it('404s for an unknown deal and requires the token', async () => {
+    const { app: noDeal } = build({ deals: fakeDeals(null) });
+    expect((await decline(noDeal, {}, 'secret')).statusCode).toBe(404);
+    await noDeal.close();
+
+    const { app, deps } = build();
+    expect((await decline(app, {})).statusCode).toBe(401);
+    expect(deps.recordEvent).not.toHaveBeenCalled();
     await app.close();
   });
 });

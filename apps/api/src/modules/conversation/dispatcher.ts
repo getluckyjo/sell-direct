@@ -18,6 +18,26 @@ import type { PrequalStore } from './prequal-store';
 const ENQUIRE_RE = /^enquire\b[\s:_-]*([A-Za-z0-9_-]+)?/i;
 /** Affirmative consent reply. */
 const YES_RE = /^\s*(yes|y|yeah|yep|ok|okay|sure|👍)\b/i;
+/**
+ * Ecosystem/upsell keywords offered in stage messages (docs/BOTTLENECKS.md,
+ * Ancillary Revenue): CERTS = compliance inspections, COVER = homeowners
+ * insurance, MOVE = movers/fibre/home services. The inbound is already
+ * persisted, so the concierge picks the request up from the message log.
+ */
+const UPSELL_REPLIES: Record<string, string> = {
+  certs:
+    '👍 Great — we’ll line up trusted, accredited inspectors for your compliance ' +
+    'certificates and WhatsApp you the quotes shortly. Booking early is the single ' +
+    'best way to avoid transfer delays.',
+  cover:
+    '👍 Great — our concierge will WhatsApp you competitive homeowners-insurance ' +
+    'quotes shortly. No obligation; your bank just needs cover in place before ' +
+    'registration.',
+  move:
+    '👍 Great — our concierge will WhatsApp you trusted quotes for movers, fibre ' +
+    'and anything else you need for the big day. No obligation.',
+};
+const UPSELL_RE = /^\s*(certs|cover|move)\b/i;
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
@@ -50,6 +70,14 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
   async function route(message: InboundMessage): Promise<void> {
     const phone = message.from;
     const text = (message.text ?? '').trim();
+
+    // 0. Upsell keyword from a stage message (CERTS / COVER / MOVE):
+    //    acknowledge and hand to the concierge — never the "reply list" fallback.
+    const upsell = text.match(UPSELL_RE);
+    if (upsell) {
+      await deps.notifier.send(phone, UPSELL_REPLIES[upsell[1].toLowerCase()]);
+      return;
+    }
 
     // 1. Buyer mid pre-qualification: interpret their consent reply.
     const pending = await deps.prequalStore.get(phone);

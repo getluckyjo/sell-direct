@@ -29,9 +29,11 @@ import {
 import {
   createPrismaDealRepository,
   registerDealRoutes,
+  recordDealEvent,
   transitionDeal,
   type DealRepository,
 } from './modules/deals';
+import { createPrismaDeadlineRepository } from './modules/deadlines';
 import { createPrismaProfileRepository } from './modules/profiles';
 import { ObaReferralStub } from './modules/finance';
 import { registerDashboardRoutes } from './modules/dashboard';
@@ -132,12 +134,15 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const internalToken = deps?.internalToken ?? process.env.INTERNAL_API_TOKEN;
   registerDashboardRoutes(app, { listings, deals, internalToken });
 
-  // Transfer-journey tracker: advance a deal + notify the parties on WhatsApp.
+  // Transfer-journey tracker: advance a deal + notify the parties on WhatsApp,
+  // with stage deadlines (countdown engine) and within-stage events (declines).
   registerDealRoutes(app, {
     deals,
     transition: (input) => transitionDeal(prisma, input),
+    recordEvent: (input) => recordDealEvent(prisma, input),
     notifier,
     templates: loadTemplateConfigFromEnv(),
+    deadlines: createPrismaDeadlineRepository(prisma),
     internalToken,
     log: (msg, err) => app.log.error({ err }, msg),
   });

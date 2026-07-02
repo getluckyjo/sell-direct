@@ -125,6 +125,7 @@ model Deal {
   updatedAt DateTime    @updatedAt
   events    DealEvent[]
   messages  Message[]
+  deadlines Deadline[]
 
   // One deal per buyer per listing.
   @@unique([listingId, buyerId])
@@ -216,4 +217,26 @@ model ConversationState {
   createdAt DateTime @default(now())
 
   @@map("conversation_states")
+}
+
+/// A tracked deadline on a deal (suspensive conditions, FICA packs,
+/// certificate bookings). The scheduler sends WhatsApp countdown reminders as
+/// `dueAt` approaches and marks the deadline resolved when the stage advances.
+model Deadline {
+  id         String    @id @default(cuid())
+  dealId     String
+  deal       Deal      @relation(fields: [dealId], references: [id])
+  /// e.g. "bond_condition", "fica_documents", "certificate_booking"
+  kind       String
+  /// Human label used in reminder messages ("bond approval condition").
+  label      String
+  dueAt      DateTime
+  /// Reminder tiers already sent, as day-offsets (e.g. [7,3]) — idempotency.
+  remindedAt Int[]     @default([])
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  @@index([dueAt])
+  @@index([dealId, kind])
+  @@map("deadlines")
 }

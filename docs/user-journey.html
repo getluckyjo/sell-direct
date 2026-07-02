@@ -1,599 +1,1024 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sold Direct — The Buyer &amp; Seller Journey, Step by Step</title>
-<style>
-  :root {
-    --surface: #fcfcfb;
-    --page: #f9f9f7;
-    --ink: #0b0b0b;
-    --ink-2: #52514e;
-    --muted: #898781;
-    --hairline: #e1e0d9;
-    --border: rgba(11, 11, 11, 0.1);
-    --buyer: #2a78d6;
-    --buyer-tint: rgba(42, 120, 214, 0.08);
-    --seller: #1baf7a;
-    --seller-tint: rgba(27, 175, 122, 0.09);
-    --wa-bubble: #e7f8d4;
-    --wa-ink: #1f3d10;
-    --good: #0ca30c;
-    --good-text: #006300;
-  }
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --surface: #1a1a19;
-      --page: #0d0d0d;
-      --ink: #ffffff;
-      --ink-2: #c3c2b7;
-      --muted: #898781;
-      --hairline: #2c2c2a;
-      --border: rgba(255, 255, 255, 0.1);
-      --buyer: #3987e5;
-      --buyer-tint: rgba(57, 135, 229, 0.14);
-      --seller: #199e70;
-      --seller-tint: rgba(25, 158, 112, 0.14);
-      --wa-bubble: #1f3325;
-      --wa-ink: #cde8c4;
-      --good-text: #0ca30c;
-    }
-  }
-  * { box-sizing: border-box; margin: 0; }
-  body {
-    background: var(--page);
-    color: var(--ink);
-    font: 15px/1.55 system-ui, -apple-system, "Segoe UI", sans-serif;
-    padding: 32px 16px 64px;
-  }
-  .wrap { max-width: 1040px; margin: 0 auto; }
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sold Direct — The Buyer &amp; Seller Journey, Step by Step</title>
+    <style>
+      :root {
+        --surface: #fcfcfb;
+        --page: #f9f9f7;
+        --ink: #0b0b0b;
+        --ink-2: #52514e;
+        --muted: #898781;
+        --hairline: #e1e0d9;
+        --border: rgba(11, 11, 11, 0.1);
+        --buyer: #2a78d6;
+        --buyer-tint: rgba(42, 120, 214, 0.08);
+        --seller: #1baf7a;
+        --seller-tint: rgba(27, 175, 122, 0.09);
+        --wa-bubble: #e7f8d4;
+        --wa-ink: #1f3d10;
+        --good: #0ca30c;
+        --good-text: #006300;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --surface: #1a1a19;
+          --page: #0d0d0d;
+          --ink: #ffffff;
+          --ink-2: #c3c2b7;
+          --muted: #898781;
+          --hairline: #2c2c2a;
+          --border: rgba(255, 255, 255, 0.1);
+          --buyer: #3987e5;
+          --buyer-tint: rgba(57, 135, 229, 0.14);
+          --seller: #199e70;
+          --seller-tint: rgba(25, 158, 112, 0.14);
+          --wa-bubble: #1f3325;
+          --wa-ink: #cde8c4;
+          --good-text: #0ca30c;
+        }
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        background: var(--page);
+        color: var(--ink);
+        font:
+          15px/1.55 system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        padding: 32px 16px 64px;
+      }
+      .wrap {
+        max-width: 1040px;
+        margin: 0 auto;
+      }
 
-  /* ---------- header ---------- */
-  header h1 { font-size: 28px; letter-spacing: -0.02em; line-height: 1.2; }
-  header .sub { color: var(--ink-2); margin-top: 8px; max-width: 64ch; }
-  .lanes-key { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 7px;
-    font-size: 12px; font-weight: 600; letter-spacing: 0.02em;
-    padding: 4px 12px; border-radius: 999px; border: 1px solid var(--border);
-    background: var(--surface);
-  }
-  .chip .dot { width: 9px; height: 9px; border-radius: 50%; }
-  .chip.buyer  { color: var(--buyer); }
-  .chip.buyer .dot { background: var(--buyer); }
-  .chip.seller { color: var(--seller); }
-  .chip.seller .dot { background: var(--seller); }
-  .chip.us { color: var(--ink-2); }
-  .chip.us .dot { background: var(--muted); }
+      /* ---------- header ---------- */
+      header h1 {
+        font-size: 28px;
+        letter-spacing: -0.02em;
+        line-height: 1.2;
+      }
+      header .sub {
+        color: var(--ink-2);
+        margin-top: 8px;
+        max-width: 64ch;
+      }
+      .lanes-key {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 18px;
+      }
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 7px;
+        font-size: 12px;
+        font-weight: 600;
+        letter-spacing: 0.02em;
+        padding: 4px 12px;
+        border-radius: 999px;
+        border: 1px solid var(--border);
+        background: var(--surface);
+      }
+      .chip .dot {
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+      }
+      .chip.buyer {
+        color: var(--buyer);
+      }
+      .chip.buyer .dot {
+        background: var(--buyer);
+      }
+      .chip.seller {
+        color: var(--seller);
+      }
+      .chip.seller .dot {
+        background: var(--seller);
+      }
+      .chip.us {
+        color: var(--ink-2);
+      }
+      .chip.us .dot {
+        background: var(--muted);
+      }
 
-  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 26px 0 8px; }
-  .stat {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 12px; padding: 14px 16px;
-  }
-  .stat b { display: block; font-size: 22px; letter-spacing: -0.02em; }
-  .stat span { color: var(--ink-2); font-size: 12.5px; }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        margin: 26px 0 8px;
+      }
+      .stat {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 14px 16px;
+      }
+      .stat b {
+        display: block;
+        font-size: 22px;
+        letter-spacing: -0.02em;
+      }
+      .stat span {
+        color: var(--ink-2);
+        font-size: 12.5px;
+      }
 
-  /* ---------- phase ---------- */
-  .phase { margin-top: 44px; }
-  .phase-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-  .phase-head h2 { font-size: 19px; letter-spacing: -0.01em; }
-  .phase-head .lead { font-size: 12px; font-weight: 600; color: var(--ink-2);
-    border: 1px solid var(--border); background: var(--surface);
-    padding: 2px 10px; border-radius: 999px; }
-  .phase-head .time { color: var(--muted); font-size: 12.5px; }
-  .phase > .desc { color: var(--ink-2); font-size: 13.5px; margin-top: 6px; max-width: 70ch; }
+      /* ---------- phase ---------- */
+      .phase {
+        margin-top: 44px;
+      }
+      .phase-head {
+        display: flex;
+        align-items: baseline;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+      .phase-head h2 {
+        font-size: 19px;
+        letter-spacing: -0.01em;
+      }
+      .phase-head .lead {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--ink-2);
+        border: 1px solid var(--border);
+        background: var(--surface);
+        padding: 2px 10px;
+        border-radius: 999px;
+      }
+      .phase-head .time {
+        color: var(--muted);
+        font-size: 12.5px;
+      }
+      .phase > .desc {
+        color: var(--ink-2);
+        font-size: 13.5px;
+        margin-top: 6px;
+        max-width: 70ch;
+      }
 
-  /* ---------- step grid ---------- */
-  .step {
-    display: grid; grid-template-columns: 1fr 190px 1fr; gap: 14px;
-    margin-top: 18px; position: relative;
-  }
-  .spine {
-    text-align: center; padding-top: 4px;
-  }
-  .stage-no {
-    width: 34px; height: 34px; border-radius: 50%; margin: 0 auto;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--ink); color: var(--page); font-weight: 700; font-size: 14px;
-  }
-  .stage-name { font-weight: 700; font-size: 13.5px; margin-top: 8px; }
-  .stage-code {
-    display: inline-block; margin-top: 5px; font-size: 10.5px; color: var(--muted);
-    font-family: ui-monospace, Menlo, monospace;
-    border: 1px solid var(--hairline); border-radius: 6px; padding: 1px 7px;
-    background: var(--surface);
-  }
-  .stage-time { color: var(--muted); font-size: 11.5px; margin-top: 6px; }
+      /* ---------- step grid ---------- */
+      .step {
+        display: grid;
+        grid-template-columns: 1fr 190px 1fr;
+        gap: 14px;
+        margin-top: 18px;
+        position: relative;
+      }
+      .spine {
+        text-align: center;
+        padding-top: 4px;
+      }
+      .stage-no {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--ink);
+        color: var(--page);
+        font-weight: 700;
+        font-size: 14px;
+      }
+      .stage-name {
+        font-weight: 700;
+        font-size: 13.5px;
+        margin-top: 8px;
+      }
+      .stage-code {
+        display: inline-block;
+        margin-top: 5px;
+        font-size: 10.5px;
+        color: var(--muted);
+        font-family: ui-monospace, Menlo, monospace;
+        border: 1px solid var(--hairline);
+        border-radius: 6px;
+        padding: 1px 7px;
+        background: var(--surface);
+      }
+      .stage-time {
+        color: var(--muted);
+        font-size: 11.5px;
+        margin-top: 6px;
+      }
 
-  /* ---------- actor cards ---------- */
-  .card {
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 14px 16px 16px;
-    border-top: 3px solid transparent;
-  }
-  .card.buyer  { border-top-color: var(--buyer); }
-  .card.seller { border-top-color: var(--seller); }
-  .card .who { font-size: 11px; font-weight: 700; letter-spacing: 0.06em; }
-  .card.buyer .who  { color: var(--buyer); }
-  .card.seller .who { color: var(--seller); }
-  .card h3 { font-size: 14.5px; margin-top: 4px; letter-spacing: -0.01em; }
-  .todo { list-style: none; padding: 0; margin-top: 8px; }
-  .todo li {
-    padding-left: 24px; position: relative; margin-top: 7px;
-    color: var(--ink-2); font-size: 13.5px;
-  }
-  .todo li::before {
-    content: "✓"; position: absolute; left: 2px; top: 0;
-    font-weight: 700; font-size: 13px;
-  }
-  .card.buyer  .todo li::before { color: var(--buyer); }
-  .card.seller .todo li::before { color: var(--seller); }
-  .todo li b { color: var(--ink); font-weight: 600; }
+      /* ---------- actor cards ---------- */
+      .card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 14px 16px 16px;
+        border-top: 3px solid transparent;
+      }
+      .card.buyer {
+        border-top-color: var(--buyer);
+      }
+      .card.seller {
+        border-top-color: var(--seller);
+      }
+      .card .who {
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .card.buyer .who {
+        color: var(--buyer);
+      }
+      .card.seller .who {
+        color: var(--seller);
+      }
+      .card h3 {
+        font-size: 14.5px;
+        margin-top: 4px;
+        letter-spacing: -0.01em;
+      }
+      .todo {
+        list-style: none;
+        padding: 0;
+        margin-top: 8px;
+      }
+      .todo li {
+        padding-left: 24px;
+        position: relative;
+        margin-top: 7px;
+        color: var(--ink-2);
+        font-size: 13.5px;
+      }
+      .todo li::before {
+        content: '✓';
+        position: absolute;
+        left: 2px;
+        top: 0;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .card.buyer .todo li::before {
+        color: var(--buyer);
+      }
+      .card.seller .todo li::before {
+        color: var(--seller);
+      }
+      .todo li b {
+        color: var(--ink);
+        font-weight: 600;
+      }
 
-  .relax {
-    display: flex; align-items: center; gap: 10px; margin-top: 10px;
-    color: var(--muted); font-size: 13px; font-style: italic;
-  }
-  .relax .z { font-style: normal; font-size: 16px; }
+      .relax {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 10px;
+        color: var(--muted);
+        font-size: 13px;
+        font-style: italic;
+      }
+      .relax .z {
+        font-style: normal;
+        font-size: 16px;
+      }
 
-  /* WhatsApp preview bubble */
-  .wa {
-    margin-top: 12px; background: var(--wa-bubble); color: var(--wa-ink);
-    border-radius: 4px 12px 12px 12px; padding: 9px 12px 7px;
-    font-size: 12.5px; line-height: 1.45; max-width: 46ch;
-  }
-  .wa .from { font-size: 10.5px; font-weight: 700; opacity: 0.75;
-    letter-spacing: 0.04em; margin-bottom: 3px; }
-  .wa .tick { display: block; text-align: right; font-size: 10px; opacity: 0.6; margin-top: 2px; }
-  .btn-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; }
-  .wa-btn {
-    font-size: 11.5px; font-weight: 600; padding: 3px 10px;
-    border: 1px solid currentColor; border-radius: 999px; opacity: 0.85;
-  }
+      /* WhatsApp preview bubble */
+      .wa {
+        margin-top: 12px;
+        background: var(--wa-bubble);
+        color: var(--wa-ink);
+        border-radius: 4px 12px 12px 12px;
+        padding: 9px 12px 7px;
+        font-size: 12.5px;
+        line-height: 1.45;
+        max-width: 46ch;
+      }
+      .wa .from {
+        font-size: 10.5px;
+        font-weight: 700;
+        opacity: 0.75;
+        letter-spacing: 0.04em;
+        margin-bottom: 3px;
+      }
+      .wa .tick {
+        display: block;
+        text-align: right;
+        font-size: 10px;
+        opacity: 0.6;
+        margin-top: 2px;
+      }
+      .btn-row {
+        display: flex;
+        gap: 6px;
+        margin-top: 8px;
+        flex-wrap: wrap;
+      }
+      .wa-btn {
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 3px 10px;
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        opacity: 0.85;
+      }
 
-  /* milestone banner (registered) */
-  .milestone {
-    grid-column: 1 / -1; text-align: center;
-    background: var(--surface); border: 1px solid var(--border);
-    border-radius: 14px; padding: 20px 18px;
-  }
-  .milestone b { font-size: 18px; }
-  .milestone .save { color: var(--good-text); font-weight: 700; }
-  .milestone p { color: var(--ink-2); font-size: 13.5px; margin-top: 6px; }
+      /* milestone banner (registered) */
+      .milestone {
+        grid-column: 1 / -1;
+        text-align: center;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 14px;
+        padding: 20px 18px;
+      }
+      .milestone b {
+        font-size: 18px;
+      }
+      .milestone .save {
+        color: var(--good-text);
+        font-weight: 700;
+      }
+      .milestone p {
+        color: var(--ink-2);
+        font-size: 13.5px;
+        margin-top: 6px;
+      }
 
-  footer {
-    margin-top: 44px; padding-top: 16px; border-top: 1px solid var(--hairline);
-    color: var(--muted); font-size: 12px; max-width: 78ch;
-  }
+      footer {
+        margin-top: 44px;
+        padding-top: 16px;
+        border-top: 1px solid var(--hairline);
+        color: var(--muted);
+        font-size: 12px;
+        max-width: 78ch;
+      }
 
-  /* ---------- small screens ---------- */
-  @media (max-width: 760px) {
-    .stats { grid-template-columns: 1fr; }
-    .step { grid-template-columns: 1fr; gap: 10px; }
-    .spine { display: flex; align-items: center; gap: 12px; text-align: left; padding: 2px 0 0; }
-    .spine::before { display: none; }
-    .stage-no { margin: 0; }
-    .stage-name { margin-top: 0; }
-    .spine .meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline; }
-    .stage-code, .stage-time { margin-top: 0; }
-  }
+      /* ---------- small screens ---------- */
+      @media (max-width: 760px) {
+        .stats {
+          grid-template-columns: 1fr;
+        }
+        .step {
+          grid-template-columns: 1fr;
+          gap: 10px;
+        }
+        .spine {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          text-align: left;
+          padding: 2px 0 0;
+        }
+        .spine::before {
+          display: none;
+        }
+        .stage-no {
+          margin: 0;
+        }
+        .stage-name {
+          margin-top: 0;
+        }
+        .spine .meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          align-items: baseline;
+        }
+        .stage-code,
+        .stage-time {
+          margin-top: 0;
+        }
+      }
 
-  /* ---------- print ---------- */
-  @media print {
-    body { background: #fff; padding: 0; font-size: 12px; }
-    .phase { break-inside: avoid; margin-top: 24px; }
-    .card, .stat, .milestone { border-color: #ccc; }
-  }
-</style>
-</head>
-<body>
-<div class="wrap">
+      /* ---------- print ---------- */
+      @media print {
+        body {
+          background: #fff;
+          padding: 0;
+          font-size: 12px;
+        }
+        .phase {
+          break-inside: avoid;
+          margin-top: 24px;
+        }
+        .card,
+        .stat,
+        .milestone {
+          border-color: #ccc;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>
+          Selling &amp; buying on Sold Direct — who does what, at every step
+        </h1>
+        <p class="sub">
+          The whole journey runs in one WhatsApp chat. Below is every stage from
+          listing to registration: what the <b>buyer</b> does, what the
+          <b>seller</b> does, and the exact WhatsApp message each one receives.
+          Everything not listed here, <b>we and our partners handle for you</b>.
+        </p>
+        <div class="lanes-key">
+          <span class="chip buyer"><span class="dot"></span>Buyer does</span>
+          <span class="chip seller"><span class="dot"></span>Seller does</span>
+          <span class="chip us"
+            ><span class="dot"></span>Sold Direct + partners handle the
+            rest</span
+          >
+        </div>
+        <div class="stats">
+          <div class="stat">
+            <b>0%</b
+            ><span
+              >commission on the qualifying path — the seller pays nothing</span
+            >
+          </div>
+          <div class="stat">
+            <b>~15 min</b
+            ><span>of questions on WhatsApp to put a home on the market</span>
+          </div>
+          <div class="stat">
+            <b>8–12 weeks</b
+            ><span
+              >typical from accepted offer to registered transfer (SA
+              average)</span
+            >
+          </div>
+        </div>
+      </header>
 
-<header>
-  <h1>Selling &amp; buying on Sold Direct — who does what, at every step</h1>
-  <p class="sub">The whole journey runs in one WhatsApp chat. Below is every stage from listing to
-  registration: what the <b>buyer</b> does, what the <b>seller</b> does, and the exact WhatsApp
-  message each one receives. Everything not listed here, <b>we and our partners handle for you</b>.</p>
-  <div class="lanes-key">
-    <span class="chip buyer"><span class="dot"></span>Buyer does</span>
-    <span class="chip seller"><span class="dot"></span>Seller does</span>
-    <span class="chip us"><span class="dot"></span>Sold Direct + partners handle the rest</span>
-  </div>
-  <div class="stats">
-    <div class="stat"><b>0%</b><span>commission on the qualifying path — the seller pays nothing</span></div>
-    <div class="stat"><b>~15 min</b><span>of questions on WhatsApp to put a home on the market</span></div>
-    <div class="stat"><b>8–12 weeks</b><span>typical from accepted offer to registered transfer (SA average)</span></div>
-  </div>
-</header>
+      <!-- ============ PHASE A ============ -->
+      <section class="phase">
+        <div class="phase-head">
+          <h2>Phase 1 — List the home</h2>
+          <span class="lead">Seller drives</span>
+          <span class="time">≈ 15 minutes, once</span>
+        </div>
+        <p class="desc">
+          No agent visits, no forms. The seller answers a guided WhatsApp
+          conversation and the listing goes live, syndicated to the major
+          portals.
+        </p>
 
-<!-- ============ PHASE A ============ -->
-<section class="phase">
-  <div class="phase-head">
-    <h2>Phase 1 — List the home</h2>
-    <span class="lead">Seller drives</span>
-    <span class="time">≈ 15 minutes, once</span>
-  </div>
-  <p class="desc">No agent visits, no forms. The seller answers a guided WhatsApp conversation and
-  the listing goes live, syndicated to the major portals.</p>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Not involved yet</h3>
+            <div class="relax"><span class="z">💤</span> Nothing to do.</div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">1</div>
+            <div class="meta">
+              <div class="stage-name">Start &amp; consent</div>
+              <span class="stage-code">pre-listing</span>
+              <div class="stage-time">~1 min</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Open the chat and say yes</h3>
+            <ul class="todo">
+              <li>
+                Tap <b>“List my home”</b> on solddirect.co.za — WhatsApp opens
+              </li>
+              <li>Read the POPIA notice and reply <b>“Yes, I agree”</b></li>
+              <li>Confirm you’re the <b>registered owner</b></li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              Hi 👋 Welcome to Sold Direct — sell your home with 0% commission.
+              Before we start we need your consent to process your details under
+              POPIA. Do you agree?
+              <div class="btn-row">
+                <span class="wa-btn">Yes, I agree</span
+                ><span class="wa-btn">Tell me more</span>
+              </div>
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Not involved yet</h3>
-      <div class="relax"><span class="z">💤</span> Nothing to do.</div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">1</div>
-      <div class="meta"><div class="stage-name">Start &amp; consent</div>
-      <span class="stage-code">pre-listing</span>
-      <div class="stage-time">~1 min</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Open the chat and say yes</h3>
-      <ul class="todo">
-        <li>Tap <b>“List my home”</b> on solddirect.co.za — WhatsApp opens</li>
-        <li>Read the POPIA notice and reply <b>“Yes, I agree”</b></li>
-        <li>Confirm you’re the <b>registered owner</b></li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        Hi 👋 Welcome to Sold Direct — sell your home with 0% commission. Before we start we need
-        your consent to process your details under POPIA. Do you agree?
-        <div class="btn-row"><span class="wa-btn">Yes, I agree</span><span class="wa-btn">Tell me more</span></div>
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Not involved yet</h3>
+            <div class="relax"><span class="z">💤</span> Nothing to do.</div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">2</div>
+            <div class="meta">
+              <div class="stage-name">Guided intake + mandate</div>
+              <span class="stage-code">listing_intake</span>
+              <div class="stage-time">~10 min</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Answer the questions, sign, add photos</h3>
+            <ul class="todo">
+              <li>
+                Pick your path: <b>Free (0%)</b> — exclusive 90-day mandate via
+                our partners — or <b>Flex</b> (flat fee)
+              </li>
+              <li><b>E-sign the sole mandate</b> from the link in the chat</li>
+              <li>
+                Answer 6 quick questions:
+                <b>address · suburb · price · beds · baths · mandate term</b>
+                (60/90/120 days)
+              </li>
+              <li>Send <b>10–15 photos</b> straight into the chat</li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              Great — what’s the asking price? (We’ll suggest a range from
+              recent sales in your suburb.)
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Not involved yet</h3>
-      <div class="relax"><span class="z">💤</span> Nothing to do.</div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">2</div>
-      <div class="meta"><div class="stage-name">Guided intake + mandate</div>
-      <span class="stage-code">listing_intake</span>
-      <div class="stage-time">~10 min</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Answer the questions, sign, add photos</h3>
-      <ul class="todo">
-        <li>Pick your path: <b>Free (0%)</b> — exclusive 90-day mandate via our partners — or <b>Flex</b> (flat fee)</li>
-        <li><b>E-sign the sole mandate</b> from the link in the chat</li>
-        <li>Answer 6 quick questions: <b>address · suburb · price · beds · baths · mandate term</b> (60/90/120 days)</li>
-        <li>Send <b>10–15 photos</b> straight into the chat</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        Great — what’s the asking price? (We’ll suggest a range from recent sales in your suburb.)
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Sees the listing appear</h3>
+            <div class="relax">
+              <span class="z">🔎</span> On Property24, Private Property or a
+              shared link.
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">3</div>
+            <div class="meta">
+              <div class="stage-name">Listing live</div>
+              <span class="stage-code">status: active</span>
+              <div class="stage-time">same day</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Share it — then wait for enquiries</h3>
+            <ul class="todo">
+              <li>
+                <b>Share your WhatsApp listing link</b> with your own network
+                (optional but powerful)
+              </li>
+              <li>Tell us your preferred <b>viewing times</b></li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              🎉 23 Vredehoek Ave is live — R6 250 000, 0% commission.
+              Syndicated to Property24 &amp; Private Property. Here’s your
+              shareable link.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Sees the listing appear</h3>
-      <div class="relax"><span class="z">🔎</span> On Property24, Private Property or a shared link.</div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">3</div>
-      <div class="meta"><div class="stage-name">Listing live</div>
-      <span class="stage-code">status: active</span>
-      <div class="stage-time">same day</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Share it — then wait for enquiries</h3>
-      <ul class="todo">
-        <li><b>Share your WhatsApp listing link</b> with your own network (optional but powerful)</li>
-        <li>Tell us your preferred <b>viewing times</b></li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        🎉 23 Vredehoek Ave is live — R6 250 000, 0% commission. Syndicated to Property24 &amp;
-        Private Property. Here’s your shareable link.
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
-</section>
+      <!-- ============ PHASE B ============ -->
+      <section class="phase">
+        <div class="phase-head">
+          <h2>Phase 2 — Enquire &amp; get bond-ready</h2>
+          <span class="lead">Buyer drives</span>
+          <span class="time">≈ 5 minutes of the buyer’s time</span>
+        </div>
+        <p class="desc">
+          A buyer enquires with one tap, and can walk into the viewing already
+          pre-qualified — free, in the same chat.
+        </p>
 
-<!-- ============ PHASE B ============ -->
-<section class="phase">
-  <div class="phase-head">
-    <h2>Phase 2 — Enquire &amp; get bond-ready</h2>
-    <span class="lead">Buyer drives</span>
-    <span class="time">≈ 5 minutes of the buyer’s time</span>
-  </div>
-  <p class="desc">A buyer enquires with one tap, and can walk into the viewing already
-  pre-qualified — free, in the same chat.</p>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Tap, consent, ask</h3>
+            <ul class="todo">
+              <li>
+                Tap <b>“Enquire on WhatsApp”</b> on the listing (portal or
+                shared link)
+              </li>
+              <li>Reply <b>“Agreed”</b> to the POPIA consent</li>
+              <li>
+                Ask anything — availability, viewings, the street noise at 5pm
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              Thanks for your interest! Want a free, no-obligation home-loan
+              pre-qualification right here? Reply YES and we’ll ask your consent
+              before sharing anything.
+              <div class="btn-row">
+                <span class="wa-btn">Yes, pre-qualify me</span
+                ><span class="wa-btn">Not now</span>
+              </div>
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">4</div>
+            <div class="meta">
+              <div class="stage-name">Enquiry</div>
+              <span class="stage-code">enquiry</span>
+              <div class="stage-time">~1 min</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>You’ll hear from us</h3>
+            <div class="relax">
+              <span class="z">🔔</span> We notify you of serious interest — no
+              tyre-kickers forwarded.
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Tap, consent, ask</h3>
-      <ul class="todo">
-        <li>Tap <b>“Enquire on WhatsApp”</b> on the listing (portal or shared link)</li>
-        <li>Reply <b>“Agreed”</b> to the POPIA consent</li>
-        <li>Ask anything — availability, viewings, the street noise at 5pm</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        Thanks for your interest! Want a free, no-obligation home-loan pre-qualification right
-        here? Reply YES and we’ll ask your consent before sharing anything.
-        <div class="btn-row"><span class="wa-btn">Yes, pre-qualify me</span><span class="wa-btn">Not now</span></div>
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">4</div>
-      <div class="meta"><div class="stage-name">Enquiry</div>
-      <span class="stage-code">enquiry</span>
-      <div class="stage-time">~1 min</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>You’ll hear from us</h3>
-      <div class="relax"><span class="z">🔔</span> We notify you of serious interest — no tyre-kickers forwarded.</div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>2-minute pre-qualification (optional, free)</h3>
+            <ul class="todo">
+              <li>
+                Reply <b>YES</b> to consent to a credit check (POPIA-logged)
+              </li>
+              <li>Share <b>income, expenses and deposit</b> in the chat</li>
+              <li>
+                Receive your <b>pre-qual certificate</b> — budget + indicative
+                rate
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              ✅ You’re pre-qualified up to R6 200 000 at approximately Prime
+              −0.50% over 20 years (indicative, via our partner ooba). Reply
+              VIEW to book a viewing.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">5</div>
+            <div class="meta">
+              <div class="stage-name">Pre-qualify + view</div>
+              <span class="stage-code">enquiry</span>
+              <div class="stage-time">~2 min + viewing</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Host the viewing</h3>
+            <ul class="todo">
+              <li>Confirm the <b>viewing slot</b> we propose</li>
+              <li>Show your home (we send you a 5-point prep checklist)</li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📅 John (pre-qualified ✅) would like to view 23 Vredehoek Ave on
+              Saturday at 10:00. Does that work?
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>2-minute pre-qualification (optional, free)</h3>
-      <ul class="todo">
-        <li>Reply <b>YES</b> to consent to a credit check (POPIA-logged)</li>
-        <li>Share <b>income, expenses and deposit</b> in the chat</li>
-        <li>Receive your <b>pre-qual certificate</b> — budget + indicative rate</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        ✅ You’re pre-qualified up to R6 200 000 at approximately Prime −0.50% over 20 years
-        (indicative, via our partner ooba). Reply VIEW to book a viewing.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">5</div>
-      <div class="meta"><div class="stage-name">Pre-qualify + view</div>
-      <span class="stage-code">enquiry</span>
-      <div class="stage-time">~2 min + viewing</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Host the viewing</h3>
-      <ul class="todo">
-        <li>Confirm the <b>viewing slot</b> we propose</li>
-        <li>Show your home (we send you a 5-point prep checklist)</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📅 John (pre-qualified ✅) would like to view 23 Vredehoek Ave on Saturday at 10:00.
-        Does that work?
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
-</section>
+      <!-- ============ PHASE C ============ -->
+      <section class="phase">
+        <div class="phase-head">
+          <h2>Phase 3 — The offer</h2>
+          <span class="lead">Both parties</span>
+          <span class="time">typically 1–3 days</span>
+        </div>
+        <p class="desc">
+          The Offer to Purchase (a binding sale agreement) is built, negotiated
+          and signed in the chat — with the standard suspensive conditions
+          protecting both sides.
+        </p>
 
-<!-- ============ PHASE C ============ -->
-<section class="phase">
-  <div class="phase-head">
-    <h2>Phase 3 — The offer</h2>
-    <span class="lead">Both parties</span>
-    <span class="time">typically 1–3 days</span>
-  </div>
-  <p class="desc">The Offer to Purchase (a binding sale agreement) is built, negotiated and signed
-  in the chat — with the standard suspensive conditions protecting both sides.</p>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Make your offer, sign when agreed</h3>
+            <ul class="todo">
+              <li>
+                Say <b>“I’d like to make an offer”</b> — we draft the OTP with
+                you
+              </li>
+              <li>
+                Set your <b>price, deposit, occupation date</b> and conditions
+                (e.g. bond approval in 21 days)
+              </li>
+              <li>Respond to any counter-offer</li>
+              <li><b>E-sign</b> the final OTP</li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📄 Update on 23 Vredehoek Ave: the seller countered at R6 000 000.
+              Reply here to respond.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">6</div>
+            <div class="meta">
+              <div class="stage-name">Offer to Purchase</div>
+              <span class="stage-code">offer_otp</span>
+              <div class="stage-time">1–3 days</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Accept, counter or decline</h3>
+            <ul class="todo">
+              <li>
+                Review the offer card we send —
+                <b>price, deposit, conditions</b>, buyer’s bond status
+              </li>
+              <li>
+                Reply <b>accept / counter / decline</b> (a counter takes one
+                message)
+              </li>
+              <li><b>E-sign</b> the final OTP</li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📄 Update on 23 Vredehoek Ave: John offered R5 900 000 (R600k
+              deposit, bond-ready, 21-day bond condition). Accept, counter or
+              decline?
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Make your offer, sign when agreed</h3>
-      <ul class="todo">
-        <li>Say <b>“I’d like to make an offer”</b> — we draft the OTP with you</li>
-        <li>Set your <b>price, deposit, occupation date</b> and conditions (e.g. bond approval in 21 days)</li>
-        <li>Respond to any counter-offer</li>
-        <li><b>E-sign</b> the final OTP</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📄 Update on 23 Vredehoek Ave: the seller countered at R6 000 000. Reply here to respond.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">6</div>
-      <div class="meta"><div class="stage-name">Offer to Purchase</div>
-      <span class="stage-code">offer_otp</span>
-      <div class="stage-time">1–3 days</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Accept, counter or decline</h3>
-      <ul class="todo">
-        <li>Review the offer card we send — <b>price, deposit, conditions</b>, buyer’s bond status</li>
-        <li>Reply <b>accept / counter / decline</b> (a counter takes one message)</li>
-        <li><b>E-sign</b> the final OTP</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📄 Update on 23 Vredehoek Ave: John offered R5 900 000 (R600k deposit, bond-ready,
-        21-day bond condition). Accept, counter or decline?
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
-</section>
+      <!-- ============ PHASE D ============ -->
+      <section class="phase">
+        <div class="phase-head">
+          <h2>Phase 4 — Bond &amp; transfer</h2>
+          <span class="lead">We drive</span>
+          <span class="time">≈ 8–12 weeks, mostly waiting</span>
+        </div>
+        <p class="desc">
+          From here the heavy lifting is ours and our partners’ — the bond
+          originator, three conveyancing attorneys, the banks and the Deeds
+          Office. You get a WhatsApp update at every milestone; your only jobs
+          are the four below.
+        </p>
 
-<!-- ============ PHASE D ============ -->
-<section class="phase">
-  <div class="phase-head">
-    <h2>Phase 4 — Bond &amp; transfer</h2>
-    <span class="lead">We drive</span>
-    <span class="time">≈ 8–12 weeks, mostly waiting</span>
-  </div>
-  <p class="desc">From here the heavy lifting is ours and our partners’ — the bond originator, three
-  conveyancing attorneys, the banks and the Deeds Office. You get a WhatsApp update at every
-  milestone; your only jobs are the four below.</p>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Job 1 — final bond documents</h3>
+            <ul class="todo">
+              <li>
+                Send <b>3 months’ bank statements &amp; payslips</b> to the
+                originator (in-chat upload)
+              </li>
+              <li>
+                We submit to <b>multiple banks at once</b> for the best rate
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📌 Transfer update for 23 Vredehoek Ave: Bond application
+              submitted. Your application is with the banks — we’ll let you know
+              the moment there’s a decision.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">7</div>
+            <div class="meta">
+              <div class="stage-name">Bond application</div>
+              <span class="stage-code">bond_application</span>
+              <div class="stage-time">5–15 working days</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Nothing to do</h3>
+            <div class="relax">
+              <span class="z">💤</span> We’ll message you the moment the bond is
+              approved.
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Job 1 — final bond documents</h3>
-      <ul class="todo">
-        <li>Send <b>3 months’ bank statements &amp; payslips</b> to the originator (in-chat upload)</li>
-        <li>We submit to <b>multiple banks at once</b> for the best rate</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📌 Transfer update for 23 Vredehoek Ave: Bond application submitted. Your application is
-        with the banks — we’ll let you know the moment there’s a decision.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">7</div>
-      <div class="meta"><div class="stage-name">Bond application</div>
-      <span class="stage-code">bond_application</span>
-      <div class="stage-time">5–15 working days</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Nothing to do</h3>
-      <div class="relax"><span class="z">💤</span> We’ll message you the moment the bond is approved.</div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Job 2 — accept the bank’s quote</h3>
+            <ul class="todo">
+              <li>
+                Compare the offers we present and
+                <b>accept your preferred bank’s quote</b> (rate choice is always
+                yours)
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              🏦 Your home loan for 23 Vredehoek Ave has been approved by
+              Standard Bank for R5 400 000. Next we’ll start the transfer with
+              the conveyancing attorneys.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">8</div>
+            <div class="meta">
+              <div class="stage-name">Bond granted</div>
+              <span class="stage-code">bond_granted</span>
+              <div class="stage-time">1–3 days</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Good news arrives</h3>
+            <div class="relax">
+              <span class="z">🔔</span> “Buyer’s home loan approved — the
+              transfer now moves to the attorneys.”
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Job 2 — accept the bank’s quote</h3>
-      <ul class="todo">
-        <li>Compare the offers we present and <b>accept your preferred bank’s quote</b> (rate choice is always yours)</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        🏦 Your home loan for 23 Vredehoek Ave has been approved by Standard Bank for R5 400 000.
-        Next we’ll start the transfer with the conveyancing attorneys.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">8</div>
-      <div class="meta"><div class="stage-name">Bond granted</div>
-      <span class="stage-code">bond_granted</span>
-      <div class="stage-time">1–3 days</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Good news arrives</h3>
-      <div class="relax"><span class="z">🔔</span> “Buyer’s home loan approved — the transfer now moves to the attorneys.”</div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Job 3 — FICA (photos in the chat)</h3>
+            <ul class="todo">
+              <li>
+                Send your <b>ID</b>, <b>proof of residence</b> (≤ 3 months) and
+                <b>proof of source of funds</b>
+              </li>
+              <li>
+                Pay the <b>deposit</b> into the attorney’s trust account;
+                transfer costs invoice follows
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              To keep your transfer of 23 Vredehoek Ave moving, please send the
+              buyer’s FICA documents: ID, proof of residence (≤3 months), and
+              proof of source of funds. Reply with photos here — they’re stored
+              securely.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">9</div>
+            <div class="meta">
+              <div class="stage-name">Documents &amp; FICA</div>
+              <span class="stage-code">documents_fica</span>
+              <div class="stage-time">3–10 days</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Job 1 — FICA (photos in the chat)</h3>
+            <ul class="todo">
+              <li>
+                Send your <b>ID</b>, <b>proof of residence</b> (≤ 3 months) and
+                <b>proof of source of funds</b>
+              </li>
+              <li>
+                Hand the attorney your <b>title deed</b> (or bond details so
+                they can retrieve it)
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              To keep your transfer of 23 Vredehoek Ave moving, please send the
+              seller’s FICA documents: ID, proof of residence (≤3 months), and
+              proof of source of funds.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Job 3 — FICA (photos in the chat)</h3>
-      <ul class="todo">
-        <li>Send your <b>ID</b>, <b>proof of residence</b> (≤ 3 months) and <b>proof of source of funds</b></li>
-        <li>Pay the <b>deposit</b> into the attorney’s trust account; transfer costs invoice follows</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        To keep your transfer of 23 Vredehoek Ave moving, please send the buyer’s FICA documents:
-        ID, proof of residence (≤3 months), and proof of source of funds. Reply with photos here —
-        they’re stored securely.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">9</div>
-      <div class="meta"><div class="stage-name">Documents &amp; FICA</div>
-      <span class="stage-code">documents_fica</span>
-      <div class="stage-time">3–10 days</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Job 1 — FICA (photos in the chat)</h3>
-      <ul class="todo">
-        <li>Send your <b>ID</b>, <b>proof of residence</b> (≤ 3 months) and <b>proof of source of funds</b></li>
-        <li>Hand the attorney your <b>title deed</b> (or bond details so they can retrieve it)</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        To keep your transfer of 23 Vredehoek Ave moving, please send the seller’s FICA documents:
-        ID, proof of residence (≤3 months), and proof of source of funds.
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Nothing to do</h3>
+            <div class="relax">
+              <span class="z">💤</span> Guarantees and rates clearance are the
+              attorneys’ job — you get progress pings.
+            </div>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📌 Transfer update for 23 Vredehoek Ave: Clearance &amp;
+              guarantees in progress. Rates clearance and bank guarantees are
+              being arranged.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">10</div>
+            <div class="meta">
+              <div class="stage-name">Clearance &amp; certificates</div>
+              <span class="stage-code">clearance</span>
+              <div class="stage-time">2–4 weeks</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Job 2 — open the door for inspectors</h3>
+            <ul class="todo">
+              <li>
+                Let the <b>compliance inspectors</b> in (electrical, plumbing,
+                gas, electric fence, beetle) — we book them
+              </li>
+              <li>
+                Settle the <b>municipal rates</b> figure the attorney requests
+                (recovered at transfer)
+              </li>
+            </ul>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              🔧 For 23 Vredehoek Ave we now arrange the compliance certificates
+              (electrical, plumbing, gas, electric fence, beetle). We’ll book
+              inspectors and keep you posted — no action needed yet.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Nothing to do</h3>
-      <div class="relax"><span class="z">💤</span> Guarantees and rates clearance are the attorneys’ job — you get progress pings.</div>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📌 Transfer update for 23 Vredehoek Ave: Clearance &amp; guarantees in progress. Rates
-        clearance and bank guarantees are being arranged.
-        <span class="tick">✓✓</span></div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">10</div>
-      <div class="meta"><div class="stage-name">Clearance &amp; certificates</div>
-      <span class="stage-code">clearance</span>
-      <div class="stage-time">2–4 weeks</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Job 2 — open the door for inspectors</h3>
-      <ul class="todo">
-        <li>Let the <b>compliance inspectors</b> in (electrical, plumbing, gas, electric fence, beetle) — we book them</li>
-        <li>Settle the <b>municipal rates</b> figure the attorney requests (recovered at transfer)</li>
-      </ul>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        🔧 For 23 Vredehoek Ave we now arrange the compliance certificates (electrical, plumbing,
-        gas, electric fence, beetle). We’ll book inspectors and keep you posted — no action needed yet.
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="card buyer">
+            <span class="who">BUYER</span>
+            <h3>Nothing to do</h3>
+            <div class="relax">
+              <span class="z">⏳</span> The Deeds Office examines the documents.
+              We watch it daily.
+            </div>
+          </div>
+          <div class="spine">
+            <div class="stage-no">11</div>
+            <div class="meta">
+              <div class="stage-name">Lodgement</div>
+              <span class="stage-code">lodgement</span>
+              <div class="stage-time">7–10 working days</div>
+            </div>
+          </div>
+          <div class="card seller">
+            <span class="who">SELLER</span>
+            <h3>Nothing to do</h3>
+            <div class="relax">
+              <span class="z">⏳</span> Same message, same day — both of you
+              always know where it stands.
+            </div>
+            <div class="wa">
+              <div class="from">SOLD DIRECT</div>
+              📌 Transfer update for 23 Vredehoek Ave: Lodged at the Deeds
+              Office. Registration usually follows in 7–10 working days.
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
 
-  <div class="step">
-    <div class="card buyer">
-      <span class="who">BUYER</span>
-      <h3>Nothing to do</h3>
-      <div class="relax"><span class="z">⏳</span> The Deeds Office examines the documents. We watch it daily.</div>
-    </div>
-    <div class="spine">
-      <div class="stage-no">11</div>
-      <div class="meta"><div class="stage-name">Lodgement</div>
-      <span class="stage-code">lodgement</span>
-      <div class="stage-time">7–10 working days</div></div>
-    </div>
-    <div class="card seller">
-      <span class="who">SELLER</span>
-      <h3>Nothing to do</h3>
-      <div class="relax"><span class="z">⏳</span> Same message, same day — both of you always know where it stands.</div>
-      <div class="wa"><div class="from">SOLD DIRECT</div>
-        📌 Transfer update for 23 Vredehoek Ave: Lodged at the Deeds Office. Registration usually
-        follows in 7–10 working days.
-        <span class="tick">✓✓</span></div>
-    </div>
-  </div>
+        <div class="step">
+          <div class="milestone">
+            <div class="stage-no" style="margin: 0 auto 10px">12</div>
+            <b>Registered 🎉</b> <span class="stage-code">registered</span>
+            <p>
+              <b>Buyer:</b> ownership transfers to you — collect the keys on the
+              occupation date.&nbsp; <b>Seller:</b> the proceeds pay out from
+              the attorney’s trust account, and on the qualifying path you paid
+              <span class="save">R0 commission — a saving of ≈ R483 000</span>
+              on a R6m sale (vs 7% + VAT).
+            </p>
+            <div class="wa" style="margin: 12px auto 0">
+              <div class="from">SOLD DIRECT</div>
+              📌 Transfer update for 23 Vredehoek Ave: Registered 🎉. Ownership
+              is now transferred — congratulations!
+              <span class="tick">✓✓</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-  <div class="step">
-    <div class="milestone">
-      <div class="stage-no" style="margin:0 auto 10px;">12</div>
-      <b>Registered 🎉</b> <span class="stage-code">registered</span>
-      <p><b>Buyer:</b> ownership transfers to you — collect the keys on the occupation date.&nbsp;
-      <b>Seller:</b> the proceeds pay out from the attorney’s trust account, and on the qualifying
-      path you paid <span class="save">R0 commission — a saving of ≈ R483 000</span> on a R6m sale
-      (vs 7% + VAT).</p>
-      <div class="wa" style="margin:12px auto 0;"><div class="from">SOLD DIRECT</div>
-        📌 Transfer update for 23 Vredehoek Ave: Registered 🎉. Ownership is now transferred —
-        congratulations!
-        <span class="tick">✓✓</span></div>
+      <footer>
+        <p>
+          <b>How to read this:</b> stage codes (<span
+            style="font-family: ui-monospace, Menlo, monospace"
+            >enquiry → offer_otp → bond_application → bond_granted →
+            documents_fica → clearance → lodgement → registered</span
+          >) are the live statuses in the Sold Direct deal tracker — every
+          change is time-stamped, audited, and mirrored to both parties on
+          WhatsApp. Message previews are the actual templates sent by the
+          platform. Durations are typical for Western Cape transfers; either
+          party can reply in the chat at any stage and a human concierge steps
+          in. Cancellation is possible from any stage before registration. All
+          personal data is processed under POPIA with explicit consent captured
+          before anything is collected or shared.
+        </p>
+      </footer>
     </div>
-  </div>
-</section>
-
-<footer>
-  <p><b>How to read this:</b> stage codes (<span style="font-family:ui-monospace,Menlo,monospace">enquiry → offer_otp → bond_application → bond_granted →
-  documents_fica → clearance → lodgement → registered</span>) are the live statuses in the Sold Direct
-  deal tracker — every change is time-stamped, audited, and mirrored to both parties on WhatsApp.
-  Message previews are the actual templates sent by the platform. Durations are typical for Western
-  Cape transfers; either party can reply in the chat at any stage and a human concierge steps in.
-  Cancellation is possible from any stage before registration. All personal data is processed under
-  POPIA with explicit consent captured before anything is collected or shared.</p>
-</footer>
-
-</div>
-</body>
+  </body>
 </html>

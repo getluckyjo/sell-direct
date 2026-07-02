@@ -123,7 +123,16 @@ export function advanceIntake(state: IntakeState, input: string): IntakeResult {
       const completed = data as ListingDraft;
       return {
         state: { step: 'completed', data },
-        reply: `Done! Your listing "${completed.title}" in ${completed.suburb} at R${completed.priceZar.toLocaleString('en-ZA')} is live. 🎉 We'll start finding buyers.`,
+        // The certificate heads-up is Cape Town-specific and cost figures are
+        // "from" estimates — see docs/BOTTLENECKS.md §1.4–1.6 (verified).
+        reply:
+          `Done! Your listing "${completed.title}" in ${completed.suburb} at ` +
+          `R${completed.priceZar.toLocaleString('en-ZA')} is live. 🎉 We'll start finding buyers.\n\n` +
+          `💡 Plan ahead — every Cape Town sale needs compliance certificates before transfer: ` +
+          `electrical (from ~R800), water installation (Cape Town-only, from ~R500, must be fresh ` +
+          `for each transfer), gas (from ~R650), electric fence (from ~R600) and usually a beetle ` +
+          `certificate (from ~R400). Repairs are extra. Reply CERTS and we'll book trusted ` +
+          `inspectors early — sellers who sort these now avoid weeks of delay later.`,
         completed,
       };
     }

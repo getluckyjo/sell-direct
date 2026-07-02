@@ -21,6 +21,38 @@ export interface TransitionInput {
  * can never drift apart. Throws {@link InvalidTransitionError} for an
  * unauthorised transition.
  */
+export interface DealEventInput {
+  dealId: string;
+  actorType: 'seller' | 'buyer' | 'agent' | 'system';
+  note: string;
+}
+
+/**
+ * Append an audit event WITHOUT changing the deal's status — for milestones
+ * that happen within a stage (e.g. a bank decline during `bond_application`,
+ * answered by multi-bank resubmission). Keeps the append-only timeline honest
+ * about everything that happened, not only transitions.
+ */
+export async function recordDealEvent(
+  prisma: PrismaClient,
+  input: DealEventInput,
+) {
+  const deal = await prisma.deal.findUniqueOrThrow({
+    where: { id: input.dealId },
+    select: { id: true, status: true },
+  });
+  await prisma.dealEvent.create({
+    data: {
+      dealId: deal.id,
+      fromStatus: deal.status,
+      toStatus: deal.status,
+      actorType: input.actorType,
+      note: input.note,
+    },
+  });
+  return deal;
+}
+
 export async function transitionDeal(
   prisma: PrismaClient,
   input: TransitionInput,

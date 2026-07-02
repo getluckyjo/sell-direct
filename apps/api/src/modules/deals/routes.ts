@@ -1,11 +1,13 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { DEAL_STAGES, type DealStage } from '@sell-direct/shared';
 import { InvalidTransitionError } from './state-machine';
-import type { TransitionInput } from './service';
+import type { DealEventInput, TransitionInput } from './service';
 import type { DealRepository } from './repository';
 import { buildStageNotifications } from './stage-notifications';
 import type { Notifier } from '../notifications';
 import type { TemplateConfig } from '../notifications/templates';
+import { applyStageDeadlines } from '../deadlines';
+import type { DeadlineRepository } from '../deadlines';
 
 export interface DealRouteDeps {
   deals: DealRepository;
@@ -13,8 +15,14 @@ export interface DealRouteDeps {
   transition: (
     input: TransitionInput,
   ) => Promise<{ id: string; status: string }>;
+  /** Appends a within-stage audit event (no status change). */
+  recordEvent: (
+    input: DealEventInput,
+  ) => Promise<{ id: string; status: string }>;
   notifier: Notifier;
   templates: TemplateConfig;
+  /** When present, stage deadlines are created/resolved on each transition. */
+  deadlines?: DeadlineRepository;
   /** When set, the endpoint requires a matching `x-internal-token` header. */
   internalToken?: string;
   log?: (message: string, error?: unknown) => void;
@@ -90,6 +98,15 @@ export function registerDealRoutes(
         throw error;
       }
 
+      // Countdown engine: create this stage's deadlines, resolve completed ones.
+      if (deps.deadlines) {
+        try {
+          await applyStageDeadlines(deps.deadlines, id, body.to);
+        } catch (error) {
+          log('stage deadlines failed', error);
+        }
+      }
+
       const notifications = buildStageNotifications(body.to, {
         ...context,
         note: body.note,
@@ -114,6 +131,83 @@ export function registerDealRoutes(
       }
 
       return { deal: { id: deal.id, status: deal.status }, notified };
+    },
+  );
+
+  /**
+   * Bond declined by a bank — NOT a stage change (the deal stays in
+   * `bond_application`); we record the event and immediately reassure both
+   * parties with the multi-bank resubmission message. Verified basis: 45.5% of
+   * applications declined by one bank are approved by another
+   * (docs/BOTTLENECKS.md §1.1) — a decline must never read as the end.
+   */
+  app.post(
+    '/api/deals/:id/bond-declined',
+    {
+      preHandler: guard,
+      schema: {
+        body: {
+          type: 'object',
+          additionalProperties: false,
+          properties: {
+            bank: { type: 'string', maxLength: 100 },
+            note: { type: 'string', maxLength: 500 },
+          },
+        },
+      },
+    },
+    async (request, reply) => {
+      const { id } = request.params as { id: string };
+      const body = request.body as { bank?: string; note?: string };
+
+      const context = await deps.deals.getNotificationContext(id);
+      if (!context) return reply.code(404).send({ error: 'not_found' });
+
+      const bank = body.bank ? `${body.bank} ` : '';
+      await deps.recordEvent({
+        dealId: id,
+        actorType: 'system',
+        note:
+          body.note ??
+          `bond declined by ${body.bank ?? 'a bank'} — resubmitted to remaining banks`,
+      });
+
+      const stage = `Bond update — ${bank}declined, resubmitting`;
+      const detailBuyer =
+        'Don’t worry: nearly half of applications declined by one bank are ' +
+        'approved by another. We’ve already resubmitted to the remaining banks — ' +
+        'no action needed from you.';
+      const detailSeller =
+        'The buyer’s application is already with the remaining banks — nearly ' +
+        'half of first declines are approved elsewhere. We’ll update you the ' +
+        'moment there’s a decision.';
+
+      const templateId = deps.templates.transfer_status;
+      const sendUpdate = async (to: string, detail: string) => {
+        try {
+          await deps.notifier.send(
+            to,
+            `📌 Transfer update for ${context.property}: ${stage}. ${detail}`,
+            templateId
+              ? {
+                  templateId,
+                  variables: { '1': context.property, '2': stage, '3': detail },
+                }
+              : undefined,
+          );
+          return 1;
+        } catch (error) {
+          log('bond-declined notification failed', error);
+          return 0;
+        }
+      };
+
+      let notified = await sendUpdate(context.buyerPhone, detailBuyer);
+      if (context.sellerPhone) {
+        notified += await sendUpdate(context.sellerPhone, detailSeller);
+      }
+
+      return { deal: { id }, notified };
     },
   );
 }

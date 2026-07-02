@@ -142,9 +142,14 @@ export function buildStageNotifications(
       }
       out.push({
         to: ctx.buyerPhone,
+        // Ecosystem upsell rides the free-text detail variable — homeowners
+        // cover is genuinely needed before registration, so it's utility-first.
         ...transfer(
           'Clearance & guarantees in progress',
-          ctx.note ?? 'Rates clearance and bank guarantees are being arranged.',
+          ctx.note ??
+            'Rates clearance and bank guarantees are being arranged. Your bank ' +
+              'will need homeowners insurance in place before registration — ' +
+              'reply COVER and we’ll arrange competitive quotes, no obligation.',
         ),
       });
       return out;
@@ -162,7 +167,10 @@ export function buildStageNotifications(
       return both(
         transfer(
           'Registered 🎉',
-          ctx.note ?? 'Ownership is now transferred — congratulations!',
+          ctx.note ??
+            'Ownership is now transferred — congratulations! Need movers, ' +
+              'fibre or home insurance for the big day? Reply MOVE and we’ll ' +
+              'arrange trusted quotes.',
         ),
       );
 

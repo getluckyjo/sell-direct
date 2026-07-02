@@ -36,10 +36,15 @@ export async function handleBuyerEnquiry(
   return {
     buyerId: buyer.id,
     dealId: deal.id,
+    // "prime − 0.67%" is our originator's achieved average, never a promise,
+    // and many first-time buyers qualify for 100% bonds — both verified
+    // (docs/BOTTLENECKS.md §1.2–1.3). Keep that framing.
     reply:
       'Thanks for your interest! Want a free, no-obligation home-loan ' +
-      'pre-qualification right here? Reply YES and we’ll ask your consent ' +
-      'before sharing anything.',
+      'pre-qualification right here? Buyers applying through our multi-bank ' +
+      'partner achieved an average rate of prime −0.67% last quarter, and ' +
+      'many first-time buyers qualify for 100% (zero-deposit) loans. ' +
+      'Reply YES and we’ll ask your consent before sharing anything.',
   };
 }
 

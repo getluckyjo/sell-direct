@@ -82,19 +82,21 @@ never present as caps), plus the nudge to book inspections early rather than at 
 |---|---|---|---|---|
 | 1 | Listing/mandate | Overpricing → stale listing ⚠︎ | Suggested price range from comparable-sales data at intake; day-30/60 price-review nudge | intake ✅, data feed ⛔ |
 | 2 | Pre-qual | Affordability surprises | Deposit benchmarks + 100%-bond routing (§1.2) | flow 🟡 (consent gate ✅) |
-| 3 | OTP | Suspensive-condition lapses, counter-stalls ⚠︎ | **Deadline countdowns** on every suspensive condition (e.g. "bond condition: 9 days left"); auto-nudge the silent party after 48h | templates ✅, countdown engine ⛔ |
-| 4 | Bond | Single-bank declines | **Auto multi-bank resubmission + reassurance message** (§1.1) | notifier ✅, ooba API ⛔ |
-| 5 | FICA | Expired/wrong documents ⚠︎ | Checklist per party (✅ `fica_checklist` template) + **validate before forwarding** (dated ≤3 months, ID legible) so the attorney never bounces a pack | template ✅, validation ⛔ |
-| 6 | Compliance certs | CT water cert missed; beetle surprise; cost shock | §1.4–1.6 checklists, OTP clause default, early booking | template ✅, checklist copy ⛔ |
+| 3 | OTP | Suspensive-condition lapses, counter-stalls ⚠︎ | **Deadline countdowns** on every suspensive condition (e.g. "bond condition: 9 days left"); auto-nudge the silent party after 48h | **countdown engine ✅** (`deadlines/` — 21-day bond condition auto-created at `offer_otp`, 7/3/1-day reminders, auto-resolved) |
+| 4 | Bond | Single-bank declines | **Auto multi-bank resubmission + reassurance message** (§1.1) | **decline event ✅** (`POST /api/deals/:id/bond-declined` — audit event + both-party reassurance); ooba API ⛔ |
+| 5 | FICA | Expired/wrong documents ⚠︎ | Checklist per party (✅ `fica_checklist` template) + 7-day deadline countdown (✅) + **validate before forwarding** (dated ≤3 months, ID legible) | templates + countdown ✅, doc validation ⛔ |
+| 6 | Compliance certs | CT water cert missed; beetle surprise; cost shock | §1.4–1.6 checklists, OTP clause default, early booking | **checklist copy ✅** (listing-completion message + CERTS keyword), booking countdown ✅ |
 | 7 | Rates clearance | City turnaround, arrears disputes ⚠︎ | Attorney-request tracker + seller arrears check at listing ("any municipal arrears? settle early") | ⛔ + open question |
 | 8 | Transfer duty | SARS processing ⚠︎ | Buyer cost disclosure at OTP (duty ≈ R458k on R6m) + payment-deadline countdown | ⛔ |
 | 9 | Deeds Office | Rejection/re-lodgement, backlogs ⚠︎ | Lodgement status pings (✅ `transfer_status`); expectation-setting ("7–10 working days; rejections are common and fixable") | template ✅ |
 | 10 | Human factors | Silent party, attorney comms gap ⚠︎ | **Escalation triggers:** no reply in 72h → human concierge takes over; every stage change mirrored to *both* parties automatically (✅ built) | stage-mirror ✅, escalation ⛔ |
 
 **Already shipped** (this playbook plugs into it): stage-change notifications to both parties,
-FICA/certs/transfer templates, the transition endpoint, dispatcher + notifier.
-**Biggest new build:** the **deadline-countdown engine** (suspensive conditions, cert validity,
-document expiry) — one scheduler serving stages 3, 5, 6 and 8.
+FICA/certs/transfer templates, the transition endpoint, dispatcher + notifier, **the
+deadline-countdown engine** (hourly scheduler; tier-idempotent 7/3/1-day reminders), **the
+bond-decline event + reassurance flow**, and the **ecosystem upsell keywords** (CERTS / COVER /
+MOVE) woven into the stage messages — riding the free-text template variables, so no template
+re-approval was needed.
 
 ---
 

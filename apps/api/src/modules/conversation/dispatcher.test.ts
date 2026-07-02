@@ -136,4 +136,19 @@ describe('conversation dispatcher', () => {
     await expect(d.dispatcher.handle(inbound('list'))).resolves.toBeUndefined();
     expect(d.log).toHaveBeenCalled();
   });
+
+  it('acknowledges upsell keywords (CERTS/COVER/MOVE) instead of the list fallback', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('COVER'));
+    expect(d.sent[0].text).toMatch(/insurance/i);
+    expect(d.sent[0].text).not.toMatch(/reply "list"/i);
+
+    await d.dispatcher.handle(inbound('move please'));
+    expect(d.sent[1].text).toMatch(/movers/i);
+
+    await d.dispatcher.handle(inbound('certs'));
+    expect(d.sent[2].text).toMatch(/inspectors/i);
+    // no flows were started by upsell replies
+    expect(await d.intakeStore.get(PHONE)).toBeNull();
+  });
 });
