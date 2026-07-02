@@ -20,9 +20,35 @@ Once approved, copy each **Content SID (`HX…`)** into config and map it where 
 
 ---
 
+## Uploading for approval
+
+**Option A — one command (recommended).** `scripts/twilio-templates.mjs` creates all nine and
+submits them for WhatsApp approval via the Content API. It's safe to re-run (existing ones are
+reused, not duplicated) and needs only Node 18+.
+
+```bash
+# preview exactly what will be sent — no account needed:
+node scripts/twilio-templates.mjs --dry-run
+
+# then, with your Console → Account Info keys (never commit these):
+TWILIO_ACCOUNT_SID=AC... TWILIO_AUTH_TOKEN=... node scripts/twilio-templates.mjs
+```
+
+It prints `TEMPLATE_<KEY>=HX…` lines — paste those into your API env (Railway / `.env`). Watch
+approval status in **Console → Messaging → Content Template Builder**.
+
+> You can run this now, before the sender number is approved — templates are account-level and
+> approve independently of the sender.
+
+**Option B — manual.** In **Content Template Builder → Create new**, pick the content type below
+(text or quick-reply), paste the body, add the variables, then **Submit for WhatsApp approval** with
+the stated category.
+
+---
+
 ## The templates
 
-### 1. `welcome_consent` — first contact + POPIA consent · UTILITY · quick-reply
+### 1. `welcome_consent` — first contact + POPIA consent · MARKETING · quick-reply
 > Hi {{1}} 👋 Welcome to *Sold Direct* — sell your home with **0% commission**. Before we start we
 > need your consent to process your details under POPIA. Do you agree?
 
