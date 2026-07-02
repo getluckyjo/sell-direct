@@ -2,8 +2,12 @@ import { Prisma, type PrismaClient } from '@prisma/client';
 import type { InboundMessage, OutboundMessage } from './types';
 
 export interface MessageRepository {
-  /** Persist an inbound message; idempotent on `waMessageId` (Meta may redeliver). */
-  recordInbound(message: InboundMessage): Promise<void>;
+  /**
+   * Persist an inbound message; idempotent on `waMessageId` (providers may
+   * redeliver). Returns `true` if newly stored, `false` if it was a duplicate —
+   * callers use this to avoid processing/replying to the same message twice.
+   */
+  recordInbound(message: InboundMessage): Promise<boolean>;
   /** Persist an outbound message we sent. */
   recordOutbound(
     message: OutboundMessage & { from: string; waMessageId?: string },
@@ -35,8 +39,9 @@ export function createPrismaMessageRepository(
             raw: (message.raw ?? Prisma.JsonNull) as Prisma.InputJsonValue,
           },
         });
+        return true;
       } catch (error) {
-        if (isUniqueViolation(error)) return; // already stored — ignore redelivery
+        if (isUniqueViolation(error)) return false; // already stored — ignore redelivery
         throw error;
       }
     },

@@ -21,8 +21,9 @@ describe('prisma message repository', () => {
     const create = vi.fn().mockResolvedValue({});
     const repo = createPrismaMessageRepository(fakePrisma(create));
 
-    await repo.recordInbound(inbound);
+    const stored = await repo.recordInbound(inbound);
 
+    expect(stored).toBe(true);
     expect(create).toHaveBeenCalledOnce();
     expect(create.mock.calls[0][0].data).toMatchObject({
       direction: 'inbound',
@@ -32,7 +33,7 @@ describe('prisma message repository', () => {
     });
   });
 
-  it('swallows a duplicate (P2002) so redelivery is idempotent', async () => {
+  it('swallows a duplicate (P2002) and reports it was not newly stored', async () => {
     const create = vi.fn().mockRejectedValue(
       new Prisma.PrismaClientKnownRequestError('duplicate', {
         code: 'P2002',
@@ -41,7 +42,7 @@ describe('prisma message repository', () => {
     );
     const repo = createPrismaMessageRepository(fakePrisma(create));
 
-    await expect(repo.recordInbound(inbound)).resolves.toBeUndefined();
+    await expect(repo.recordInbound(inbound)).resolves.toBe(false);
   });
 
   it('rethrows non-duplicate errors', async () => {

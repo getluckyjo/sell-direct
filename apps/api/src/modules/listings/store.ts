@@ -16,7 +16,10 @@ export function createPrismaConversationStore(
       const row = await prisma.conversationState.findUnique({
         where: { phone },
       });
-      if (!row) return null;
+      // Only surface listing-intake conversations — a phone's single
+      // conversation row may instead belong to another flow (e.g. buyer
+      // pre-qualification), which this store must not misread as a draft.
+      if (!row || row.flow !== 'listing_intake') return null;
       return {
         step: row.step as IntakeStep,
         data: row.data as Partial<ListingDraft>,

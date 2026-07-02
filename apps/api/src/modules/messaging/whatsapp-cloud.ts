@@ -5,7 +5,17 @@ import type {
   MessagingAdapter,
   OutboundMessage,
   SendResult,
+  WebhookVerifyContext,
 } from './types';
+
+/** Read a single header value regardless of string / string[] shape. */
+function headerValue(
+  headers: WebhookVerifyContext['headers'],
+  name: string,
+): string | undefined {
+  const v = headers[name];
+  return Array.isArray(v) ? v[0] : v;
+}
 
 export interface WhatsAppCloudConfig {
   verifyToken: string;
@@ -70,15 +80,13 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
     return null;
   }
 
-  verifySignature(
-    rawBody: string,
-    signatureHeader: string | undefined,
-  ): boolean {
+  verifySignature(ctx: WebhookVerifyContext): boolean {
+    const signatureHeader = headerValue(ctx.headers, 'x-hub-signature-256');
     if (!signatureHeader || !this.config.appSecret) return false;
     const expected =
       'sha256=' +
       createHmac('sha256', this.config.appSecret)
-        .update(rawBody, 'utf8')
+        .update(ctx.rawBody, 'utf8')
         .digest('hex');
     const received = Buffer.from(signatureHeader);
     const computed = Buffer.from(expected);

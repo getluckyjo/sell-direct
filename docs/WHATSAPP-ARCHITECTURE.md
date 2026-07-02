@@ -16,9 +16,11 @@
 - **Every conversation flow is built and unit-tested** (listing intake, deal state machine, buyer
   enquiry, bond-referral consent), **but none are wired to the live webhook yet.** Today an inbound
   message is only *logged*; the system never dispatches it to a flow and never sends a reply.
-- To go live on Twilio you need, in order: a **Twilio WhatsApp adapter**, a **dispatcher** that
-  routes inbound messages to flows and sends replies, a **notifications module**, and **approved
-  message templates**. Section 6 is the ordered checklist.
+- **Update (this PR):** the **Twilio adapter**, **BSP factory**, **dispatcher** (routes inbound →
+  intake / enquiry / pre-qual and replies), and **notifications** service are now **built and
+  tested**. Remaining to go live: an **approved sender number** (in progress) and **approved message
+  templates** (`docs/whatsapp-templates.md`), then flip `WHATSAPP_BSP=twilio`. Section 6 is the
+  ordered checklist.
 
 ---
 
@@ -48,13 +50,13 @@ flowchart LR
 | Webhook routes | `.../messaging/routes.ts` | ✅ | `GET /api/webhooks/whatsapp` (challenge) + `POST` (verify → parse → persist → `200`). |
 | Message persistence | `.../messaging/repository.ts` | ✅ | Writes `messages`; idempotent on `waMessageId` (swallows Prisma `P2002`). `recordOutbound` exists but is **never called**. |
 | Server wiring + raw body | `apps/api/src/app.ts` | ✅ | Registers webhook, leads, dashboard; raw-body JSON parser feeds signature check; `GET /health`. |
-| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | 🟡 | Scripted state machine `awaiting_title→suburb→price→bedrooms→bathrooms→exclusivity→completed`; trigger `^(list\|sell)`. Built + tested, **not wired**. |
-| Deal state machine | `.../deals/state-machine.ts`, `service.ts` | 🟡 | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. Built + tested, **no caller advances a deal**. |
-| Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | 🟡 | Buyer → deal at `enquiry`; consent-gated pre-qual. Built + tested, **not wired**. |
-| Finance / ooba referral | `.../finance/ooba-stub.ts`, `types.ts` | 🟡 | `FinanceReferralAdapter` seam + POPIA consent gate; **ObaReferralStub logs only**, returns synthetic id. |
-| Dispatcher / router | — | ⛔ | **Nothing routes an inbound message to a flow.** The single biggest gap. |
-| Notifications | `.../notifications/` | ⛔ | Empty (`.gitkeep`). No outbound is ever triggered. |
-| Twilio adapter | — | ⛔ | Only the Meta adapter exists. Twilio is named in docs only. |
+| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_title→suburb→price→bedrooms→bathrooms→exclusivity→completed`; trigger `^(list\|sell)`. **Wired via the dispatcher** (seller flow). |
+| Deal state machine | `.../deals/state-machine.ts`, `service.ts` | 🟡 | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. Enquiry deals are created; **advancing beyond `enquiry` is not yet wired** (external-party flows). |
+| Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
+| Finance / ooba referral | `.../finance/ooba-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **ObaReferralStub logs only** (real ooba API pending). |
+| Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
+| Notifications | `.../notifications/index.ts` | ✅ | `Notifier` sends via the adapter and persists the outbound message. |
+| Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates). Select with `WHATSAPP_BSP=twilio`. |
 
 **Deal stages (SA transfer journey):**
 `enquiry → offer_otp → bond_application → bond_granted → documents_fica → clearance → lodgement → registered` (plus `cancelled` from any non-terminal stage). Transitions are strictly forward one step; every change writes a timestamped, actor-stamped `deal_events` row. **Actor types today:** `seller | buyer | agent | system` — no external-party actor.
@@ -168,7 +170,8 @@ state machine or the DB lives in Twilio.
 ### 5.2 Message templates (the part that needs lead time)
 Anything **you initiate outside the 24-hour session window must be a pre-approved template.** Author
 them in Twilio's **Content Template Builder** and submit for WhatsApp approval (categories: *utility*
-vs *marketing*). Concrete templates the journeys need:
+vs *marketing*). **Paste-ready drafts for all nine are in `docs/whatsapp-templates.md`.** Concrete
+templates the journeys need:
 
 | Template | Trigger | Category | Variables |
 |---|---|---|---|
@@ -192,8 +195,8 @@ Free-form replies **within** 24h of the user's last message don't need a templat
 - Twilio POSTs **`application/x-www-form-urlencoded`** (`From`, `To`, `Body`, `MessageSid`,
   `NumMedia`, `ButtonText`…) — different from Meta's JSON. Hence the new adapter below.
 
-### 5.4 Adapter work (next PR — specified here, not built this session)
-Add `TwilioWhatsAppAdapter implements MessagingAdapter` in `apps/api/src/modules/messaging/`:
+### 5.4 Adapter work — ✅ BUILT (`apps/api/src/modules/messaging/twilio.ts`)
+`TwilioWhatsAppAdapter implements MessagingAdapter`:
 - **`verifySignature`** — validate `X-Twilio-Signature` (base64 HMAC-**SHA1** of the full URL +
   alphabetically-sorted POST params, keyed by `TWILIO_AUTH_TOKEN`; Twilio's SDK `RequestValidator`
   does this). Note: this needs the **form params + exact URL**, so the webhook must expose them (a
@@ -226,20 +229,22 @@ category-based conversation price). This is the "BSP/Twilio markup" flagged as a
 
 Each item maps to an existing seam, so it's incremental:
 
-1. **Twilio adapter + BSP factory** (§5.4) — `MessagingAdapter` seam already exists. ⛔
-2. **Dispatcher** — after `recordInbound`, route by phone/conversation to intake / enquiry / consent
-   / deal-command, then call `adapter.send()` **and** `repository.recordOutbound()` (both already
-   exist, just uncalled). Construct the flow services in `app.ts` (they aren't today). ⛔
-3. **Notifications module** — a thin service the flows call to send templated/session messages. ⛔
-4. **Approved templates** in Twilio (§5.2) — start now; approval takes time. ⛔
-5. **Real ooba adapter** — replace `ObaReferralStub` using `ORIGINATOR_*` env. 🟡→✅
+1. **Twilio adapter + BSP factory** (§5.4) — ✅ done (`twilio.ts`, `factory.ts`, `WHATSAPP_BSP`).
+2. **Dispatcher** — ✅ done. After `recordInbound` (now returns whether the message was *new*), routes
+   by phone/conversation to intake / enquiry / consent and replies via the notifier
+   (`conversation/dispatcher.ts`); flow services constructed in `app.ts`.
+3. **Notifications** — ✅ done (`notifications/index.ts`): sends via the adapter + persists outbound.
+4. **Approved templates** in Twilio (§5.2) — 🟡 drafted in `docs/whatsapp-templates.md`; submit for
+   approval (needs the sender number, in progress).
+5. **Real ooba adapter** — replace `ObaReferralStub` using `ORIGINATOR_*` env. 🟡
 6. **External-party models + actor type** — conveyancer/bank/originator party records; extend
-   `DealEvent.actorType`; their inbound/outbound templates. ⛔
+   `DealEvent.actorType`; deal-advancement beyond `enquiry`; their inbound/outbound templates. ⛔
 7. **e-sign, syndication, FICA + Storage + field encryption** — the remaining transfer-journey
    integrations; wire `StorageProvider` + `FIELD_ENCRYPTION_KEY`. ⛔
 
-**Minimum viable live loop = items 1 + 2 + 3 + 4** (transport on Twilio, a dispatcher that replies,
-and the first few approved templates). Everything else deepens the journey.
+**Minimum viable live loop = items 1 + 2 + 3 + 4.** Items 1–3 are now built; the loop goes live the
+moment the **sender number is approved** and the **templates are approved** — then set
+`WHATSAPP_BSP=twilio` and the Twilio env keys on Railway.
 
 ---
 

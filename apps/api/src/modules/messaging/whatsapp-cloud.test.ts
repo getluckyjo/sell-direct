@@ -23,6 +23,17 @@ function sign(body: string): string {
   );
 }
 
+function ctx(rawBody: string, signature?: string) {
+  return {
+    rawBody,
+    body: {},
+    headers: signature
+      ? { 'x-hub-signature-256': signature }
+      : ({} as Record<string, string | string[] | undefined>),
+    url: 'https://api.example/api/webhooks/whatsapp',
+  };
+}
+
 const SAMPLE_INBOUND = {
   object: 'whatsapp_business_account',
   entry: [
@@ -83,16 +94,16 @@ describe('WhatsAppCloudAdapter.verifyChallenge', () => {
 describe('WhatsAppCloudAdapter.verifySignature', () => {
   it('accepts a correct signature', () => {
     const body = JSON.stringify(SAMPLE_INBOUND);
-    expect(adapter.verifySignature(body, sign(body))).toBe(true);
+    expect(adapter.verifySignature(ctx(body, sign(body)))).toBe(true);
   });
 
   it('rejects a tampered body', () => {
     const body = JSON.stringify(SAMPLE_INBOUND);
-    expect(adapter.verifySignature(body + ' ', sign(body))).toBe(false);
+    expect(adapter.verifySignature(ctx(body + ' ', sign(body)))).toBe(false);
   });
 
   it('rejects a missing signature header', () => {
-    expect(adapter.verifySignature('{}', undefined)).toBe(false);
+    expect(adapter.verifySignature(ctx('{}', undefined))).toBe(false);
   });
 });
 

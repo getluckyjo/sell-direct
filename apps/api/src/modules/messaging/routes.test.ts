@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { buildServer } from '../../app';
 import type { MessagingAdapter } from './types';
 import type { MessageRepository } from './repository';
+import type { InboundDispatcher } from './routes';
 
 function fakeAdapter(
   overrides: Partial<MessagingAdapter> = {},
@@ -15,20 +16,42 @@ function fakeAdapter(
   };
 }
 
-function fakeRepository(): MessageRepository & {
-  recordInbound: ReturnType<typeof vi.fn>;
-} {
+function fakeRepository(
+  storedResult = true,
+): MessageRepository & { recordInbound: ReturnType<typeof vi.fn> } {
   return {
-    recordInbound: vi.fn().mockResolvedValue(undefined),
+    recordInbound: vi.fn().mockResolvedValue(storedResult),
     recordOutbound: vi.fn().mockResolvedValue(undefined),
   };
 }
+
+function fakeDispatcher(): InboundDispatcher & {
+  handle: ReturnType<typeof vi.fn>;
+} {
+  return { handle: vi.fn().mockResolvedValue(undefined) };
+}
+
+const oneMessage = () =>
+  fakeAdapter({
+    verifySignature: () => true,
+    parseInbound: () => [
+      {
+        waMessageId: 'wamid.1',
+        from: '27820001111',
+        to: '27210000000',
+        type: 'text',
+        text: 'hi',
+        raw: {},
+      },
+    ],
+  });
 
 describe('GET /api/webhooks/whatsapp (verification handshake)', () => {
   it('echoes the challenge on success', async () => {
     const app = buildServer({
       adapter: fakeAdapter({ verifyChallenge: () => '99' }),
       repository: fakeRepository(),
+      dispatcher: fakeDispatcher(),
     });
     const res = await app.inject({
       method: 'GET',
@@ -43,6 +66,7 @@ describe('GET /api/webhooks/whatsapp (verification handshake)', () => {
     const app = buildServer({
       adapter: fakeAdapter({ verifyChallenge: () => null }),
       repository: fakeRepository(),
+      dispatcher: fakeDispatcher(),
     });
     const res = await app.inject({
       method: 'GET',
@@ -54,24 +78,10 @@ describe('GET /api/webhooks/whatsapp (verification handshake)', () => {
 });
 
 describe('POST /api/webhooks/whatsapp (inbound)', () => {
-  it('persists parsed messages and acknowledges', async () => {
-    const repository = fakeRepository();
-    const app = buildServer({
-      adapter: fakeAdapter({
-        verifySignature: () => true,
-        parseInbound: () => [
-          {
-            waMessageId: 'wamid.1',
-            from: '27820001111',
-            to: '27210000000',
-            type: 'text',
-            text: 'hi',
-            raw: {},
-          },
-        ],
-      }),
-      repository,
-    });
+  it('persists, dispatches, and acknowledges a new message', async () => {
+    const repository = fakeRepository(true);
+    const dispatcher = fakeDispatcher();
+    const app = buildServer({ adapter: oneMessage(), repository, dispatcher });
 
     const res = await app.inject({
       method: 'POST',
@@ -86,14 +96,38 @@ describe('POST /api/webhooks/whatsapp (inbound)', () => {
     expect(res.statusCode).toBe(200);
     expect(res.json()).toEqual({ received: 1 });
     expect(repository.recordInbound).toHaveBeenCalledOnce();
+    expect(dispatcher.handle).toHaveBeenCalledOnce();
+    await app.close();
+  });
+
+  it('does not dispatch a duplicate (already-stored) message', async () => {
+    const repository = fakeRepository(false); // recordInbound → not newly stored
+    const dispatcher = fakeDispatcher();
+    const app = buildServer({ adapter: oneMessage(), repository, dispatcher });
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/webhooks/whatsapp',
+      headers: {
+        'content-type': 'application/json',
+        'x-hub-signature-256': 'sha256=whatever',
+      },
+      payload: JSON.stringify({ entry: [] }),
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(repository.recordInbound).toHaveBeenCalledOnce();
+    expect(dispatcher.handle).not.toHaveBeenCalled();
     await app.close();
   });
 
   it('rejects an invalid signature with 401 and persists nothing', async () => {
     const repository = fakeRepository();
+    const dispatcher = fakeDispatcher();
     const app = buildServer({
       adapter: fakeAdapter({ verifySignature: () => false }),
       repository,
+      dispatcher,
     });
 
     const res = await app.inject({
@@ -108,6 +142,7 @@ describe('POST /api/webhooks/whatsapp (inbound)', () => {
 
     expect(res.statusCode).toBe(401);
     expect(repository.recordInbound).not.toHaveBeenCalled();
+    expect(dispatcher.handle).not.toHaveBeenCalled();
     await app.close();
   });
 });
