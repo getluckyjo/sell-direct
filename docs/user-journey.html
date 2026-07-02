@@ -91,18 +91,12 @@
     margin-top: 18px; position: relative;
   }
   .spine {
-    text-align: center; padding-top: 4px; position: relative;
+    text-align: center; padding-top: 4px;
   }
-  .spine::before {           /* connecting line */
-    content: ""; position: absolute; left: 50%; top: 44px; bottom: -22px;
-    width: 2px; background: var(--hairline); transform: translateX(-50%);
-  }
-  .phase .step:last-child .spine::before { display: none; }
   .stage-no {
     width: 34px; height: 34px; border-radius: 50%; margin: 0 auto;
     display: flex; align-items: center; justify-content: center;
     background: var(--ink); color: var(--page); font-weight: 700; font-size: 14px;
-    position: relative; z-index: 1;
   }
   .stage-name { font-weight: 700; font-size: 13.5px; margin-top: 8px; }
   .stage-code {
