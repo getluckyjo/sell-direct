@@ -157,7 +157,7 @@ export const SCENES: Scene[] = [
     track: 0,
     from: 'bot',
     kind: 'text',
-    text: 'Two ways to sell, Maria:\n\n🟢 Free (0%) — list exclusively with us for 90 days and transact through our bond & legal partners.\n🔵 Flex — a small flat fee, total freedom.\n\nWhich suits you?',
+    text: 'Two ways to sell, Maria:\n\n🟢 Free (0%) — list exclusively with us for 90 days and transact through our bond & legal partners.\n🔵 Flex — just 1% of the sale price, total freedom.\n\nWhich suits you?',
     note: {
       tag: 'Revenue',
       title: 'Conditional 0% — the model',

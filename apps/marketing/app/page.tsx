@@ -36,13 +36,13 @@ const TIERS = [
   },
   {
     name: 'Flex',
-    price: 'Low flat fee',
+    price: '1% of sale',
     tagline: 'No lock-in',
     highlight: false,
     points: [
       'Same platform, no exclusivity',
       'Use your own bank or attorney',
-      'A simple, transparent flat fee',
+      'A simple 1% fee — only when you sell',
     ],
     foot: 'For sellers who want freedom over the lowest price.',
   },
@@ -273,8 +273,8 @@ export default function Home() {
           </h2>
           <p className="mt-2 max-w-2xl text-slate-600">
             It&apos;s free when you list exclusively and transact through our
-            partner ecosystem. Want freedom instead? The Flex tier is a simple,
-            transparent flat fee.
+            partner ecosystem. Want freedom instead? The Flex tier is a simple
+            1% of the sale price — only payable when you sell.
           </p>
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {TIERS.map((tier) => (

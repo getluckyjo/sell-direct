@@ -16,7 +16,7 @@ const CHAPTERS = [
     points: [
       'Starts in WhatsApp from solddirect.co.za — no app, no portal login',
       'POPIA consent captured first; owner confirmed',
-      'Chooses Free (0%, exclusive) or Flex (low flat fee)',
+      'Chooses Free (0%, exclusive) or Flex (1% of sale price)',
       'Sole mandate e-signed; guided intake builds a structured listing',
       'Listing live & syndicated to Property24 / Private Property',
     ],
