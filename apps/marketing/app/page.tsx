@@ -112,8 +112,8 @@ export default function Home() {
             Cape Town • WhatsApp-first • 0% commission
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
-            Sell your home, direct.{' '}
-            <span className="text-emerald-300">On WhatsApp.</span>
+            Sell your home direct.{' '}
+            <span className="text-emerald-300">Keep your money.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-100">
             The streamlined way to sell privately — guided end-to-end by our
