@@ -16,8 +16,8 @@ building.
   stages** (enquiry → offer → bond → FICA → clearance → lodgement → registration).
 - **Internal dashboard** ("control room"): listings, deals, and a live status
   timeline — access-gated.
-- **Public marketing site** — "0% commission, keep your money" positioning +
-  **waitlist capture**.
+- **Public marketing site** — "sell your home, direct — on WhatsApp" positioning
+  (streamlined private sales; agent-respectful, PPRA-aligned) + **waitlist capture**.
 - **Investor site** — public teaser + **gated data-room request** (no confidential
   numbers or partners exposed).
 - **Built to last:** typed end-to-end, CI on every change, **privacy-by-design**

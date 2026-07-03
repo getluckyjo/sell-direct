@@ -49,7 +49,7 @@ export function WaitlistForm() {
           You&apos;re on the list 🎉
         </p>
         <p className="mt-1 text-sm text-emerald-700">
-          We&apos;ll be in touch as we open up Cape Town. Keep your money.
+          We&apos;ll be in touch as we open up Cape Town. Sell direct.
         </p>
       </div>
     );

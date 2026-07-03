@@ -59,9 +59,15 @@ banks**. **In Year 1** the bond is placed via our multi-bank originator (**ooba*
 **origination referral (~0.5% of bond)**. **From Year 2 we bring origination in-house, working
 directly with the banks** under our own aggregation agreements, capturing the **full origination
 commission (~1.5% of bond)** — roughly **3× the referral**. **Otherwise a 1% facilitation fee**
-applies on the price (cash, sub-80%, or buyers who won't use our partners) — still **~6× cheaper**
-than 5–7% agent commission. Separately, a bank pays a **headline-sponsorship fee** to be the
-featured brand on the platform (advertising, not steering).
+applies on the price (cash, sub-80%, or buyers who won't use our partners) — **~6× less than a
+typical full-service commission (5–7% + VAT)**, stated as a neutral benchmark. Separately, a bank
+pays a **headline-sponsorship fee** to be the featured brand on the platform (advertising, not
+steering).
+
+> **Segment positioning:** Sold Direct is **complementary to, not competing with, full-service
+> agents** — we serve sellers who choose to sell privately and do the work themselves, assisted by
+> our **own employed, registered property practitioners (PPRA/FFC)** and WhatsApp concierge. No
+> anti-agent marketing; zero friction with the PPRA by design.
 
 > ⚠️ **Why not a single-bank prerequisite:** making one bank a condition of the 0% is legally grey
 > (consumer-steering, competition, PPRA). Replaced by the bank-agnostic referral/origination above +

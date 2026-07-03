@@ -4,14 +4,18 @@ All figures **ZAR**. Linked live to the model on the **Market Sizing** tab of
 `sold-direct-model.xlsx`. Estimates carry the reliability flags from `00-assumptions.md`; the
 segment-pool count is the weakest input and must be confirmed.
 
-## 1. The market we disrupt (context)
+## 1. The market context
 
 | | Value | Source |
 |---|---|---|
 | SA annual residential transfers | **~250,000** | Lightstone 2024 (range 207k–277k) |
 | Avg transaction price (national) | **~R1.4m** | Lightstone Q1 2024 |
 | Total annual transaction value | **~R350bn** | derived |
-| **Agent-commission pool / yr** (6% + VAT) | **~R24bn** | the cost we remove from the market |
+| **Full-service commission pool / yr** (6% + VAT) | **~R24bn** | what sellers currently pay for full service — context for the scale of the private-sale segment we serve |
+
+> **Positioning:** full-service agents continue to serve the majority who want full service; Sold
+> Direct serves the segment who **choose to sell privately** and do the work themselves — with our
+> own employed, registered practitioners assisting. Complementary, not adversarial.
 
 ## 2. TAM — addressable revenue pool
 
@@ -65,8 +69,9 @@ upper-market** — a far more defensible ask. Sensitivity to the (estimated) poo
 
 ## 6. Consumer value — commission saved
 
-In SA the **seller** carries the agent commission, so the hard saving accrues to sellers; buyers
-benefit via free bond pre-qualification, no agent mark-up, and a faster, transparent process.
+In SA the **seller** carries the commission on a full-service sale, so the hard saving accrues to
+sellers who choose the self-service path; buyers benefit via free bond pre-qualification, no
+commission on the qualifying path, and a faster, transparent process.
 
 | | Y1 | Y3 | Y5 |
 |---|---:|---:|---:|
@@ -74,9 +79,10 @@ benefit via free bond pre-qualification, no agent mark-up, and a faster, transpa
 | Annual consumer saving | R20.5m | R205m | **R733m** |
 | Cumulative saving | R20.5m | R305m | **~R1.46bn** |
 
-> **By Year 5, Sold Direct saves South African sellers ~R733m/year in commission — ~R1.46bn
-> cumulatively over five years** (lower per-sale than the prime-only model because of the taper,
-> but across more, broader deals). The consumer-value and PR/regulatory-goodwill story holds:
-> we transfer industry inefficiency back to homeowners.
+> **By Year 5, Sold Direct's sellers keep ~R733m/year that a full-service sale would have cost —
+> ~R1.46bn cumulatively over five years** (lower per-sale than the prime-only model because of the
+> taper, but across more, broader deals). The consumer-value and regulatory-goodwill story holds:
+> we return value to sellers who choose the self-service path, while full-service agents continue
+> to serve those who want them.
 
 *(Figures use a 6% + VAT benchmark and the base-case deal ramp; all editable on the Market Sizing tab.)*

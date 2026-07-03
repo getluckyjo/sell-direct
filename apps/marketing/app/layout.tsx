@@ -3,9 +3,9 @@ import type { ReactNode } from 'react';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Sold Direct — Sell your home, keep your money',
+  title: 'Sold Direct — Sell your home, direct. On WhatsApp.',
   description:
-    '0% commission for buyers and sellers in Cape Town. We get paid by the banks, not by you. Manage your whole property sale from WhatsApp.',
+    'The streamlined way to sell your Cape Town home privately — 0% commission on the qualifying path, guided on WhatsApp by our technology, concierge and registered property practitioners.',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

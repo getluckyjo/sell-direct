@@ -5,7 +5,7 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 const STEPS = [
   {
     title: 'List on WhatsApp',
-    body: 'Answer a few guided questions and add photos. Your listing is live in minutes — no agent visit needed.',
+    body: 'Answer a few guided questions and add photos. Self-guided on WhatsApp — your listing is live in minutes.',
   },
   {
     title: 'Buyers enquire & pre-qualify',
@@ -42,7 +42,7 @@ const TIERS = [
     points: [
       'Same platform, no exclusivity',
       'Use your own bank or attorney',
-      'Still far cheaper than traditional commission',
+      'A simple, transparent flat fee',
     ],
     foot: 'For sellers who want freedom over the lowest price.',
   },
@@ -109,13 +109,14 @@ export default function Home() {
             Cape Town • WhatsApp-first • 0% commission
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
-            Sell your home.{' '}
-            <span className="text-emerald-300">Keep your money.</span>
+            Sell your home, direct.{' '}
+            <span className="text-emerald-300">On WhatsApp.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-100">
-            0% commission for buyers and sellers. We get paid by the banks, not
-            by you — and you manage the whole sale from WhatsApp, all the way to
-            transfer.
+            The streamlined way to sell privately — guided end-to-end by our
+            technology, concierge team and registered property practitioners,
+            with 0% commission on the qualifying path. We get paid by the banks,
+            not by you.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -134,30 +135,54 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Problem */}
+      {/* Who it's for */}
       <section className="border-y border-slate-100 bg-slate-50">
         <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 sm:grid-cols-3">
           <div className="sm:col-span-2">
             <h2 className="text-2xl font-bold sm:text-3xl">
-              Commission is the biggest, most resented cost in a sale.
+              Made for sellers who choose to sell direct.
             </h2>
             <p className="mt-3 max-w-xl text-slate-600">
-              On an average R6m Cape Town home, traditional estate-agent
-              commission of 5–7% plus VAT approaches half a million rand out of
-              the seller&apos;s pocket — for work many sellers feel they could
-              partly do themselves.
+              Estate agents play a valuable role in South African property, and
+              a full-service sale is the right choice for many. Sold Direct is
+              built for a different seller: the growing group who want to sell
+              privately and do the work themselves. Our technology, WhatsApp
+              concierge and registered property practitioners streamline every
+              step — so selling direct is simple, safe and fully compliant.
             </p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-white p-6">
             <p className="text-sm text-slate-500">
-              Typical agent commission (5–7% + VAT)
+              Typical full-service commission (5–7% + VAT)
             </p>
-            <p className="mt-1 text-3xl font-extrabold text-slate-400 line-through">
+            <p className="mt-1 text-3xl font-extrabold text-slate-600">
               R345k–R483k
             </p>
-            <p className="mt-4 text-sm text-slate-500">With Sold Direct</p>
+            <p className="mt-4 text-sm text-slate-500">
+              Sold Direct qualifying path
+            </p>
             <p className="mt-1 text-4xl font-extrabold text-emerald-600">R0</p>
+            <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">
+              Commission pays for a full-service agent. If you handle the
+              viewings yourself — with our tools and team behind you — you keep
+              it.
+            </p>
           </div>
+        </div>
+      </section>
+
+      {/* People + technology */}
+      <section className="mx-auto max-w-6xl px-6 pt-14">
+        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-6 sm:flex sm:items-center sm:gap-6">
+          <p className="text-sm text-emerald-900">
+            <span className="font-semibold">
+              People + technology, on your side.
+            </span>{' '}
+            Our team includes registered property practitioners (PPRA, with a
+            valid Fidelity Fund Certificate) and a WhatsApp concierge. The
+            technology does the admin — our people help you sell, from mandate
+            to registration.
+          </p>
         </div>
       </section>
 
@@ -239,8 +264,8 @@ export default function Home() {
           </h2>
           <p className="mt-2 max-w-2xl text-slate-600">
             It&apos;s free when you list exclusively and transact through our
-            partner ecosystem. Want freedom instead? The Flex tier is still the
-            cheapest credible option in the market.
+            partner ecosystem. Want freedom instead? The Flex tier is a simple,
+            transparent flat fee.
           </p>
           <div className="mt-10 grid gap-6 lg:grid-cols-3">
             {TIERS.map((tier) => (

@@ -16,11 +16,15 @@ model-grade (see sourcing caveats in each document).
 
 ## Strategy: land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
 
-**Land at prime** (Atlantic Seaboard, City Bowl, Southern Suburbs, Constantia) and **taper the
-average transacting price down (R6.5m → R4.0m) as the brand scales**, broadening into the
-upper-market to grow from a far larger pool and cut market-share risk. Run by a small
-**AI-augmented** team (50% AI agents), **reinvesting the high gross margin into above-the-line
-(brand) marketing** to drive the deal ramp. Legally-clean monetisation: (1) free 0% via a
+**We serve the private-sale segment** — sellers who choose to sell direct and do the work
+themselves — assisted by our **own employed, registered property practitioners (PPRA/FFC)** and
+WhatsApp concierge. **Complementary to full-service agents, not adversarial** (no anti-agent
+marketing; zero PPRA friction by design). **Land at prime** (Atlantic Seaboard, City Bowl,
+Southern Suburbs, Constantia) and **taper the average transacting price down (R6.5m → R4.0m) as
+the brand scales**, broadening into the upper-market to grow from a far larger pool and cut
+market-share risk. Run by a small **AI-augmented** team (50% AI agents), **reinvesting the high
+gross margin into above-the-line (brand) marketing** to drive the deal ramp. Legally-clean
+monetisation: (1) free 0% via a
 **qualifying ≥80% bond** — **Year 1 via our multi-bank originator (ooba)** earning the referral,
 then **from Year 2 origination goes in-house, direct with the banks**, capturing the full ~1.5%
 commission; (2) a **1% facilitation fee** on cash / non-partner deals; (3) a **bank

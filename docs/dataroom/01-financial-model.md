@@ -17,7 +17,8 @@ capturing the full origination commission instead of a thin referral share.
      aggregation agreements and capture the **full origination commission (~1.5% of the bond)** —
      roughly **3× the referral**. Year 1 via ooba buys time to sign the bank agreements and put the
      FAIS/FSP accreditation in place before switching.
-2. **1% facilitation fee** on cash / sub-80% / non-partner deals (~6× cheaper than agent commission).
+2. **1% facilitation fee** on cash / sub-80% / non-partner deals (~6× less than a typical
+   full-service commission, 5–7% + VAT).
 3. **Bank headline sponsorship** — annual fee (R3m → R8m).
 4. **Optional ecosystem revenue** (the database; default off — see Ancillary Revenue tab).
 

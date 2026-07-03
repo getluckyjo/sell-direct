@@ -13,6 +13,19 @@ The full strategy lives in `../Sell-Direct-Project-Plan.md`. Key points that aff
 - **We are a registered property practitioner (or operate under one).** So the product *can* act as an intermediary (offers, mandates) — but keep that behind clearly-gated, logged flows.
 - **POPIA is non-negotiable.** We handle IDs, payslips, bank and property data. Privacy-by-design from commit #1 (see below).
 
+## Positioning guardrails (ALL copy — sites, docs, WhatsApp messages, dataroom)
+
+**Never anti-agent, never anti-PPRA.** Estate agents play a valuable role in SA property and we
+employ registered practitioners ourselves. Every piece of copy must follow these pillars:
+
+1. **For private sellers, by choice** — we serve the segment who *want* to sell direct and do the
+   work themselves. Full-service agents remain a great choice for everyone else.
+2. **Technology + WhatsApp does the admin; people help you sell** — our team includes registered
+   property practitioners (PPRA, FFC) and a WhatsApp concierge.
+3. **PPRA-aligned** — we add value via innovative integration; we do not fight the industry.
+4. **Savings framed neutrally** — "what a full-service sale (5–7% + VAT) would have cost", never
+   "resented cost", "obsolete", "the cost we remove", strikethrough comparisons, or "no agents".
+
 ## MVP scope (build in this order)
 
 1. **WhatsApp webhook + message log** — receive/send via the WhatsApp Cloud API (through a BSP); persist every inbound/outbound message.

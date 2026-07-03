@@ -4,8 +4,8 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const OPPORTUNITY = [
   {
-    title: 'A big, resented cost',
-    body: 'Estate-agent commission is the largest discretionary cost in a South African home sale — and the one sellers most want gone.',
+    title: 'A large, underserved segment',
+    body: 'A growing group of South African sellers want to sell privately and do the work themselves — but no one has built them a streamlined, compliant way to do it. Full-service agents keep serving those who want full service; we serve the rest.',
   },
   {
     title: 'A large, digital-first market',
@@ -23,8 +23,8 @@ const APPROACH = [
     body: 'List, enquire, pre-qualify and track a sale inside the channel South Africans already use — not another portal nobody opens.',
   },
   {
-    title: 'Guided end-to-end',
-    body: 'We do the tedious admin — offer, FICA, bond hand-off — and answer the one question everyone has: “where is my deal?”',
+    title: 'People + technology',
+    body: 'A hybrid model: software does the admin — offer, FICA, bond hand-off, “where is my deal?” — while our employed, registered property practitioners and concierge assist both parties. PPRA-compliant by design.',
   },
   {
     title: 'A revenue stack',
@@ -72,13 +72,14 @@ export default function Investors() {
             Pre-launch • Cape Town • WhatsApp-first
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
-            Back the company making estate-agent commission{' '}
-            <span className="text-emerald-400">obsolete.</span>
+            Back the platform powering{' '}
+            <span className="text-emerald-400">private property sales</span> in
+            South Africa.
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-200">
-            Sold Direct is a WhatsApp-first property marketplace for South
-            Africa. 0% commission to buyers and sellers — we earn from the
-            financial ecosystem around every deal.
+            Sold Direct is a WhatsApp-first platform that streamlines selling
+            direct. 0% commission to buyers and sellers on the qualifying path —
+            we earn from the financial ecosystem around every deal.
           </p>
           <div className="mt-8">
             <a
@@ -175,7 +176,8 @@ export default function Investors() {
               <span aria-hidden className="text-emerald-400">
                 →
               </span>
-              High-value Cape Town homes, where “keep your money” bites hardest.
+              High-value Cape Town homes, where the self-service saving is
+              largest.
             </li>
           </ul>
           <p className="mt-6 text-sm text-slate-400">

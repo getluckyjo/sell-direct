@@ -192,7 +192,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Product',
       title: 'Guided listing intake',
-      body: 'A structured WhatsApp Flow turns a chat into a clean, validated listing record — no agent visit, live in minutes.',
+      body: 'A structured WhatsApp Flow turns a chat into a clean, validated listing record — self-guided, live in minutes.',
     },
   },
   {
@@ -616,8 +616,8 @@ export const SCENES: Scene[] = [
     status: {
       title: '🟢 0% commission',
       lines: [
-        'Maria paid R0 agent commission',
-        'Saved ≈ R483 000 vs 7% + VAT',
+        'Maria paid R0 commission',
+        'Kept ≈ R483 000 a full-service sale (7% + VAT) would have cost',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',
