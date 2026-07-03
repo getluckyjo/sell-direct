@@ -9,9 +9,9 @@ model-grade (see sourcing caveats in each document).
 |---|---|
 | [`00-assumptions.md`](./00-assumptions.md) | Sourced assumption base — market size, prices, bond economics, costs, valuation comps — with reliability flags and confirmed data gaps |
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
-| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, staged raise (seed → Series A), valuation, **cap table** (4×25% founders → dilution) and funder growth |
+| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, the R10m seed at R40m pre-money, valuation, **cap table** (3 founders + board + strategic funder at inception) and runway check |
 | [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied upper-market share (stress test + positioning), and consumer commission saved |
-| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model** — 13 linked tabs (Assumptions · P&L · Scenarios · COGS Build · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Funder Growth · Competitive Landscape · Risk Register · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
+| [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model (CA-reviewed)** — 12 linked tabs (Home · Assumptions · P&L · COGS Build · Scenarios · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Competitive Landscape · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 
 ## Strategy: land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
@@ -32,23 +32,25 @@ headline-sponsorship** fee; (4) an **optional ecosystem-revenue** layer (the dat
 
 ## Headlines (base case)
 
-- **Revenue:** R6.2m (Y1) → **R188.9m (Y5)**; **EBITDA-positive in Y3**, **~39% margin** by Y5.
-- **Model:** **~R62–80k per deal** — origination (0.5% ooba referral in Y1, **~1.5% in-house from
-  Y2**) *or* 1% fee, + conveyancing + add-ons — plus a **R3m → R8m/yr bank sponsorship**.
-- **COGS is bottom-up:** ~7 direct per-deal lines + payment processing, blending to **~12% of
-  revenue (~88% gross margin, now derived)** — the 12% is itemised, not assumed (COGS Build tab).
+- **Revenue:** R6.1m (Y1) → **R162.3m (Y5)**; **EBITDA-positive in Y3**, **~17% margin** by Y5
+  (CA-reviewed: 27% tax, delivery-realistic headcount of 96, conveyancing referral removed per LPC).
+- **Model:** **~R52–71k per deal** — origination (0.5% ooba referral in Y1, **~1.5% in-house from
+  Y2**) *or* 1% fee, + add-ons — plus **bank sponsorship (R3→8m/yr)** and **conveyancer panel
+  advertising (R0.36→2.4m/yr, fixed subscriptions — no referral fees, per LPC)**.
+- **COGS is validated bottom-up:** ~7 direct per-deal lines + payment processing supporting the
+  ~12% of revenue (~88% gross margin) input — itemised, not assumed (COGS Build tab).
 - **In-house origination (from Y2):** working directly with the banks ~3×'s the bond take per
-  qualifying deal; modelled with its own cost line + a one-off Y2 setup, and it still **improves**
-  the cash trough (to ~−R3.3m).
+  qualifying deal; modelled with its own cost line + a one-off Y2 setup.
 - **Market share:** the taper keeps the implied Y5 share at **~8.3% of the upper-market** (vs ~21%
   prime-only) — a defensible ask.
 - **The database:** each customer unlocks **~R50k of ecosystem referral revenue**; modelled optional
   (~R5k/deal captured, default off).
-- **Capital:** need is only **~R6.3m** to breakeven; raise a **single ~R15m seed** to fund the brand
-  push and stand up in-house origination.
-- **Valuation:** seed pre-money **~R50m**; Year-5 enterprise value **~R756m–1.13bn** (4–6×).
-- **Cap table:** founders **4×25%** (Johannes/Wilhelm/Dean/Strategic Funder) → **16.0% each** after
-  seed + optional Series A; the **R15m seed returns ~12.1×** to a ~R945m base-case exit.
+- **Capital:** need is **~R7.5m** to breakeven; the **R10m seed (at R40m pre-money, 20%)** covers
+  the trough with a minimum cash position of +R5.5m (runway check on the Scenarios tab).
+- **Valuation:** Year-5 enterprise value **~R649–974m** (4–6×); base exit **~R811m** (5×).
+- **Cap table:** founders **3×25%** + **Jan le Roux 5% (board)** + **Strategic Funder 20% at
+  inception (R10m)** → post-optional-Series-A: 20.8% / 4.2% / 16.7%; the **seed models ~13.5×**
+  to the base-case exit.
 - **⚠ Validate** the in-house origination terms (bank agreements + accreditation), the ATL→deals
   conversion, and the upper-market pool count with a pilot.
 
@@ -56,8 +58,9 @@ headline-sponsorship** fee; (4) an **optional ecosystem-revenue** layer (the dat
 
 These documents are **model-grade, not audit-grade**. Re-confirm the highest-leverage
 inputs against primary sources first — the **Y2 in-house origination commission (~1.5%) + bank
-aggregation/accreditation terms**, the **0.5% Y1 ooba referral share**, the **conveyancing panel
-%**, **Western Cape/CT transfer counts**, and **SA CAC** (see `00-assumptions.md §F`). None changes
+aggregation/accreditation terms**, the **0.5% Y1 ooba referral share**, the **conveyancer
+panel-advertising appetite (LPC-safe structuring)**, **Western Cape/CT transfer counts**, and
+**SA CAC** (see `00-assumptions.md §F`). None changes
 the model's shape; they sharpen individual lines.
 
 ## To build out next
@@ -67,5 +70,5 @@ the model's shape; they sharpen individual lines.
 - Letters of intent from ooba (referral terms) and a panel conveyancer
 - A signed bank headline-sponsor (the sponsorship line)
 
-*(Market sizing, cap table + use-of-funds, competitive landscape and the risk register are now in
-the workbook and the docs above.)*
+*(Market sizing, cap table + use-of-funds and the competitive landscape are in the workbook; the
+operational risk playbook lives in `docs/BOTTLENECKS.md`.)*

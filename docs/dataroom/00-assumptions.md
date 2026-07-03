@@ -54,8 +54,8 @@ skews cash). Price/bonded inputs are live on the Assumptions tab (C15:G15 / C16:
 ## C. Revenue rates per deal
 
 **Monetisation policy (legally clean — no bank exclusivity).** The free 0% tier requires a
-**qualifying ≥80% bond + our panel conveyancer** — the buyer keeps **full rate-choice across
-banks**. **In Year 1** the bond is placed via our multi-bank originator (**ooba**) and we earn the
+**qualifying ≥80% bond**; the **seller appoints a conveyancer from our panel** (a 30–40% fee
+discount is passed to the consumer) — the buyer keeps **full rate-choice across banks**. **In Year 1** the bond is placed via our multi-bank originator (**ooba**) and we earn the
 **origination referral (~0.5% of bond)**. **From Year 2 we bring origination in-house, working
 directly with the banks** under our own aggregation agreements, capturing the **full origination
 commission (~1.5% of bond)** — roughly **3× the referral**. **Otherwise a 1% facilitation fee**
@@ -86,12 +86,14 @@ steering).
 | **In-house origination — Y2+** (direct with banks, full commission) | **~1.5% of bond** (mid of 1.0–1.9%) | Assumption / bank norms | Low |
 | **Facilitation fee** on non-partner deals | **1.0% of price** (Sold Direct policy) | Policy | n/a |
 | → Origination-or-fee per deal, blended | Y1 `bonded%×0.5%×bond + (1−bonded%)×1%×price`; **Y2+ uses 1.5%** on the bonded portion | Derived | Medium |
-| Conveyancing referral per deal (negotiated panel rebate) | **~R9,000–10,000** (prime; exact SA panel-share % not recovered) | Estimate | Low |
+| Conveyancing referral per deal | **R0 — REMOVED: the Legal Practice Council (LPC) prohibits attorneys paying referral fees** | LPC rules | High |
+| **Conveyancer panel advertising** (annual, fixed subscriptions — volume-independent) | **R0.36m (Y1) → R2.4m (Y5)**; seller appoints a panel conveyancer, 30–40% fee discount passed to the consumer | Assumption | Low |
 | Add-ons (premium photography / compliance / insurance), blended | **~R5,000–6,500** | Estimate | Low |
 | **Bank headline sponsorship** (annual, platform-wide) | **R3.0m (Y1) → R8.0m (Y5)** — scales with audience/reach | Assumption | Low |
 
-> **Revenue per registered deal ≈ R64.7k (Y1) → R79.6k (Y2) → R62.4k (Y5)** — steps up in Y2 as
-> origination goes in-house, then eases with the price taper — plus the **annual sponsorship**.
+> **Revenue per registered deal ≈ R55.7k (Y1) → R70.6k (Y2) → R52.4k (Y5)** — steps up in Y2 as
+> origination goes in-house, then eases with the price taper — plus the **annual sponsorship and
+> panel-advertising subscriptions**.
 
 **In-house origination cost inputs (from Y2 — new cost line).**
 
@@ -101,8 +103,9 @@ steering).
 | Bank-aggregation / origination licensing base (annual) | **R0.8m (Y2) → R1.5m (Y5)** | fixed compliance/relationship cost | Low |
 | One-off setup / licensing (Y2 only) | **~R1.5m** | accreditation, systems, bank onboarding | Low |
 
-> Net effect (base): Year-2 origination revenue uplift **outweighs** the added cost + setup — Y5
-> revenue rises to **~R189m** and the cumulative cash low-point **improves** to ~−R3.3m.
+> Net effect (base): the Year-2 origination uplift outweighs the added cost + setup; with the
+> conveyancing referral removed (LPC) and tax applied, **Y5 revenue is ~R162.3m** and the
+> cumulative after-tax cash low-point is **~−R4.5m (Y2)**.
 
 **Reinvest-for-growth stance.** The base case **reinvests the high gross margin into above-the-line
 (brand) marketing** — R2.5m (Y1) rising to **R50m (Y5)**, ~40% of revenue early easing to ~24% —
@@ -119,6 +122,11 @@ captured per deal at ~10% blended capture; conveyancing & compliance certs are e
 they already sit in the core model.
 
 ## D. Cost inputs
+
+**CA-review additions:** SA **corporate tax at 27%** applied to positive EBITDA (no loss
+carry-forward modelled — conservative); **total headcount doubled to 96 by Y5** (50% AI) for
+delivery-realistic capacity; a **cash-runway check** on the Scenarios tab confirms the R10m seed
+covers the trough (minimum cash +R5.5m) with Series A at Y3 optional.
 
 **COGS — bottom-up (validates the ~12%; gross margin now *derived*).** Rather than assume a flat
 margin, COGS is built up from the direct, per-deal cost of delivering a transaction (full table on

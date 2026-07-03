@@ -20,7 +20,12 @@ capturing the full origination commission instead of a thin referral share.
 2. **1% facilitation fee** on cash / sub-80% / non-partner deals (~6× less than a typical
    full-service commission, 5–7% + VAT).
 3. **Bank headline sponsorship** — annual fee (R3m → R8m).
-4. **Optional ecosystem revenue** (the database; default off — see Ancillary Revenue tab).
+4. **Conveyancer panel advertising** — fixed annual subscriptions (R0.36m → R2.4m),
+   volume-independent. **The old conveyancing referral fee is REMOVED — the Legal Practice
+   Council prohibits attorneys paying referral fees.** The seller appoints a panel conveyancer
+   (a 30–40% fee discount is passed to the consumer); the panel pays for advertising, never
+   per-deal referrals.
+5. **Optional ecosystem revenue** (the database; default off — see Ancillary Revenue tab).
 
 ## 2. Price taper, the origination step & the revenue engine
 
@@ -34,7 +39,8 @@ in-house)**, which lifts revenue per deal from Year 2 even as the price tapers.
 | Bonded share (≥80%) | 40% | 40% | 40% | 42% | 42% |
 | **Origination rate on the bond** | **0.5%** *(ooba)* | **1.5%** *(in-house)* | **1.5%** | **1.5%** | **1.5%** |
 | Origination income / qualifying deal | R29,250 | R77,625 | R67,500 | R60,750 | R54,000 |
-| **Revenue per deal** | **R64,700** | **R79,550** | **R72,000** | **R67,615** | **R62,380** |
+| Conveyancing referral | **R0 — removed (LPC prohibition)** | R0 | R0 | R0 | R0 |
+| **Revenue per deal** | **R55,700** | **R70,550** | **R62,500** | **R57,615** | **R52,380** |
 | Registered deals | 50 | 220 | 650 | 1,500 | 2,900 |
 | Bank sponsorship (Rm/yr) | 3.0 | 4.0 | 5.0 | 6.5 | 8.0 |
 
@@ -43,53 +49,57 @@ in-house)**, which lifts revenue per deal from Year 2 even as the price tapers.
 | Line | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---:|---:|---:|---:|---:|
 | Registered deals | 50 | 220 | 650 | 1,500 | 2,900 |
-| Transactional revenue | 3.24 | 17.50 | 46.80 | 101.42 | 180.90 |
-| Bank sponsorship | 3.00 | 4.00 | 5.00 | 6.50 | 8.00 |
-| **Total revenue** | **6.24** | **21.50** | **51.80** | **107.92** | **188.90** |
-| COGS (~12%) | (0.75) | (2.58) | (6.22) | (12.95) | (22.67) |
-| **Gross profit** | **5.49** | **18.92** | **45.58** | **94.97** | **166.23** |
-| Payroll + AI agents | 3.40 | 6.10 | 9.77 | 15.49 | 22.30 |
+| Transactional revenue | 2.79 | 15.52 | 40.63 | 86.42 | 151.90 |
+| Bank sponsorship + panel advertising | 3.36 | 4.72 | 6.20 | 8.30 | 10.40 |
+| **Total revenue** | **6.14** | **20.24** | **46.83** | **94.72** | **162.30** |
+| COGS (~12%) | (0.74) | (2.43) | (5.62) | (11.37) | (19.48) |
+| **Gross profit** | **5.41** | **17.81** | **41.21** | **83.35** | **142.82** |
+| Payroll + AI agents | 3.40 | 6.10 | 9.77 | 22.77 | 44.59 |
 | Marketing (above-the-line) | 2.50 | 8.00 | 18.00 | 32.00 | 50.00 |
 | Tech & tools | 0.60 | 1.00 | 1.80 | 2.80 | 4.00 |
 | Legal / compliance / insurance | 0.70 | 1.00 | 1.50 | 2.20 | 3.00 |
 | G&A / office / other | 0.60 | 1.00 | 1.80 | 3.20 | 4.50 |
 | **Bond origination (in-house)** | **—** | **2.83** | **2.56** | **4.98** | **8.81** |
-| **Total operating expenses** | **7.80** | **19.93** | **35.43** | **60.67** | **92.60** |
-| **EBITDA** | **(2.31)** | **(1.01)** | **10.16** | **34.30** | **73.63** |
-| EBITDA margin | — | — | 20% | 32% | **39%** |
-| **Cumulative EBITDA** | (2.31) | **(3.32)** | 6.83 | 41.14 | 114.77 |
+| **Total operating expenses** | **7.80** | **19.93** | **35.43** | **67.95** | **114.90** |
+| **EBITDA** | **(2.39)** | **(2.12)** | **5.78** | **15.40** | **27.93** |
+| EBITDA margin | — | — | 12% | 16% | **17%** |
+| **Tax (27%, positive EBITDA only)** | — | — | (1.56) | (4.16) | (7.54) |
+| **EBITDA after tax** | (2.39) | (2.12) | **4.22** | **11.24** | **20.39** |
+| **Cumulative after tax (cash proxy)** | (2.39) | **(4.51)** | (0.29) | 10.95 | 31.33 |
 
-- **EBITDA-positive in Y3**; cumulative cash low-point **≈ −R3.3m (Y2)** — *better* than before the
-  origination switch, because the Y2+ revenue uplift outweighs the new origination cost + setup.
+- **EBITDA-positive in Y3**; cumulative after-tax cash low-point **≈ −R4.5m (Y2)**, cumulative
+  positive from **Y4**.
 - The **in-house origination cost line** (bond-consultant cost per bonded deal + a bank-aggregation /
   licensing base + a one-off R1.5m Y2 setup) is modelled explicitly and nets against the uplift.
-- The **~39% Y5 margin** sits between the pre-taper ~48% and the taper-only ~30% — the origination
-  economics restore margin while the broader-market volume assumption stays de-risked.
-- **COGS is bottom-up, not a flat assumption.** The ~12% line is built up from ~7 direct per-deal
-  costs (messaging, FICA/KYC, e-sign, property data, **listing media & portal syndication**,
-  **add-on/compliance-cert fulfilment**, contingency) + ~0.7% payment processing — **~R9,230/deal
-  (Y1) → ~R7,820/deal (Y5)**, blending to **~12% of revenue (~88% gross margin, now derived)**. It
-  trends 7.8%→12.7% (sponsorship carries no COGS). Full build on the COGS Build tab; see
-  `00-assumptions.md §D`. Excludes in-house origination cost (own line) and the concierge team (opex).
+- The **~17% Y5 margin** reflects the CA review: conveyancing referral removed (LPC), **27% tax**,
+  and headcount doubled to a delivery-realistic **96 by Y5** — deliberately conservative and far
+  more defensible in diligence than the earlier ~39%.
+- **COGS is validated bottom-up** on the COGS Build tab (~7 direct per-deal lines + payment
+  processing, blended low/high per line) supporting the ~12% / ~88% gross-margin input. Excludes
+  the in-house origination cost (own opex line) and the concierge team (payroll).
 
 ## 4. Scenario summary (R'm)
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
 | Y5 registered deals | 1,900 | **2,900** | 4,800 |
-| Y5 revenue | 117.0 | **188.9** | 337.4 |
-| Y5 EBITDA | 36.3 | **73.6** | 176.5 |
-| Y5 EBITDA margin | 31% | **39%** | 52% |
-| First EBITDA-positive year | Y3 | **Y3** | Y2 |
-| Total capital need (incl. buffer) | ~R6.9m | **~R6.3m** | ~R5.5m |
+| Y5 revenue | 102.0 | **162.3** | 287.0 |
+| Y5 EBITDA | 4.9 | **27.9** | 105.4 |
+| Y5 EBITDA margin | 5% | **17%** | 37% |
+| First EBITDA-positive year | Y4 | **Y3** | Y2 |
+| Total capital need (incl. buffer) | ~R8.7m | **~R7.5m** | ~R5.5m |
 | Implied share of upper-market (Y5) | 5.4% | **8.3%** | 13.7% |
+
+**CA-review adjustments baked in:** 27% SA corporate tax on positive EBITDA; headcount doubled to
+a delivery-realistic **96 by Y5** (50% AI); a **cash-runway check** (R10m seed at Y1, Series A at
+Y3) shows a minimum cash position of **+R5.5m** — the seed alone covers the trough.
 
 ## 5. Watch-outs (flag before investors do)
 
 1. **In-house origination execution** — becoming our own originator needs **bank aggregation
    agreements** and **FAIS/FSP accreditation**; the ~1.5% capture and the origination cost inputs
    are assumptions to confirm against a real bank term sheet. Year 1 via ooba is the de-risking
-   runway. (See the Risk Register.)
+   runway.
 2. **ATL→deals conversion** — the central growth assumption; validate with a CT pilot.
 3. **Upper-market pool size** (~35k) — an estimate; confirm. The taper makes the share far safer
    (~8%) but the pool count still needs grounding.

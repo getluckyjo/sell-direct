@@ -59,7 +59,7 @@ const CHAPTERS = [
 
 const REVENUE = [
   'Bond origination share from the bank (via ooba) — paid by the bank',
-  'Panel conveyancing referral / fee share',
+  'Conveyancer panel advertising (fixed subscriptions — no referral fees, per LPC rules)',
   'Optional add-ons: photography, compliance coordination, insurance',
 ];
 

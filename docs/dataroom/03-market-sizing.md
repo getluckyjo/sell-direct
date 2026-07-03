@@ -33,15 +33,15 @@ transfer at a blended ~R25k/deal:
 |---|---|
 | Upper-market (>~R4m) transfers / yr | **~35,000** *(estimate — broadens as avg price tapers; **confirm**)* |
 | Avg price (segment) | tapers R6.5m → R4.0m |
-| Our revenue / deal | R64.7k (Y1) → **R79.6k (Y2, origination in-house)** → R62.4k (Y5) |
-| **SAM revenue pool / yr** | **~R2.2bn** *(35k × Y5 rev/deal — up as in-house origination lifts per-deal)* |
+| Our revenue / deal | R55.7k (Y1) → **R70.6k (Y2, origination in-house)** → R52.4k (Y5) |
+| **SAM revenue pool / yr** | **~R1.8bn** *(35k × Y5 rev/deal; conveyancing referral removed per LPC)* |
 
 ## 4. SOM — obtainable (our projection, linked)
 
 | | Conservative | Base | Aggressive |
 |---|---:|---:|---:|
 | Y5 registered deals | 1,900 | **2,900** | 4,800 |
-| Y5 revenue | R117.0m | **R188.9m** | R337.4m |
+| Y5 revenue | R102.0m | **R162.3m** | R287.0m |
 | **% of upper-market transactions** | 5.4% | **8.3%** | 13.7% |
 | % of ALL SA transfers | 0.76% | **1.16%** | 1.92% |
 

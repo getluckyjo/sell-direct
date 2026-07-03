@@ -161,7 +161,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Revenue',
       title: 'Conditional 0% — the model',
-      body: 'Free to the consumer when they list exclusively and use our partner ecosystem (bond originator + panel conveyancer). Flex is the low-fee hedge for sellers who want freedom.',
+      body: 'Free to the consumer when they list exclusively and use our partner ecosystem (bond originator + a panel conveyancer, with a fee discount passed to you). Flex is the low-fee hedge for sellers who want freedom.',
     },
   },
   {
@@ -625,7 +625,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Revenue',
       title: 'The whole model in one deal',
-      body: 'Consumer pays nothing. We earned from the bond origination share and the conveyancing panel — recurring, scalable, paid by the financial ecosystem around every deal.',
+      body: 'Consumer pays nothing. We earned from the bond origination share and partner advertising — recurring, scalable, paid by the financial ecosystem around every deal.',
     },
   },
   {
