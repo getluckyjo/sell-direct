@@ -41,7 +41,7 @@ const TIERS = [
     highlight: false,
     points: [
       'Same platform, no exclusivity',
-      'Use your own bank or attorney',
+      'No partner requirements',
       'A simple 1% fee — only when you sell',
     ],
     foot: 'For sellers who want freedom over the lowest price.',
