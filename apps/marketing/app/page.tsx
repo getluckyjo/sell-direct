@@ -79,6 +79,9 @@ export default function Home() {
             <a href="#journey" className="hover:text-slate-900">
               See it work
             </a>
+            <a href="/compliance" className="hover:text-slate-900">
+              Compliance
+            </a>
             <a
               href="#waitlist"
               className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
@@ -181,7 +184,13 @@ export default function Home() {
             Our team includes registered property practitioners (PPRA, with a
             valid Fidelity Fund Certificate) and a WhatsApp concierge. The
             technology does the admin — our people help you sell, from mandate
-            to registration.
+            to registration.{' '}
+            <a
+              href="/compliance"
+              className="font-semibold underline hover:text-emerald-700"
+            >
+              See how we keep it compliant →
+            </a>
           </p>
         </div>
       </section>
@@ -330,7 +339,11 @@ export default function Home() {
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           </span>
           <span>
-            0% commission · POPIA-compliant · We handle your data with care.
+            0% commission ·{' '}
+            <a href="/compliance" className="underline hover:text-slate-700">
+              POPIA-compliant · PPRA registered
+            </a>{' '}
+            · We handle your data with care.
           </span>
         </div>
       </footer>
