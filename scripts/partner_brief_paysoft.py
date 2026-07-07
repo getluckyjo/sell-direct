@@ -159,13 +159,11 @@ story = [
 
     Paragraph('Keeping it clean', s_h),
     Paragraph(
-        'Because Sunday lunches matter more than cap tables, we’ve '
-        'designed this so it never gets awkward: the equity vests against '
-        'delivered value, the engagement terms are written down and '
+        'Clean contracts govern the relationship: the equity vests against '
+        'delivered value, the engagement terms are written and '
         'arm’s-length, everything is disclosed to our strategic funder '
         'and board, IP sits with Sold Direct, there’s a simple SLA, and '
-        'either side can step away on notice. If it ever stops working for '
-        'Paysoft, it stops — no hard feelings, no tangled families.', s_p),
+        'either side can step away on notice.', s_p),
 
     Spacer(1, 3 * mm),
     Paragraph(
