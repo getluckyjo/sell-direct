@@ -9,7 +9,7 @@ model-grade (see sourcing caveats in each document).
 |---|---|
 | [`00-assumptions.md`](./00-assumptions.md) | Sourced assumption base — market size, prices, bond economics, costs, valuation comps — with reliability flags and confirmed data gaps |
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
-| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, the R10m seed at R40m pre-money, valuation, **cap table** (3 founders + board + strategic funder at inception) and runway check |
+| [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, the R10m seed at R30m pre-money (25%), valuation, **cap table** (2 working founders + technology partner + board + strategic funder at inception) and runway check |
 | [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied upper-market share (stress test + positioning), and consumer commission saved |
 | [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model (CA-reviewed)** — 12 linked tabs (Home · Assumptions · P&L · COGS Build · Scenarios · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Competitive Landscape · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
@@ -45,12 +45,12 @@ headline-sponsorship** fee; (4) an **optional ecosystem-revenue** layer (the dat
   prime-only) — a defensible ask.
 - **The database:** each customer unlocks **~R50k of ecosystem referral revenue**; modelled optional
   (~R5k/deal captured, default off).
-- **Capital:** need is **~R7.5m** to breakeven; the **R10m seed (at R40m pre-money, 20%)** covers
+- **Capital:** need is **~R7.5m** to breakeven; the **R10m seed (at R30m pre-money, 25%)** covers
   the trough with a minimum cash position of +R5.5m (runway check on the Scenarios tab).
 - **Valuation:** Year-5 enterprise value **~R649–974m** (4–6×); base exit **~R811m** (5×).
-- **Cap table:** founders **3×25%** + **Jan le Roux 5% (board)** + **Strategic Funder 20% at
-  inception (R10m)** → post-optional-Series-A: 20.8% / 4.2% / 16.7%; the **seed models ~13.5×**
-  to the base-case exit.
+- **Cap table:** **Johannes 30% · Dean 30% · Paysoft (technology partner, vesting) 10% · Jan le
+  Roux 5% (board) · Strategic Funder 25% (R10m)** at inception → post-optional-Series-A:
+  25 / 25 / 8.3 / 4.2 / 20.8 / 16.7; the **seed models ~16.9×** to the base-case exit.
 - **⚠ Validate** the in-house origination terms (bank agreements + accreditation), the ATL→deals
   conversion, and the upper-market pool count with a pilot.
 
