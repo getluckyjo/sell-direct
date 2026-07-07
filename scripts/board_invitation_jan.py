@@ -123,17 +123,17 @@ story = [
                           '~37% aggressive · 27% tax modelled — numbers built '
                           'to survive diligence'),
         ('Capital', 'Breakeven on ~R7.5m · R10m strategic funding secured '
-                    'against 20% · runway check: minimum cash position +R5.5m '
+                    'against 25% · runway check: minimum cash position +R5.5m '
                     '— the seed alone covers the trough'),
-        ('Valuation frame', 'R40m pre / R50m post at founding · Y5 EV '
+        ('Valuation frame', 'R30m pre / R40m post at founding · Y5 EV '
                             'R649–974m (4–6× revenue)'),
     ]),
 
     Paragraph('The offer', s_h),
     kv_table([
         ('Equity', '5% — board allocation, vesting over the service period. '
-                   'Working founders: Johannes 25% · Wilhelm 25% · Dean 25% · '
-                   'Strategic funder 20% (R10m)'),
+                   'Alongside: Johannes 30% · Dean 30% · Paysoft (technology '
+                   'partner) 10% · Strategic funder 25% (R10m)'),
         ('Role', 'Non-executive director · registered principal for the '
                  "firm's PPRA licence · origination and bank-relationship "
                  'counsel'),
@@ -143,7 +143,7 @@ story = [
 
     Spacer(1, 4 * mm),
     Paragraph(
-        '<b>Next step:</b> an hour with the three of us — full data room, '
+        '<b>Next step:</b> an hour with the two of us — full data room, '
         'live model, and the WhatsApp journey demo. Bring the hard questions; '
         "the model was built to be interrogated, and we'd value nothing more "
         'than your red pen.', s_p),

@@ -3,7 +3,9 @@
 All figures **ZAR** unless noted. USD at **~R18.5/$** (illustrative). Built bottom-up from
 `01-financial-model.md` (prime → upper-market taper; in-house origination from Y2; conveyancing
 referral removed per LPC; 27% tax). Live on the **Capital & Valuation** and **Cap Table** tabs of
-`sold-direct-model.xlsx`, with a **cash-runway check** on the Scenarios tab.
+`sold-direct-model.xlsx`, with a **cash-runway check** on the Scenarios tab. Paysoft's
+technology-partner stake is granted in return for **preferred development rates plus a
+free-development allocation to an agreed value**, vesting as that value is delivered.
 
 ## 1. Capital requirement (bottom-up)
 
@@ -20,7 +22,7 @@ The model turns **EBITDA-positive in Y3**; the cumulative after-tax cash low-poi
 
 | Round | Timing | Amount | Pre-money | Stake | Use of funds |
 |---|---|---:|---:|---:|---|
-| **Seed (Strategic Funder)** | Inception | **R10m (~$0.54m)** | **R40m** | **20%** | CT launch + brand campaign, AI-augmented team, origination accreditation, integrations (see Use of Funds tab) |
+| **Seed (Strategic Funder)** | Inception | **R10m (~$0.54m)** | **R30m** | **25%** | CT launch + brand campaign, AI-augmented team, origination accreditation, integrations (see Use of Funds tab) |
 | **Series A** | *Y3, optional* | R50m | R250m | 16.7% | Fuel on a proven engine; national upper-market rollout |
 
 **Runway check (live on the Scenarios tab):** with the R10m seed injected at Y1 and Series A at
@@ -44,27 +46,30 @@ CA-reviewed model pairs high growth with a deliberately conservative **~17% Y5 E
 
 - Base Y5 revenue **R162.3m** → exit enterprise value **~R811m** at the model's 5× base multiple
   (editable input, Assumptions C75).
-- The seed investor's **20% (16.7% post-A)** of a ~R811m outcome ≈ **R135m on R10m invested —
-  ~13.5×** (with dilution). Lead with the revenue line and the ~8% market share, not the multiple.
+- The seed investor's **25% (20.8% post-A)** of a ~R811m outcome ≈ **R169m on R10m invested —
+  ~16.9×** (with dilution). Lead with the revenue line and the ~8% market share, not the multiple.
 
 ### c) Why the pre-money is well-supported
 
-**R40m pre-money** is grounded by: a live product (WhatsApp loop + tracker + dashboard), the
+**R30m pre-money** is grounded by: a live product (WhatsApp loop + tracker + dashboard), the
 defensible monetisation wedge (owned origination from Y2), a capital-efficient path (breakeven
-inside the seed), and conservative CA-reviewed numbers that hold up in diligence.
+inside the seed), a committed technology partner, and conservative CA-reviewed numbers that hold
+up in diligence.
 
 ## 3. Cap table
 
-**No separate founding round — the Strategic Funder invests at inception alongside the founders**
-(live on the Cap Table tab; seed terms drive dilution automatically):
+**No separate founding round — the Strategic Funder and the technology partner come in at
+inception alongside the working founders** (live on the Cap Table tab; seed terms drive dilution
+automatically). Paysoft's stake vests against a preferred-rate + free-development commitment
+to an agreed value:
 
 | Holder | At Seed (inception) | Post-Series A |
 |---|---:|---:|
-| Johannes — Commercial Director | 25.0% | 20.8% |
-| Wilhelm — CTO | 25.0% | 20.8% |
-| Dean — COO | 25.0% | 20.8% |
+| Johannes — Commercial Director | 30.0% | 25.0% |
+| Dean — COO | 30.0% | 25.0% |
+| Paysoft — Technology Partner | 10.0% | 8.3% |
 | Jan le Roux — Board (non-executive) | 5.0% | 4.2% |
-| Strategic Funder / Seed Investor (R10m) | **20.0%** | 16.7% |
+| Strategic Funder / Seed Investor (R10m) | **25.0%** | 20.8% |
 | Series A Investor (R50m) | — | 16.7% |
 | **Total** | **100%** | **100%** |
 
@@ -72,9 +77,10 @@ inside the seed), and conservative CA-reviewed numbers that hold up in diligence
 
 | Holder | Invested | Value @ Exit | Multiple |
 |---|---:|---:|---:|
-| Each founder (×3) | sweat | **~R169m** | — |
+| Each working founder (×2) | sweat | **~R203m** | — |
+| Paysoft | dev delivery (vesting) | ~R68m | — |
 | Jan le Roux | board | ~R34m | — |
-| Strategic Funder / Seed | R10m | **~R135m** | **~13.5×** |
+| Strategic Funder / Seed | R10m | **~R169m** | **~16.9×** |
 | Series A | R50m | ~R135m | ~2.7× |
 
 ## 4. The Purplebricks guardrail — and why the taper sidesteps it
