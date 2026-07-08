@@ -159,6 +159,9 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           data: createPrismaAgentDataSource(prisma),
           notifier: agentNotifier,
           mode: agentMode,
+          // Live mode lets the agent run listing intake through the same
+          // store + validation as the scripted flow (hand-off safe).
+          intake: { store: conversationStore, createListing },
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : undefined;

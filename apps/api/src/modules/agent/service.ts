@@ -1,6 +1,11 @@
 import type { Notifier } from '../notifications';
 import { AGENT_SYSTEM_PROMPT } from './knowledge';
-import { buildAgentTools, type AgentDataSource, type AgentTurnContext } from './tools';
+import {
+  buildAgentTools,
+  type AgentDataSource,
+  type AgentIntakeAccess,
+  type AgentTurnContext,
+} from './tools';
 import type { AgentMode, AgentModel, AgentRepository } from './types';
 
 export interface AgentServiceDeps {
@@ -13,6 +18,11 @@ export interface AgentServiceDeps {
    * live — reply is sent immediately; the draft row is kept as the audit record.
    */
   mode: AgentMode;
+  /**
+   * Listing-intake write access. Only exercised in live mode — a shadow
+   * agent must never mutate drafts while users receive the canned replies.
+   */
+  intake?: AgentIntakeAccess;
   log?: (message: string, error?: unknown) => void;
 }
 
@@ -29,6 +39,8 @@ export interface AgentTurnOutcome {
 
 export interface AgentHandler {
   handle(message: AgentInbound): Promise<AgentTurnOutcome>;
+  /** The dispatcher routes structured flows to the agent only when live. */
+  readonly mode: AgentMode;
 }
 
 /**
@@ -40,9 +52,15 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
   const log = deps.log ?? (() => {});
 
   return {
+    mode: deps.mode,
     async handle(message) {
       const ctx: AgentTurnContext = { escalated: false };
-      const tools = buildAgentTools(deps.data, message.phone, ctx);
+      const tools = buildAgentTools(
+        deps.data,
+        message.phone,
+        ctx,
+        deps.mode === 'live' ? deps.intake : undefined,
+      );
 
       // The webhook persists the inbound before dispatching, so the history
       // normally already ends with this message. Guard for the empty case

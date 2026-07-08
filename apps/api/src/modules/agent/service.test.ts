@@ -1,7 +1,13 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createAgentHandler, type AgentServiceDeps } from './service';
-import { benchmarkDeposit, buildAgentTools, type AgentDataSource } from './tools';
+import {
+  benchmarkDeposit,
+  buildAgentTools,
+  type AgentDataSource,
+  type AgentIntakeAccess,
+} from './tools';
 import type { AgentMessage, AgentModel, AgentRepository } from './types';
+import { createInMemoryConversationStore } from '../listings';
 
 function fakeRepository(history: AgentMessage[] = []): AgentRepository & {
   drafts: Array<Parameters<AgentRepository['saveDraft']>[0]>;
@@ -168,6 +174,102 @@ describe('buildAgentTools', () => {
     expect(dealsForPhone).toHaveBeenCalledWith('+27829990000');
     expect(result).toContain('bond application in progress');
     expect(result).toContain('2-bed in Sea Point');
+  });
+});
+
+describe('agent intake write tools', () => {
+  function intakeAccess(): AgentIntakeAccess & {
+    createListing: ReturnType<typeof vi.fn>;
+  } {
+    const createListing = vi.fn(async () => ({ id: 'listing_9' }));
+    return { store: createInMemoryConversationStore(), createListing };
+  }
+
+  it('write tools appear only when intake access is provided', async () => {
+    const withIntake = buildAgentTools(emptyData, '+27820000001', { escalated: false }, intakeAccess());
+    const withoutIntake = buildAgentTools(emptyData, '+27820000001', { escalated: false });
+    expect(withIntake.map((t) => t.name)).toContain('update_listing_draft');
+    expect(withIntake.map((t) => t.name)).toContain('publish_listing');
+    expect(withoutIntake.map((t) => t.name)).not.toContain('update_listing_draft');
+  });
+
+  it('shadow handler never offers write tools; live handler does', async () => {
+    let offered: string[] = [];
+    const model: AgentModel = {
+      async reply(request) {
+        offered = request.tools.map((t) => t.name);
+        return { text: 'ok', toolCalls: [] };
+      },
+    };
+    const base = {
+      model,
+      repository: fakeRepository([{ role: 'user' as const, content: 'hi' }]),
+      data: emptyData,
+      notifier: { send: vi.fn() },
+      intake: intakeAccess(),
+    };
+
+    await createAgentHandler({ ...base, mode: 'shadow' }).handle({
+      phone: '+27820000001',
+      text: 'hi',
+    });
+    expect(offered).toHaveLength(4);
+
+    await createAgentHandler({ ...base, mode: 'live' }).handle({
+      phone: '+27820000001',
+      text: 'hi',
+    });
+    expect(offered).toHaveLength(6);
+  });
+
+  it('update_listing_draft validates, persists and reports missing fields', async () => {
+    const access = intakeAccess();
+    const tools = buildAgentTools(emptyData, '+27820000002', { escalated: false }, access);
+    const update = tools.find((t) => t.name === 'update_listing_draft')!;
+
+    const result = await update.run({
+      title: '4 bed home in Mowbray',
+      suburb: 'Mowbray',
+      bedrooms: 4,
+      price_zar: 5000, // below minimum → rejected with explanation
+    });
+
+    expect(result).toContain('price_zar=5000 rejected');
+    expect(result).toContain('Still missing: priceZar, bathrooms, exclusivityTermDays');
+    const state = await access.store.get('+27820000002');
+    expect(state?.data).toMatchObject({
+      title: '4 bed home in Mowbray',
+      suburb: 'Mowbray',
+      bedrooms: 4,
+    });
+    expect(state?.step).toBe('awaiting_price'); // hand-off safe for scripted flow
+  });
+
+  it('publish_listing refuses without confirm or with an incomplete draft', async () => {
+    const access = intakeAccess();
+    const tools = buildAgentTools(emptyData, '+27820000003', { escalated: false }, access);
+    const update = tools.find((t) => t.name === 'update_listing_draft')!;
+    const publish = tools.find((t) => t.name === 'publish_listing')!;
+
+    expect(await publish.run({ confirm: false })).toContain('Refused');
+    await update.run({ title: 'Home', suburb: 'Gardens' });
+    expect(await publish.run({ confirm: true })).toContain('incomplete');
+    expect(access.createListing).not.toHaveBeenCalled();
+
+    await update.run({ price_zar: 2_000_000, bedrooms: 2, bathrooms: 1, exclusivity_term_days: 90 });
+    const result = await publish.run({ confirm: true });
+
+    expect(result).toContain('Published listing listing_9');
+    expect(access.createListing).toHaveBeenCalledWith('+27820000003', {
+      title: 'Home',
+      suburb: 'Gardens',
+      priceZar: 2_000_000,
+      bedrooms: 2,
+      bathrooms: 1,
+      exclusivityTermDays: 90,
+      tier: 'free',
+    });
+    expect(await access.store.get('+27820000003')).toBeNull(); // cleared
   });
 });
 

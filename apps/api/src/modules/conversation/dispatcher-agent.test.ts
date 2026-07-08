@@ -3,7 +3,7 @@ import { createDispatcher, type DispatcherDeps } from './dispatcher';
 import { createInMemoryPrequalStore } from './prequal-store';
 import { createInMemoryConversationStore } from '../listings';
 import { ObaReferralStub } from '../finance';
-import type { AgentHandler } from '../agent';
+import type { AgentHandler, AgentMode } from '../agent';
 import type { InboundMessage } from '../messaging';
 
 const PHONE = '+27820001111';
@@ -19,6 +19,13 @@ function inbound(text: string): InboundMessage {
   };
 }
 
+function fakeAgent(
+  mode: AgentMode,
+  handle: AgentHandler['handle'] = vi.fn(async () => ({ sent: mode === 'live' })),
+): AgentHandler {
+  return { mode, handle };
+}
+
 function makeDeps(agent?: AgentHandler) {
   const sent: { to: string; text: string }[] = [];
   const notifier = {
@@ -26,9 +33,10 @@ function makeDeps(agent?: AgentHandler) {
       sent.push({ to, text });
     }),
   };
+  const intakeStore = createInMemoryConversationStore();
   const deps: DispatcherDeps = {
     intake: {
-      store: createInMemoryConversationStore(),
+      store: intakeStore,
       createListing: vi.fn(async () => ({ id: 'listing-1' })),
     },
     enquiry: {
@@ -52,14 +60,12 @@ function makeDeps(agent?: AgentHandler) {
     agent,
     log: vi.fn(),
   };
-  return { dispatcher: createDispatcher(deps), sent };
+  return { dispatcher: createDispatcher(deps), sent, intakeStore };
 }
 
 describe('dispatcher × AI concierge', () => {
   it('hands unmatched messages to the agent; live mode suppresses the canned help', async () => {
-    const agent: AgentHandler = {
-      handle: vi.fn(async () => ({ sent: true })),
-    };
+    const agent = fakeAgent('live');
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('how long does a transfer take?'));
@@ -72,9 +78,10 @@ describe('dispatcher × AI concierge', () => {
   });
 
   it('shadow mode still sends the canned help so the user is not left hanging', async () => {
-    const agent: AgentHandler = {
-      handle: vi.fn(async () => ({ sent: false, draftId: 'draft-1' })),
-    };
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => ({ sent: false, draftId: 'draft-1' })),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('how long does a transfer take?'));
@@ -84,22 +91,65 @@ describe('dispatcher × AI concierge', () => {
     expect(d.sent[0].text).toContain('Reply "list"');
   });
 
-  it('the "list" trigger never reaches the agent', async () => {
-    const agent: AgentHandler = { handle: vi.fn(async () => ({ sent: true })) };
+  it('shadow agent: the "list" trigger stays with the scripted flow', async () => {
+    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('list'));
 
     expect(agent.handle).not.toHaveBeenCalled();
-    expect(d.sent[0].text).toContain('headline'); // intake started
+    expect(d.sent[0].text).toContain('headline'); // scripted intake started
   });
 
-  it('an agent failure falls back to the canned help reply', async () => {
-    const agent: AgentHandler = {
-      handle: vi.fn(async () => {
+  it('live agent: the "list" trigger routes to agent-led intake', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+
+    await d.dispatcher.handle(inbound('list my 4 bed in Mowbray'));
+
+    expect(agent.handle).toHaveBeenCalledWith({
+      phone: PHONE,
+      text: 'list my 4 bed in Mowbray',
+    });
+    expect(d.sent).toHaveLength(0); // agent replied itself
+  });
+
+  it('live agent: an active intake draft routes mid-flow messages to the agent', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', tier: 'free' },
+    });
+
+    await d.dispatcher.handle(inbound('R5m sounds right'));
+
+    expect(agent.handle).toHaveBeenCalled();
+    expect(d.sent).toHaveLength(0);
+  });
+
+  it('live agent failure on "list" falls back to the scripted flow', async () => {
+    const agent = fakeAgent(
+      'live',
+      vi.fn(async () => {
         throw new Error('model unavailable');
       }),
-    };
+    );
+    const d = makeDeps(agent);
+
+    await d.dispatcher.handle(inbound('list'));
+
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toContain('headline'); // scripted intake took over
+  });
+
+  it('an agent failure on freeform falls back to the canned help reply', async () => {
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => {
+        throw new Error('model unavailable');
+      }),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('random question'));
@@ -108,7 +158,7 @@ describe('dispatcher × AI concierge', () => {
     expect(d.sent[0].text).toContain('Reply "list"');
   });
 
-  it('without an agent the canned help behaviour is unchanged', async () => {
+  it('without an agent the scripted behaviour is unchanged', async () => {
     const d = makeDeps(undefined);
 
     await d.dispatcher.handle(inbound('random question'));
