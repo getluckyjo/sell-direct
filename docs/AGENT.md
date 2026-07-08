@@ -27,6 +27,28 @@ BOTTLENECKS numbers with their attribution rules, hard safety rules (no
 financial/legal advice, never collect income/ID/bank details in chat, never
 promise approval), and WhatsApp style constraints.
 
+## No double questions (context-aware intake)
+
+The listing intake is data-first: the next question is always the first
+*missing* field, and every reply passes through an extraction layer, so
+"4 bedroom home in Mowbray" fills title, suburb and bedrooms in one turn.
+Three layers, degrading gracefully:
+
+| Agent state | Who runs intake | How answers are understood |
+|---|---|---|
+| `AGENT_MODE=live` | Claude, conversationally (write tools `update_listing_draft` / `publish_listing`, validated + persisted by code) | The model itself |
+| shadow / off, key set | Scripted flow (canned prompts) | `IntakeFieldExtractor` — one small structured-outputs call per turn, reads fields only, never writes text (`INTAKE_EXTRACTION=false` to disable) |
+| No API key | Scripted flow | Deterministic parsing only (original behaviour) |
+
+Both paths end at a **summary + explicit YES** before the listing goes
+live (a wrong price no longer publishes silently; corrections like
+"price 4500000" edit the draft at the confirm step). The agent and the
+scripted flow share the same conversation store with a data-derived step,
+so a failed agent turn falls back mid-conversation without losing fields.
+The same principle covers enquiry: when live, the agent words the pre-qual
+invite (aware of what the buyer said); POPIA consent remains a strict
+deterministic YES/NO in code, always.
+
 ## Modes
 
 | `AGENT_MODE` | Behaviour |

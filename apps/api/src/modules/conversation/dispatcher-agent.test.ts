@@ -34,6 +34,16 @@ function makeDeps(agent?: AgentHandler) {
     }),
   };
   const intakeStore = createInMemoryConversationStore();
+  const prequalStore = createInMemoryPrequalStore();
+  const deals = {
+    createOrGetEnquiryDeal: vi.fn(async () => ({
+      id: 'deal-1',
+      status: 'enquiry',
+    })),
+    list: vi.fn(async () => []),
+    getWithTimeline: vi.fn(async () => null),
+    getNotificationContext: vi.fn(async () => null),
+  };
   const deps: DispatcherDeps = {
     intake: {
       store: intakeStore,
@@ -44,23 +54,21 @@ function makeDeps(agent?: AgentHandler) {
         upsertBuyerByPhone: vi.fn(async () => ({ id: 'buyer-1' })),
         recordBuyerFinancialConsent: vi.fn(async () => {}),
       },
-      deals: {
-        createOrGetEnquiryDeal: vi.fn(async () => ({
-          id: 'deal-1',
-          status: 'enquiry',
-        })),
-        list: vi.fn(async () => []),
-        getWithTimeline: vi.fn(async () => null),
-        getNotificationContext: vi.fn(async () => null),
-      },
+      deals,
       finance: new ObaReferralStub(),
     },
-    prequalStore: createInMemoryPrequalStore(),
+    prequalStore,
     notifier,
     agent,
     log: vi.fn(),
   };
-  return { dispatcher: createDispatcher(deps), sent, intakeStore };
+  return {
+    dispatcher: createDispatcher(deps),
+    sent,
+    intakeStore,
+    prequalStore,
+    deals,
+  };
 }
 
 describe('dispatcher × AI concierge', () => {
@@ -156,6 +164,37 @@ describe('dispatcher × AI concierge', () => {
 
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toContain('Reply "list"');
+  });
+
+  it('live agent composes the enquiry invite; deterministic work still runs', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+
+    await d.dispatcher.handle(inbound('ENQUIRE listing-42'));
+
+    // Buyer + deal + pending consent happen in code, not the agent…
+    expect(d.deals.createOrGetEnquiryDeal).toHaveBeenCalledWith(
+      'listing-42',
+      'buyer-1',
+    );
+    expect(await d.prequalStore.get(PHONE)).toEqual({
+      buyerId: 'buyer-1',
+      listingId: 'listing-42',
+    });
+    // …while the agent words the invite.
+    expect(agent.handle).toHaveBeenCalled();
+    expect(d.sent).toHaveLength(0);
+  });
+
+  it('shadow agent: the canned enquiry invite is sent unchanged', async () => {
+    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
+    const d = makeDeps(agent);
+
+    await d.dispatcher.handle(inbound('ENQUIRE listing-42'));
+
+    expect(agent.handle).not.toHaveBeenCalled(); // enquiry replies are canned in shadow
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toMatch(/pre-qualif/i);
   });
 
   it('without an agent the scripted behaviour is unchanged', async () => {

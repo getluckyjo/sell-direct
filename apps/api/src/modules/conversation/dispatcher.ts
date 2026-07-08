@@ -122,6 +122,18 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         buyerId: result.buyerId,
         listingId,
       });
+      // The deterministic work (buyer + deal + pending consent) is done
+      // above and never moves to the agent. When live, the agent may word
+      // the pre-qual invite itself — aware of the listing and anything the
+      // buyer already said. Consent stays the strict YES/NO in route 1.
+      if (deps.agent?.mode === 'live') {
+        try {
+          const outcome = await deps.agent.handle({ phone, text });
+          if (outcome.sent) return;
+        } catch (error) {
+          log('agent enquiry turn failed', error); // fall through to canned
+        }
+      }
       await deps.notifier.send(phone, result.reply);
       return;
     }
