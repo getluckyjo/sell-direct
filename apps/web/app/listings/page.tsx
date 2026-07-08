@@ -37,15 +37,40 @@ export default async function ListingsPage() {
               {listings.map((l) => (
                 <tr key={l.id}>
                   <td className="px-4 py-3">
-                    <div className="font-medium">{l.title}</div>
-                    <div className="text-slate-500">
-                      {[l.suburb, l.city].filter(Boolean).join(', ')}
-                      {l.bedrooms != null ? ` · ${l.bedrooms} bed` : ''}
+                    <div className="flex items-center gap-3">
+                      {l.photos?.[0]?.url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={l.photos[0].url}
+                          alt=""
+                          className="h-12 w-12 flex-none rounded-lg object-cover"
+                        />
+                      ) : (
+                        <div className="flex h-12 w-12 flex-none items-center justify-center rounded-lg bg-slate-100 text-slate-400">
+                          🏠
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-medium">{l.title}</div>
+                        <div className="text-slate-500">
+                          {[l.suburb, l.city].filter(Boolean).join(', ')}
+                          {l.bedrooms != null ? ` · ${l.bedrooms} bed` : ''}
+                          {` · ${l._count?.photos ?? 0} photo${(l._count?.photos ?? 0) === 1 ? '' : 's'}`}
+                          {` · description ${l.description ? '✓' : '–'}`}
+                        </div>
+                      </div>
                     </div>
                   </td>
                   <td className="px-4 py-3">{zar(l.priceZar)}</td>
                   <td className="px-4 py-3">
-                    {l.status} · {l.tier}
+                    {l.status === 'awaiting_photos' ? (
+                      <span className="rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-800">
+                        awaiting photos
+                      </span>
+                    ) : (
+                      l.status
+                    )}{' '}
+                    · {l.tier}
                   </td>
                   <td className="px-4 py-3 text-slate-600">
                     {l.seller.name ?? l.seller.phone}

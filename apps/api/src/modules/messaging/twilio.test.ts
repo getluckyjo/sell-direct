@@ -185,3 +185,51 @@ describe('TwilioWhatsAppAdapter.send', () => {
     );
   });
 });
+
+describe('TwilioWhatsAppAdapter media', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('parses inbound media into media (Body becomes the caption, not text)', () => {
+    const [msg] = adapter.parseInbound({
+      MessageSid: 'SM123',
+      From: 'whatsapp:+27820001111',
+      To: 'whatsapp:+14155238886',
+      NumMedia: '1',
+      MediaUrl0: 'https://api.twilio.example/media/ME123',
+      MediaContentType0: 'image/jpeg',
+      Body: 'our lounge',
+    });
+    expect(msg.type).toBe('image');
+    expect(msg.text).toBeUndefined();
+    expect(msg.media).toEqual({
+      url: 'https://api.twilio.example/media/ME123',
+      mimeType: 'image/jpeg',
+      caption: 'our lounge',
+    });
+  });
+
+  it('fetchMedia downloads with Basic auth', async () => {
+    const bytes = Buffer.from('img');
+    const fetchMock = vi.fn().mockResolvedValue(
+      new Response(bytes, {
+        status: 200,
+        headers: { 'content-type': 'image/jpeg' },
+      }),
+    );
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await adapter.fetchMedia({
+      url: 'https://api.twilio.example/media/ME123',
+    });
+
+    expect(result.mimeType).toBe('image/jpeg');
+    expect(result.bytes.equals(bytes)).toBe(true);
+    const [url, init] = fetchMock.mock.calls[0];
+    expect(url).toBe('https://api.twilio.example/media/ME123');
+    const expectedAuth =
+      'Basic ' + Buffer.from(`${config.accountSid}:${config.authToken}`).toString('base64');
+    expect(init.headers.Authorization).toBe(expectedAuth);
+  });
+});

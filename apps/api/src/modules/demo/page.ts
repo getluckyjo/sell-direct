@@ -73,11 +73,17 @@ export const DEMO_PAGE_HTML = `<!doctype html>
                   cursor: pointer; color: var(--ink); }
 
   .composer { display: flex; gap: 8px; padding: 8px 10px; background: #f0f0f0; }
-  .composer input { flex: 1; border: 0; border-radius: 999px; padding: 11px 16px;
+  .composer input[type="text"] { flex: 1; border: 0; border-radius: 999px; padding: 11px 16px;
                     font-size: 14px; outline: none; }
   .composer button { width: 44px; height: 44px; border-radius: 50%; border: 0;
                      background: var(--wa-header); color: #fff; font-size: 17px;
                      cursor: pointer; flex: none; }
+  .composer button.attach { background: #8696a0; font-size: 19px; }
+  .bubble.photo { padding: 4px; }
+  .bubble.photo img { max-width: 220px; border-radius: 6px; display: block; }
+  .bubble.photo .ph { width: 180px; height: 120px; border-radius: 6px;
+                      background: #d8d5cc; display: flex; align-items: center;
+                      justify-content: center; color: #8a877f; font-size: 12px; }
 
   dialog { border: 0; border-radius: 12px; padding: 22px; max-width: 340px; width: 90%; }
   dialog::backdrop { background: rgba(0,0,0,.45); }
@@ -104,7 +110,9 @@ export const DEMO_PAGE_HTML = `<!doctype html>
   <div class="typing" id="typing">Sold Direct is typing…</div>
   <div class="chips" id="chips"></div>
   <div class="composer">
-    <input id="box" placeholder="Type a message" autocomplete="off">
+    <button id="attach" class="attach" title="Send photos">📎</button>
+    <input id="file" type="file" accept="image/*" multiple hidden>
+    <input id="box" type="text" placeholder="Type a message" autocomplete="off">
     <button id="send">➤</button>
   </div>
 </div>
@@ -189,6 +197,18 @@ export const DEMO_PAGE_HTML = `<!doctype html>
     var html = '';
     state.messages.forEach(function (m) {
       var me = m.direction === 'inbound'; // you play the customer
+      if (m.type === 'image') {
+        var img = m.mediaId
+          ? '<img src="/api/demo/media/' + encodeURIComponent(m.mediaId)
+            + '?token=' + encodeURIComponent(token())
+            + '" onerror="this.outerHTML=\\'<div class=&quot;ph&quot;>photo expired</div>\\'">'
+          : '<div class="ph">photo</div>';
+        html += '<div class="row ' + (me ? 'me' : 'them') + '"><div class="bubble photo">'
+          + img
+          + (m.body ? '<div style="padding:4px 6px">' + esc(m.body) + '</div>' : '')
+          + '<div class="meta" style="padding:0 6px 4px">' + time(m.createdAt) + '</div></div></div>';
+        return;
+      }
       html += '<div class="row ' + (me ? 'me' : 'them') + '"><div class="bubble">'
         + esc(m.body)
         + '<div class="meta">' + time(m.createdAt) + '</div></div></div>';
@@ -244,6 +264,35 @@ export const DEMO_PAGE_HTML = `<!doctype html>
 
   document.getElementById('send').onclick = send;
   box.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
+
+  // Photo upload: read each file as a data URL, optimistic bubble, POST.
+  var fileInput = document.getElementById('file');
+  document.getElementById('attach').onclick = function () {
+    if (!token()) { askToken(); return; }
+    fileInput.click();
+  };
+  fileInput.addEventListener('change', function () {
+    Array.prototype.forEach.call(fileInput.files, function (file) {
+      var reader = new FileReader();
+      reader.onload = function () {
+        var row = document.createElement('div');
+        row.className = 'row me';
+        row.innerHTML = '<div class="bubble photo"><img src="' + reader.result + '"><div class="meta" style="padding:0 6px 4px">…</div></div>';
+        chat.appendChild(row);
+        chat.scrollTop = chat.scrollHeight;
+        typing.classList.add('on');
+        api('/api/demo/photo', {
+          method: 'POST',
+          body: JSON.stringify({ phone: phone, dataUrl: reader.result })
+        }).then(function (state) {
+          typing.classList.remove('on');
+          render(state);
+        }).catch(function () { typing.classList.remove('on'); });
+      };
+      reader.readAsDataURL(file);
+    });
+    fileInput.value = '';
+  });
 
   // Gentle poll so shadow drafts / async work show up without a reload.
   pollTimer = setInterval(function () {

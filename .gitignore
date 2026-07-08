@@ -38,3 +38,6 @@ Thumbs.db
 # Test / coverage
 coverage/
 .nyc_output/
+
+# Local storage fallback (listing photos in dev/demo)
+.data/

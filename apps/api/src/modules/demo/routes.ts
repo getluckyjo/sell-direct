@@ -3,7 +3,11 @@ import type { Dispatcher } from '../conversation';
 import type { MessageRepository } from '../messaging';
 import type { Notifier } from '../notifications';
 import type { AgentRepository } from '../agent';
-import { DEMO_PHONE_RE, type DemoRepository } from './types';
+import {
+  DEMO_PHONE_RE,
+  type DemoMediaStore,
+  type DemoRepository,
+} from './types';
 import { DEMO_PAGE_HTML } from './page';
 
 export interface DemoRouteDeps {
@@ -12,12 +16,16 @@ export interface DemoRouteDeps {
   messages: MessageRepository;
   demo: DemoRepository;
   agentDrafts: AgentRepository;
+  /** In-memory photo stash feeding the demo's fetchMedia. */
+  media: DemoMediaStore;
   /** The demo's persist-only notifier (draft approvals send through it). */
   notifier: Notifier;
   /** When set, API endpoints require a matching `x-internal-token` header. */
   internalToken?: string;
   log?: (message: string, error?: unknown) => void;
 }
+
+const DATA_URL_RE = /^data:(image\/[a-z+.-]+);base64,(.+)$/i;
 
 let demoInboundSeq = 0;
 
@@ -95,6 +103,66 @@ export function registerDemoRoutes(
       return threadState(phone);
     },
   );
+
+  // Photo upload: base64 data-URL JSON (bodyLimit raised — Fastify's default
+  // 1 MiB is too small for a phone photo, and base64 inflates ~33%).
+  app.post(
+    '/api/demo/photo',
+    { preHandler: guard, bodyLimit: 12 * 1024 * 1024 },
+    async (request, reply) => {
+      const body = (request.body ?? {}) as { phone?: string; dataUrl?: string };
+      const phone = body.phone ?? '';
+      if (!DEMO_PHONE_RE.test(phone)) {
+        return reply.code(400).send({ error: 'invalid_demo_phone' });
+      }
+      const match = DATA_URL_RE.exec(body.dataUrl ?? '');
+      if (!match) {
+        return reply.code(400).send({ error: 'not_an_image' });
+      }
+      const [, mimeType, payload] = match;
+      let bytes: Buffer;
+      try {
+        bytes = Buffer.from(payload, 'base64');
+      } catch {
+        return reply.code(400).send({ error: 'bad_base64' });
+      }
+      if (bytes.length === 0) {
+        return reply.code(400).send({ error: 'empty_image' });
+      }
+
+      const mediaId = deps.media.put(bytes, mimeType);
+      demoInboundSeq += 1;
+      const message = {
+        waMessageId: `wamid.demo.in.${Date.now()}.${demoInboundSeq}`,
+        from: phone,
+        to: 'demo',
+        type: 'image',
+        text: undefined,
+        media: { id: mediaId, mimeType },
+        raw: { demo: true, demoMediaId: mediaId },
+      };
+      await deps.messages.recordInbound(message);
+      await deps.dispatcher.handle(message);
+
+      return threadState(phone);
+    },
+  );
+
+  // Image bubbles load via <img>, which can't send headers — the token rides
+  // the query string instead. Bytes are gone after a restart (404), which the
+  // UI renders as a placeholder.
+  app.get('/api/demo/media/:id', async (request, reply) => {
+    if (deps.internalToken) {
+      const { token } = request.query as { token?: string };
+      if (token !== deps.internalToken) {
+        return reply.code(401).send({ error: 'unauthorized' });
+      }
+    }
+    const { id } = request.params as { id: string };
+    const item = deps.media.get(id);
+    if (!item) return reply.code(404).send({ error: 'not_found' });
+    return reply.type(item.mimeType).send(item.bytes);
+  });
 
   app.post(
     '/api/demo/drafts/:id/approve',

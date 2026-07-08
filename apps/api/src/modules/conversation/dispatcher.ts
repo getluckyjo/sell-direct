@@ -1,9 +1,13 @@
 import type { InboundMessage } from '../messaging';
 import type { Notifier } from '../notifications';
 import {
+  handleDescriptionMessage,
+  handleInboundPhoto,
   handleListingIntakeMessage,
   START_RE,
+  type DescriptionDeps,
   type ListingIntakeDeps,
+  type PhotoIntakeDeps,
 } from '../listings';
 import {
   handleBuyerEnquiry,
@@ -47,6 +51,14 @@ export interface DispatcherDeps {
   prequalStore: PrequalStore;
   notifier: Notifier;
   /**
+   * Optional inbound-photo handling: downloads, stores and attaches seller
+   * photos to their pending/active listing. Deterministic code in ALL modes
+   * — the model never touches bytes.
+   */
+  photoIntake?: PhotoIntakeDeps;
+  /** Optional post-publish description step (scripted, verbatim, SKIP-able). */
+  description?: DescriptionDeps;
+  /**
    * Optional AI concierge. When present, messages no scripted flow claims
    * (the intake help fallback) go to the agent instead of the canned help
    * reply. In shadow mode the agent only drafts — the canned reply is still
@@ -79,6 +91,16 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
   async function route(message: InboundMessage): Promise<void> {
     const phone = message.from;
     const text = (message.text ?? '').trim();
+
+    // -1. Inbound media (a photo) — handled by code in every mode, above all
+    //     other routing. An image has empty text so no keyword route could
+    //     claim it anyway; a buyer mid-prequal who sends a photo gets a sane
+    //     photo reply and can still answer the consent question next.
+    if (message.media && deps.photoIntake) {
+      const result = await handleInboundPhoto(deps.photoIntake, message);
+      await deps.notifier.send(phone, result.reply);
+      return;
+    }
 
     // 0. Upsell keyword from a stage message (CERTS / COVER / MOVE):
     //    acknowledge and hand to the concierge — never the "reply list" fallback.
@@ -136,6 +158,22 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       }
       await deps.notifier.send(phone, result.reply);
       return;
+    }
+
+    // 2.5 Post-publish description step: while an onboarding row exists, free
+    //     text is the seller's (optional) description — stored verbatim by
+    //     code even in live mode (the live agent normally clears this state
+    //     via its own tool first; this is the scripted safety net). Keyword
+    //     triggers fall through so "list" still starts a fresh intake.
+    if (deps.description) {
+      const result = await handleDescriptionMessage(deps.description, {
+        phone,
+        text,
+      });
+      if (result.handled && result.reply) {
+        await deps.notifier.send(phone, result.reply);
+        return;
+      }
     }
 
     // 3. Agent-led intake: when the AI concierge is LIVE it owns the listing

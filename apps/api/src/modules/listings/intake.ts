@@ -223,17 +223,17 @@ export function renderSummary(draft: ListingDraft): string {
   );
 }
 
-// The certificate heads-up is Cape Town-specific and cost figures are
-// "from" estimates — see docs/BOTTLENECKS.md §1.4–1.6 (verified).
-function liveReply(completed: ListingDraft): string {
+// The listing pends until the first photo arrives (portals effectively
+// require photos); the celebratory copy + Cape Town CERTS pitch moved to the
+// activation message in photos.ts. Description is optional and SKIP-able.
+function pendingReply(completed: ListingDraft): string {
   return (
-    `Done! Your listing "${completed.title}" in ${completed.suburb} at ` +
-    `${formatPriceZar(completed.priceZar)} is live. 🎉 We'll start finding buyers.\n\n` +
-    `💡 Plan ahead — every Cape Town sale needs compliance certificates before transfer: ` +
-    `electrical (from ~R800), water installation (Cape Town-only, from ~R500, must be fresh ` +
-    `for each transfer), gas (from ~R650), electric fence (from ~R600) and usually a beetle ` +
-    `certificate (from ~R400). Repairs are extra. Reply CERTS and we'll book trusted ` +
-    `inspectors early — sellers who sort these now avoid weeks of delay later.`
+    `Perfect — your listing "${completed.title}" in ${completed.suburb} at ` +
+    `${formatPriceZar(completed.priceZar)} is confirmed!\n\n` +
+    `📝 Optional: reply with a short description buyers will read (a sentence ` +
+    `or two about what makes it special), or reply SKIP.\n` +
+    `📸 Then send 5–10 photos whenever you're ready — your listing goes live ` +
+    `the moment your first photo arrives.`
   );
 }
 
@@ -296,7 +296,7 @@ export function advanceIntake(
   if (state.step === 'awaiting_confirm') {
     if (YES_RE.test(text)) {
       const completed = data as ListingDraft;
-      return { state: { step: 'completed', data }, reply: liveReply(completed), completed };
+      return { state: { step: 'completed', data }, reply: pendingReply(completed), completed };
     }
     // An edit: extracted fields may overwrite ("price 4500000").
     const edit = applyExtracted(data, found, { overwrite: true });

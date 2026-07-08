@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from 'vitest';
 import { createDispatcher, type DispatcherDeps } from './dispatcher';
 import { createInMemoryPrequalStore } from './prequal-store';
-import { createInMemoryConversationStore } from '../listings';
+import {
+  createInMemoryConversationStore,
+  createInMemoryOnboardingStore,
+} from '../listings';
 import { ObaReferralStub } from '../finance';
 import type { AgentHandler, AgentMode } from '../agent';
 import type { InboundMessage } from '../messaging';
@@ -26,7 +29,7 @@ function fakeAgent(
   return { mode, handle };
 }
 
-function makeDeps(agent?: AgentHandler) {
+function makeDeps(agent?: AgentHandler, extra: Partial<DispatcherDeps> = {}) {
   const sent: { to: string; text: string }[] = [];
   const notifier = {
     send: vi.fn(async (to: string, text: string) => {
@@ -61,6 +64,7 @@ function makeDeps(agent?: AgentHandler) {
     notifier,
     agent,
     log: vi.fn(),
+    ...extra,
   };
   return {
     dispatcher: createDispatcher(deps),
@@ -204,5 +208,67 @@ describe('dispatcher × AI concierge', () => {
 
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toContain('Reply "list"');
+  });
+
+  it('an inbound photo is handled by code even in live mode — never the agent', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent, {
+      photoIntake: {
+        listings: {
+          findPhotoTarget: vi.fn(async () => ({
+            id: 'l1',
+            title: 'Home',
+            status: 'awaiting_photos' as const,
+            photoCount: 0,
+          })),
+          addPhoto: vi.fn(async () => ({ id: 'p1' })),
+          activate: vi.fn(async () => true),
+          getForSyndication: vi.fn(async () => null),
+        },
+        fetchMedia: vi.fn(async () => ({
+          bytes: Buffer.from('jpeg'),
+          mimeType: 'image/jpeg',
+        })),
+        storage: {
+          putObject: vi.fn(async ({ path }: { path: string }) => ({ path })),
+          getObjectUrl: vi.fn(async () => 'https://cdn.example/p.jpg'),
+          getUploadUrl: vi.fn(),
+        },
+        bucket: 'listing-photos',
+        minPhotos: 1,
+      },
+    });
+
+    await d.dispatcher.handle({
+      waMessageId: 'wamid.img',
+      from: PHONE,
+      to: 'x',
+      type: 'image',
+      media: { id: 'm1', mimeType: 'image/jpeg' },
+      raw: {},
+    });
+
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toMatch(/now LIVE/i);
+  });
+
+  it('the description step claims free text ahead of the agent', async () => {
+    const agent = fakeAgent('live');
+    const onboarding = createInMemoryOnboardingStore();
+    await onboarding.set(PHONE, { listingId: 'l1' });
+    const setDescription = vi.fn(async () => {});
+    const d = makeDeps(agent, {
+      description: { onboarding, setDescription },
+    });
+
+    await d.dispatcher.handle(inbound('A sunny family home near schools.'));
+
+    expect(setDescription).toHaveBeenCalledWith(
+      'l1',
+      'A sunny family home near schools.',
+    );
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent[0].text).toMatch(/description saved/i);
   });
 });
