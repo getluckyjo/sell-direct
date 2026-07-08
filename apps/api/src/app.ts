@@ -23,8 +23,11 @@ import {
   type LeadRepository,
 } from './modules/leads';
 import {
+  createAnthropicIntakeExtractor,
+  createNoopExtractor,
   createPrismaConversationStore,
   createPrismaListingRepository,
+  type ListingDraft,
   type ListingRepository,
 } from './modules/listings';
 import {
@@ -119,6 +122,24 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   // One notifier serves both the conversational replies and stage updates.
   const notifier = createNotifier(adapter, repository, senderNumber());
 
+  // Shared intake wiring: the scripted flow, the demo dispatcher and (when
+  // live) the agent's write tools all act on the same conversation store and
+  // listings repository — state stays hand-off-safe between them. The
+  // extractor lets any reply fill several fields at once (no double
+  // questions); it degrades to a noop without an API key or with
+  // INTAKE_EXTRACTION=false.
+  const conversationStore = createPrismaConversationStore(prisma);
+  const createListing = (phone: string, draft: ListingDraft) =>
+    createPrismaListingRepository(prisma).createFromDraft(phone, draft);
+  const extractor =
+    process.env.ANTHROPIC_API_KEY && process.env.INTAKE_EXTRACTION !== 'false'
+      ? createAnthropicIntakeExtractor({
+          model: process.env.INTAKE_EXTRACTOR_MODEL,
+          log: (msg, err) => app.log.warn({ err }, msg),
+        })
+      : createNoopExtractor();
+  const intakeDeps = { store: conversationStore, createListing, extractor };
+
   // AI concierge (Claude): drafts replies for messages no scripted flow
   // claims. Off unless AGENT_ENABLED=true and an ANTHROPIC_API_KEY is set;
   // AGENT_MODE=shadow (default — draft only, concierge approves) or live.
@@ -148,11 +169,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const dispatcher =
     deps?.dispatcher ??
     createDispatcher({
-      intake: {
-        store: createPrismaConversationStore(prisma),
-        createListing: (phone, draft) =>
-          createPrismaListingRepository(prisma).createFromDraft(phone, draft),
-      },
+      intake: intakeDeps,
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
@@ -193,11 +210,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   if (process.env.DEMO_ENABLED !== 'false') {
     const demoNotifier = createDemoNotifier(repository);
     const demoDispatcher = createDispatcher({
-      intake: {
-        store: createPrismaConversationStore(prisma),
-        createListing: (phone, draft) =>
-          createPrismaListingRepository(prisma).createFromDraft(phone, draft),
-      },
+      intake: intakeDeps,
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
