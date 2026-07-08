@@ -205,6 +205,42 @@ model Lead {
   @@map("leads")
 }
 
+/// Review state of an AI-drafted WhatsApp reply (shadow mode).
+enum AgentDraftStatus {
+  pending
+  approved
+  dismissed
+  /// Sent automatically (agent live mode) — stored for audit, no review needed.
+  sent
+}
+
+/// An AI-agent-drafted reply to an inbound WhatsApp message. In shadow mode
+/// nothing is sent until a concierge approves; in live mode the reply is sent
+/// immediately and the row is kept as the audit record. `toolCalls` lists the
+/// tools the agent used to compose the reply (names only — never tool output,
+/// which may contain PII).
+model AgentDraft {
+  id        String           @id @default(cuid())
+  /// The WhatsApp number the reply is addressed to (PII — the contact key).
+  phone     String
+  /// The inbound message body the draft responds to.
+  inbound   String
+  /// The agent's proposed reply text.
+  draft     String
+  /// Names of tools the agent invoked while drafting (audit trail).
+  toolCalls String[]         @default([])
+  /// The agent flagged this thread for human (concierge) takeover.
+  escalated Boolean          @default(false)
+  status    AgentDraftStatus @default(pending)
+  createdAt DateTime         @default(now())
+  /// When a concierge approved/dismissed the draft (null while pending/sent).
+  reviewedAt DateTime?
+
+  @@index([status, createdAt])
+  @@index([phone, createdAt])
+  @@map("agent_drafts")
+}
+
 /// Per-phone WhatsApp conversation state for guided flows (e.g. listing intake).
 /// `data` holds the in-progress answers; cleared when the flow completes.
 model ConversationState {

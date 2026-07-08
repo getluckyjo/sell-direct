@@ -20,6 +20,7 @@
     "start": "tsx src/server.ts"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.110.0",
     "@prisma/client": "^6.1.0",
     "@sell-direct/shared": "workspace:*",
     "fastify": "^5.2.0",

@@ -10,6 +10,7 @@ import {
   type EnquiryDeps,
 } from '../enquiry';
 import type { PrequalStore } from './prequal-store';
+import type { AgentHandler } from '../agent';
 
 /**
  * A buyer arrives via a deep link that pre-fills a message like
@@ -44,6 +45,13 @@ export interface DispatcherDeps {
   enquiry: EnquiryDeps;
   prequalStore: PrequalStore;
   notifier: Notifier;
+  /**
+   * Optional AI concierge. When present, messages no scripted flow claims
+   * (the intake help fallback) go to the agent instead of the canned help
+   * reply. In shadow mode the agent only drafts — the canned reply is still
+   * sent so the user is never left hanging.
+   */
+  agent?: AgentHandler;
   /** Optional logger for send/flow failures (never throws into the webhook). */
   log?: (message: string, error?: unknown) => void;
 }
@@ -122,6 +130,18 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       phone,
       text,
     });
+
+    // 4. No scripted flow claimed the message → AI concierge, when enabled.
+    //    Consent, deep links and active intake drafts never reach the agent.
+    if (result.fallback && deps.agent) {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) return; // live mode replied already
+      } catch (error) {
+        log('agent turn failed', error); // fall through to the canned reply
+      }
+    }
+
     await deps.notifier.send(phone, result.reply);
   }
 
