@@ -68,7 +68,10 @@ cost and latency down.
 
 `https://<api-host>/demo` serves a WhatsApp-look simulator wired to the
 **production pipeline** — same dispatcher, scripted flows, agent, and
-database. Only the transport is simulated: inbound goes through
+database. The marketing site proxies it too, so it's playable at
+**www.solddirect.co.za/demo** (Next.js rewrites in
+`apps/marketing/next.config.mjs`, using the `API_INTERNAL_URL` env var
+already configured on Vercel). Only the transport is simulated: inbound goes through
 `POST /api/demo/messages` instead of the BSP webhook, and outbound is
 persisted to the message log instead of hitting Meta/Twilio.
 
