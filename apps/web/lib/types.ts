@@ -8,9 +8,12 @@ export interface ListingRow {
   bathrooms: number | null;
   status: string;
   tier: string;
+  description: string | null;
   createdAt: string;
   seller: { phone: string; name: string | null };
-  _count: { deals: number };
+  /** First photo (sortOrder asc), when any. */
+  photos: { url: string | null }[];
+  _count: { deals: number; photos: number };
 }
 
 export interface DealRow {

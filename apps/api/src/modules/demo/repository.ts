@@ -12,13 +12,17 @@ export function createPrismaDemoRepository(
         where: { OR: [{ fromPhone: phone }, { toPhone: phone }] },
         orderBy: { createdAt: 'asc' },
         take: 200,
-        select: { direction: true, body: true, createdAt: true },
+        select: { direction: true, body: true, type: true, raw: true, createdAt: true },
       });
       return rows
-        .filter((r) => (r.body ?? '').trim() !== '')
+        .filter((r) => (r.body ?? '').trim() !== '' || r.type === 'image')
         .map((r) => ({
           direction: r.direction,
-          body: r.body as string,
+          body: r.body ?? '',
+          type: r.type,
+          mediaId:
+            (r.raw as { demoMediaId?: string } | null)?.demoMediaId ??
+            undefined,
           createdAt: r.createdAt,
         }));
     },

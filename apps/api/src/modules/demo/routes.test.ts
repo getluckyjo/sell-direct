@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import Fastify from 'fastify';
 import { registerDemoRoutes, type DemoRouteDeps } from './routes';
 import { createDemoNotifier } from './repository';
-import type { DemoMessage } from './types';
+import { createDemoMediaStore, type DemoMessage } from './types';
 import type { InboundMessage, MessageRepository } from '../messaging';
 import type { AgentDraftRecord, AgentRepository } from '../agent';
 
@@ -15,6 +15,8 @@ function makeApp(overrides: Partial<DemoRouteDeps> = {}) {
       log.push({
         direction: 'inbound',
         body: message.text ?? '',
+        type: message.type,
+        mediaId: (message.raw as { demoMediaId?: string } | null)?.demoMediaId,
         createdAt: new Date(),
       });
       return true;
@@ -23,6 +25,7 @@ function makeApp(overrides: Partial<DemoRouteDeps> = {}) {
       log.push({
         direction: 'outbound',
         body: message.text,
+        type: 'text',
         createdAt: new Date(),
       });
     },
@@ -57,6 +60,7 @@ function makeApp(overrides: Partial<DemoRouteDeps> = {}) {
 
   const app = Fastify();
   registerDemoRoutes(app, {
+    media: createDemoMediaStore(),
     // Echo dispatcher: replies through the demo notifier like a real flow.
     dispatcher: {
       async handle(message) {
@@ -147,6 +151,78 @@ describe('demo routes', () => {
       body: 'Here is my answer.',
     });
     expect((await agentDrafts.getDraft(id))?.status).toBe('approved');
+  });
+
+  it('accepts a photo data-URL and injects a media message through the pipeline', async () => {
+    const seen: InboundMessage[] = [];
+    const { app } = makeApp({
+      dispatcher: {
+        async handle(message) {
+          seen.push(message);
+        },
+      },
+    });
+    const png = Buffer.from('fake-png-bytes').toString('base64');
+
+    const res = await app.inject({
+      method: 'POST',
+      url: '/api/demo/photo',
+      headers: auth,
+      payload: { phone: PHONE, dataUrl: `data:image/png;base64,${png}` },
+    });
+
+    expect(res.statusCode).toBe(200);
+    expect(seen).toHaveLength(1);
+    expect(seen[0].type).toBe('image');
+    expect(seen[0].text).toBeUndefined();
+    expect(seen[0].media?.id).toBeTruthy();
+    expect(seen[0].media?.mimeType).toBe('image/png');
+  });
+
+  it('rejects non-image data URLs and bad phones on the photo endpoint', async () => {
+    const { app } = makeApp();
+    const bad = await app.inject({
+      method: 'POST',
+      url: '/api/demo/photo',
+      headers: auth,
+      payload: { phone: PHONE, dataUrl: 'data:application/pdf;base64,QUJD' },
+    });
+    expect(bad.statusCode).toBe(400);
+    expect(bad.json().error).toBe('not_an_image');
+
+    const badPhone = await app.inject({
+      method: 'POST',
+      url: '/api/demo/photo',
+      headers: auth,
+      payload: { phone: '+27821234567', dataUrl: 'data:image/png;base64,QUJD' },
+    });
+    expect(badPhone.statusCode).toBe(400);
+  });
+
+  it('serves stashed media by id with the token in the query', async () => {
+    const media = createDemoMediaStore();
+    const { app } = makeApp({ media });
+    const id = media.put(Buffer.from('img-bytes'), 'image/jpeg');
+
+    const noToken = await app.inject({
+      method: 'GET',
+      url: `/api/demo/media/${id}`,
+    });
+    expect(noToken.statusCode).toBe(401);
+
+    const hit = await app.inject({
+      method: 'GET',
+      url: `/api/demo/media/${id}?token=secret`,
+    });
+    expect(hit.statusCode).toBe(200);
+    expect(hit.headers['content-type']).toContain('image/jpeg');
+    expect(hit.body).toBe('img-bytes');
+
+    const miss = await app.inject({
+      method: 'GET',
+      url: '/api/demo/media/nope?token=secret',
+    });
+    expect(miss.statusCode).toBe(404);
   });
 
   it('refuses to approve a draft for a non-demo (real) thread', async () => {

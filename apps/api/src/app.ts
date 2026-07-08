@@ -51,6 +51,7 @@ import {
   type AgentMode,
 } from './modules/agent';
 import {
+  createDemoMediaStore,
   createDemoNotifier,
   createPrismaDemoRepository,
   registerDemoRoutes,
@@ -268,6 +269,10 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   // DEMO_ENABLED=false once real traffic is the priority.
   if (process.env.DEMO_ENABLED !== 'false') {
     const demoNotifier = createDemoNotifier(repository);
+    // Demo photos come from the in-memory stash instead of a BSP download;
+    // everything downstream (storage, DB, activation, syndication) is the
+    // production path.
+    const demoMedia = createDemoMediaStore();
     const demoDispatcher = createDispatcher({
       intake: intakeDeps,
       enquiry: {
@@ -277,6 +282,12 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier: demoNotifier,
+      photoIntake: makePhotoIntake(async (media) => {
+        const item = media.id ? demoMedia.get(media.id) : undefined;
+        if (!item) throw new Error('demo media not found (restarted?)');
+        return item;
+      }),
+      description,
       agent: deps?.agent ?? makeAgent(demoNotifier),
       log: (msg, err) => app.log.error({ err }, msg),
     });
@@ -285,6 +296,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       messages: repository,
       demo: createPrismaDemoRepository(prisma),
       agentDrafts: agentRepository,
+      media: demoMedia,
       notifier: demoNotifier,
       internalToken,
       log: (msg, err) => app.log.error({ err }, msg),
