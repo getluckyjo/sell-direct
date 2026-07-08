@@ -11,6 +11,7 @@ import {
 import {
   createNotifier,
   loadTemplateConfigFromEnv,
+  type Notifier,
 } from './modules/notifications';
 import {
   createDispatcher,
@@ -46,6 +47,11 @@ import {
   type AgentHandler,
   type AgentMode,
 } from './modules/agent';
+import {
+  createDemoNotifier,
+  createPrismaDemoRepository,
+  registerDemoRoutes,
+} from './modules/demo';
 
 export type ServerDeps = MessagingRouteDeps & {
   leadRepository: LeadRepository;
@@ -121,9 +127,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     process.env.AGENT_ENABLED === 'true' && !!process.env.ANTHROPIC_API_KEY;
   const agentMode: AgentMode =
     process.env.AGENT_MODE === 'live' ? 'live' : 'shadow';
-  const agent =
-    deps?.agent ??
-    (agentEnabled
+  const makeAgent = (agentNotifier: Notifier): AgentHandler | undefined =>
+    agentEnabled
       ? createAgentHandler({
           model: createAnthropicAgentModel({
             model: process.env.AGENT_MODEL,
@@ -131,11 +136,12 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           }),
           repository: agentRepository,
           data: createPrismaAgentDataSource(prisma),
-          notifier,
+          notifier: agentNotifier,
           mode: agentMode,
           log: (msg, err) => app.log.warn({ err }, msg),
         })
-      : undefined);
+      : undefined;
+  const agent = deps?.agent ?? makeAgent(notifier);
 
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
@@ -179,6 +185,39 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     internalToken,
     log: (msg, err) => app.log.error({ err }, msg),
   });
+
+  // WhatsApp demo simulator (GET /demo): the full production pipeline —
+  // dispatcher, flows, agent, Postgres — behind a persist-only transport.
+  // Demo threads are locked to the reserved +2700xxxxxxx range. Disable with
+  // DEMO_ENABLED=false once real traffic is the priority.
+  if (process.env.DEMO_ENABLED !== 'false') {
+    const demoNotifier = createDemoNotifier(repository);
+    const demoDispatcher = createDispatcher({
+      intake: {
+        store: createPrismaConversationStore(prisma),
+        createListing: (phone, draft) =>
+          createPrismaListingRepository(prisma).createFromDraft(phone, draft),
+      },
+      enquiry: {
+        profiles: createPrismaProfileRepository(prisma),
+        deals: createPrismaDealRepository(prisma),
+        finance: new ObaReferralStub((msg) => app.log.info(msg)),
+      },
+      prequalStore: createPrismaPrequalStore(prisma),
+      notifier: demoNotifier,
+      agent: deps?.agent ?? makeAgent(demoNotifier),
+      log: (msg, err) => app.log.error({ err }, msg),
+    });
+    registerDemoRoutes(app, {
+      dispatcher: demoDispatcher,
+      messages: repository,
+      demo: createPrismaDemoRepository(prisma),
+      agentDrafts: agentRepository,
+      notifier: demoNotifier,
+      internalToken,
+      log: (msg, err) => app.log.error({ err }, msg),
+    });
+  }
 
   // Transfer-journey tracker: advance a deal + notify the parties on WhatsApp,
   // with stage deadlines (countdown engine) and within-stage events (declines).
