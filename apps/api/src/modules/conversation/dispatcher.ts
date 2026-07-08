@@ -2,6 +2,7 @@ import type { InboundMessage } from '../messaging';
 import type { Notifier } from '../notifications';
 import {
   handleListingIntakeMessage,
+  START_RE,
   type ListingIntakeDeps,
 } from '../listings';
 import {
@@ -121,18 +122,47 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         buyerId: result.buyerId,
         listingId,
       });
+      // The deterministic work (buyer + deal + pending consent) is done
+      // above and never moves to the agent. When live, the agent may word
+      // the pre-qual invite itself — aware of the listing and anything the
+      // buyer already said. Consent stays the strict YES/NO in route 1.
+      if (deps.agent?.mode === 'live') {
+        try {
+          const outcome = await deps.agent.handle({ phone, text });
+          if (outcome.sent) return;
+        } catch (error) {
+          log('agent enquiry turn failed', error); // fall through to canned
+        }
+      }
       await deps.notifier.send(phone, result.reply);
       return;
     }
 
-    // 3. Seller listing intake (active draft / trigger / help fallback).
+    // 3. Agent-led intake: when the AI concierge is LIVE it owns the listing
+    //    conversation (asks only for missing fields, natural wording). The
+    //    scripted flow below remains the fallback if the agent turn fails,
+    //    so the user is never stranded. Consent stays deterministic above.
+    if (
+      deps.agent?.mode === 'live' &&
+      (START_RE.test(text) || (await deps.intake.store.get(phone)) !== null)
+    ) {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) return;
+      } catch (error) {
+        log('agent intake turn failed', error); // fall through to scripted
+      }
+    }
+
+    // 4. Scripted listing intake (active draft / trigger / help fallback) —
+    //    now data-first with extraction, so it never re-asks a question.
     const result = await handleListingIntakeMessage(deps.intake, {
       phone,
       text,
     });
 
-    // 4. No scripted flow claimed the message → AI concierge, when enabled.
-    //    Consent, deep links and active intake drafts never reach the agent.
+    // 5. No scripted flow claimed the message → AI concierge, when enabled.
+    //    (Shadow mode drafts here; the canned reply below still goes out.)
     if (result.fallback && deps.agent) {
       try {
         const outcome = await deps.agent.handle({ phone, text });
