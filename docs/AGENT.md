@@ -64,6 +64,30 @@ phone number), so the agent remembers the thread without any new state. The
 system prompt is byte-stable and cached (prompt caching), keeping per-turn
 cost and latency down.
 
+## Playable WhatsApp demo (`/demo`)
+
+`https://<api-host>/demo` serves a WhatsApp-look simulator wired to the
+**production pipeline** — same dispatcher, scripted flows, agent, and
+database. The marketing site proxies it too, so it's playable at
+**www.solddirect.co.za/demo** (Next.js rewrites in
+`apps/marketing/next.config.mjs`, using the `API_INTERNAL_URL` env var
+already configured on Vercel). Only the transport is simulated: inbound goes through
+`POST /api/demo/messages` instead of the BSP webhook, and outbound is
+persisted to the message log instead of hitting Meta/Twilio.
+
+- Paste the `INTERNAL_API_TOKEN` once (kept in the browser's localStorage);
+  every demo API call is guarded by it.
+- Each chat plays as a random number in the reserved `+2700xxxxxxx` range —
+  an invalid SA prefix, so demo threads can never touch a real user, and the
+  demo endpoints reject any other number.
+- Shadow mode is visible in the chat: the agent's draft renders as an amber
+  card with **Approve & send** / **Dismiss** buttons (approval sends through
+  the demo transport only).
+- "New chat" starts over as a fresh person.
+- Disable the whole thing with `DEMO_ENABLED=false` when it has served its
+  purpose. Demo traffic shares the production tables (listings created in the
+  demo are real rows) — fine pre-launch, revisit before real users arrive.
+
 ## Verifying locally
 
 `scripts/agent-smoke.mts` runs the whole loop against a real Postgres with a
