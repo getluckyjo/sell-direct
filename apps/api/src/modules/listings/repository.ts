@@ -92,7 +92,9 @@ export function createPrismaListingRepository(
           bathrooms: draft.bathrooms,
           exclusivityTermDays: draft.exclusivityTermDays,
           tier: draft.tier,
-          status: 'active',
+          // Hidden from buyers until the first photo arrives (portals
+          // effectively require photos) — photos.ts flips it to active.
+          status: 'awaiting_photos',
         },
         select: { id: true },
       });

@@ -74,6 +74,7 @@ async function main() {
   await prisma.agentDraft.deleteMany();
   await prisma.message.deleteMany();
   await prisma.deal.deleteMany();
+  await prisma.listingPhoto.deleteMany();
   await prisma.listing.deleteMany();
   await prisma.seller.deleteMany();
 

@@ -7,7 +7,10 @@ import {
   type AgentIntakeAccess,
 } from './tools';
 import type { AgentMessage, AgentModel, AgentRepository } from './types';
-import { createInMemoryConversationStore } from '../listings';
+import {
+  createInMemoryConversationStore,
+  createInMemoryOnboardingStore,
+} from '../listings';
 
 function fakeRepository(history: AgentMessage[] = []): AgentRepository & {
   drafts: Array<Parameters<AgentRepository['saveDraft']>[0]>;
@@ -180,9 +183,25 @@ describe('buildAgentTools', () => {
 describe('agent intake write tools', () => {
   function intakeAccess(): AgentIntakeAccess & {
     createListing: ReturnType<typeof vi.fn>;
+    setDescription: ReturnType<typeof vi.fn>;
   } {
     const createListing = vi.fn(async () => ({ id: 'listing_9' }));
-    return { store: createInMemoryConversationStore(), createListing };
+    const setDescription = vi.fn(async () => {});
+    return {
+      store: createInMemoryConversationStore(),
+      createListing,
+      onboarding: createInMemoryOnboardingStore(),
+      listings: {
+        findPhotoTarget: vi.fn(async () => ({
+          id: 'listing_9',
+          title: 'Home',
+          status: 'awaiting_photos' as const,
+          photoCount: 0,
+        })),
+        setDescription,
+      },
+      setDescription,
+    };
   }
 
   it('write tools appear only when intake access is provided', async () => {
@@ -219,7 +238,7 @@ describe('agent intake write tools', () => {
       phone: '+27820000001',
       text: 'hi',
     });
-    expect(offered).toHaveLength(6);
+    expect(offered).toHaveLength(7);
   });
 
   it('update_listing_draft validates, persists and reports missing fields', async () => {
@@ -259,7 +278,8 @@ describe('agent intake write tools', () => {
     await update.run({ price_zar: 2_000_000, bedrooms: 2, bathrooms: 1, exclusivity_term_days: 90 });
     const result = await publish.run({ confirm: true });
 
-    expect(result).toContain('Published listing listing_9');
+    expect(result).toContain('Saved listing listing_9');
+    expect(result).toContain('PENDING PHOTOS');
     expect(access.createListing).toHaveBeenCalledWith('+27820000003', {
       title: 'Home',
       suburb: 'Gardens',

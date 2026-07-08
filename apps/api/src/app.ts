@@ -55,6 +55,20 @@ import {
   createPrismaDemoRepository,
   registerDemoRoutes,
 } from './modules/demo';
+import {
+  createStorageProvider,
+  registerStorageRoutes,
+  selectedStorage,
+  storageBucket,
+  storageLocalDir,
+  type StorageProvider,
+} from './modules/storage';
+import { Property24SyndicationStub } from './modules/syndication';
+import {
+  createPrismaOnboardingStore,
+  type DescriptionDeps,
+  type PhotoIntakeDeps,
+} from './modules/listings';
 
 export type ServerDeps = MessagingRouteDeps & {
   leadRepository: LeadRepository;
@@ -62,6 +76,8 @@ export type ServerDeps = MessagingRouteDeps & {
   dealRepository: DealRepository;
   /** Test seam: inject a fake agent (or leave AGENT_ENABLED unset to omit). */
   agent?: AgentHandler;
+  /** Test seam: inject a fake storage provider. */
+  storage?: StorageProvider;
   internalToken?: string;
 };
 
@@ -122,6 +138,13 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   // One notifier serves both the conversational replies and stage updates.
   const notifier = createNotifier(adapter, repository, senderNumber());
 
+  // Storage: Supabase when configured, local filesystem otherwise (dev/demo)
+  // — local objects are served from GET /api/storage/... on this API.
+  const storage = deps?.storage ?? createStorageProvider();
+  if (!deps?.storage && selectedStorage() === 'local') {
+    registerStorageRoutes(app, { baseDir: storageLocalDir() });
+  }
+
   // Shared intake wiring: the scripted flow, the demo dispatcher and (when
   // live) the agent's write tools all act on the same conversation store and
   // listings repository — state stays hand-off-safe between them. The
@@ -129,8 +152,14 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   // questions); it degrades to a noop without an API key or with
   // INTAKE_EXTRACTION=false.
   const conversationStore = createPrismaConversationStore(prisma);
+  const listingRepository =
+    deps?.listingRepository ?? createPrismaListingRepository(prisma);
   const createListing = (phone: string, draft: ListingDraft) =>
-    createPrismaListingRepository(prisma).createFromDraft(phone, draft);
+    listingRepository.createFromDraft(phone, draft);
+  const onboardingStore = createPrismaOnboardingStore(prisma);
+  const syndication = new Property24SyndicationStub((msg) =>
+    app.log.info(msg),
+  );
   const extractor =
     process.env.ANTHROPIC_API_KEY && process.env.INTAKE_EXTRACTION !== 'false'
       ? createAnthropicIntakeExtractor({
@@ -138,7 +167,28 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : createNoopExtractor();
-  const intakeDeps = { store: conversationStore, createListing, extractor };
+  const intakeDeps = {
+    store: conversationStore,
+    createListing,
+    extractor,
+    onboarding: onboardingStore,
+  };
+  const description: DescriptionDeps = {
+    onboarding: onboardingStore,
+    setDescription: (id, text) => listingRepository.setDescription(id, text),
+  };
+  const makePhotoIntake = (
+    fetchMedia: PhotoIntakeDeps['fetchMedia'],
+  ): PhotoIntakeDeps => ({
+    listings: listingRepository,
+    fetchMedia,
+    storage,
+    bucket: storageBucket(),
+    minPhotos: Number(process.env.LISTING_MIN_PHOTOS ?? 1) || 1,
+    intakeStore: conversationStore,
+    syndication,
+    log: (msg, err) => app.log.warn({ err }, msg),
+  });
 
   // AI concierge (Claude): drafts replies for messages no scripted flow
   // claims. Off unless AGENT_ENABLED=true and an ANTHROPIC_API_KEY is set;
@@ -161,7 +211,12 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           mode: agentMode,
           // Live mode lets the agent run listing intake through the same
           // store + validation as the scripted flow (hand-off safe).
-          intake: { store: conversationStore, createListing },
+          intake: {
+            store: conversationStore,
+            createListing,
+            onboarding: onboardingStore,
+            listings: listingRepository,
+          },
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : undefined;
@@ -180,6 +235,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier,
+      photoIntake: makePhotoIntake((media) => adapter.fetchMedia(media)),
+      description,
       agent,
       log: (msg, err) => app.log.error({ err }, msg),
     });
@@ -190,8 +247,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     deps?.leadRepository ?? createPrismaLeadRepository(prisma);
   registerLeadRoutes(app, { repository: leadRepository });
 
-  const listings =
-    deps?.listingRepository ?? createPrismaListingRepository(prisma);
+  const listings = listingRepository;
   const deals = deps?.dealRepository ?? createPrismaDealRepository(prisma);
   const internalToken = deps?.internalToken ?? process.env.INTERNAL_API_TOKEN;
   registerDashboardRoutes(app, { listings, deals, internalToken });

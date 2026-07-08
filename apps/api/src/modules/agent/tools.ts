@@ -8,6 +8,8 @@ import {
   type ConversationStore,
   type IntakeField,
   type ListingDraft,
+  type ListingRepository,
+  type OnboardingStore,
 } from '../listings';
 import type { AgentToolDefinition } from './types';
 
@@ -59,6 +61,10 @@ export interface AgentIntakeAccess {
     phone: string,
     draft: ListingDraft,
   ) => Promise<{ id: string }>;
+  /** Post-publish onboarding state (scripted description safety net). */
+  onboarding: OnboardingStore;
+  /** Description writes + pending-listing lookup for set_listing_description. */
+  listings: Pick<ListingRepository, 'findPhotoTarget' | 'setDescription'>;
 }
 
 const STAGE_LABELS: Record<string, string> = {
@@ -366,10 +372,64 @@ function buildIntakeWriteTools(
         }
         const listing = await intake.createListing(phone, data as ListingDraft);
         await intake.store.clear(phone);
+        // Scripted safety net: if this agent dies before the description is
+        // handled, the scripted description step picks the thread up.
+        await intake.onboarding.set(phone, { listingId: listing.id });
         return (
-          `Published listing ${listing.id} — it is live. Tell the seller, and add the ` +
-          `compliance-certificates heads-up: every Cape Town sale needs certificates before ` +
-          `transfer; replying CERTS books trusted inspectors early and avoids weeks of delay.`
+          `Saved listing ${listing.id} — it is PENDING PHOTOS, not live yet. Tell the seller ` +
+          `it goes live the moment their first photo arrives (5–10 photos is ideal) and invite ` +
+          `them to send photos now. Then draft a short portal-ready description (2–4 factual ` +
+          `sentences from ONLY what the seller told you — never invent features) and ask them ` +
+          `to approve or edit it before you call set_listing_description.`
+        );
+      },
+    },
+    {
+      name: 'set_listing_description',
+      description:
+        "Save the portal-ready description for the seller's pending or " +
+        'most recent listing. Only call AFTER you have shown the seller the ' +
+        'exact description text and their latest message explicitly approves ' +
+        'it. Never call speculatively and never invent features.',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          description: {
+            type: 'string',
+            description: 'The exact approved text (max 2000 characters)',
+          },
+          confirmed: {
+            type: 'boolean',
+            description:
+              'Must be true, and only after the seller explicitly approved the text',
+          },
+        },
+        required: ['description', 'confirmed'],
+        additionalProperties: false,
+      },
+      async run(input) {
+        const { description, confirmed } = (input ?? {}) as {
+          description?: string;
+          confirmed?: boolean;
+        };
+        if (confirmed !== true) {
+          return 'Refused: set_listing_description requires confirmed=true after the seller explicitly approved the text.';
+        }
+        const text = (description ?? '').trim();
+        if (text.length < 20) {
+          return 'Refused: the description is too short to be portal-ready (min 20 characters).';
+        }
+        const target = await intake.listings.findPhotoTarget(phone);
+        if (!target) {
+          return 'Refused: no pending or active listing found for this seller.';
+        }
+        await intake.listings.setDescription(target.id, text.slice(0, 2000));
+        await intake.onboarding.clear(phone);
+        return (
+          `Description saved on listing ${target.id}. ` +
+          (target.photoCount === 0
+            ? 'Remind the seller to send photos — the listing goes live with the first one.'
+            : 'The listing already has photos.')
         );
       },
     },

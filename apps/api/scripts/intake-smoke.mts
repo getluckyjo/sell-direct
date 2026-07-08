@@ -23,6 +23,7 @@ import type { AgentModel } from '../src/modules/agent/types';
 import {
   createPrismaConversationStore,
   createPrismaListingRepository,
+  createPrismaOnboardingStore,
 } from '../src/modules/listings';
 import type {
   InboundMessage,
@@ -93,9 +94,10 @@ const scriptedModel: AgentModel = {
     }
     if (/^yes/i.test(last)) {
       const result = await publish.run({ confirm: true });
-      assert.match(result, /Published listing/);
+      assert.match(result, /Saved listing/);
+      assert.match(result, /PENDING PHOTOS/);
       return {
-        text: 'Your listing is live! 🎉 Tip: reply CERTS and we will book your compliance certificates early.',
+        text: 'Your listing is confirmed! Send 5-10 photos whenever you are ready — it goes live with the first one.',
         toolCalls: ['publish_listing'],
       };
     }
@@ -108,6 +110,7 @@ async function main() {
   await prisma.message.deleteMany();
   await prisma.conversationState.deleteMany();
   await prisma.deal.deleteMany();
+  await prisma.listingPhoto.deleteMany();
   await prisma.listing.deleteMany();
   await prisma.seller.deleteMany();
 
@@ -129,6 +132,8 @@ async function main() {
         store,
         createListing: (phone, draft) =>
           createPrismaListingRepository(prisma).createFromDraft(phone, draft),
+        onboarding: createPrismaOnboardingStore(prisma),
+        listings: createPrismaListingRepository(prisma),
       },
     }),
   });
@@ -154,7 +159,7 @@ async function main() {
 
   await say('wamid.smoke.i3', 'YES');
   assert.equal(sent.length, 3);
-  assert.match(sent[2].text, /live/i);
+  assert.match(sent[2].text, /photos/i);
 
   const listings = await prisma.listing.findMany();
   assert.equal(listings.length, 1, 'exactly one listing created');

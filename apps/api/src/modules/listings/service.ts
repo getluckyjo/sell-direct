@@ -9,6 +9,7 @@ import {
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
 import type { ConversationStore } from './store';
+import type { OnboardingStore } from './onboarding';
 
 export interface ListingIntakeDeps {
   store: ConversationStore;
@@ -22,6 +23,11 @@ export interface ListingIntakeDeps {
    * Defaults to a noop (strictly scripted behaviour).
    */
   extractor?: IntakeFieldExtractor;
+  /**
+   * Optional post-publish state: when set, the seller's next text message is
+   * treated as the (optional, SKIP-able) listing description.
+   */
+  onboarding?: OnboardingStore;
 }
 
 export interface IntakeMessage {
@@ -94,6 +100,7 @@ export async function handleListingIntakeMessage(
   if (result.completed) {
     const listing = await deps.createListing(message.phone, result.completed);
     await deps.store.clear(message.phone);
+    await deps.onboarding?.set(message.phone, { listingId: listing.id });
     return { reply: result.reply, listingId: listing.id };
   }
 

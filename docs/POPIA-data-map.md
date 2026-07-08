@@ -50,3 +50,17 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 - **Encrypt sensitive fields at rest** (`FIELD_ENCRYPTION_KEY`) when ID numbers,
   payslips and bank details are introduced (PR 5).
 - Consent capture UX + retention/erasure policy.
+
+## Listing photos (`listing_photos`)
+
+- **What:** property images sellers WhatsApp us, stored via the storage
+  provider (public `listing-photos` bucket — they are public marketing content
+  shown to buyers and, later, portals).
+- **PII level:** low (images of a property, not a person; the seller chose to
+  publish them).
+- **Follow-up (tracked):** inbound photos may carry **EXIF GPS coordinates**
+  of the location they were taken (typically the seller's home — already
+  disclosed by the listing itself, but metadata should still be stripped).
+  Stripping requires an image-processing dependency (e.g. `sharp`) — the
+  approved-dependency decision is pending; see the `TODO(POPIA)` in
+  `apps/api/src/modules/listings/photos.ts`.

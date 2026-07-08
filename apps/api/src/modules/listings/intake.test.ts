@@ -37,7 +37,11 @@ describe('listing intake state machine', () => {
 
     r = advanceIntake(r.state, 'YES');
     expect(r.state.step).toBe('completed');
-    expect(r.reply).toMatch(/is live/);
+    // Listing now pends until the first photo arrives.
+    expect(r.reply).toMatch(/confirmed/i);
+    expect(r.reply).toMatch(/photos/i);
+    expect(r.reply).toMatch(/skip/i);
+    expect(r.reply).not.toMatch(/is live/i);
     expect(r.completed).toEqual({
       title: '2-bed apartment in Sea Point',
       suburb: 'Sea Point',
