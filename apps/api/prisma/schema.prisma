@@ -35,6 +35,9 @@ enum DealStatus {
 /// Lifecycle of a listing, distinct from a deal's transfer status.
 enum ListingStatus {
   draft
+  /// Confirmed via intake but not publicly visible until the first photo
+  /// arrives (Property24-style portals effectively require photos).
+  awaiting_photos
   active
   under_offer
   sold
@@ -109,9 +112,29 @@ model Listing {
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   deals               Deal[]
+  photos              ListingPhoto[]
 
   @@index([status])
   @@map("listings")
+}
+
+/// A listing photo stored via the StorageProvider (bucket listing-photos —
+/// public marketing content). POPIA note: property images, low PII; EXIF/GPS
+/// stripping is a documented follow-up (needs an image library — see
+/// docs/POPIA-data-map.md).
+model ListingPhoto {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  storagePath String
+  /// Public URL captured at upload time; null only if URL construction failed.
+  url         String?
+  mimeType    String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([listingId, sortOrder])
+  @@map("listing_photos")
 }
 
 model Deal {

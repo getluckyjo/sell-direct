@@ -53,6 +53,9 @@ const fakeAdapter: MessagingAdapter = {
     sent.push(message);
     return { waMessageId: `wamid.out.${sent.length}` };
   },
+  async fetchMedia() {
+    throw new Error('no media in this smoke');
+  },
 };
 
 /**

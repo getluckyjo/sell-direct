@@ -164,3 +164,79 @@ describe('WhatsAppCloudAdapter.send', () => {
     );
   });
 });
+
+describe('WhatsAppCloudAdapter media', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  it('parses an inbound image into media (caption never becomes text)', () => {
+    const payload = {
+      entry: [
+        {
+          changes: [
+            {
+              value: {
+                metadata: { display_phone_number: '27210000000' },
+                messages: [
+                  {
+                    id: 'wamid.IMG',
+                    from: '27820001111',
+                    type: 'image',
+                    timestamp: '1700000000',
+                    image: {
+                      id: 'media-123',
+                      mime_type: 'image/jpeg',
+                      caption: 'list my house',
+                    },
+                  },
+                ],
+              },
+            },
+          ],
+        },
+      ],
+    };
+    const [msg] = adapter.parseInbound(payload);
+    expect(msg.type).toBe('image');
+    expect(msg.text).toBeUndefined(); // caption must not trigger keyword routing
+    expect(msg.media).toEqual({
+      id: 'media-123',
+      mimeType: 'image/jpeg',
+      caption: 'list my house',
+    });
+  });
+
+  it('fetchMedia resolves the id then downloads with the bearer token', async () => {
+    const bytes = Buffer.from('image-bytes');
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(
+        new Response(
+          JSON.stringify({ url: 'https://lookaside.example/media/abc', mime_type: 'image/png' }),
+          { status: 200 },
+        ),
+      )
+      .mockResolvedValueOnce(new Response(bytes, { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await adapter.fetchMedia({ id: 'media-123' });
+
+    expect(result.mimeType).toBe('image/png');
+    expect(result.bytes.equals(bytes)).toBe(true);
+    const [lookupUrl, lookupInit] = fetchMock.mock.calls[0];
+    expect(lookupUrl).toBe('https://graph.example/v21.0/media-123');
+    expect(lookupInit.headers.Authorization).toBe('Bearer access-token');
+    const [mediaUrl, mediaInit] = fetchMock.mock.calls[1];
+    expect(mediaUrl).toBe('https://lookaside.example/media/abc');
+    expect(mediaInit.headers.Authorization).toBe('Bearer access-token');
+  });
+
+  it('fetchMedia throws on a failed lookup', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('nope', { status: 404 })),
+    );
+    await expect(adapter.fetchMedia({ id: 'gone' })).rejects.toThrow(/404/);
+  });
+});

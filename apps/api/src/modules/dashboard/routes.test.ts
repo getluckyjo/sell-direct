@@ -7,6 +7,11 @@ function fakeListings(): ListingRepository {
   return {
     createFromDraft: vi.fn(),
     list: vi.fn().mockResolvedValue([{ id: 'l1', title: 'Sea Point flat' }]),
+    findPhotoTarget: vi.fn().mockResolvedValue(null),
+    addPhoto: vi.fn(),
+    activate: vi.fn().mockResolvedValue(false),
+    setDescription: vi.fn(),
+    getForSyndication: vi.fn().mockResolvedValue(null),
   };
 }
 

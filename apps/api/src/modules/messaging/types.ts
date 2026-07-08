@@ -4,6 +4,30 @@
  * Clickatell / 360dialog) can be swapped without touching business logic.
  */
 
+/**
+ * A normalised inbound media attachment. Providers reference media
+ * differently: Meta sends an id that must be resolved via the Graph API;
+ * Twilio sends a directly fetchable URL. Exactly one of id|url is set.
+ */
+export interface InboundMedia {
+  /** Meta Cloud API media id — resolved to a short-lived URL at download time. */
+  id?: string;
+  /** Twilio media URL — fetched with the account's Basic auth. */
+  url?: string;
+  mimeType?: string;
+  /**
+   * The sender's caption. Deliberately NOT copied into `text` — a caption
+   * must never trigger keyword routing.
+   */
+  caption?: string;
+}
+
+/** Downloaded media bytes. */
+export interface FetchedMedia {
+  bytes: Buffer;
+  mimeType: string;
+}
+
 /** A normalised inbound message, provider-agnostic. */
 export interface InboundMessage {
   /** Provider message id — used for idempotent persistence. */
@@ -14,8 +38,10 @@ export interface InboundMessage {
   to: string;
   /** Message type (text, image, …). */
   type: string;
-  /** Text body, when present. */
+  /** Text body, when present. Undefined for pure media messages. */
   text?: string;
+  /** Present when the message carries media (images for now). */
+  media?: InboundMedia;
   timestamp?: Date;
   /** The raw provider message node (must be free of secrets before persisting). */
   raw: unknown;
@@ -69,4 +95,6 @@ export interface MessagingAdapter {
   parseInbound(payload: unknown): InboundMessage[];
   /** Send an outbound message. */
   send(message: OutboundMessage): Promise<SendResult>;
+  /** Download an inbound attachment's bytes with the BSP's auth. Throws on failure. */
+  fetchMedia(media: InboundMedia): Promise<FetchedMedia>;
 }
