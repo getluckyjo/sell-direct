@@ -37,11 +37,22 @@ import { createPrismaDeadlineRepository } from './modules/deadlines';
 import { createPrismaProfileRepository } from './modules/profiles';
 import { ObaReferralStub } from './modules/finance';
 import { registerDashboardRoutes } from './modules/dashboard';
+import {
+  createAgentHandler,
+  createAnthropicAgentModel,
+  createPrismaAgentDataSource,
+  createPrismaAgentRepository,
+  registerAgentRoutes,
+  type AgentHandler,
+  type AgentMode,
+} from './modules/agent';
 
 export type ServerDeps = MessagingRouteDeps & {
   leadRepository: LeadRepository;
   listingRepository: ListingRepository;
   dealRepository: DealRepository;
+  /** Test seam: inject a fake agent (or leave AGENT_ENABLED unset to omit). */
+  agent?: AgentHandler;
   internalToken?: string;
 };
 
@@ -102,6 +113,30 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   // One notifier serves both the conversational replies and stage updates.
   const notifier = createNotifier(adapter, repository, senderNumber());
 
+  // AI concierge (Claude): drafts replies for messages no scripted flow
+  // claims. Off unless AGENT_ENABLED=true and an ANTHROPIC_API_KEY is set;
+  // AGENT_MODE=shadow (default — draft only, concierge approves) or live.
+  const agentRepository = createPrismaAgentRepository(prisma);
+  const agentEnabled =
+    process.env.AGENT_ENABLED === 'true' && !!process.env.ANTHROPIC_API_KEY;
+  const agentMode: AgentMode =
+    process.env.AGENT_MODE === 'live' ? 'live' : 'shadow';
+  const agent =
+    deps?.agent ??
+    (agentEnabled
+      ? createAgentHandler({
+          model: createAnthropicAgentModel({
+            model: process.env.AGENT_MODEL,
+            effort: process.env.AGENT_EFFORT as 'low' | 'medium' | 'high' | undefined,
+          }),
+          repository: agentRepository,
+          data: createPrismaAgentDataSource(prisma),
+          notifier,
+          mode: agentMode,
+          log: (msg, err) => app.log.warn({ err }, msg),
+        })
+      : undefined);
+
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
   const dispatcher =
@@ -119,6 +154,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier,
+      agent,
       log: (msg, err) => app.log.error({ err }, msg),
     });
 
@@ -133,6 +169,16 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const deals = deps?.dealRepository ?? createPrismaDealRepository(prisma);
   const internalToken = deps?.internalToken ?? process.env.INTERNAL_API_TOKEN;
   registerDashboardRoutes(app, { listings, deals, internalToken });
+
+  // Shadow-mode review queue: list pending AI drafts, approve (sends) or
+  // dismiss. Registered even when the agent is off so the dashboard can
+  // always read the audit trail.
+  registerAgentRoutes(app, {
+    repository: agentRepository,
+    notifier,
+    internalToken,
+    log: (msg, err) => app.log.error({ err }, msg),
+  });
 
   // Transfer-journey tracker: advance a deal + notify the parties on WhatsApp,
   // with stage deadlines (countdown engine) and within-stage events (declines).

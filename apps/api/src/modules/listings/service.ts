@@ -18,6 +18,12 @@ export interface IntakeReply {
   reply: string;
   /** Set when this message completed the flow and created a listing. */
   listingId?: string;
+  /**
+   * True when the message matched no flow (no active draft, no trigger) and
+   * `reply` is only the generic help text — the dispatcher may hand these to
+   * the AI concierge instead.
+   */
+  fallback?: boolean;
 }
 
 const START_RE = /^(list|sell)\b/i;
@@ -43,6 +49,7 @@ export async function handleListingIntakeMessage(
     return {
       reply:
         'Hi! Reply "list" to put your property on the market with 0% commission.',
+      fallback: true,
     };
   }
 
