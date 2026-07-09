@@ -211,13 +211,10 @@ Capacity (duly authorised): ______________
 
 ### Annexure A — Interim Rate Card
 
-*(Attach Green Pastures' standard rate card, or record agreed interim rates here.)*
+*(Agreed interim rate for Interim Services rendered under clause 4.)*
 
-| Service | Rate (ZAR, incl./excl. VAT — specify) |
-|---------|----------------------------------------|
-| Collection & transport of the deceased (within service area) | [●] |
-| Mortuary storage (per day) | [●] |
-| Preparation of the deceased | [●] |
-| Cremation (incl. standard container) | [●] |
-| Ash return / urn options | [●] |
-| After-hours / long-distance surcharge | [●] |
+| Service | Rate (ZAR) |
+|---------|------------|
+| Single all-inclusive interim fee per deceased, covering: collection & transport of the deceased (within a 60 km radius), mortuary storage, preparation of the deceased, cremation (incl. standard container) and return of ashes | **R14 500,00** (all-inclusive, incl. VAT) |
+| Additional doctor's / medical practitioner's fees | Excluded — charged at cost |
+| Collection & transport beyond a 60 km radius | To be agreed in writing per engagement |
