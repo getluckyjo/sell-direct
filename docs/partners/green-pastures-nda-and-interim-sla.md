@@ -53,7 +53,7 @@ conclusion of the Definitive Agreement.
       service standards and review mechanisms to be set out in the Definitive Agreement; and
 
   (c) the Parties will use reasonable endeavours to conclude the Definitive Agreement within
-      **90 (ninety) days** of the Signature Date, or such longer period as they may agree in
+      **30 (thirty) days** of the Signature Date, or such longer period as they may agree in
       writing.
 
 2.2 Nothing in this clause 2 obliges either Party to conclude the Definitive Agreement, and no
@@ -123,7 +123,7 @@ minimum-volume or long-term commitment arises from the rendering of Interim Serv
 
 ## 5. Exclusive Negotiation (binding)
 
-5.1 For **90 (ninety) days** from the Signature Date (the "**Exclusivity Period**"), and unless
+5.1 For **30 (thirty) days** from the Signature Date (the "**Exclusivity Period**"), and unless
 extended by written agreement:
 
   (a) the Company shall not solicit or enter into negotiations with any other provider for the
