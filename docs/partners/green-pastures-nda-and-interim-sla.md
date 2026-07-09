@@ -218,3 +218,11 @@ Capacity (duly authorised): ______________
 | Single all-inclusive interim fee per deceased, covering: collection & transport of the deceased (within a 60 km radius), mortuary storage, preparation of the deceased, cremation (incl. standard container) and return of ashes | **R14 500,00** (all-inclusive, incl. VAT) |
 | Additional doctor's / medical practitioner's fees | Excluded — charged at cost |
 | Collection & transport beyond a 60 km radius | To be agreed in writing per engagement |
+
+**Memorial Forest — family plots (supplied by the Company)**
+
+Green Pastures may purchase Memorial Forest family plots from the Company at a wholesale price
+of **R30 000,00** (incl. VAT) per plot, for onward retail at a recommended price of
+**R45 000,00** (incl. VAT) — a margin of R15 000,00 per plot to Green Pastures. Offering as
+presented at https://memorial-forest.vercel.app. Orders, availability and delivery per written
+engagement.
