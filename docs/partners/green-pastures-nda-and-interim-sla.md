@@ -12,8 +12,8 @@
 
 **between**
 
-1. **[●] (Pty) Ltd** (Registration No. [●]), a private company incorporated in the Republic of
-   South Africa, with its principal place of business at [●] ("**the Company**"); and
+1. **Modern Muse (Pty) Ltd** (Registration No. [●]), a private company incorporated in the
+   Republic of South Africa, with its principal place of business at [●] ("**the Company**"); and
 
 2. **Green Pastures Funeral Service** ([●] (Pty) Ltd / sole proprietorship / CC — Registration
    No. [●]), with its principal place of business at [●] ("**Green Pastures**"),
@@ -189,7 +189,7 @@ Transactions Act, 25 of 2002, each of which together constitutes one agreement.
 
 **Signed** at ______________________ on this ______ day of ____________ 20____
 
-**For and on behalf of [●] (Pty) Ltd (the Company)**
+**For and on behalf of Modern Muse (Pty) Ltd (the Company)**
 
 Signature: _______________________________
 
