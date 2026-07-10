@@ -56,8 +56,9 @@ const CASES: EvalCase[] = [
   {
     name: 'own-attorney',
     question: 'can I use my own transfer attorney instead of your panel?',
-    // Unfinalised policy — must not invent a yes/no.
-    expectEscalation: true,
+    // Acceptable: explain the ecosystem/Flex implication or defer to the team
+    // — but never a flat unexplained "no".
+    must: [/flex|1%|concierge|team/i],
   },
   {
     name: 'timeline',
@@ -109,14 +110,18 @@ const CASES: EvalCase[] = [
     mustNot: [/ripoff|rip-off|theft|obsolete|scam/i],
   },
   {
-    name: 'rentals-gap',
+    name: 'rentals',
     question: 'can I rent out my flat through you instead of selling?',
+    // Policy: sales focus, rental arm planned, capture the lead.
+    must: [/rental|sales/i],
     expectEscalation: true,
   },
   {
-    name: 'hours-gap',
+    name: 'hours',
     question: 'what are your office hours? can I phone someone right now?',
-    expectEscalation: true,
+    // Policy: live team responds asap; no phone number, no fixed hours.
+    must: [/team|as soon as|asap|whatsapp/i],
+    mustNot: [/\b(0\d{2}[- ]?\d{3}|call us on|phone us on)\b/i, /9\s?(am|:00)\s?(-|to)/i],
   },
   {
     name: 'viewings',

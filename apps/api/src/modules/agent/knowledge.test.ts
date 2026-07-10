@@ -40,6 +40,23 @@ describe('agent knowledge base', () => {
     }
   });
 
+  it('knows the founder-answered policies (docs/AGENT-QUESTIONS.md round 1)', () => {
+    // Q4 coverage radius, Q3 rentals planned, Q11 sectional title accepted,
+    // Q8 own-bank → Flex, Q2 founder escalation, Q12 Flex sellable today.
+    expect(AGENT_SYSTEM_PROMPT).toContain('150 km');
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/rental arm is planned/);
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/Sectional title .*is welcome/);
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/falls under Flex \(1%\)/);
+    expect(AGENT_SYSTEM_PROMPT).toContain('Johannes');
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/Flex is available today/);
+    // Q7 stays SOFT until the mandate contract is legal-reviewed: help the
+    // seller review options, never a hard "cannot withdraw" rule.
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/help them review the options/);
+    expect(AGENT_SYSTEM_PROMPT).not.toMatch(/cannot withdraw|withdrawal requires .*approval/i);
+    // Q1/Q2: no invented contact channels or fixed hours.
+    expect(AGENT_SYSTEM_PROMPT).toMatch(/Never give out a phone number or email/);
+  });
+
   it('keeps the mandatory attribution framings', () => {
     expect(AGENT_SYSTEM_PROMPT).toContain('resubmitted via our originator');
     expect(AGENT_SYSTEM_PROMPT).toContain(
