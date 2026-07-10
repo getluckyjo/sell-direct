@@ -21,11 +21,25 @@ never be "interpreted" by the model.
 | `benchmark_deposit` | Compares a deposit to verified oobarometer benchmarks (docs/BOTTLENECKS.md) |
 | `escalate_to_concierge` | Flags the thread for human takeover (recorded on the draft) |
 
-The system prompt (`knowledge.ts`) encodes the positioning guardrails from
-CLAUDE.md (never anti-agent/anti-PPRA, neutral savings framing), the verified
-BOTTLENECKS numbers with their attribution rules, hard safety rules (no
-financial/legal advice, never collect income/ID/bank details in chat, never
-promise approval), and WhatsApp style constraints.
+The system prompt (`knowledge.ts`) is composed of named section constants
+(identity, audience, positioning, pricing tiers, journey, viewings, Cape Town
+certificates, buyer costs, market data, tools, behaviour, open questions,
+confidential, style) joined once at module load — still one byte-stable
+cached string. It encodes the positioning guardrails from CLAUDE.md (never
+anti-agent/anti-PPRA, neutral savings framing), the verified BOTTLENECKS
+numbers with their attribution rules and refuted-claim bans, the public tier
+facts (Free 0% / Flex 1% / add-ons), hard safety rules (no financial/legal
+advice, never collect income/ID/bank details in chat, never promise
+approval), a confidentiality section (internal economics are never in
+context, so they cannot leak), and WhatsApp style constraints.
+
+To change what the agent knows: edit the relevant `PROMPT_*` section in
+`knowledge.ts` — `knowledge.test.ts` locks the load-bearing facts and
+forbidden claims. Policy gaps the founders haven't answered yet live in
+**docs/AGENT-QUESTIONS.md**; until answered, the prompt's open-questions
+section makes the agent say "I'll get our concierge to confirm" and
+escalate rather than improvise. Each answer folds into its section in a
+small PR and comes off the open-questions list.
 
 ## No double questions (context-aware intake)
 
@@ -62,14 +76,24 @@ Review queue (internal-token guarded, same as the dashboard reads):
 - `POST /api/agent/drafts/:id/approve` — sends the draft (body `{"text": "..."}` to send an edited version)
 - `POST /api/agent/drafts/:id/dismiss`
 
-Rollout: run shadow on real traffic → review transcripts, tighten the prompt →
-flip `AGENT_MODE=live`. Escalated threads are flagged on the draft either way.
+**The demo simulator runs LIVE by default** regardless of `AGENT_MODE` — it
+is a playground on the reserved +2700 number range, so visitors talk to the
+real concierge with no approval cards. Set `DEMO_AGENT_MODE=shadow` to
+restore the draft-approval behaviour in the demo. Production (the real
+WhatsApp number) is always governed by `AGENT_MODE`.
+
+Rollout gate for production: run `scripts/agent-eval.mts` (real model, ~15
+consumer questions incl. refuted-claim traps and internal-economics probes)
+and read the transcript like a customer would; run shadow on real traffic →
+review transcripts, tighten the prompt → flip `AGENT_MODE=live`. Escalated
+threads are flagged on the draft either way.
 
 ## Configuration
 
 ```
 AGENT_ENABLED=true            # off by default
-AGENT_MODE=shadow             # shadow | live
+AGENT_MODE=shadow             # shadow | live (production)
+DEMO_AGENT_MODE=live          # demo simulator only; shadow restores cards
 ANTHROPIC_API_KEY=sk-ant-...  # sandbox/test key in dev, per CLAUDE.md
 AGENT_MODEL=claude-opus-4-8   # optional override
 AGENT_EFFORT=low              # low | medium | high — low keeps latency snappy
@@ -102,9 +126,10 @@ persisted to the message log instead of hitting Meta/Twilio.
 - Each chat plays as a random number in the reserved `+2700xxxxxxx` range —
   an invalid SA prefix, so demo threads can never touch a real user, and the
   demo endpoints reject any other number.
-- Shadow mode is visible in the chat: the agent's draft renders as an amber
-  card with **Approve & send** / **Dismiss** buttons (approval sends through
-  the demo transport only).
+- The demo agent is LIVE by default (`DEMO_AGENT_MODE`, see Modes). With
+  `DEMO_AGENT_MODE=shadow` the agent's draft renders as an amber card with
+  **Approve & send** / **Dismiss** buttons (approval sends through the demo
+  transport only).
 - "New chat" starts over as a fresh person.
 - Disable the whole thing with `DEMO_ENABLED=false` when it has served its
   purpose. Demo traffic shares the production tables (listings created in the
@@ -118,6 +143,15 @@ shadow draft → approve → outbound send.
 
 ```
 DATABASE_URL=... DIRECT_URL=... WHATSAPP_PHONE_NUMBER_ID=x npx tsx scripts/agent-smoke.mts
+```
+
+`scripts/agent-eval.mts` is the knowledge eval (REAL model + real Postgres):
+~15 consumer questions with hard assertions on the non-negotiables and a
+transcript for human review. Run it after any `knowledge.ts` change and
+before flipping production to live:
+
+```
+DATABASE_URL=... DIRECT_URL=... ANTHROPIC_API_KEY=sk-ant-... npx tsx scripts/agent-eval.mts
 ```
 
 ## POPIA notes
