@@ -199,7 +199,15 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     process.env.AGENT_ENABLED === 'true' && !!process.env.ANTHROPIC_API_KEY;
   const agentMode: AgentMode =
     process.env.AGENT_MODE === 'live' ? 'live' : 'shadow';
-  const makeAgent = (agentNotifier: Notifier): AgentHandler | undefined =>
+  // The demo simulator is a playground: its agent runs LIVE by default so
+  // visitors talk to the real concierge (DEMO_AGENT_MODE=shadow restores the
+  // approval-card behaviour). Production stays governed by AGENT_MODE.
+  const demoAgentMode: AgentMode =
+    process.env.DEMO_AGENT_MODE === 'shadow' ? 'shadow' : 'live';
+  const makeAgent = (
+    agentNotifier: Notifier,
+    mode: AgentMode,
+  ): AgentHandler | undefined =>
     agentEnabled
       ? createAgentHandler({
           model: createAnthropicAgentModel({
@@ -209,7 +217,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           repository: agentRepository,
           data: createPrismaAgentDataSource(prisma),
           notifier: agentNotifier,
-          mode: agentMode,
+          mode,
           // Live mode lets the agent run listing intake through the same
           // store + validation as the scripted flow (hand-off safe).
           intake: {
@@ -221,7 +229,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : undefined;
-  const agent = deps?.agent ?? makeAgent(notifier);
+  const agent = deps?.agent ?? makeAgent(notifier, agentMode);
 
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
@@ -288,7 +296,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
         return item;
       }),
       description,
-      agent: deps?.agent ?? makeAgent(demoNotifier),
+      agent: deps?.agent ?? makeAgent(demoNotifier, demoAgentMode),
       log: (msg, err) => app.log.error({ err }, msg),
     });
     registerDemoRoutes(app, {
