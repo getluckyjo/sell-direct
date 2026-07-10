@@ -182,6 +182,11 @@ ground rules (flat platform fees only — no fee-sharing), and the build
 sketch live in **`docs/ATTORNEY-LED-TIER.md`**. Blocked on attorney
 sign-off (fee structure + mandate paperwork) before any build.
 
+Year 2+: a **captive conveyancing firm** — Sold Direct cannot own a law
+firm (Legal Practice Act), but a conveyancer-owned firm running entirely on
+our platform under arm's-length licence/service fees captures the same
+economics (structure, risks and sequencing in the same doc).
+
 ## Note on progress
 
 PR 1 (scaffold) and PR 2 (schema + state machine) are complete and on
