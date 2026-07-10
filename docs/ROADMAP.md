@@ -170,6 +170,18 @@ A seller can list a property over WhatsApp; a buyer can enquire and be captured 
 - **Managed auth/storage** — decided: **Supabase** (Postgres + Auth + Storage), behind interfaces; concrete Auth adapter at PR 6, Storage when uploads land.
 - **External accounts** (Meta WhatsApp Business, BSP, ooba referral, Vercel, Railway/Render) — needed before PR 3 and PR 7; these are your sign-ups and I'll guide you step by step.
 
+## Future tier — attorney-led selling (researched, parked)
+
+Attorneys and candidate attorneys are expressly excluded from the Property
+Practitioners Act, so a partner law firm can market and sell for our sellers
+(no PPRA registration) at ±6–12 hrs extra work per mandate, funded by the
+R40–70k of conveyancing fees the seller's nomination brings the firm —
+seller still pays 0%. Full legal basis, economics, structuring options
+(anchor-firm desk first; in-house attorney is not possible), compliance
+ground rules (flat platform fees only — no fee-sharing), and the build
+sketch live in **`docs/ATTORNEY-LED-TIER.md`**. Blocked on attorney
+sign-off (fee structure + mandate paperwork) before any build.
+
 ## Note on progress
 
 PR 1 (scaffold) and PR 2 (schema + state machine) are complete and on
