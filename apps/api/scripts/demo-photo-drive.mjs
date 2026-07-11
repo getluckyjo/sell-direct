@@ -52,6 +52,11 @@ if (/which suburb/i.test(reply)) {
   // extractor off — answer scripted
   await say('Mowbray');
 }
+reply = await lastBubble();
+if (/street address/i.test(reply)) {
+  // the optional pre-price address question
+  reply = await say('12 Milner Road');
+}
 await say('5000000');
 reply = await lastBubble();
 if (/how many bedrooms/i.test(reply)) await say('4');

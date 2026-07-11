@@ -3,8 +3,8 @@ import {
   missingFields,
   startIntake,
   FIELD_ORDER,
+  type ExtractableField,
   type ExtractedListingFields,
-  type IntakeField,
   type ListingDraft,
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
@@ -70,7 +70,10 @@ export async function handleListingIntakeMessage(
       // "sell my 4 bed in Mowbray" — the trigger message itself may carry
       // fields, and its remainder may be a perfectly good headline.
       const remainder = text.replace(TRIGGER_PREFIX_RE, '').trim();
-      const extracted = await safeExtract(extractor, text, FIELD_ORDER);
+      const extracted = await safeExtract(extractor, text, [
+        ...FIELD_ORDER,
+        'address',
+      ]);
       if (remainder.length >= 3 && extracted.title === undefined) {
         extracted.title = remainder;
       }
@@ -85,12 +88,18 @@ export async function handleListingIntakeMessage(
     };
   }
 
-  // Editable set: the missing fields — or everything at the confirm step,
-  // where "price 4500000" style corrections may overwrite.
-  const editable: readonly IntakeField[] =
+  // Editable set: the missing fields (plus the optional address while it is
+  // unanswered) — or everything at the confirm step, where "price 4500000"
+  // style corrections may overwrite.
+  const editable: readonly ExtractableField[] =
     existing.step === 'awaiting_confirm'
-      ? FIELD_ORDER
-      : missingFields(existing.data);
+      ? [...FIELD_ORDER, 'address']
+      : [
+          ...missingFields(existing.data),
+          ...(existing.data.address === undefined
+            ? (['address'] as const)
+            : []),
+        ];
   const extracted =
     editable.length > 0
       ? await safeExtract(extractor, text, editable)
@@ -112,7 +121,7 @@ export async function handleListingIntakeMessage(
 async function safeExtract(
   extractor: IntakeFieldExtractor,
   text: string,
-  fields: readonly IntakeField[],
+  fields: readonly ExtractableField[],
 ): Promise<ExtractedListingFields> {
   try {
     return await extractor.extract(text, fields);

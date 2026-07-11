@@ -1,6 +1,12 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { betaJSONSchemaOutputFormat } from '@anthropic-ai/sdk/helpers/beta/json-schema';
-import { validateField, type ExtractedListingFields, type IntakeField } from './intake';
+import {
+  validateAddress,
+  validateField,
+  type ExtractableField,
+  type ExtractedListingFields,
+  type IntakeField,
+} from './intake';
 
 /**
  * Extracts listing fields a user stated in a freeform WhatsApp message
@@ -14,7 +20,7 @@ export interface IntakeFieldExtractor {
   /** `fields` limits which keys may be returned (the still-missing ones). */
   extract(
     message: string,
-    fields: readonly IntakeField[],
+    fields: readonly ExtractableField[],
   ): Promise<ExtractedListingFields>;
 }
 
@@ -36,6 +42,7 @@ const EXTRACTION_SCHEMA = {
   properties: {
     title: { type: ['string', 'null'] },
     suburb: { type: ['string', 'null'] },
+    address: { type: ['string', 'null'] },
     price_zar: { type: ['integer', 'null'] },
     bedrooms: { type: ['integer', 'null'] },
     bathrooms: { type: ['integer', 'null'] },
@@ -44,6 +51,7 @@ const EXTRACTION_SCHEMA = {
   required: [
     'title',
     'suburb',
+    'address',
     'price_zar',
     'bedrooms',
     'bathrooms',
@@ -52,9 +60,10 @@ const EXTRACTION_SCHEMA = {
   additionalProperties: false,
 } as const;
 
-const WIRE_TO_FIELD: Record<string, IntakeField> = {
+const WIRE_TO_FIELD: Record<string, ExtractableField> = {
   title: 'title',
   suburb: 'suburb',
+  address: 'address',
   price_zar: 'priceZar',
   bedrooms: 'bedrooms',
   bathrooms: 'bathrooms',
@@ -74,6 +83,7 @@ Rules:
 - price_zar is the asking price in whole Rand: interpret "R5m", "5 million", "R5,000,000" and "5000000" all as 5000000. A number is only a price when the message presents it as the price.
 - bedrooms/bathrooms only when the message states the count ("4 bed", "four bedrooms", "2 bathrooms").
 - suburb is a Cape Town area name the seller mentions as the location (e.g. Mowbray, Sea Point, Gardens).
+- address only when the message states a street address (number and street, e.g. "12 Milner Road"); a suburb alone is never an address.
 - exclusivity_term_days only when the seller names a listing term in days (60, 90 or 120).
 - title only when the message reads as a listing headline or description of the property.
 - You never write user-facing text; your output is consumed by software.`;
@@ -81,7 +91,7 @@ Rules:
 /** Pure mapper: raw parsed output → validated fields (exported for tests). */
 export function toExtractedFields(
   raw: unknown,
-  fields: readonly IntakeField[],
+  fields: readonly ExtractableField[],
 ): ExtractedListingFields {
   if (raw === null || typeof raw !== 'object') return {};
   const out: ExtractedListingFields = {};
@@ -89,7 +99,10 @@ export function toExtractedFields(
     const value = (raw as Record<string, unknown>)[wireKey];
     if (value === null || value === undefined) continue;
     if (!fields.includes(field)) continue;
-    const valid = validateField(field, value);
+    const valid =
+      field === 'address'
+        ? validateAddress(value)
+        : validateField(field as IntakeField, value);
     if (valid === null) continue;
     (out as Record<string, unknown>)[field] = valid;
   }
