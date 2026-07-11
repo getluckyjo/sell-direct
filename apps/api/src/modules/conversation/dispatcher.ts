@@ -35,6 +35,10 @@ const UPSELL_REPLIES: Record<string, string> = {
     '👍 Great — we’ll line up trusted, accredited inspectors for your compliance ' +
     'certificates and WhatsApp you the quotes shortly. Booking early is the single ' +
     'best way to avoid transfer delays.',
+  consult:
+    '👍 Great — our team will WhatsApp you shortly for a free, no-obligation ' +
+    'pricing chat about your home. The asking price is always yours; we bring ' +
+    'the recent-sales data.',
   cover:
     '👍 Great — our concierge will WhatsApp you competitive homeowners-insurance ' +
     'quotes shortly. No obligation; your bank just needs cover in place before ' +
@@ -43,7 +47,7 @@ const UPSELL_REPLIES: Record<string, string> = {
     '👍 Great — our concierge will WhatsApp you trusted quotes for movers, fibre ' +
     'and anything else you need for the big day. No obligation.',
 };
-const UPSELL_RE = /^\s*(certs|cover|move)\b/i;
+const UPSELL_RE = /^\s*(certs|cover|move|consult)\b/i;
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;

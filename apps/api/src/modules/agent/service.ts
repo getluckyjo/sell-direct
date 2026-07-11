@@ -1,4 +1,5 @@
 import type { Notifier } from '../notifications';
+import type { ValuationAdapter } from '../valuation';
 import { AGENT_SYSTEM_PROMPT } from './knowledge';
 import {
   buildAgentTools,
@@ -23,6 +24,8 @@ export interface AgentServiceDeps {
    * agent must never mutate drafts while users receive the canned replies.
    */
   intake?: AgentIntakeAccess;
+  /** Optional market price estimates (read-only tool; both modes). */
+  valuation?: ValuationAdapter;
   log?: (message: string, error?: unknown) => void;
 }
 
@@ -60,6 +63,7 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
         message.phone,
         ctx,
         deps.mode === 'live' ? deps.intake : undefined,
+        deps.valuation,
       );
 
       // The webhook persists the inbound before dispatching, so the history

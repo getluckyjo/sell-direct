@@ -35,6 +35,8 @@ describe('agent knowledge base', () => {
       'CERTS',
       'COVER',
       'MOVE',
+      'CONSULT',
+      'never call it a valuation',
     ]) {
       expect(AGENT_SYSTEM_PROMPT).toContain(fact);
     }

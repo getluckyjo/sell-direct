@@ -116,6 +116,69 @@ describe('listing intake orchestrator', () => {
     });
   });
 
+  it('shows price guidance once at the price step and saves it on publish', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn().mockResolvedValue({ id: 'listing_9' });
+    const estimate = vi.fn().mockResolvedValue({
+      lowZar: 2_400_000,
+      highZar: 2_700_000,
+      source: 'LOOM Property Insights',
+    });
+    const saveEstimate = vi.fn();
+    const deps = {
+      store,
+      createListing,
+      valuation: { estimate },
+      saveEstimate,
+    };
+    const phone = '27820005555';
+
+    const replies: string[] = [];
+    for (const text of ['list', 'Cosy 2-bed in Gardens', 'Gardens', '12 Milner Road']) {
+      replies.push((await handleListingIntakeMessage(deps, { phone, text })).reply);
+    }
+    // The price prompt carries the attributed guidance line.
+    expect(replies.at(-1)).toMatch(/asking price/i);
+    expect(replies.at(-1)).toMatch(/R2[\s,.  ]?400[\s,.  ]?000/);
+    expect(replies.at(-1)).toMatch(/via LOOM Property Insights/);
+    expect(replies.at(-1)).toMatch(/CONSULT/);
+    expect(estimate).toHaveBeenCalledOnce();
+    expect(estimate.mock.calls[0][0]).toMatchObject({
+      suburb: 'Gardens',
+      address: '12 Milner Road',
+    });
+
+    for (const text of ['2500000', '2', '1', '90', 'YES']) {
+      await handleListingIntakeMessage(deps, { phone, text });
+    }
+    // Looked up once for the whole conversation; persisted at publish.
+    expect(estimate).toHaveBeenCalledOnce();
+    expect(saveEstimate).toHaveBeenCalledWith('listing_9', {
+      lowZar: 2_400_000,
+      highZar: 2_700_000,
+      source: 'LOOM Property Insights',
+    });
+  });
+
+  it('no adapter (or a null estimate) means the plain price prompt — never a fabricated range', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = {
+      store,
+      createListing: vi.fn().mockResolvedValue({ id: 'x' }),
+      valuation: { estimate: vi.fn().mockResolvedValue(null) },
+    };
+    const phone = '27820006666';
+    let reply = '';
+    for (const text of ['list', 'Home in Gardens', 'Gardens', 'skip']) {
+      reply = (await handleListingIntakeMessage(deps, { phone, text })).reply;
+    }
+    expect(reply).toMatch(/asking price/i);
+    expect(reply).not.toMatch(/Price guidance|LOOM/);
+    // The null result is cached — no second lookup on a price re-ask.
+    await handleListingIntakeMessage(deps, { phone, text: 'about two mil' });
+    expect(deps.valuation.estimate).toHaveBeenCalledOnce();
+  });
+
   it('skips the extractor call when nothing is editable', async () => {
     const store = createInMemoryConversationStore();
     const extract = vi.fn(async () => ({}));

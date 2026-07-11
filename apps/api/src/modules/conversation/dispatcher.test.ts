@@ -148,6 +148,10 @@ describe('conversation dispatcher', () => {
 
     await d.dispatcher.handle(inbound('certs'));
     expect(d.sent[2].text).toMatch(/inspectors/i);
+
+    await d.dispatcher.handle(inbound('CONSULT'));
+    expect(d.sent[3].text).toMatch(/pricing chat/i);
+    expect(d.sent[3].text).toMatch(/asking price is always yours/i);
     // no flows were started by upsell replies
     expect(await d.intakeStore.get(PHONE)).toBeNull();
   });

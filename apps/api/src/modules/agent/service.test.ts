@@ -212,6 +212,42 @@ describe('agent intake write tools', () => {
     expect(withoutIntake.map((t) => t.name)).not.toContain('update_listing_draft');
   });
 
+  it('get_price_estimate appears with a valuation adapter and keeps the framing', async () => {
+    const valuation = {
+      estimate: vi.fn().mockResolvedValue({
+        lowZar: 2_400_000,
+        highZar: 2_700_000,
+        comparablesCount: 9,
+        source: 'LOOM Property Insights',
+      }),
+    };
+    const tools = buildAgentTools(
+      emptyData,
+      '+27820000009',
+      { escalated: false },
+      undefined,
+      valuation,
+    );
+    const estimateTool = tools.find((t) => t.name === 'get_price_estimate')!;
+    expect(estimateTool).toBeDefined();
+
+    const result = await estimateTool.run({ suburb: 'Mowbray', bedrooms: 4 });
+    expect(result).toMatch(/R2[\s,.  ]?400[\s,.  ]?000/);
+    expect(result).toContain('LOOM Property Insights');
+    expect(result).toMatch(/estimate/i);
+    expect(result).toMatch(/never as a valuation/i);
+
+    // Null data → the tool forbids inventing a range.
+    valuation.estimate.mockResolvedValueOnce(null);
+    const empty = await estimateTool.run({ suburb: 'Nowhere' });
+    expect(empty).toMatch(/Do NOT invent/i);
+    expect(empty).toMatch(/consultation/i);
+
+    // No valuation adapter → no tool at all.
+    const without = buildAgentTools(emptyData, '+27820000009', { escalated: false });
+    expect(without.map((t) => t.name)).not.toContain('get_price_estimate');
+  });
+
   it('shadow handler never offers write tools; live handler does', async () => {
     let offered: string[] = [];
     const model: AgentModel = {

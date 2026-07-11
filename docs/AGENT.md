@@ -19,6 +19,7 @@ never be "interpreted" by the model.
 | `search_listings` | Active listings by suburb/keywords (max 5, no seller PII) |
 | `get_my_deals` | The sender's deals + transfer-journey stage, scoped to their phone |
 | `benchmark_deposit` | Compares a deposit to verified oobarometer benchmarks (docs/BOTTLENECKS.md) |
+| `get_price_estimate` | Market price range from the valuation adapter (LOOM when configured; demo mock in the simulator; absent otherwise) — always framed as an estimate with attribution, never a "valuation" |
 | `escalate_to_concierge` | Flags the thread for human takeover (recorded on the draft) |
 
 The system prompt (`knowledge.ts`) is composed of named section constants

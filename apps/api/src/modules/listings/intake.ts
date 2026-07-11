@@ -63,6 +63,18 @@ export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>> & 
 export interface IntakeState {
   step: IntakeStep;
   data: Partial<ListingDraft>;
+  /**
+   * Cached market-price estimate for this conversation (looked up once when
+   * the price question is reached). `undefined` = not looked up yet;
+   * `null` = looked up, no data (never show guidance). Managed by the
+   * orchestrator (service.ts) — the pure machine ignores it.
+   */
+  estimate?: {
+    lowZar: number;
+    highZar: number;
+    comparablesCount?: number;
+    source: string;
+  } | null;
 }
 
 export interface IntakeResult {

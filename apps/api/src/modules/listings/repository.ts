@@ -45,6 +45,11 @@ export interface ListingRepository {
    */
   activate(listingId: string): Promise<boolean>;
   setDescription(listingId: string, description: string): Promise<void>;
+  /** Caches the market estimate the seller was shown (one report/property). */
+  saveEstimate(
+    listingId: string,
+    estimate: { lowZar: number; highZar: number; source: string },
+  ): Promise<void>;
   getForSyndication(listingId: string): Promise<SyndicationListing | null>;
 }
 
@@ -157,6 +162,18 @@ export function createPrismaListingRepository(
       await prisma.listing.update({
         where: { id: listingId },
         data: { description },
+      });
+    },
+
+    async saveEstimate(listingId, estimate) {
+      await prisma.listing.update({
+        where: { id: listingId },
+        data: {
+          estimateLowZar: estimate.lowZar,
+          estimateHighZar: estimate.highZar,
+          estimateSource: estimate.source,
+          estimatedAt: new Date(),
+        },
       });
     },
 
