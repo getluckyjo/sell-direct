@@ -66,6 +66,12 @@ import {
 } from './modules/storage';
 import { Property24SyndicationStub } from './modules/syndication';
 import {
+  createDemoValuationAdapter,
+  createValuationAdapter,
+  type PriceEstimate,
+  type ValuationAdapter,
+} from './modules/valuation';
+import {
   createPrismaOnboardingStore,
   type DescriptionDeps,
   type PhotoIntakeDeps,
@@ -79,6 +85,8 @@ export type ServerDeps = MessagingRouteDeps & {
   agent?: AgentHandler;
   /** Test seam: inject a fake storage provider. */
   storage?: StorageProvider;
+  /** Test seam: inject a fake valuation adapter. */
+  valuation?: ValuationAdapter;
   internalToken?: string;
 };
 
@@ -168,11 +176,21 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : createNoopExtractor();
+  // Price guidance (LOOM when configured; silent noop otherwise — no
+  // fabricated ranges ever reach a real seller). The demo dispatcher gets a
+  // clearly-mock adapter below so the guidance experience stays playable.
+  const valuation =
+    deps?.valuation ??
+    createValuationAdapter((msg, err) => app.log.warn({ err }, msg));
+  const saveEstimate = (id: string, estimate: PriceEstimate) =>
+    listingRepository.saveEstimate(id, estimate);
   const intakeDeps = {
     store: conversationStore,
     createListing,
     extractor,
     onboarding: onboardingStore,
+    valuation,
+    saveEstimate,
   };
   const description: DescriptionDeps = {
     onboarding: onboardingStore,
@@ -207,6 +225,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const makeAgent = (
     agentNotifier: Notifier,
     mode: AgentMode,
+    agentValuation: typeof valuation,
   ): AgentHandler | undefined =>
     agentEnabled
       ? createAgentHandler({
@@ -226,10 +245,11 @@ export function buildServer(deps?: Partial<ServerDeps>) {
             onboarding: onboardingStore,
             listings: listingRepository,
           },
+          valuation: agentValuation,
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : undefined;
-  const agent = deps?.agent ?? makeAgent(notifier, agentMode);
+  const agent = deps?.agent ?? makeAgent(notifier, agentMode, valuation);
 
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
@@ -281,8 +301,11 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     // everything downstream (storage, DB, activation, syndication) is the
     // production path.
     const demoMedia = createDemoMediaStore();
+    // The demo gets a deterministic MOCK estimate adapter so price guidance
+    // is playable — mock numbers can never leak to production flows.
+    const demoValuation = createDemoValuationAdapter();
     const demoDispatcher = createDispatcher({
-      intake: intakeDeps,
+      intake: { ...intakeDeps, valuation: demoValuation },
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
@@ -296,7 +319,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
         return item;
       }),
       description,
-      agent: deps?.agent ?? makeAgent(demoNotifier, demoAgentMode),
+      agent: deps?.agent ?? makeAgent(demoNotifier, demoAgentMode, demoValuation),
       log: (msg, err) => app.log.error({ err }, msg),
     });
     registerDemoRoutes(app, {

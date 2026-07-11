@@ -12,6 +12,7 @@ import {
   type ListingRepository,
   type OnboardingStore,
 } from '../listings';
+import type { ValuationAdapter } from '../valuation';
 import type { AgentToolDefinition } from './types';
 
 /**
@@ -124,6 +125,7 @@ export function buildAgentTools(
   phone: string,
   ctx: AgentTurnContext,
   intake?: AgentIntakeAccess,
+  valuation?: ValuationAdapter,
 ): AgentToolDefinition[] {
   const tools: AgentToolDefinition[] = [
     {
@@ -249,6 +251,69 @@ export function buildAgentTools(
     },
   ];
 
+  if (valuation) {
+    tools.push({
+      name: 'get_price_estimate',
+      description:
+        'Get a market price estimate (a range) for a property from our ' +
+        'data partner, based on recent confirmed sales. Pass whatever the ' +
+        'person has told you — at minimum the suburb; a street address makes ' +
+        'it much more accurate. Share the result WITH its attribution, as an ' +
+        'estimate (never a formal valuation), and remind them the asking ' +
+        'price is theirs. If it returns no data, do not invent a range — ' +
+        'offer the free pricing consultation instead (reply CONSULT).',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          suburb: { type: 'string', description: 'Cape Town suburb' },
+          address: {
+            type: 'string',
+            description: 'Street address if the person gave one',
+          },
+          bedrooms: { type: 'integer' },
+          bathrooms: { type: 'integer' },
+        },
+        required: ['suburb'],
+        additionalProperties: false,
+      },
+      async run(input) {
+        const p = (input ?? {}) as {
+          suburb?: string;
+          address?: string;
+          bedrooms?: number;
+          bathrooms?: number;
+        };
+        if (!p.suburb || p.suburb.trim().length < 2) {
+          return 'A suburb is required for an estimate — ask which suburb the home is in.';
+        }
+        try {
+          const estimate = await valuation.estimate({
+            suburb: p.suburb.trim(),
+            address: p.address,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+          });
+          if (!estimate) {
+            return (
+              'No estimate available for this property. Do NOT invent a range. ' +
+              'Offer the free pricing consultation with the concierge team instead (they can reply CONSULT).'
+            );
+          }
+          const fmt = (n: number) => `R${n.toLocaleString('en-ZA')}`;
+          return (
+            `Estimated range: ${fmt(estimate.lowZar)}–${fmt(estimate.highZar)} ` +
+            `(source: ${estimate.source}` +
+            (estimate.comparablesCount
+              ? `, ${estimate.comparablesCount} recent comparable sales`
+              : '') +
+            `). Present this as an estimate based on recent confirmed sales, with the source named — never as a valuation or a promise.`
+          );
+        } catch {
+          return 'The estimate lookup failed. Do NOT invent a range — offer the free pricing consultation instead.';
+        }
+      },
+    });
+  }
   if (intake) {
     tools.push(...buildIntakeWriteTools(intake, phone));
   }
