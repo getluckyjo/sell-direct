@@ -36,7 +36,7 @@ The repo ships `apps/api/railway.json`, so Railway auto-configures the install,
 build, migrate and start commands and a `/health` healthcheck. You only set the
 **Root Directory** and the **environment variables**.
 
-1. **New Project → Deploy from GitHub repo** → pick `getluckyjo/sell-direct`.
+1. **New Project → Deploy from GitHub repo** → pick `getluckyjo/sold-direct`.
 2. Open the service → **Settings → Source** → set **Root Directory** to
    `apps/api`. (That's where `railway.json` lives; it `cd`s to the repo root so
    the pnpm workspace resolves.) Leave the build/start commands blank — they
