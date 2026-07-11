@@ -11,6 +11,7 @@ function fakeListings(): ListingRepository {
     addPhoto: vi.fn(),
     activate: vi.fn().mockResolvedValue(false),
     setDescription: vi.fn(),
+    saveEstimate: vi.fn(),
     getForSyndication: vi.fn().mockResolvedValue(null),
   };
 }
