@@ -3,6 +3,8 @@ export interface ListingRow {
   title: string;
   suburb: string | null;
   city: string;
+  /** Private seller data — internal dashboard only, never buyer-facing. */
+  address: string | null;
   priceZar: string;
   bedrooms: number | null;
   bathrooms: number | null;

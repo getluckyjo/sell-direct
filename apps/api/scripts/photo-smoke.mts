@@ -91,14 +91,18 @@ async function main() {
   await say('r1.1', 'list');
   await say('r1.2', '4 bedroom home in mowbray');
   await say('r1.3', 'mowbray');
+  assert.match(sent.at(-1)!.text, /street address/i); // optional, pre-price
+  await say('r1.4a', '12 Milner Road');
   await say('r1.4', '5000000');
   await say('r1.5', '4');
   await say('r1.6', '2');
   await say('r1.7', '90');
+  assert.match(sent.at(-1)!.text, /12 Milner Road \(kept private\)/);
   await say('r1.8', 'YES');
 
   let listing = (await prisma.listing.findMany())[0];
   assert.equal(listing.status, 'awaiting_photos', 'listing pends after YES');
+  assert.equal(listing.address, '12 Milner Road', 'address persisted');
   assert.match(sent.at(-1)!.text, /confirmed/i);
   assert.match(sent.at(-1)!.text, /skip/i);
   const onboarding = await prisma.conversationState.findUnique({
@@ -148,6 +152,7 @@ async function main() {
   });
   assert.equal(state?.flow, 'listing_intake');
   await say('r2.2', 'Gardens');
+  await say('r2.2a', 'skip'); // the optional address question
   await say('r2.3', '2500000');
   await say('r2.4', '3');
   await say('r2.5', '2');
@@ -160,6 +165,7 @@ async function main() {
   const l2 = (await prisma.listing.findMany())[0];
   assert.equal(l2.status, 'active');
   assert.equal(l2.description, null, 'skipped description stays null');
+  assert.equal(l2.address, null, 'skipped address stays null');
 
   await app.close();
   await prisma.$disconnect();

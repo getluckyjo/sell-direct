@@ -255,13 +255,24 @@ describe('agent intake write tools', () => {
 
     expect(result).toContain('price_zar=5000 rejected');
     expect(result).toContain('Still missing: priceZar, bathrooms, exclusivityTermDays');
+    expect(result).toContain('Street address: not asked yet');
     const state = await access.store.get('+27820000002');
     expect(state?.data).toMatchObject({
       title: '4 bed home in Mowbray',
       suburb: 'Mowbray',
       bedrooms: 4,
     });
-    expect(state?.step).toBe('awaiting_price'); // hand-off safe for scripted flow
+    // Hand-off safe for the scripted flow: the unanswered optional address
+    // is the next question before the price.
+    expect(state?.step).toBe('awaiting_address');
+
+    // A declined address is recorded as null and never re-asked.
+    const declined = await update.run({ address_skipped: true });
+    expect(declined).toContain('seller declined');
+    expect((await access.store.get('+27820000002'))?.data.address).toBeNull();
+    expect((await access.store.get('+27820000002'))?.step).toBe(
+      'awaiting_price',
+    );
   });
 
   it('publish_listing refuses without confirm or with an incomplete draft', async () => {

@@ -16,6 +16,7 @@ import type { DealTier } from '@sell-direct/shared';
 export type IntakeStep =
   | 'awaiting_title'
   | 'awaiting_suburb'
+  | 'awaiting_address'
   | 'awaiting_price'
   | 'awaiting_bedrooms'
   | 'awaiting_bathrooms'
@@ -26,6 +27,12 @@ export type IntakeStep =
 export interface ListingDraft {
   title: string;
   suburb: string;
+  /**
+   * Street address — OPTIONAL and PRIVATE (never shown to buyers; used for
+   * price guidance and portal syndication). `undefined` = not asked yet,
+   * `null` = the seller skipped it, string = given.
+   */
+  address?: string | null;
   priceZar: number;
   bedrooms: number;
   bathrooms: number;
@@ -44,8 +51,14 @@ export const FIELD_ORDER = [
 ] as const;
 export type IntakeField = (typeof FIELD_ORDER)[number];
 
-/** Fields an extractor (LLM or agent) may supply from a freeform message. */
-export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>>;
+/**
+ * Fields an extractor (LLM or agent) may supply from a freeform message —
+ * the required intake fields plus the optional street address.
+ */
+export type ExtractableField = IntakeField | 'address';
+export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>> & {
+  address?: string;
+};
 
 export interface IntakeState {
   step: IntakeStep;
@@ -81,6 +94,10 @@ const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
   awaiting_title:
     'Let\'s list your property — 0% commission. What\'s a short headline? (e.g. "2-bed apartment in Sea Point")',
   awaiting_suburb: 'Which suburb is it in?',
+  awaiting_address:
+    "What's the street address? 🔒 Kept private — buyers never see it; we " +
+    'use it for accurate price guidance and portal syndication. Reply SKIP ' +
+    'to leave it out.',
   awaiting_price:
     "What's the asking price in Rand? (digits only, e.g. 2100000)",
   awaiting_bedrooms: 'How many bedrooms?',
@@ -94,6 +111,8 @@ const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
 const REASKS: Partial<Record<IntakeStep, string>> = {
   awaiting_title: 'Please give a short headline (at least 3 characters).',
   awaiting_suburb: 'Please tell me the suburb.',
+  awaiting_address:
+    'Please send the street address (e.g. 12 Milner Road), or reply SKIP.',
   awaiting_price: 'Please send the price as digits in Rand, e.g. 2100000.',
   awaiting_bedrooms: 'How many bedrooms? Please reply with a number.',
   awaiting_bathrooms: 'How many bathrooms? Please reply with a number.',
@@ -102,6 +121,18 @@ const REASKS: Partial<Record<IntakeStep, string>> = {
 
 /** Mirrors the dispatcher's consent regex — a confirm must be unmistakable. */
 const YES_RE = /^\s*(yes|y|yeah|yep|ok|okay|sure|👍)\b/i;
+/** Mirrors description.ts: the optional address step is SKIP-able. */
+const SKIP_RE = /^\s*(skip|no|nope|later)\b/i;
+
+/**
+ * The optional street address: minimum something like "12 Milner Rd". Not
+ * part of validateField — address is not an IntakeField (never required).
+ */
+export function validateAddress(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  return text.length >= 5 && text.length <= 200 ? text : null;
+}
 
 export function parseWholeNumber(input: string): number | null {
   const digits = input.replace(/[\s,rR]/g, '');
@@ -157,6 +188,15 @@ export function missingFields(data: Partial<ListingDraft>): IntakeField[] {
 /** The next question is always the first missing field — never a fixed walk. */
 export function nextStep(data: Partial<ListingDraft>): IntakeStep {
   const missing = missingFields(data);
+  // The optional address is asked exactly once, just before the price — or
+  // before the confirm summary when everything else arrived in one message.
+  // `undefined` = not asked yet; `null` = skipped; string = given.
+  if (
+    data.address === undefined &&
+    (missing.length === 0 || missing[0] === 'priceZar')
+  ) {
+    return 'awaiting_address';
+  }
   return missing.length === 0 ? 'awaiting_confirm' : FIELD_STEP[missing[0]];
 }
 
@@ -169,9 +209,9 @@ export function applyExtracted(
   data: Partial<ListingDraft>,
   extracted: ExtractedListingFields,
   opts: { overwrite?: boolean } = {},
-): { data: Partial<ListingDraft>; applied: IntakeField[] } {
+): { data: Partial<ListingDraft>; applied: ExtractableField[] } {
   const next = { ...data };
-  const applied: IntakeField[] = [];
+  const applied: ExtractableField[] = [];
   for (const field of FIELD_ORDER) {
     const value = extracted[field];
     if (value === undefined) continue;
@@ -182,6 +222,17 @@ export function applyExtracted(
     (next as Record<string, unknown>)[field] = valid;
     applied.push(field);
   }
+  // The optional address: fill when unanswered (or skipped — a stated
+  // address beats an earlier SKIP), overwrite only at the confirm step.
+  const address = validateAddress(extracted.address);
+  if (
+    address !== null &&
+    next.address !== address &&
+    (opts.overwrite || next.address === undefined || next.address === null)
+  ) {
+    next.address = address;
+    applied.push('address');
+  }
   return { data: next, applied };
 }
 
@@ -189,12 +240,17 @@ export function formatPriceZar(price: number): string {
   return `R${price.toLocaleString('en-ZA')}`;
 }
 
-function describeField(field: IntakeField, data: Partial<ListingDraft>): string {
+function describeField(
+  field: ExtractableField,
+  data: Partial<ListingDraft>,
+): string {
   switch (field) {
     case 'title':
       return `"${data.title}"`;
     case 'suburb':
       return data.suburb ?? '';
+    case 'address':
+      return data.address ?? '';
     case 'priceZar':
       return formatPriceZar(data.priceZar ?? 0);
     case 'bedrooms':
@@ -207,7 +263,7 @@ function describeField(field: IntakeField, data: Partial<ListingDraft>): string 
 }
 
 /** Templated acknowledgement of extracted fields — deterministic, shadow-safe. */
-function ackLine(applied: IntakeField[], data: Partial<ListingDraft>): string {
+function ackLine(applied: ExtractableField[], data: Partial<ListingDraft>): string {
   if (applied.length === 0) return '';
   return `Got it — ${applied.map((f) => describeField(f, data)).join(', ')}.\n`;
 }
@@ -217,6 +273,7 @@ export function renderSummary(draft: ListingDraft): string {
     `Here's your listing:\n` +
     `🏠 "${draft.title}"\n` +
     `📍 ${draft.suburb}, Cape Town\n` +
+    (draft.address ? `📫 ${draft.address} (kept private)\n` : '') +
     `💰 ${formatPriceZar(draft.priceZar)}\n` +
     `🛏 ${draft.bedrooms} bed · 🛁 ${draft.bathrooms} bath\n` +
     `📆 ${draft.exclusivityTermDays}-day exclusive term`
@@ -240,7 +297,7 @@ function pendingReply(completed: ListingDraft): string {
 /** Build the reply for wherever the draft stands now. */
 function promptFor(
   state: IntakeState,
-  applied: IntakeField[],
+  applied: ExtractableField[],
 ): IntakeResult {
   const ack = ackLine(applied, state.data);
   if (state.step === 'awaiting_confirm') {
@@ -315,6 +372,28 @@ export function advanceIntake(
       state,
       reply: `${renderSummary(data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
     };
+  }
+
+  // The optional address step: SKIP-able, never blocks the flow.
+  if (state.step === 'awaiting_address') {
+    if (SKIP_RE.test(text)) {
+      data.address = null;
+    } else {
+      const address = validateAddress(found.address) ?? validateAddress(text);
+      if (address === null) {
+        const merge = applyExtracted(data, found);
+        return {
+          state: { ...state, data: merge.data },
+          reply: REASKS.awaiting_address!,
+        };
+      }
+      data.address = address;
+    }
+    const merge = applyExtracted(data, found);
+    return promptFor(
+      { step: nextStep(merge.data), data: merge.data },
+      merge.applied.filter((f) => f !== 'address'),
+    );
   }
 
   // 1. Deterministic parse of the current step's answer (unchanged rules).

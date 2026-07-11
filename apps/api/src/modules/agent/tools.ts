@@ -4,6 +4,7 @@ import {
   missingFields,
   nextStep,
   renderSummary,
+  validateAddress,
   validateField,
   type ConversationStore,
   type IntakeField,
@@ -268,11 +269,17 @@ function draftStatus(data: Partial<ListingDraft>): string {
   const have = FIELD_ORDER.filter((f) => data[f] !== undefined)
     .map((f) => `${f}: ${String(data[f])}`)
     .join('; ');
+  const addressNote =
+    data.address === undefined
+      ? '\nStreet address: not asked yet — optional; ask once (kept private), accept a decline.'
+      : data.address === null
+        ? '\nStreet address: seller declined — do not ask again.'
+        : `\nStreet address: ${data.address} (private).`;
   if (missing.length > 0) {
-    return `Draft so far — ${have || 'nothing yet'}.\nStill missing: ${missing.join(', ')}. Ask only for these.`;
+    return `Draft so far — ${have || 'nothing yet'}.${addressNote}\nStill missing: ${missing.join(', ')}. Ask only for these.`;
   }
   return (
-    `All fields present:\n${renderSummary(data as ListingDraft)}\n` +
+    `All fields present:${addressNote}\n${renderSummary(data as ListingDraft)}\n` +
     `Show the seller this summary and get an explicit YES before calling publish_listing.`
   );
 }
@@ -295,12 +302,24 @@ function buildIntakeWriteTools(
         'Returns the current draft and which fields are still missing — ask ' +
         'only for those. Never invent or assume a value the seller did not ' +
         'give. Constraints: price min R100,000; bedrooms/bathrooms 0–20; ' +
-        'exclusivity term 60, 90 or 120 days.',
+        'exclusivity term 60, 90 or 120 days. Also ask ONCE for the street ' +
+        'address (kept private — buyers never see it; used for price ' +
+        'guidance and portal syndication); it is optional, so if the seller ' +
+        'declines, pass address_skipped=true and move on.',
       inputSchema: {
         type: 'object',
         properties: {
           title: { type: 'string', description: 'Short listing headline, verbatim from the seller' },
           suburb: { type: 'string', description: 'Cape Town suburb' },
+          address: {
+            type: 'string',
+            description:
+              'Street address, verbatim (kept private; never shown to buyers)',
+          },
+          address_skipped: {
+            type: 'boolean',
+            description: 'True when the seller declined to give the address',
+          },
           price_zar: { type: 'integer', description: 'Asking price in whole Rand (min 100000)' },
           bedrooms: { type: 'integer' },
           bathrooms: { type: 'integer' },
@@ -332,6 +351,18 @@ function buildIntakeWriteTools(
             continue;
           }
           (data as Record<string, unknown>)[field] = valid;
+        }
+        // Optional address: a stated address wins; an explicit decline is
+        // recorded as null so the scripted flow never re-asks it either.
+        const address = validateAddress(provided.address);
+        if (address !== null) {
+          data.address = address;
+        } else if (provided.address_skipped === true && data.address === undefined) {
+          data.address = null;
+        } else if (provided.address !== undefined && provided.address !== null) {
+          rejected.push(
+            `address=${JSON.stringify(provided.address)} rejected (too short — a street address needs a number and street name)`,
+          );
         }
         await intake.store.set(phone, { step: nextStep(data), data });
         const rejectedNote = rejected.length ? `${rejected.join('\n')}\n` : '';

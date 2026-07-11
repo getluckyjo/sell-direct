@@ -87,6 +87,8 @@ export function createPrismaListingRepository(
           title: draft.title,
           suburb: draft.suburb,
           city: 'Cape Town',
+          // Private (POPIA): never exposed on buyer-facing surfaces.
+          address: draft.address ?? null,
           priceZar: draft.priceZar,
           bedrooms: draft.bedrooms,
           bathrooms: draft.bathrooms,
@@ -109,6 +111,8 @@ export function createPrismaListingRepository(
           title: true,
           suburb: true,
           city: true,
+          // Internal dashboard only — never a buyer-facing endpoint.
+          address: true,
           priceZar: true,
           bedrooms: true,
           bathrooms: true,

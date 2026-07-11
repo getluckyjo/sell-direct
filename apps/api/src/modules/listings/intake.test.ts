@@ -20,6 +20,10 @@ describe('listing intake state machine', () => {
     r = advanceIntake(r.state, '2-bed apartment in Sea Point');
     expect(r.state.step).toBe('awaiting_suburb');
     r = advanceIntake(r.state, 'Sea Point');
+    // The optional address is asked once, just before the price.
+    expect(r.state.step).toBe('awaiting_address');
+    expect(r.reply).toMatch(/kept private/i);
+    r = advanceIntake(r.state, '12 Milner Road');
     expect(r.state.step).toBe('awaiting_price');
     r = advanceIntake(r.state, 'R 2,100,000');
     expect(r.state.step).toBe('awaiting_bedrooms');
@@ -45,12 +49,42 @@ describe('listing intake state machine', () => {
     expect(r.completed).toEqual({
       title: '2-bed apartment in Sea Point',
       suburb: 'Sea Point',
+      address: '12 Milner Road',
       priceZar: 2100000,
       bedrooms: 2,
       bathrooms: 1,
       exclusivityTermDays: 90,
       tier: 'free',
     });
+  });
+
+  it('the address step is optional: SKIP records null and moves to price', () => {
+    const state: IntakeState = {
+      step: 'awaiting_address',
+      data: { title: 'x', suburb: 'Sea Point', tier: 'free' },
+    };
+    const r = advanceIntake(state, 'skip');
+    expect(r.state.data.address).toBeNull();
+    expect(r.state.step).toBe('awaiting_price');
+
+    // Too short to be an address → gentle re-ask, still skippable.
+    const bad = advanceIntake(state, 'abc');
+    expect(bad.state.step).toBe('awaiting_address');
+    expect(bad.reply).toMatch(/skip/i);
+
+    // The summary shows the address only when given.
+    expect(
+      renderSummary({
+        title: 't',
+        suburb: 's',
+        address: '12 Milner Road',
+        priceZar: 2_000_000,
+        bedrooms: 2,
+        bathrooms: 1,
+        exclusivityTermDays: 90,
+        tier: 'free',
+      }),
+    ).toMatch(/12 Milner Road \(kept private\)/);
   });
 
   it('never re-asks fields the headline already answered (the Mowbray bug)', () => {
@@ -60,7 +94,8 @@ describe('listing intake state machine', () => {
       bedrooms: 4,
     });
 
-    expect(r.state.step).toBe('awaiting_price'); // suburb + bedrooms skipped
+    // Suburb + bedrooms skipped; the optional address slots in before price.
+    expect(r.state.step).toBe('awaiting_address');
     expect(r.state.data).toMatchObject({
       title: '4 bedroom home in mowbray',
       suburb: 'Mowbray',
@@ -129,8 +164,12 @@ describe('listing intake state machine', () => {
       },
     };
     expect(advanceIntake(base, '45').state.step).toBe('awaiting_exclusivity');
-    // Exclusivity now leads to the confirm step, not instant publish.
-    expect(advanceIntake(base, '120').state.step).toBe('awaiting_confirm');
+    // Exclusivity leads to the unanswered address question, then confirm.
+    const done = advanceIntake(base, '120');
+    expect(done.state.step).toBe('awaiting_address');
+    expect(advanceIntake(done.state, 'skip').state.step).toBe(
+      'awaiting_confirm',
+    );
   });
 
   it('confirm-step edits overwrite fields and re-render the summary', () => {
@@ -139,6 +178,7 @@ describe('listing intake state machine', () => {
       data: {
         title: '4 bedroom home in mowbray',
         suburb: 'Mowbray',
+        address: null, // asked and skipped on the way here
         priceZar: 5_000_000,
         bedrooms: 4,
         bathrooms: 2,
@@ -166,8 +206,18 @@ describe('listing intake state machine', () => {
       suburb: 'Mowbray',
       bedrooms: 4,
     });
-    expect(r.state.step).toBe('awaiting_price');
+    expect(r.state.step).toBe('awaiting_address');
     expect(r.reply).not.toMatch(DOUBLE_QUESTION);
+
+    // A trigger that already states the address skips that question too.
+    const withAddress = startIntake({
+      title: '4 bed at 12 Milner Rd',
+      suburb: 'Mowbray',
+      address: '12 Milner Rd',
+      bedrooms: 4,
+    });
+    expect(withAddress.state.step).toBe('awaiting_price');
+    expect(withAddress.state.data.address).toBe('12 Milner Rd');
   });
 
   it('helpers: validateField, missingFields, nextStep, renderSummary', () => {
@@ -184,7 +234,13 @@ describe('listing intake state machine', () => {
       'bathrooms',
       'exclusivityTermDays',
     ]);
-    expect(nextStep(data)).toBe('awaiting_price');
+    // Address (unanswered) slots in before the price question…
+    expect(nextStep(data)).toBe('awaiting_address');
+    // …and never re-appears once answered or skipped.
+    expect(nextStep({ ...data, address: null })).toBe('awaiting_price');
+    expect(nextStep({ ...data, address: '12 Milner Rd' })).toBe(
+      'awaiting_price',
+    );
 
     const { data: merged, applied } = applyExtracted(data, {
       priceZar: 2_000_000,

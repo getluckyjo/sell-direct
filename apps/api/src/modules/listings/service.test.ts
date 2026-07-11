@@ -27,6 +27,7 @@ describe('listing intake orchestrator', () => {
       'list',
       'Sunny 3-bed in Newlands',
       'Newlands',
+      '15 Kildare Road', // the optional address, asked before the price
       '3 250 000',
       '3',
       '2',
@@ -48,6 +49,7 @@ describe('listing intake orchestrator', () => {
     expect(createListing.mock.calls[0][1]).toMatchObject({
       title: 'Sunny 3-bed in Newlands',
       suburb: 'Newlands',
+      address: '15 Kildare Road',
       priceZar: 3250000,
       bedrooms: 3,
       bathrooms: 2,
@@ -75,7 +77,7 @@ describe('listing intake orchestrator', () => {
     const phone = '27820002222';
 
     const replies: string[] = [];
-    for (const text of ['list', '4 bedroom home in mowbray', '5000000', '2', '90', 'YES']) {
+    for (const text of ['list', '4 bedroom home in mowbray', 'SKIP', '5000000', '2', '90', 'YES']) {
       const res = await handleListingIntakeMessage(deps, { phone, text });
       replies.push(res.reply);
     }
@@ -86,6 +88,7 @@ describe('listing intake orchestrator', () => {
     expect(createListing.mock.calls[0][1]).toMatchObject({
       title: '4 bedroom home in mowbray',
       suburb: 'Mowbray',
+      address: null, // skipped
       bedrooms: 4,
       bathrooms: 2,
       priceZar: 5_000_000,
@@ -103,7 +106,8 @@ describe('listing intake orchestrator', () => {
       { phone: '27820003333', text: 'sell my 4 bed in Mowbray' },
     );
 
-    expect(res.reply).toMatch(/asking price/i); // title+suburb+beds all known
+    // Title+suburb+beds all known → the next ask is the optional address.
+    expect(res.reply).toMatch(/street address/i);
     const state = await store.get('27820003333');
     expect(state?.data).toMatchObject({
       title: '4 bed in Mowbray',
