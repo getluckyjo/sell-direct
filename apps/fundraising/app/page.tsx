@@ -222,10 +222,13 @@ export default function Investors() {
       {/* Market */}
       <Section
         id="market"
-        tone="tinted"
         eyebrow="Market"
         heading={MARKET_SECTION.heading}
         intro={MARKET_SECTION.intro}
+        backdrop={{
+          src: '/cape-town-aerial-atlantic.jpg',
+          alt: 'Aerial view of the Atlantic Seaboard beneath Lion’s Head — Bantry Bay and Sea Point, Cape Town',
+        }}
       >
         <StatGrid stats={MARKET_SECTION.stats} />
         <p className="mt-6 max-w-3xl text-base text-slate-300">

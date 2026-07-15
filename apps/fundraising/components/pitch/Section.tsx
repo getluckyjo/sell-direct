@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import type { ReactNode } from 'react';
 
 type SectionProps = {
@@ -6,6 +7,12 @@ type SectionProps = {
   heading: string;
   intro?: string;
   tone?: 'plain' | 'tinted';
+  /**
+   * Optional full-bleed photo behind the section (with a dark overlay so
+   * content stays readable). Drop new images in public/ and pass them here
+   * to break up the page.
+   */
+  backdrop?: { src: string; alt: string };
   children?: ReactNode;
 };
 
@@ -20,6 +27,7 @@ export function Section({
   heading,
   intro,
   tone = 'plain',
+  backdrop,
   children,
 }: SectionProps) {
   const inner = (
@@ -34,6 +42,25 @@ export function Section({
       {children}
     </div>
   );
+
+  if (backdrop) {
+    return (
+      <section className="relative isolate overflow-hidden border-y border-slate-800">
+        <Image
+          src={backdrop.src}
+          alt={backdrop.alt}
+          fill
+          sizes="100vw"
+          className="-z-10 object-cover object-[50%_70%]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/90 via-slate-950/65 to-slate-950/90"
+        />
+        {inner}
+      </section>
+    );
+  }
 
   if (tone === 'tinted') {
     return (
