@@ -432,7 +432,7 @@ export default function Investors() {
           width={2000}
           height={1125}
           sizes="100vw"
-          className="h-[20rem] w-full object-cover sm:h-[26rem]"
+          className="h-[20rem] w-full object-cover object-top sm:h-[26rem]"
         />
         <div
           aria-hidden
