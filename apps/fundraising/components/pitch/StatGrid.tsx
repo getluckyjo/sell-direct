@@ -22,7 +22,9 @@ export function StatGrid({
           <p className="mt-1 text-3xl font-extrabold tracking-tight text-white">
             {s.value}
           </p>
-          {s.sub ? <p className="mt-1 text-sm text-slate-400">{s.sub}</p> : null}
+          {s.sub ? (
+            <p className="mt-1 text-sm text-slate-400">{s.sub}</p>
+          ) : null}
         </div>
       ))}
     </div>

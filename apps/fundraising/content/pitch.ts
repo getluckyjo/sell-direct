@@ -240,7 +240,8 @@ export const CALCULATOR = {
   step: 250_000,
   initial: 2_500_000,
   exitMultiple: 16.9,
-  exitLabel: 'Modelled value at the base-case exit (~R811m EV, Y5, post-dilution)',
+  exitLabel:
+    'Modelled value at the base-case exit (~R811m EV, Y5, post-dilution)',
   caveat:
     'Illustrative only, from the model-grade base case (5× Y5 revenue exit multiple, post-optional-Series-A dilution). Not a forecast, guarantee or offer; early-stage investment carries risk, including loss of capital.',
 } as const;

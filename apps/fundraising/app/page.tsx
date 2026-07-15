@@ -138,26 +138,25 @@ export default function Investors() {
         intro={MODEL_SECTION.intro}
       >
         <div className="mt-10 grid gap-6 md:grid-cols-2">
-          {[MODEL_SECTION.originationStep.y1, MODEL_SECTION.originationStep.y2].map(
-            (step, i) => (
-              <div
-                key={step.label}
-                className={`rounded-2xl border p-6 ${
-                  i === 1
-                    ? 'border-emerald-500/40 bg-emerald-500/5'
-                    : 'border-slate-800'
-                }`}
-              >
-                <p className="text-sm font-medium text-slate-400">
-                  {step.label}
-                </p>
-                <p className="mt-1 text-3xl font-extrabold tracking-tight text-white">
-                  {step.rate}
-                </p>
-                <p className="mt-2 text-sm text-slate-300">{step.body}</p>
-              </div>
-            ),
-          )}
+          {[
+            MODEL_SECTION.originationStep.y1,
+            MODEL_SECTION.originationStep.y2,
+          ].map((step, i) => (
+            <div
+              key={step.label}
+              className={`rounded-2xl border p-6 ${
+                i === 1
+                  ? 'border-emerald-500/40 bg-emerald-500/5'
+                  : 'border-slate-800'
+              }`}
+            >
+              <p className="text-sm font-medium text-slate-400">{step.label}</p>
+              <p className="mt-1 text-3xl font-extrabold tracking-tight text-white">
+                {step.rate}
+              </p>
+              <p className="mt-2 text-sm text-slate-300">{step.body}</p>
+            </div>
+          ))}
         </div>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {MODEL_SECTION.revenueLines.map((line) => (
@@ -289,9 +288,7 @@ export default function Investors() {
             <p className="text-sm font-medium text-slate-400">Seed round</p>
             <p className="mt-1 text-4xl font-extrabold tracking-tight text-white">
               {ASK.amount}{' '}
-              <span className="text-2xl text-emerald-300">
-                for {ASK.stake}
-              </span>
+              <span className="text-2xl text-emerald-300">for {ASK.stake}</span>
             </p>
             <p className="mt-1 text-sm text-slate-300">{ASK.preMoney}</p>
             <p className="mt-4 text-sm text-slate-400">{ASK.seriesA}</p>
@@ -338,11 +335,7 @@ export default function Investors() {
       </Section>
 
       {/* FAQ */}
-      <Section
-        id="faq"
-        eyebrow="Straight answers"
-        heading="Investor FAQ"
-      >
+      <Section id="faq" eyebrow="Straight answers" heading="Investor FAQ">
         <div className="mt-8 grid gap-3">
           {FAQ.map((item) => (
             <details
@@ -379,7 +372,10 @@ export default function Investors() {
       </Section>
 
       {/* Access / data room */}
-      <section id="access" className="mx-auto max-w-3xl scroll-mt-20 px-6 py-16">
+      <section
+        id="access"
+        className="mx-auto max-w-3xl scroll-mt-20 px-6 py-16"
+      >
         <div className="rounded-3xl border border-slate-800 bg-slate-900 p-8">
           <h2 className="text-2xl font-bold sm:text-3xl">
             {ACCESS_SECTION.heading}
@@ -397,8 +393,8 @@ export default function Investors() {
       <footer className="border-t border-slate-800">
         <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-slate-500">
           © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
-          Confidential — do not distribute. Not an offer to the public;
-          private placement only.
+          Confidential — do not distribute. Not an offer to the public; private
+          placement only.
         </div>
       </footer>
     </div>
