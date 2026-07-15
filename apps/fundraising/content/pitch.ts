@@ -242,8 +242,8 @@ export const TEAM_SECTION = {
   intro:
     'Two working founders, a committed technology partner, and a reserved seat for a strategic non-executive board member.',
   capTable: [
-    { holder: 'Johannes — Commercial Director', stake: 30 },
-    { holder: 'Dean — COO', stake: 30 },
+    { holder: 'Johannes — Marketing Director', stake: 30 },
+    { holder: 'Dean — Managing Director', stake: 30 },
     { holder: 'Seed investor (R10m)', stake: 25 },
     { holder: 'Paysoft — technology partner (vesting)', stake: 10 },
     { holder: 'Board seat (reserved, non-executive)', stake: 5 },
