@@ -255,12 +255,12 @@ export default function Investors() {
       {/* City banner */}
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/cape-town-city.jpg"
-          alt="Aerial view of Cape Town, Table Mountain and the Atlantic seaboard"
+          src="/green-point-aerial.jpg"
+          alt="Aerial view of Green Point and the Atlantic coast beneath a tablecloth cloud pouring over Table Mountain"
           width={2000}
-          height={1333}
+          height={1500}
           sizes="100vw"
-          className="h-[22rem] w-full object-cover saturate-[1.15] contrast-[1.04] sm:h-[30rem]"
+          className="h-[22rem] w-full object-cover object-[50%_30%] saturate-[1.1] sm:h-[30rem]"
         />
         <div
           aria-hidden
