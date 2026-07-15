@@ -286,10 +286,10 @@ export const SCENES: Scene[] = [
     track: 1,
     from: 'bot',
     kind: 'text',
-    text: 'Great — this is handled securely by ooba, our bond origination partner. A few questions on income, expenses and deposit, plus consent for a credit check.',
+    text: 'Great — this is handled securely by BetterBond, our bond origination partner. A few questions on income, expenses and deposit, plus consent for a credit check.',
     note: {
       tag: 'Revenue',
-      title: 'Bond origination referral (ooba)',
+      title: 'Bond origination referral (BetterBond)',
       body: 'A consented hand-off to our originator partner. The bank pays an origination share on a successful bond — at zero cost to the buyer or seller. This is our primary revenue engine.',
     },
   },
@@ -416,11 +416,11 @@ export const SCENES: Scene[] = [
     track: 3,
     from: 'bot',
     kind: 'text',
-    text: "Now I'll submit John's bond application to several banks at once via ooba, to secure the best rate.",
+    text: "Now I'll submit John's bond application to several banks at once via BetterBond, to secure the best rate.",
     note: {
       tag: 'Finance',
       title: 'Multi-bank bond application',
-      body: 'ooba submits to multiple banks simultaneously and negotiates — historically winning better rates than going to one bank.',
+      body: 'BetterBond submits to multiple banks simultaneously and negotiates — historically winning better rates than going to one bank.',
     },
   },
   {
@@ -469,7 +469,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Revenue',
       title: 'Panel conveyancing',
-      body: 'The transferring attorney comes from our panel — a second, consented revenue line (referral / fee share), again at no extra cost to the consumer.',
+      body: 'The transferring attorney comes from our panel — the seller gets a fee discount, and panel firms pay fixed advertising subscriptions (no referral fees, per Legal Practice Council rules).',
     },
   },
   {
