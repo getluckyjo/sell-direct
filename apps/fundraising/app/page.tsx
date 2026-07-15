@@ -182,9 +182,6 @@ export default function Investors() {
             </div>
           ))}
         </div>
-        <p className="mt-4 max-w-3xl rounded-xl border border-amber-500/30 bg-amber-500/5 p-4 text-sm text-amber-100/90">
-          {MODEL_SECTION.dependsOn}
-        </p>
         <div className="mt-6 grid gap-6 md:grid-cols-2">
           {MODEL_SECTION.revenueLines.map((line) => (
             <div

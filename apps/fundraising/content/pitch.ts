@@ -110,8 +110,6 @@ export const MODEL_SECTION = {
       body: 'We become our own originator, direct with the banks — roughly 3× the referral.',
     },
   },
-  dependsOn:
-    'What this depends on: accreditation under the Financial Advisory and Intermediary Services Act (FAIS) as a financial services provider (FSP), plus bank aggregation agreements. Year 1 via BetterBond is the de-risking runway to get both signed.',
   revenueLines: [
     {
       title: 'Bond origination',
