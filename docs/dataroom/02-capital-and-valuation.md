@@ -65,8 +65,8 @@ to an agreed value:
 
 | Holder | At Seed (inception) | Post-Series A |
 |---|---:|---:|
-| Johannes — Commercial Director | 30.0% | 25.0% |
-| Dean — COO | 30.0% | 25.0% |
+| Johannes — Marketing Director | 30.0% | 25.0% |
+| Dean — Managing Director | 30.0% | 25.0% |
 | Paysoft — Technology Partner | 10.0% | 8.3% |
 | Board seat (reserved — non-executive strategic) | 5.0% | 4.2% |
 | Strategic Funder / Seed Investor (R10m) | **25.0%** | 20.8% |

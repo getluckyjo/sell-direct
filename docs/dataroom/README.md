@@ -71,8 +71,9 @@ the model's shape; they sharpen individual lines.
 - Formalise the supplier partnerships in motion: Loom (property valuations) and Capture
   Media (listing video/photography)
 - A signed bank headline-sponsor (the sponsorship line)
-- Refresh `sold-direct-model.xlsx` for the BetterBond naming and the reserved board-seat
-  row (the workbook still shows the previous labels; numbers are unchanged)
+- Refresh `sold-direct-model.xlsx` for the BetterBond naming, the reserved board-seat
+  row and the founder titles (Dean — Managing Director, Johannes — Marketing Director);
+  the workbook still shows the previous labels; numbers are unchanged
 
 *(Market sizing, cap table + use-of-funds and the competitive landscape are in the workbook; the
 operational risk playbook lives in `docs/BOTTLENECKS.md`.)*

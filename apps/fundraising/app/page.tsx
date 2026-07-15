@@ -150,6 +150,22 @@ export default function Investors() {
         </div>
       </Section>
 
+      {/* Interactive journey */}
+      <Section
+        id="demo"
+        eyebrow="See it work · interactive"
+        heading={DEMO_SECTION.heading}
+        intro={DEMO_SECTION.intro}
+        backdrop={{
+          src: '/bo-kaap-street.jpg',
+          alt: 'Colourful Bo-Kaap houses beneath Lion’s Head, Cape Town',
+        }}
+      >
+        <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
+          <WhatsAppDemo />
+        </div>
+      </Section>
+
       {/* Revenue model */}
       <Section
         id="model"
@@ -280,10 +296,13 @@ export default function Investors() {
       {/* Traction & partners */}
       <Section
         id="traction"
-        tone="tinted"
         eyebrow="Traction"
         heading={TRACTION_SECTION.heading}
         intro={TRACTION_SECTION.intro}
+        backdrop={{
+          src: '/cbd-sunrise.jpg',
+          alt: 'Golden sunrise over the Cape Town city centre',
+        }}
       >
         <ul className="mt-8 grid max-w-3xl gap-3 text-slate-300">
           {TRACTION_SECTION.shipped.map((item) => (
@@ -321,10 +340,13 @@ export default function Investors() {
       {/* The Raise */}
       <Section
         id="ask"
-        tone="tinted"
         eyebrow="The Raise"
         heading={ASK_SECTION.heading}
         intro={ASK_SECTION.intro}
+        backdrop={{
+          src: '/camps-bay-sunset.jpg',
+          alt: 'Sunset over Camps Bay beach beneath the Twelve Apostles',
+        }}
       >
         <div className="mt-8 grid gap-6 md:grid-cols-[1fr_1.2fr]">
           <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/5 p-6">
@@ -402,17 +424,34 @@ export default function Investors() {
         </div>
       </Section>
 
-      {/* Interactive journey */}
-      <Section
-        id="demo"
-        eyebrow="See it work · interactive"
-        heading={DEMO_SECTION.heading}
-        intro={DEMO_SECTION.intro}
-      >
-        <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
-          <WhatsAppDemo />
+      {/* Pre-access banner */}
+      <section className="relative isolate overflow-hidden">
+        <Image
+          src="/lions-head-sunset.jpg"
+          alt="Lion’s Head at sunset seen from the Camps Bay rocks"
+          width={2000}
+          height={1125}
+          sizes="100vw"
+          className="h-[20rem] w-full object-cover sm:h-[26rem]"
+        />
+        <div
+          aria-hidden
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/20"
+        />
+        <div className="absolute inset-0 flex items-end">
+          <div className="mx-auto w-full max-w-6xl px-6 pb-12">
+            <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-4xl">
+              R10m for 25%. The data room is one request away.
+            </h2>
+            <a
+              href="#access"
+              className="mt-5 inline-flex rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
+            >
+              Request the data room
+            </a>
+          </div>
         </div>
-      </Section>
+      </section>
 
       {/* Access / data room */}
       <section
