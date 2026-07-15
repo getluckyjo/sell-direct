@@ -3,11 +3,13 @@
 import { useState } from 'react';
 import { CALCULATOR } from '@/content/pitch';
 
-const zar = new Intl.NumberFormat('en-ZA', {
-  style: 'currency',
-  currency: 'ZAR',
-  maximumFractionDigits: 0,
-});
+// Deterministic ZAR formatting (SA convention: R2 500 000) — Intl output
+// differs between the Node server and the browser and breaks hydration.
+function zar(amount: number): string {
+  return `R${Math.round(amount)
+    .toString()
+    .replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}`;
+}
 
 export function TicketCalculator() {
   const [amount, setAmount] = useState<number>(CALCULATOR.initial);
@@ -33,7 +35,7 @@ export function TicketCalculator() {
         />
       </label>
       <p className="mt-2 text-3xl font-extrabold tracking-tight text-white">
-        {zar.format(amount)}
+        {zar(amount)}
       </p>
 
       <dl className="mt-6 grid gap-3 border-t border-slate-800 pt-4 text-sm">
@@ -44,7 +46,7 @@ export function TicketCalculator() {
         <div className="flex items-baseline justify-between gap-4">
           <dt className="text-slate-400">{CALCULATOR.exitLabel}</dt>
           <dd className="font-semibold text-emerald-300">
-            {zar.format(exitValue)}{' '}
+            {zar(exitValue)}{' '}
             <span className="text-slate-400">
               (~{CALCULATOR.exitMultiple}×)
             </span>
