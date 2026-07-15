@@ -11,12 +11,13 @@ capturing the full origination commission instead of a thin referral share.
 ## 1. The monetisation model (legally clean)
 
 1. **Bond origination (free 0% path).**
-   - **Year 1 — ooba referral.** Qualifying ≥80% bonds are placed via our multi-bank originator
-     (ooba); buyer keeps rate choice; we earn the **origination referral (~0.5% of the bond)**.
+   - **Year 1 — BetterBond referral.** Qualifying ≥80% bonds are placed via our multi-bank
+     originator (BetterBond); buyer keeps rate choice; we earn the **origination referral
+     (~0.5% of the bond)**.
    - **Year 2 onward — in-house, direct with banks.** We become our own originator with bank
      aggregation agreements and capture the **full origination commission (~1.5% of the bond)** —
-     roughly **3× the referral**. Year 1 via ooba buys time to sign the bank agreements and put the
-     FAIS/FSP accreditation in place before switching.
+     roughly **3× the referral**. Year 1 via BetterBond buys time to sign the bank agreements and
+     put the FAIS/FSP accreditation in place before switching.
 2. **1% facilitation fee** on cash / sub-80% / non-partner deals (~6× less than a typical
    full-service commission, 5–7% + VAT).
 3. **Bank headline sponsorship** — annual fee (R3m → R8m).
@@ -30,14 +31,14 @@ capturing the full origination commission instead of a thin referral share.
 ## 2. Price taper, the origination step & the revenue engine
 
 The **average transacting price tapers from R6.5m (Y1) to R4.0m (Y5)** — we start prime and broaden
-down-market. Layered on top, the **origination rate steps up from 0.5% (Y1, ooba) to 1.5% (Y2+,
-in-house)**, which lifts revenue per deal from Year 2 even as the price tapers.
+down-market. Layered on top, the **origination rate steps up from 0.5% (Y1, BetterBond) to 1.5%
+(Y2+, in-house)**, which lifts revenue per deal from Year 2 even as the price tapers.
 
 | | Y1 | Y2 | Y3 | Y4 | Y5 |
 |---|---|---|---|---|---|
 | **Avg transacting price** | R6.5m | R5.75m | R5.0m | R4.5m | R4.0m |
 | Bonded share (≥80%) | 40% | 40% | 40% | 42% | 42% |
-| **Origination rate on the bond** | **0.5%** *(ooba)* | **1.5%** *(in-house)* | **1.5%** | **1.5%** | **1.5%** |
+| **Origination rate on the bond** | **0.5%** *(BetterBond)* | **1.5%** *(in-house)* | **1.5%** | **1.5%** | **1.5%** |
 | Origination income / qualifying deal | R29,250 | R77,625 | R67,500 | R60,750 | R54,000 |
 | Conveyancing referral | **R0 — removed (LPC prohibition)** | R0 | R0 | R0 | R0 |
 | **Revenue per deal** | **R55,700** | **R70,550** | **R62,500** | **R57,615** | **R52,380** |
@@ -98,8 +99,8 @@ Y3) shows a minimum cash position of **+R5.5m** — the seed alone covers the tr
 
 1. **In-house origination execution** — becoming our own originator needs **bank aggregation
    agreements** and **FAIS/FSP accreditation**; the ~1.5% capture and the origination cost inputs
-   are assumptions to confirm against a real bank term sheet. Year 1 via ooba is the de-risking
-   runway.
+   are assumptions to confirm against a real bank term sheet. Year 1 via BetterBond is the
+   de-risking runway.
 2. **ATL→deals conversion** — the central growth assumption; validate with a CT pilot.
 3. **Upper-market pool size** (~35k) — an estimate; confirm. The taper makes the share far safer
    (~8%) but the pool count still needs grounding.

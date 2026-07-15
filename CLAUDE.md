@@ -9,7 +9,7 @@
 The full strategy lives in `../Sell-Direct-Project-Plan.md`. Key points that affect the code:
 
 - **WhatsApp is the primary interface.** A web dashboard is the secondary "control room". Build mobile-first; assume most users only ever touch WhatsApp.
-- **Revenue is conditional 0%:** free to the consumer *if* they list exclusively for a term and transact via our partners (bond originator + panel conveyancer). The product must capture which path a deal is on (qualifying vs Flex) and route finance to our originator partner (initially **ooba** by referral — no own financial licence).
+- **Revenue is conditional 0%:** free to the consumer *if* they list exclusively for a term and transact via our partners (bond originator + panel conveyancer). The product must capture which path a deal is on (qualifying vs Flex) and route finance to our originator partner (initially **BetterBond** by referral — no own financial licence).
 - **We are a registered property practitioner (or operate under one).** So the product *can* act as an intermediary (offers, mandates) — but keep that behind clearly-gated, logged flows.
 - **POPIA is non-negotiable.** We handle IDs, payslips, bank and property data. Privacy-by-design from commit #1 (see below).
 

@@ -20,7 +20,7 @@ sell-direct/
 │   │       │   ├── listings/    # property listings
 │   │       │   ├── deals/       # deal state machine (the core)
 │   │       │   ├── profiles/    # buyer & seller profiles
-│   │       │   ├── finance/     # originator referral hand-off (ooba)
+│   │       │   ├── finance/     # originator referral hand-off (BetterBond)
 │   │       │   └── notifications/
 │   │       ├── db/              # schema + migrations
 │   │       └── server.ts
@@ -84,7 +84,7 @@ See `.env.example` for the full list. Never commit `.env`. Use sandbox/test keys
 
 ## Status
 
-🚀 **MVP feature-complete on `claude/dev-planning-discussion-nik2of`.** Shipped: monorepo scaffold; database + deal state machine; build env (CI + SessionStart hook) + Supabase decision; WhatsApp adapter + webhook; listing intake; buyer enquiry + (stubbed, consented) ooba referral; internal dashboard. Plus a public **marketing** site (waitlist) and an investor **fundraising** site.
+🚀 **MVP feature-complete on `claude/dev-planning-discussion-nik2of`.** Shipped: monorepo scaffold; database + deal state machine; build env (CI + SessionStart hook) + Supabase decision; WhatsApp adapter + webhook; listing intake; buyer enquiry + (stubbed, consented) BetterBond referral; internal dashboard. Plus a public **marketing** site (waitlist) and an investor **fundraising** site.
 
 **Live:**
 - Marketing site → https://sell-direct-marketing.vercel.app (Vercel, auto-deploys from `main`)

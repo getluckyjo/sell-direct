@@ -90,7 +90,7 @@ testable and separate from the WhatsApp adapter. Add tests. Plan first, then PR.
 Build the buyer enquiry flow: a buyer enquires on a listing via WhatsApp, we
 create/attach a buyer profile and a deal in 'enquiry' status. Optionally capture
 bond pre-qualification intent and build a referral hand-off payload for our
-originator partner (ooba) behind a finance ADAPTER interface (don't call any real
+originator partner (BetterBond) behind a finance ADAPTER interface (don't call any real
 API yet — stub it and log the consented payload). Enforce explicit consent before
 capturing financial data, per CLAUDE.md. Add tests. Plan first, then PR.
 ```

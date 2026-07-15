@@ -99,7 +99,7 @@ story = [
         ('Build capacity',
          'Our roadmap is specified, tested and CI-gated — we need senior '
          'delivery capacity, not discovery. Named workstreams ready to start: '
-         'WhatsApp go-live hardening, the ooba/bank origination integration, '
+         'WhatsApp go-live hardening, the BetterBond/bank origination integration, '
          'e-signature, FICA pre-validation, conveyancer/bank status flows, '
          'portal syndication, dashboard buildout.'),
         ('Payments rails',
@@ -134,8 +134,9 @@ story = [
     Paragraph('The deal we have in mind — tweak it, challenge it', s_h),
     kv_table([
         ('Founding equity', '<b>10% of Sold Direct at inception</b>, '
-                            'alongside Johannes 30% · Dean 30% · Jan le Roux '
-                            '5% (board) · strategic funder 25% (R10m). In '
+                            'alongside Johannes 30% · Dean 30% · a reserved '
+                            'non-executive board seat 5% · strategic funder '
+                            '25% (R10m). In '
                             'return, Paysoft backs the build: <b>preferred '
                             'development rates</b> for the platform plus a '
                             '<b>free-development allocation up to a value we '

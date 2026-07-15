@@ -464,7 +464,7 @@ function BubbleBody({ scene }: { scene: Scene }) {
       return (
         <div className="w-60 rounded-lg border border-emerald-100 bg-emerald-50/60 p-3">
           <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
-            Pre-qualified ✅ · via ooba
+            Pre-qualified ✅ · via BetterBond
           </p>
           <p className="mt-1 text-xl font-extrabold text-emerald-800">
             {p.amount}

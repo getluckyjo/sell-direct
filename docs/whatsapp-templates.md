@@ -64,7 +64,7 @@ Variables: `1` = listing title / suburb.
 
 ### 3. `prequal_result` — pre-qual outcome · UTILITY · text
 > ✅ You're pre-qualified up to *{{1}}* at approximately *{{2}}* over {{3}} years (indicative, via
-> our partner ooba). Reply *VIEW* to book a viewing or ask me anything.
+> our partner BetterBond). Reply *VIEW* to book a viewing or ask me anything.
 
 Variables: `1` = amount (e.g. "R6 200 000"), `2` = rate (e.g. "Prime −0.50%"), `3` = term ("20").
 
