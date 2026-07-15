@@ -176,9 +176,11 @@ export function WhatsAppDemo() {
             </div>
 
             {/* Chat */}
+            {/* Fixed pixel height: vh units resize with the mobile URL bar
+                and made the page jump mid-scroll. */}
             <div
               ref={chatRef}
-              className="h-[60vh] min-h-[420px] space-y-2.5 overflow-y-auto overscroll-contain bg-[#ECE5DD] px-3 py-4"
+              className="h-[480px] space-y-2.5 overflow-y-auto overscroll-contain bg-[#ECE5DD] px-3 py-4"
             >
               {visible.map((s, i) => (
                 <Bubble key={i} scene={s} isLast={i === visible.length - 1} />
@@ -350,16 +352,18 @@ export function WhatsAppDemo() {
   );
 }
 
+// Fixed height on both states: a panel that grows/shrinks per step shifts
+// the whole page below the demo on every autoplay tick.
 function Annotation({ note }: { note?: Note }) {
   if (!note) {
     return (
-      <div className="min-h-[156px] rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
+      <div className="h-[210px] overflow-y-auto rounded-2xl border border-dashed border-slate-200 p-5 text-sm text-slate-400">
         Step through the journey to see what happens behind the scenes.
       </div>
     );
   }
   return (
-    <div className="min-h-[156px] rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="h-[210px] overflow-y-auto rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       <span
         className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide ring-1 ${TAG_STYLES[note.tag]}`}
       >
