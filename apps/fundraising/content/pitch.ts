@@ -8,6 +8,10 @@ export type Stat = { label: string; value: string; sub?: string };
 export type Card = { title: string; body: string };
 
 // source: docs/dataroom/02-capital-and-valuation.md §1
+export const RIBBON =
+  'Seed round open: R10m for 25% at a R30m pre-money valuation';
+
+// source: docs/dataroom/02-capital-and-valuation.md §1
 export const ASK = {
   amount: 'R10m',
   stake: '25%',
@@ -224,6 +228,61 @@ export const ASK_SECTION = {
   ],
 } as const;
 
+// source: docs/dataroom/02-capital-and-valuation.md §2b — the seed models
+// ~16.9× to the base-case exit (~R811m EV at 5× Y5 revenue, post-Series-A
+// dilution). The calculator scales that per rand invested; post-money R40m.
+export const CALCULATOR = {
+  heading: 'What your ticket becomes',
+  sub: 'Drag to your investment. Illustrative outcomes from the published base-case model.',
+  postMoney: 40_000_000,
+  min: 1_000_000,
+  max: 10_000_000,
+  step: 250_000,
+  initial: 2_500_000,
+  exitMultiple: 16.9,
+  exitLabel: 'Modelled value at the base-case exit (~R811m EV, Y5, post-dilution)',
+  caveat:
+    'Illustrative only, from the model-grade base case (5× Y5 revenue exit multiple, post-optional-Series-A dilution). Not a forecast, guarantee or offer; early-stage investment carries risk, including loss of capital.',
+} as const;
+
+export const FAQ = [
+  {
+    q: 'Why is 0% commission sustainable?',
+    a: 'Because the consumer was never our customer to bill. The bank pays for bond origination in every financed SA property deal — 0.5% of the bond via BetterBond in Year 1, ~1.5% once origination is in-house from Year 2 — and our AI agent keeps the cost of running a deal near zero. On non-qualifying deals a disclosed 1% facilitation fee applies.',
+  },
+  {
+    q: 'Are you against estate agents?',
+    a: 'No. Full-service agents play a valuable role and remain a great choice for the majority who want full service. We serve the segment who choose to sell privately and do the work themselves — and our own team includes employed, registered property practitioners (PPRA, Fidelity Fund Certificates) who assist both parties. Complementary to the industry, not adversarial.',
+  },
+  {
+    q: 'What exactly is the AI agent?',
+    a: 'An AI trained on the last 50 years of South African property transaction, legal and bond data. It runs listing intake, buyer qualification, offer assembly and transfer tracking over WhatsApp — the admin of a sale — while registered practitioners handle the human side. It is built and working today; it is the productivity engine, not a replacement for the licensed people in the deal.',
+  },
+  {
+    q: 'Is the conveyancer revenue line legal?',
+    a: 'Yes — it is designed around the Legal Practice Council rules. Attorneys may not pay referral fees, so there are none: panel conveyancers pay fixed annual advertising subscriptions (volume-independent), and sellers who use the panel receive a 30–40% conveyancing fee discount.',
+  },
+  {
+    q: 'What about Purplebricks?',
+    a: 'The cautionary comp we manage against. Purplebricks was destroyed by marketing-led customer-acquisition costs and over-expansion. We land at prime Cape Town where demand is referral- and reputation-driven (the cheapest customers), broaden down-market only as the brand earns trust, and run an AI-lean cost base with delivery-realistic headcount in the model.',
+  },
+  {
+    q: 'What are the main risks?',
+    a: 'Three we flag before investors do: the Year-2 in-house origination step-up needs bank aggregation agreements and FAIS/FSP accreditation (Year 1 via BetterBond is the de-risking runway); the marketing-to-deals conversion is the central growth assumption, validated with a Cape Town pilot before scale; and the upper-market pool estimate (~35,000 transfers/yr) still needs primary confirmation. All are documented with sources in the data room.',
+  },
+  {
+    q: 'What exactly am I buying?',
+    a: 'A 25% stake in Sold Direct for R10m at a R30m pre-money valuation, alongside two working founders (30% each), Paysoft as vesting technology partner (10%) and a reserved non-executive board seat (5%). Full terms, the CA-reviewed model and the cap table are in the data room, under NDA.',
+  },
+] as const;
+
+export const NEXT_STEPS = [
+  'Request access — we review and share the data room under NDA',
+  'Work through the CA-reviewed model, assumptions and cap table',
+  'Meet the founders and see the live WhatsApp product',
+  'Reserve your allocation in the R10m round',
+] as const;
+
 export const DEMO_SECTION = {
   heading: 'The product, end to end.',
   intro:
@@ -248,5 +307,6 @@ export const NAV = [
   { href: '#traction', label: 'Traction' },
   { href: '#team', label: 'Team' },
   { href: '#ask', label: 'The ask' },
+  { href: '#faq', label: 'FAQ' },
   { href: '#demo', label: 'Demo' },
 ] as const;

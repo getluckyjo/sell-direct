@@ -5,6 +5,7 @@ import { Section } from '@/components/pitch/Section';
 import { StatGrid } from '@/components/pitch/StatGrid';
 import { RevenueBars } from '@/components/pitch/RevenueBars';
 import { CapTable } from '@/components/pitch/CapTable';
+import { TicketCalculator } from '@/components/pitch/TicketCalculator';
 import {
   ACCESS_SECTION,
   AI_SECTION,
@@ -12,12 +13,15 @@ import {
   ASK_SECTION,
   DEMO_SECTION,
   DISCLAIMER,
+  FAQ,
   FIN_SECTION,
   HERO,
   MARKET_SECTION,
   MODEL_SECTION,
   NAV,
+  NEXT_STEPS,
   QUALIFYING_PATH_NOTE,
+  RIBBON,
   TEAM_SECTION,
   TRACTION_SECTION,
 } from '@/content/pitch';
@@ -25,6 +29,12 @@ import {
 export default function Investors() {
   return (
     <div>
+      <div
+        role="note"
+        className="bg-emerald-500 px-6 py-2 text-center text-sm font-semibold text-slate-950"
+      >
+        {RIBBON}
+      </div>
       <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
           <span className="shrink-0 text-lg font-bold tracking-tight">
@@ -299,6 +309,60 @@ export default function Investors() {
               ))}
             </ul>
           </div>
+        </div>
+        <div className="mt-6 grid gap-6 md:grid-cols-2">
+          <TicketCalculator />
+          <div className="rounded-2xl border border-slate-800 p-6">
+            <h3 className="font-semibold text-white">What happens next</h3>
+            <ol className="mt-3 grid gap-3 text-sm text-slate-300">
+              {NEXT_STEPS.map((step, i) => (
+                <li key={step} className="flex gap-3">
+                  <span
+                    aria-hidden
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-xs font-bold text-emerald-300"
+                  >
+                    {i + 1}
+                  </span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+            <a
+              href="#access"
+              className="mt-6 inline-flex rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+            >
+              Request the data room
+            </a>
+          </div>
+        </div>
+      </Section>
+
+      {/* FAQ */}
+      <Section
+        id="faq"
+        eyebrow="Straight answers"
+        heading="Investor FAQ"
+      >
+        <div className="mt-8 grid gap-3">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group rounded-2xl border border-slate-800 bg-slate-950 p-5 open:border-emerald-500/40"
+            >
+              <summary className="cursor-pointer list-none font-semibold text-slate-100 marker:content-none">
+                <span className="mr-2 text-emerald-400 group-open:hidden">
+                  +
+                </span>
+                <span className="mr-2 hidden text-emerald-400 group-open:inline">
+                  −
+                </span>
+                {item.q}
+              </summary>
+              <p className="mt-3 text-sm leading-relaxed text-slate-300">
+                {item.a}
+              </p>
+            </details>
+          ))}
         </div>
       </Section>
 
