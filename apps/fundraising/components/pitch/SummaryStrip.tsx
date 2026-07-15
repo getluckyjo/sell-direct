@@ -25,12 +25,6 @@ export function SummaryStrip() {
           </div>
         ))}
       </div>
-      <a
-        href="#access"
-        className="mt-5 inline-flex rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
-      >
-        Request the data room
-      </a>
     </div>
   );
 }
