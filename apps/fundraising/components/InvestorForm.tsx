@@ -87,10 +87,16 @@ export function InvestorForm() {
           <span className="font-medium text-slate-300">Firm / fund</span>
           <input name="firm" type="text" className={field} />
         </label>
-        <label className="grid gap-1 text-sm sm:col-span-2">
-          <span className="font-medium text-slate-300">Anything to add?</span>
-          <textarea name="message" rows={3} className={field} />
-        </label>
+        <details className="text-sm sm:col-span-2">
+          <summary className="cursor-pointer font-medium text-slate-400 hover:text-slate-300">
+            Add a note (optional)
+          </summary>
+          <textarea
+            name="message"
+            rows={3}
+            className={`${field} mt-2 w-full`}
+          />
+        </details>
       </div>
 
       <label className="flex items-start gap-2 text-sm text-slate-400">
@@ -101,7 +107,8 @@ export function InvestorForm() {
         />
         <span>
           I agree to be contacted about this opportunity. My details are
-          processed per the POPIA privacy notice.
+          processed per the Protection of Personal Information Act (POPIA)
+          privacy notice.
         </span>
       </label>
 
@@ -114,6 +121,10 @@ export function InvestorForm() {
       >
         {status === 'submitting' ? 'Sending…' : 'Request data-room access'}
       </button>
+      <p className="text-sm text-slate-400">
+        We reply within one business day. NDA covers detailed financials, cap
+        table and partner terms.
+      </p>
     </form>
   );
 }
