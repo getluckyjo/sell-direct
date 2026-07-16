@@ -191,78 +191,52 @@ export default function Home() {
         eyebrow="Who it's for"
         heading="Made for sellers who choose to sell direct."
       >
-        <div className="mt-8 grid gap-8 sm:grid-cols-3">
-          <div className="flex flex-col justify-between gap-6 sm:col-span-2">
+        <div className="mt-8 grid items-center gap-10 sm:grid-cols-3">
+          <div className="grid gap-6 sm:col-span-2">
             <p className="max-w-xl text-slate-300">
-              Estate agents play a valuable role in South African property, and
-              a full-service sale is the right choice for many. Sold Direct is
-              built for a different seller: the growing group who want to sell
-              privately and do the work themselves. Our technology, WhatsApp
-              concierge and registered property practitioners streamline every
-              step — so selling direct is simple, safe and fully compliant.
+              Full-service agents are the right choice for many. Sold Direct is
+              for sellers who&apos;d rather do it themselves — with our
+              technology and people handling every step.
             </p>
-            <ul className="grid gap-3 text-sm text-slate-300">
+            <ul className="grid gap-3 text-slate-300">
               <li className="flex gap-3">
                 <span aria-hidden className="text-emerald-400">
                   ✓
                 </span>
-                You host the viewings and choose the offer — we do the admin,
-                paperwork and chasing.
+                You host the viewings — we do the paperwork
               </li>
               <li className="flex gap-3">
                 <span aria-hidden className="text-emerald-400">
                   ✓
                 </span>
-                A WhatsApp concierge with you from mandate to Deeds Office
-                registration.
+                A WhatsApp concierge from mandate to registration
               </li>
               <li className="flex gap-3">
                 <span aria-hidden className="text-emerald-400">
                   ✓
                 </span>
-                Your listing on the major property portals from day one.
+                On the major property portals from day one
               </li>
             </ul>
-            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
-              <p className="text-sm text-slate-300">
-                <span className="font-semibold text-emerald-300">
-                  People + technology, on your side.
-                </span>{' '}
-                Our team includes registered property practitioners (PPRA, with
-                a valid Fidelity Fund Certificate) and a WhatsApp concierge. The
-                technology does the admin — our people help you sell, from
-                mandate to registration.{' '}
-                <Link
-                  href="/compliance"
-                  className="font-semibold text-emerald-400 underline-offset-2 hover:underline"
-                >
-                  See how we keep it compliant →
-                </Link>
-              </p>
-            </div>
-          </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
             <p className="text-sm text-slate-400">
-              Typical full-service commission on a R6m home (5–7% + VAT)
+              Our team includes PPRA-registered property practitioners.{' '}
+              <Link
+                href="/compliance"
+                className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+              >
+                How we keep it compliant →
+              </Link>
             </p>
-            <p className="mt-1 text-3xl font-extrabold text-slate-300">
-              R345k–R483k
+          </div>
+          <div className="rounded-2xl border border-slate-800 bg-slate-950 p-8 text-center">
+            <p className="text-sm text-slate-400">
+              Agent commission on a R6m home
             </p>
-            <p className="mt-4 text-sm text-slate-400">
-              Sold Direct — buyer bonds via our partner
+            <p className="mt-1 text-4xl font-extrabold text-slate-300">
+              ~R414k
             </p>
-            <p className="mt-1 text-3xl font-extrabold text-emerald-400">R0</p>
-            <p className="mt-4 text-sm text-slate-400">
-              Sold Direct — cash buyer (1%, agreed upfront)
-            </p>
-            <p className="mt-1 text-3xl font-extrabold text-emerald-400">
-              R60k
-            </p>
-            <p className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
-              Commission pays for a full-service agent. If you handle the
-              viewings yourself — with our tools and team behind you — you keep
-              it, whichever way your buyer pays.
-            </p>
+            <p className="mt-6 text-sm text-slate-400">With Sold Direct</p>
+            <p className="mt-1 text-5xl font-extrabold text-emerald-400">R0</p>
           </div>
         </div>
       </Section>
