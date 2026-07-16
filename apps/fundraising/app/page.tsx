@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { InvestorForm } from '@/components/InvestorForm';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
-const CONTACT_EMAIL = 'invest@solddirect.co.za';
+const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
 const STATS = [
   {

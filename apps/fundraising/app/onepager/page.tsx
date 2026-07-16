@@ -186,7 +186,7 @@ export default function OnePager() {
           conveyancing sequence reflects a typical South African freehold
           transfer; specifics vary per deal, municipality and bank. Sold Direct
           facilitates finance via a registered bond originator and legal work
-          via panel conveyancers. Investor contact: invest@solddirect.co.za. ©
+          via panel conveyancers. Investor contact: johannes@solddirect.co.za. ©
           Sold Direct, Cape Town.
         </footer>
       </div>

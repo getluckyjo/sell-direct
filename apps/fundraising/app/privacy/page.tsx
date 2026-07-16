@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     'How Sold Direct processes personal information submitted through the investor site, in terms of POPIA.',
 };
 
-const CONTACT_EMAIL = 'invest@solddirect.co.za';
+const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
 export default function Privacy() {
   return (

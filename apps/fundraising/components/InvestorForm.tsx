@@ -41,7 +41,7 @@ export function InvestorForm() {
     } catch {
       setStatus('error');
       setError(
-        'Something went wrong. Please try again in a moment — or email us directly at invest@solddirect.co.za.',
+        'Something went wrong. Please try again in a moment — or email us directly at johannes@solddirect.co.za.',
       );
     }
   }
