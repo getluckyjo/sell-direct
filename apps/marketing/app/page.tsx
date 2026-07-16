@@ -54,17 +54,20 @@ const TIERS = [
     ],
     foot: 'For sellers who want freedom over the lowest price.',
   },
+];
+
+const ADDONS = [
   {
-    name: 'Add-ons',
-    price: 'Per service',
-    tagline: 'À la carte',
-    highlight: false,
-    points: [
-      'Professional photography & floor plans',
-      'Featured placement & social campaigns',
-      'Compliance-certificate coordination',
-    ],
-    foot: 'Optional extras to make your home shine.',
+    title: 'Photography & floor plans',
+    body: 'Professional shoots and floor plans that make your listing stand out on the portals.',
+  },
+  {
+    title: 'Featured placement & social campaigns',
+    body: 'Boost your listing’s visibility with featured portal placement and targeted social campaigns.',
+  },
+  {
+    title: 'Compliance-certificate coordination',
+    body: 'We arrange the electrical, plumbing, gas, electric-fence and beetle certificates your transfer needs.',
   },
 ];
 
@@ -75,14 +78,9 @@ const OUTCOMES = [
     why: 'The bank pays us an origination commission — the sale funds itself.',
   },
   {
-    when: 'Your buyer pays cash (or takes a smaller bond)',
+    when: 'Your buyer pays cash or takes a smaller bond — or you choose Flex, with no exclusivity',
     fee: 'You pay 1%',
-    why: 'No bank in the deal to pay us — R60k on a R6m home, vs ~R414k full service.',
-  },
-  {
-    when: 'You choose Flex — no exclusivity',
-    fee: 'You pay 1%',
-    why: 'Total freedom, one simple fee, only when you sell.',
+    why: 'One simple fee, agreed upfront, only when you sell — R60k on a R6m home, vs ~R414k full service.',
   },
 ];
 
@@ -304,7 +302,7 @@ export default function Home() {
         heading="Someone always pays to sell a home. We make sure it's not you."
         intro="Every sale has banks and attorneys earning inside it. When your buyer bonds through our origination partner, the bank pays us — and you pay 0%. When there's no bond in the deal, a simple 1% covers it, agreed upfront in your mandate. Either way, you keep what a full-service commission would have cost."
       >
-        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+        <div className="mt-8 grid max-w-4xl gap-4 sm:grid-cols-2">
           {OUTCOMES.map((o) => (
             <div
               key={o.when}
@@ -318,7 +316,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+        <div className="mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
           {TIERS.map((tier) => (
             <div
               key={tier.name}
@@ -359,10 +357,30 @@ export default function Home() {
         </p>
       </Section>
 
+      {/* Add-ons */}
+      <Section
+        id="addons"
+        tone="tinted"
+        eyebrow="À la carte"
+        heading="Optional add-ons"
+        intro="Extras to make your home shine — priced per service, only if you want them."
+      >
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {ADDONS.map((a) => (
+            <div
+              key={a.title}
+              className="rounded-2xl border border-slate-800 bg-slate-950 p-6"
+            >
+              <h3 className="font-semibold text-emerald-300">{a.title}</h3>
+              <p className="mt-2 text-sm text-slate-300">{a.body}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
       {/* FAQ */}
       <Section
         id="faq"
-        tone="tinted"
         eyebrow="Straight answers"
         heading="Questions sellers ask"
       >
