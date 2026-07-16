@@ -8,7 +8,7 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
 const RIBBON =
-  '0% commission on the qualifying path — otherwise a simple, upfront 1% Flex fee. Always disclosed before you sign.';
+  '0% commission — the banks pay us, not you. No bond in your sale? A simple, upfront 1% — still ~6× less than full service.';
 
 const STEPS = [
   {
@@ -68,14 +68,32 @@ const TIERS = [
   },
 ];
 
+const OUTCOMES = [
+  {
+    when: 'Your buyer bonds through our partner (80%+)',
+    fee: 'You pay R0',
+    why: 'The bank pays us an origination commission — the sale funds itself.',
+  },
+  {
+    when: 'Your buyer pays cash (or takes a smaller bond)',
+    fee: 'You pay 1%',
+    why: 'No bank in the deal to pay us — R60k on a R6m home, vs ~R414k full service.',
+  },
+  {
+    when: 'You choose Flex — no exclusivity',
+    fee: 'You pay 1%',
+    why: 'Total freedom, one simple fee, only when you sell.',
+  },
+];
+
 const FAQ = [
   {
     q: 'Is it really 0% commission?',
-    a: 'Yes — on the qualifying path. You list exclusively with us for a fixed term, your buyer finances with a bond of 80% or more through our origination partner, and a panel conveyancer handles the transfer (with a conveyancing-fee discount passed to you). The banks pay us for the work around the deal, so you pay nothing.',
+    a: 'Yes — and here is how that is possible. Every property sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our origination partner and a panel conveyancer handles the transfer (with a fee discount passed to you), the bank pays us an origination commission — so you pay R0. It is not a discount; it is the cost of selling moved off your shoulders and onto the financial ecosystem.',
   },
   {
     q: 'What if my buyer pays cash?',
-    a: 'On a cash sale, a smaller bond, or a deal outside our partner ecosystem, a simple 1% facilitation fee applies — agreed upfront in your mandate, never a surprise. That is still roughly six times less than a typical full-service commission (6% + VAT).',
+    a: 'A cash offer is often your best offer — take it. With no bond there is simply no bank in the deal to pay us, so a simple 1% applies instead, agreed upfront in your mandate, never a surprise. On a R6m home that is R60,000 — versus around R414,000 for a typical full-service commission (6% + VAT). Either way, the principle is the same: someone always pays to sell a home, and we make sure it is almost never you.',
   },
   {
     q: 'What does the exclusive mandate involve? Can I cancel?',
@@ -221,13 +239,19 @@ export default function Home() {
               R345k–R483k
             </p>
             <p className="mt-4 text-sm text-slate-400">
-              Sold Direct qualifying path
+              Sold Direct — buyer bonds via our partner
             </p>
             <p className="mt-1 text-4xl font-extrabold text-emerald-400">R0</p>
+            <p className="mt-4 text-sm text-slate-400">
+              Sold Direct — cash buyer (1%, agreed upfront)
+            </p>
+            <p className="mt-1 text-2xl font-extrabold text-emerald-300">
+              R60k
+            </p>
             <p className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
               Commission pays for a full-service agent. If you handle the
               viewings yourself — with our tools and team behind you — you keep
-              it.
+              it, whichever way your buyer pays.
             </p>
           </div>
         </div>
@@ -277,9 +301,23 @@ export default function Home() {
       <Section
         id="pricing"
         eyebrow="Pricing"
-        heading="Conditional 0% — with options"
-        intro="It's free when you list exclusively and transact through our partner ecosystem. Want freedom instead? The Flex tier is a simple 1% of the sale price — only payable when you sell."
+        heading="Someone always pays to sell a home. We make sure it's not you."
+        intro="Every sale has banks and attorneys earning inside it. When your buyer bonds through our origination partner, the bank pays us — and you pay 0%. When there's no bond in the deal, a simple 1% covers it, agreed upfront in your mandate. Either way, you keep what a full-service commission would have cost."
       >
+        <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          {OUTCOMES.map((o) => (
+            <div
+              key={o.when}
+              className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5"
+            >
+              <p className="text-sm text-slate-400">{o.when}</p>
+              <p className="mt-1 text-2xl font-extrabold text-emerald-400">
+                {o.fee}
+              </p>
+              <p className="mt-1 text-xs text-slate-500">{o.why}</p>
+            </div>
+          ))}
+        </div>
         <div className="mt-10 grid gap-6 lg:grid-cols-3">
           {TIERS.map((tier) => (
             <div
@@ -347,16 +385,16 @@ export default function Home() {
       {/* City banner */}
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/table-mountain-homes.jpg"
-          alt="Cape Town homes beneath Table Mountain"
+          src="/green-point-aerial.jpg"
+          alt="Aerial view of Green Point and the Atlantic coast beneath a tablecloth cloud pouring over Table Mountain"
           width={2000}
-          height={1333}
+          height={1500}
           sizes="100vw"
-          className="h-[24rem] w-full object-cover sm:h-[30rem]"
+          className="h-[22rem] w-full object-cover object-[50%_30%] saturate-[1.1] sm:h-[30rem]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/10"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
