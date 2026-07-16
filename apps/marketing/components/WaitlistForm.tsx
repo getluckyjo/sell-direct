@@ -20,6 +20,8 @@ export function WaitlistForm() {
       phone: String(form.get('phone') ?? '').trim() || undefined,
       role: String(form.get('role') ?? '') || undefined,
       consent: form.get('consent') === 'on',
+      // Honeypot — hidden from humans; bots that fill it are dropped silently.
+      website: String(form.get('website') ?? '').trim() || undefined,
     };
 
     if (!payload.consent) {
@@ -38,66 +40,67 @@ export function WaitlistForm() {
       setStatus('success');
     } catch {
       setStatus('error');
-      setError('Something went wrong. Please try again in a moment.');
+      setError(
+        'Something went wrong. Please try again in a moment — or email us at johannes@solddirect.co.za.',
+      );
     }
   }
 
   if (status === 'success') {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-        <p className="text-lg font-semibold text-emerald-800">
+      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
+        <p className="text-lg font-semibold text-emerald-300">
           You&apos;re on the list 🎉
         </p>
-        <p className="mt-1 text-sm text-emerald-700">
+        <p className="mt-1 text-sm text-emerald-200/80">
           We&apos;ll be in touch as we open up Cape Town. Sell direct.
         </p>
       </div>
     );
   }
 
+  const field =
+    'rounded-lg border border-slate-700 bg-slate-950 px-3 py-2 text-slate-100 placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30';
+
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">Name</span>
+          <span className="font-medium text-slate-300">Name</span>
           <input
             name="name"
             type="text"
             autoComplete="name"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="Thabo M."
           />
         </label>
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">
-            Email <span className="text-emerald-600">*</span>
+          <span className="font-medium text-slate-300">
+            Email <span className="text-emerald-400">*</span>
           </span>
           <input
             name="email"
             type="email"
             required
             autoComplete="email"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="you@example.co.za"
           />
         </label>
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">WhatsApp number</span>
+          <span className="font-medium text-slate-300">WhatsApp number</span>
           <input
             name="phone"
             type="tel"
             autoComplete="tel"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="+27 82 000 0000"
           />
         </label>
         <label className="grid gap-1 text-sm">
-          <span className="font-medium text-slate-700">I want to…</span>
-          <select
-            name="role"
-            defaultValue="seller"
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-          >
+          <span className="font-medium text-slate-300">I want to…</span>
+          <select name="role" defaultValue="seller" className={field}>
             <option value="seller">Sell a property</option>
             <option value="buyer">Buy a property</option>
             <option value="other">Just keeping an eye out</option>
@@ -105,24 +108,41 @@ export function WaitlistForm() {
         </label>
       </div>
 
-      <label className="flex items-start gap-2 text-sm text-slate-600">
+      {/* Honeypot: invisible to humans, tempting to bots. */}
+      <div aria-hidden className="absolute left-[-9999px] top-[-9999px]">
+        <label>
+          Website
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
+      <label className="flex items-start gap-2 text-sm text-slate-400">
         <input
           name="consent"
           type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-200"
+          className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-950 text-emerald-500 focus:ring-emerald-500/30"
         />
         <span>
           I agree to be contacted about Sold Direct and accept that my details
-          are processed per the POPIA privacy notice.
+          are processed per the{' '}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+          >
+            POPIA privacy notice
+          </a>
+          .
         </span>
       </label>
 
-      {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      {error ? <p className="text-sm text-red-400">{error}</p> : null}
 
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:opacity-60"
       >
         {status === 'submitting' ? 'Joining…' : 'Join the waitlist'}
       </button>

@@ -59,6 +59,7 @@ const CHAPTERS = [
 
 const REVENUE = [
   'Bond origination share from the bank (via BetterBond) — paid by the bank',
+  '1% facilitation fee on non-qualifying deals (cash / sub-80% bond / non-partner)',
   'Conveyancer panel advertising (fixed subscriptions — no referral fees, per LPC rules)',
   'Optional add-ons: photography, compliance coordination, insurance',
 ];
@@ -159,8 +160,8 @@ export default function OnePager() {
               ))}
             </ul>
             <p className="mt-2 text-[11px] font-medium text-purple-700">
-              The consumer pays nothing — we earn from the financial ecosystem
-              around every deal.
+              0% to the consumer on the qualifying path — otherwise a disclosed
+              1% fee, still ~6× less than full service (6% + VAT).
             </p>
           </section>
           <section className="rounded-xl border border-amber-200 bg-amber-50/50 p-4">
