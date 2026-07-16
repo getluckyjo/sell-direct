@@ -9,7 +9,7 @@ const SITE_URL =
 
 const TITLE = 'Sold Direct — Sell your home direct. Keep your money.';
 const DESCRIPTION =
-  'The streamlined way to sell your Cape Town home privately — 0% commission on the qualifying path, guided on WhatsApp by our technology, concierge and registered property practitioners.';
+  'The streamlined way to sell your Cape Town home privately — 0% commission, because the banks pay us, not you. Guided on WhatsApp by our technology, concierge and registered property practitioners.';
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

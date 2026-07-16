@@ -8,7 +8,7 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
 const RIBBON =
-  '0% commission — the banks pay us, not you. No bond in your sale? A simple, upfront 1% — still ~6× less than full service.';
+  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront — 6× less than full service.';
 
 const STEPS = [
   {
@@ -80,22 +80,22 @@ const OUTCOMES = [
   {
     when: 'Your buyer pays cash or takes a smaller bond — or you choose Flex, with no exclusivity',
     fee: 'You pay 1%',
-    why: 'One simple fee, agreed upfront, only when you sell — R60k on a R6m home, vs ~R414k full service.',
+    why: 'One simple fee, agreed upfront, only when you sell — R60k on a R6m home vs ~R414k full service.',
   },
 ];
 
 const FAQ = [
   {
     q: 'Is it really 0% commission?',
-    a: 'Yes — and here is how that is possible. Every property sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our origination partner and a panel conveyancer handles the transfer (with a fee discount passed to you), the bank pays us an origination commission — so you pay R0. It is not a discount; it is the cost of selling moved off your shoulders and onto the financial ecosystem.',
+    a: 'Yes — here’s how. Every property sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our origination partner and a panel conveyancer handles the transfer (with a fee discount passed to you), the bank pays us an origination commission — and you pay R0. Not a discount: the cost of selling, moved off your shoulders and onto the financial ecosystem.',
   },
   {
     q: 'What if my buyer pays cash?',
-    a: 'A cash offer is often your best offer — take it. With no bond there is simply no bank in the deal to pay us, so a simple 1% applies instead, agreed upfront in your mandate, never a surprise. On a R6m home that is R60,000 — versus around R414,000 for a typical full-service commission (6% + VAT). Either way, the principle is the same: someone always pays to sell a home, and we make sure it is almost never you.',
+    a: 'A cash offer is often your best offer — take it. With no bond, there’s no bank in the deal to pay us, so a simple 1% applies instead — agreed upfront in your mandate, never a surprise. On a R6m home that’s R60,000, versus around R414,000 for a typical full-service commission (6% + VAT). The principle never changes: someone always pays to sell a home, and we make sure it’s almost never you.',
   },
   {
     q: 'What does the exclusive mandate involve? Can I cancel?',
-    a: 'The free tier uses a fixed-term exclusive mandate with plain-language terms you e-sign on WhatsApp — a proper, regulated instrument handled by our employed, registered property practitioners. Cancellation follows the mandate’s notice terms. Prefer no exclusivity? Flex at 1% is always available.',
+    a: 'The Free tier uses a fixed-term exclusive mandate with plain-language terms you e-sign on WhatsApp — a proper, regulated instrument handled by our employed, registered property practitioners. Cancellation follows the mandate’s notice terms. Prefer no exclusivity? Flex at 1% is always available.',
   },
   {
     q: 'Are you against estate agents?',
@@ -173,9 +173,8 @@ export default function Home() {
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-200">
             The streamlined way to sell privately — guided end-to-end by our
-            technology, concierge team and registered property practitioners,
-            with 0% commission on the qualifying path. We get paid by the banks,
-            not by you.
+            technology, WhatsApp concierge and registered property
+            practitioners. 0% commission, because the banks pay us — not you.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -375,7 +374,7 @@ export default function Home() {
         </div>
         <p className="mt-6 text-xs text-slate-500">
           Pricing shown is indicative for our Cape Town launch and subject to
-          our terms. A genuine alternative is always available.
+          our terms. A genuine alternative (Flex) is always available.
         </p>
       </Section>
 
@@ -385,7 +384,7 @@ export default function Home() {
         tone="tinted"
         eyebrow="À la carte"
         heading="Optional add-ons"
-        intro="Extras to make your home shine — priced per service, only if you want them."
+        intro="Extras to make your home shine — priced per service."
       >
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {ADDONS.map((a) => (
