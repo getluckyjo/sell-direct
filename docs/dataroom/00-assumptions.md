@@ -149,26 +149,31 @@ fulfilment lift later years.
 > team (payroll). The two biggest lines — **media/syndication** and **add-on/cert fulfilment** — are
 > the ones to firm up against real supplier quotes (photographer, CoC inspectors, portal rates, BSP).
 
-### Portal syndication — Property24 (researched Jul 2026)
+### Portal syndication — Property24 (researched Jul 2026; 2026 rate card in hand)
 
 | Finding | Detail | Source | Rel. |
 |---|---|---|---|
-| Agency pricing model | Monthly **sale-listing subscription**, tiered by listing volume (bands 1–10 · 11–30 · 31–50 · 51–150 · 151–250 · 251+ … 1501–2000+) **and by average property-price band** (e.g. R1.3m–R2.5m). Exact rand rates are on the gated rate card — confirm in the meeting. | property24.com/products/rate-card | Medium |
+| Agency pricing model | Monthly **sale-listing subscription**, a matrix of **monthly leads** (1–10 … >3000) × **median listing price band** (<R1.3m … >R15m). All ex VAT. | P24 Detailed Rate Card 2026 (primary) | High |
+| Key cells — R6m–R8m band (our launch band) | 1–10 leads **R989** · 11–30 **R2,868** · 31–50 **R4,480** · **51–150 R7,153** · 151–250 R9,320 · 251–500 R13,251 · 1001–1500 R28,020 · 2001–3000 R47,790 /month | Rate card 2026 | High |
+| Key cells — R4m–R6m band (post-taper) | 51–150 **R6,355** · 251–500 R12,366 · 1501–2000 R31,775 · 2001–3000 R44,492 · >3000 **R73,360** /month | Rate card 2026 | High |
+| SIBP (CompCom-mandated small-user package) | Sale listing subscription **R656/month**; branded listings from R108 | Rate card 2026 | High |
+| Structural note | Pricing rises with the **median price band** — our prime launch sits in one of the most expensive columns, and the **price taper (R6.5m→R4.0m) moves us into cheaper bands** as volumes grow. | Rate card 2026 | High |
 | Feed / interoperability fee | Historically **R500/month per office** for third-party feeds; the Competition Commission ordered interoperability **at no fee**. | CompCom OIPMI 2023 / IOL | High |
 | Regulatory context | CompCom Online Intermediation Platforms Market Inquiry (Jul 2023) found **“exorbitant” fee increases** and volume-based price discrimination — small agencies paid **>300% more per listing** than large ones. Remedy: an **SIBP** for ≤30-lead users priced within **15% (later 10%) of the average per-listing/lead across all users**, expected to roughly **halve SME fees**. Volume-fair pricing is now the mandated norm. | CompCom final report / OnlineMarketplaces / Property Professional | High |
 | Pay-per-success precedent | Property24’s own **SBF model: R199 per sale registered at the Deeds Office**, no subscription (introductory rate; dated source — reconfirm). | GhostDigest | Low |
 | Private-listing gap | P24’s private self-service channel is **capped at homes ≤R500,000** — prime private sellers cannot list directly. Sold Direct (a registered practitioner) brings that inventory as a normal agency-grade feed. | property24.com private-listing pages | Medium |
 
-**Reconciliation with the model — no P&L change needed.** The COGS line *Listing media &
-portal syndication* (R3,600 → R2,900 per registered deal, amortised incl. unsold) already
-carries portal fees; photography/media is its dominant component. At ~70% sell-through the
-listing pool is ~70 (Y1) → ~4,100 (Y5). Even a conservative subscription estimate (an
-SIBP-band entry of ~R3–5k/month in Y1, scaling to a large-agency tier by Y5) implies
-**~R500–R900 per listing in Y1, falling under ~R100 by Y5** — comfortably inside the
-existing envelope, with the mandated **R0 feed fee** removing the old per-office charge.
-**Negotiation targets** (see `partner-brief-property24.html`): volume-tiered per-listing
-pricing in the spirit of the OIPMI remedies, a launch-year partner rate, and optionally a
-success-based component on the SBF precedent.
+**Reconciliation with the model (against the actual 2026 card).** At ~70% sell-through the
+listing pool is ~70 (Y1) → ~4,100 (Y5); with ~90-day time-on-market and ~5 leads/listing/month,
+the lead tiers work out roughly: **Y1 ≈ 51–150 leads → R7,153/m (R6m–R8m band) ≈ R86k/yr ≈
+R1,700 per registered deal**; Y2 ≈ 251–500 leads in the R4m–R6m band → ~R675/deal; **Y5 ≈
+>3000 leads → R73,360/m ≈ R880k/yr ≈ R300/deal**. The COGS envelope (*Listing media & portal
+syndication*, R3,600 → R2,900/deal) holds comfortably from Y2; **Y1 runs ~R1.4k/deal hot at
+full standard rates once photography (~R2.9k/deal amortised) is added — ≈R0.07m in total,
+immaterial to the P&L and closed entirely if we enter on the SIBP (R656/m) or land a launch
+rate.** The mandated **R0 feed fee** (OIPMI) removes the old R500/office charge. **Negotiation
+targets** (see `partner-brief-property24.html`): SIBP-level entry stepping up the published
+tiers at agreed lead milestones, and optionally a success-based component on the SBF precedent.
 
 | Input | Value used | Source | Rel. |
 |---|---|---|---|
