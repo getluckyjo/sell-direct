@@ -176,7 +176,7 @@ export const SCENES: Scene[] = [
     track: 0,
     from: 'bot',
     kind: 'text',
-    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). We act as a registered property practitioner, so this is a proper, regulated mandate.",
+    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). Our employed, registered property practitioners handle the mandate — a proper, regulated process.",
     note: {
       tag: 'Legal',
       title: 'Sole mandate & PPRA',
@@ -469,7 +469,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Revenue',
       title: 'Panel conveyancing',
-      body: 'The transferring attorney comes from our panel — a second, consented revenue line (referral / fee share), again at no extra cost to the consumer.',
+      body: 'The transferring attorney comes from our panel. Panel firms pay fixed advertising subscriptions — never per-deal referral fees, which the Legal Practice Council prohibits — and a 30–40% conveyancing-fee discount is passed to the consumer.',
     },
   },
   {
@@ -617,7 +617,7 @@ export const SCENES: Scene[] = [
       title: '🟢 0% commission',
       lines: [
         'Maria paid R0 commission',
-        'Kept ≈ R483 000 a full-service sale (7% + VAT) would have cost',
+        'Kept ≈ R414 000 a full-service sale (6% + VAT) would have cost',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',
