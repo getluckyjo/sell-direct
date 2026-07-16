@@ -347,16 +347,16 @@ export default function Home() {
       {/* City banner */}
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/table-mountain-homes.jpg"
-          alt="Cape Town homes beneath Table Mountain"
+          src="/green-point-aerial.jpg"
+          alt="Aerial view of Green Point and the Atlantic coast beneath a tablecloth cloud pouring over Table Mountain"
           width={2000}
-          height={1333}
+          height={1500}
           sizes="100vw"
-          className="h-[24rem] w-full object-cover sm:h-[30rem]"
+          className="h-[22rem] w-full object-cover object-[50%_30%] saturate-[1.1] sm:h-[30rem]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/10"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
