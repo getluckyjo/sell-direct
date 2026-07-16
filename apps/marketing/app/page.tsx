@@ -32,27 +32,31 @@ const STEPS = [
 const TIERS = [
   {
     name: 'Free',
-    price: 'R0',
     tagline: '0% commission',
-    highlight: true,
+    price: 'R0',
+    mechanic:
+      'Your buyer bonds through our partner and a panel conveyancer handles transfer. The bank pays us — you pay nothing.',
     points: [
-      'Full listing + WhatsApp tools + deal tracker',
-      'Syndicated to major property portals',
-      'List exclusively for a fixed term and transact via our partners',
+      'Full listing, portal syndication & deal tracker',
+      'WhatsApp concierge from mandate to registration',
+      'Exclusive with us for a fixed term',
     ],
-    foot: 'Free because the banks pay us — not you.',
+    foot: 'Cash buyer? A simple 1%, agreed upfront — still 6× less than full service.',
+    highlight: true,
   },
   {
     name: 'Flex',
-    price: '1% of sale',
     tagline: 'No lock-in',
-    highlight: false,
+    price: '1%',
+    mechanic:
+      'No exclusivity, no partner requirements — one simple fee, only when you sell.',
     points: [
-      'Same platform, no exclusivity',
-      'No partner requirements',
-      'A simple 1% on sale — 6× less than full service',
+      'The same platform, tools and concierge',
+      'Any buyer, any bank, any conveyancer',
+      'Nothing to pay until your home sells',
     ],
-    foot: 'For sellers who want freedom over the lowest price.',
+    foot: 'For sellers who want total freedom.',
+    highlight: false,
   },
 ];
 
@@ -68,19 +72,6 @@ const ADDONS = [
   {
     title: 'Compliance-certificate coordination',
     body: 'We arrange the electrical, plumbing, gas, electric-fence and beetle certificates your transfer needs.',
-  },
-];
-
-const OUTCOMES = [
-  {
-    when: 'Your buyer bonds through our partner (80%+)',
-    fee: 'You pay R0',
-    why: 'The bank pays us an origination commission — the sale funds itself.',
-  },
-  {
-    when: 'Your buyer pays cash or takes a smaller bond — or you choose Flex, with no exclusivity',
-    fee: 'You pay 1%',
-    why: 'One simple fee, agreed upfront, only when you sell — R60k on a R6m home vs ~R414k full service.',
   },
 ];
 
@@ -320,28 +311,14 @@ export default function Home() {
       <Section
         id="pricing"
         eyebrow="Pricing"
-        heading="Someone always pays to sell a home. We make sure it's not you."
-        intro="Every sale has banks and attorneys earning inside it. When your buyer bonds through our origination partner, the bank pays us — and you pay 0%. When there's no bond in the deal, a simple 1% covers it, agreed upfront in your mandate. Either way, you keep what a full-service commission would have cost."
+        heading="Two ways to sell. One simple rule: the banks pay us, not you."
+        intro="When your buyer bonds through our partner, the bank pays us — and you pay 0%. No bond in the deal? A simple 1%, agreed upfront in your mandate."
       >
-        <div className="mx-auto mt-8 grid max-w-4xl gap-4 sm:grid-cols-2">
-          {OUTCOMES.map((o) => (
-            <div
-              key={o.when}
-              className="rounded-2xl border border-slate-800 bg-slate-950/60 p-5"
-            >
-              <p className="text-sm text-slate-400">{o.when}</p>
-              <p className="mt-1 text-2xl font-extrabold text-emerald-400">
-                {o.fee}
-              </p>
-              <p className="mt-1 text-xs text-slate-500">{o.why}</p>
-            </div>
-          ))}
-        </div>
         <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
           {TIERS.map((tier) => (
             <div
               key={tier.name}
-              className={`flex flex-col rounded-2xl border p-6 ${
+              className={`flex flex-col rounded-2xl border p-8 ${
                 tier.highlight
                   ? 'border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/30'
                   : 'border-slate-800 bg-slate-950'
@@ -353,10 +330,11 @@ export default function Home() {
                   {tier.tagline}
                 </span>
               </div>
-              <p className="mt-2 text-3xl font-extrabold text-white">
+              <p className="mt-4 text-6xl font-extrabold tracking-tight text-white">
                 {tier.price}
               </p>
-              <ul className="mt-4 grid gap-2 text-sm text-slate-300">
+              <p className="mt-4 text-sm text-slate-300">{tier.mechanic}</p>
+              <ul className="mt-6 grid gap-2.5 text-sm text-slate-300">
                 {tier.points.map((point) => (
                   <li key={point} className="flex gap-2">
                     <span aria-hidden className="text-emerald-400">
@@ -366,15 +344,22 @@ export default function Home() {
                   </li>
                 ))}
               </ul>
-              <p className="mt-4 border-t border-slate-800 pt-4 text-sm text-slate-400">
+              <div aria-hidden className="min-h-6 flex-1" />
+              <p className="border-t border-slate-800 pt-4 text-sm text-slate-400">
                 {tier.foot}
               </p>
             </div>
           ))}
         </div>
-        <p className="mt-6 text-xs text-slate-500">
+        <p className="mx-auto mt-8 max-w-4xl text-center text-sm text-slate-300">
+          On a R6m home, that&apos;s{' '}
+          <span className="font-semibold text-emerald-400">R0</span> or{' '}
+          <span className="font-semibold text-emerald-400">R60k</span> — versus
+          ~R414k for a typical full-service commission (6% + VAT).
+        </p>
+        <p className="mx-auto mt-3 max-w-4xl text-center text-xs text-slate-500">
           Pricing shown is indicative for our Cape Town launch and subject to
-          our terms. A genuine alternative (Flex) is always available.
+          our terms.
         </p>
       </Section>
 
