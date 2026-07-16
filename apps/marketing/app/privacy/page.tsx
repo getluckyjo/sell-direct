@@ -14,27 +14,27 @@ export default function Privacy() {
     <div className="mx-auto max-w-3xl px-6 py-16">
       <Link
         href="/"
-        className="text-sm font-medium text-emerald-400 hover:text-emerald-300"
+        className="text-sm font-medium text-emerald-700 hover:text-emerald-600"
       >
         ← Back to Sold Direct
       </Link>
       <h1 className="mt-6 text-3xl font-extrabold tracking-tight">
         Privacy notice
       </h1>
-      <p className="mt-2 text-sm text-slate-400">
+      <p className="mt-2 text-sm text-slate-500">
         Waitlist & website · Protection of Personal Information Act, 2013
         (POPIA)
       </p>
 
-      <div className="mt-10 grid gap-8 text-slate-300">
+      <div className="mt-10 grid gap-8 text-slate-600">
         <section>
-          <h2 className="font-bold text-white">Who we are</h2>
+          <h2 className="font-bold text-slate-900">Who we are</h2>
           <p className="mt-2 text-sm">
             Sold Direct (Cape Town, South Africa) is the responsible party for
             personal information collected through this website. Contact:{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-emerald-700 hover:text-emerald-600"
             >
               {CONTACT_EMAIL}
             </a>
@@ -43,7 +43,7 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="font-bold text-white">What we collect, and why</h2>
+          <h2 className="font-bold text-slate-900">What we collect, and why</h2>
           <p className="mt-2 text-sm">
             When you join the waitlist we collect your name, email address,
             WhatsApp number, and whether you want to sell, buy or just keep an
@@ -54,7 +54,7 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="font-bold text-white">Consent and lawful basis</h2>
+          <h2 className="font-bold text-slate-900">Consent and lawful basis</h2>
           <p className="mt-2 text-sm">
             We process your details on the basis of the consent you give when
             submitting the form, recorded with a timestamp. You may withdraw
@@ -65,7 +65,7 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="font-bold text-white">Storage and sharing</h2>
+          <h2 className="font-bold text-slate-900">Storage and sharing</h2>
           <p className="mt-2 text-sm">
             Your details are stored securely on our systems and are accessible
             only to the Sold Direct team. They are not shared with third parties
@@ -77,7 +77,7 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="font-bold text-white">Retention</h2>
+          <h2 className="font-bold text-slate-900">Retention</h2>
           <p className="mt-2 text-sm">
             We keep waitlist details until our Cape Town launch has completed
             and for up to 12 months afterwards, then delete them, unless you ask
@@ -86,23 +86,23 @@ export default function Privacy() {
         </section>
 
         <section>
-          <h2 className="font-bold text-white">Your rights</h2>
+          <h2 className="font-bold text-slate-900">Your rights</h2>
           <p className="mt-2 text-sm">
             Under POPIA you may request access to, correction of, or deletion of
             your personal information, and you may object to processing. Email{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-emerald-700 hover:text-emerald-600"
             >
               {CONTACT_EMAIL}
             </a>{' '}
             and we will respond promptly. You also have the right to lodge a
             complaint with the Information Regulator (South Africa) at{' '}
-            <span className="text-slate-200">inforeg.org.za</span>. For how we
+            <span className="text-slate-700">inforeg.org.za</span>. For how we
             keep the sale itself compliant, see our{' '}
             <Link
               href="/compliance"
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-emerald-700 hover:text-emerald-600"
             >
               compliance page
             </Link>

@@ -103,36 +103,36 @@ export default function Home() {
     <div>
       <div
         role="note"
-        className="border-b border-slate-800 bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
+        className="bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
       >
         {RIBBON}
       </div>
 
       {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-400">Direct</span>
+            Sold <span className="text-emerald-600">Direct</span>
           </span>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 sm:flex">
-            <a href="#how" className="hover:text-white">
+          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
+            <a href="#how" className="hover:text-slate-900">
               How it works
             </a>
-            <a href="#pricing" className="hover:text-white">
+            <a href="#pricing" className="hover:text-slate-900">
               Pricing
             </a>
-            <a href="#journey" className="hover:text-white">
+            <a href="#journey" className="hover:text-slate-900">
               See it work
             </a>
-            <a href="#faq" className="hover:text-white">
+            <a href="#faq" className="hover:text-slate-900">
               FAQ
             </a>
-            <Link href="/compliance" className="hover:text-white">
+            <Link href="/compliance" className="hover:text-slate-900">
               Compliance
             </Link>
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-400"
+              className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-emerald-700"
             >
               Join waitlist
             </a>
@@ -152,17 +152,17 @@ export default function Home() {
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/90 via-slate-950/70 to-slate-900/40"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/55 to-slate-900/25"
         />
         <div className="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white ring-1 ring-inset ring-white/30 backdrop-blur">
             Cape Town • WhatsApp-first • 0% commission
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
             Sell your home direct.{' '}
-            <span className="text-emerald-400">Keep your money.</span>
+            <span className="text-emerald-300">Keep your money.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-200">
+          <p className="mt-6 max-w-2xl text-lg text-slate-100">
             Sell privately, guided end-to-end on WhatsApp — with our concierge
             and registered practitioners behind you. 0% commission, because the
             banks pay us — not you.
@@ -170,13 +170,13 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
+              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-950/20 transition hover:bg-emerald-500"
             >
               Join the waitlist
             </a>
             <a
               href="#how"
-              className="rounded-lg border border-slate-500 bg-slate-950/60 px-6 py-3 font-semibold text-white backdrop-blur transition hover:border-emerald-400 hover:text-emerald-300"
+              className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
             >
               See how it works
             </a>
@@ -193,51 +193,51 @@ export default function Home() {
       >
         <div className="mt-8 grid items-center gap-10 sm:grid-cols-3">
           <div className="grid gap-6 sm:col-span-2">
-            <p className="max-w-xl text-slate-300">
+            <p className="max-w-xl text-slate-600">
               Full-service agents are the right choice for many. Sold Direct is
               for sellers who&apos;d rather do it themselves — with our
               technology and people handling every step.
             </p>
-            <ul className="grid gap-3 text-slate-300">
+            <ul className="grid gap-3 text-slate-600">
               <li className="flex gap-3">
-                <span aria-hidden className="text-emerald-400">
+                <span aria-hidden className="font-semibold text-emerald-600">
                   ✓
                 </span>
                 You host the viewings — we do the paperwork
               </li>
               <li className="flex gap-3">
-                <span aria-hidden className="text-emerald-400">
+                <span aria-hidden className="font-semibold text-emerald-600">
                   ✓
                 </span>
                 A WhatsApp concierge from mandate to registration
               </li>
               <li className="flex gap-3">
-                <span aria-hidden className="text-emerald-400">
+                <span aria-hidden className="font-semibold text-emerald-600">
                   ✓
                 </span>
                 On the major property portals — doors normally closed to private
                 sellers
               </li>
             </ul>
-            <p className="text-sm text-slate-400">
+            <p className="text-sm text-slate-500">
               Our team includes PPRA-registered property practitioners.{' '}
               <Link
                 href="/compliance"
-                className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+                className="font-medium text-emerald-700 underline-offset-2 hover:underline"
               >
                 How we keep it compliant →
               </Link>
             </p>
           </div>
-          <div className="rounded-2xl border border-slate-800 bg-slate-950 p-8 text-center">
-            <p className="text-sm text-slate-400">
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <p className="text-sm text-slate-500">
               Agent commission on a R6m home
             </p>
-            <p className="mt-1 text-4xl font-extrabold text-slate-300">
+            <p className="mt-1 text-4xl font-extrabold text-slate-600">
               ~R414k
             </p>
-            <p className="mt-6 text-sm text-slate-400">With Sold Direct</p>
-            <p className="mt-1 text-5xl font-extrabold text-emerald-400">R0</p>
+            <p className="mt-6 text-sm text-slate-500">With Sold Direct</p>
+            <p className="mt-1 text-5xl font-extrabold text-emerald-600">R0</p>
           </div>
         </div>
       </Section>
@@ -257,13 +257,15 @@ export default function Home() {
           {STEPS.map((step, i) => (
             <li
               key={step.title}
-              className="rounded-2xl border border-slate-700 bg-slate-950/80 p-6 backdrop-blur"
+              className="rounded-2xl border border-white/50 bg-white/90 p-6 shadow-lg backdrop-blur"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 font-bold text-slate-950">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 font-bold text-white">
                 {i + 1}
               </span>
-              <h3 className="mt-4 font-semibold text-white">{step.title}</h3>
-              <p className="mt-2 text-sm text-slate-300">{step.body}</p>
+              <h3 className="mt-4 font-semibold text-slate-900">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm text-slate-600">{step.body}</p>
             </li>
           ))}
         </ol>
@@ -277,7 +279,7 @@ export default function Home() {
         heading="The whole journey, inside WhatsApp."
         intro="One Cape Town home, from listing to registered sale. Press Play, or step through it yourself."
       >
-        <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
+        <div className="mt-8 rounded-3xl bg-white p-4 shadow-xl ring-1 ring-slate-200 sm:p-8">
           <WhatsAppDemo />
         </div>
       </Section>
@@ -295,24 +297,29 @@ export default function Home() {
               key={tier.name}
               className={`flex flex-col rounded-2xl border p-8 ${
                 tier.highlight
-                  ? 'border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/30'
-                  : 'border-slate-800 bg-slate-950'
+                  ? 'border-emerald-300 bg-white shadow-lg ring-2 ring-emerald-200'
+                  : 'border-slate-200 bg-white shadow-sm'
               }`}
             >
               <div className="flex items-baseline justify-between">
-                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
-                <span className="text-xs font-medium uppercase tracking-wide text-emerald-300">
+                <h3 className="text-lg font-bold text-slate-900">
+                  {tier.name}
+                </h3>
+                <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
                   {tier.tagline}
                 </span>
               </div>
-              <p className="mt-4 text-6xl font-extrabold tracking-tight text-white">
+              <p className="mt-4 text-6xl font-extrabold tracking-tight text-slate-900">
                 {tier.price}
               </p>
-              <p className="mt-4 text-sm text-slate-300">{tier.mechanic}</p>
-              <ul className="mt-6 grid gap-2.5 text-sm text-slate-300">
+              <p className="mt-4 text-sm text-slate-600">{tier.mechanic}</p>
+              <ul className="mt-6 grid gap-2.5 text-sm text-slate-600">
                 {tier.points.map((point) => (
                   <li key={point} className="flex gap-2">
-                    <span aria-hidden className="text-emerald-400">
+                    <span
+                      aria-hidden
+                      className="font-semibold text-emerald-600"
+                    >
                       ✓
                     </span>
                     {point}
@@ -320,19 +327,19 @@ export default function Home() {
                 ))}
               </ul>
               <div aria-hidden className="min-h-6 flex-1" />
-              <p className="border-t border-slate-800 pt-4 text-sm text-slate-400">
+              <p className="border-t border-slate-100 pt-4 text-sm text-slate-500">
                 {tier.foot}
               </p>
             </div>
           ))}
         </div>
-        <p className="mx-auto mt-8 max-w-4xl text-center text-sm text-slate-300">
+        <p className="mx-auto mt-8 max-w-4xl text-center text-sm text-slate-600">
           On a R6m home, that&apos;s{' '}
-          <span className="font-semibold text-emerald-400">R0</span> or{' '}
-          <span className="font-semibold text-emerald-400">R60k</span> — versus
+          <span className="font-semibold text-emerald-700">R0</span> or{' '}
+          <span className="font-semibold text-emerald-700">R60k</span> — versus
           ~R414k for a typical full-service commission (6% + VAT).
         </p>
-        <p className="mx-auto mt-3 max-w-4xl text-center text-xs text-slate-500">
+        <p className="mx-auto mt-3 max-w-4xl text-center text-xs text-slate-400">
           Pricing shown is indicative for our Cape Town launch and subject to
           our terms.
         </p>
@@ -341,19 +348,23 @@ export default function Home() {
       {/* Add-ons */}
       <Section
         id="addons"
-        tone="tinted"
         eyebrow="À la carte"
         heading="Optional add-ons"
         intro="Extras to make your home shine — priced per service."
+        backdrop={{
+          src: '/living-room-interior.jpg',
+          alt: 'A bright, professionally styled living room, ready for viewings',
+          overlay: 'light',
+        }}
       >
         <div className="mt-8 grid gap-6 md:grid-cols-3">
           {ADDONS.map((a) => (
             <div
               key={a.title}
-              className="rounded-2xl border border-slate-800 bg-slate-950 p-6"
+              className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur"
             >
-              <h3 className="font-semibold text-emerald-300">{a.title}</h3>
-              <p className="mt-2 text-sm text-slate-300">{a.body}</p>
+              <h3 className="font-semibold text-emerald-700">{a.title}</h3>
+              <p className="mt-2 text-sm text-slate-600">{a.body}</p>
             </div>
           ))}
         </div>
@@ -369,13 +380,13 @@ export default function Home() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-2xl border border-slate-800 bg-slate-950 p-5 open:border-emerald-500/40"
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm open:border-emerald-300"
             >
-              <summary className="cursor-pointer list-none font-semibold text-slate-100 marker:content-none">
-                <span className="mr-2 text-emerald-400">＋</span>
+              <summary className="cursor-pointer list-none font-semibold text-slate-900 marker:content-none">
+                <span className="mr-2 text-emerald-600">＋</span>
                 {item.q}
               </summary>
-              <p className="mt-3 text-sm text-slate-300">{item.a}</p>
+              <p className="mt-3 text-sm text-slate-600">{item.a}</p>
             </details>
           ))}
         </div>
@@ -393,7 +404,7 @@ export default function Home() {
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
@@ -412,22 +423,22 @@ export default function Home() {
         id="waitlist"
         className="mx-auto max-w-3xl scroll-mt-20 px-6 py-16"
       >
-        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-8">
-          <h2 className="text-2xl font-bold sm:text-3xl">
+        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             Be first in Cape Town
           </h2>
-          <p className="mt-2 text-slate-300">
+          <p className="mt-2 text-slate-600">
             Join the first group of Cape Town sellers and buyers — we&apos;ll
             reach out as we go live.
           </p>
           <div className="mt-8">
             <WaitlistForm />
           </div>
-          <p className="mt-6 text-sm text-slate-400">
+          <p className="mt-6 text-sm text-slate-500">
             Prefer email?{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="font-medium text-emerald-400 hover:text-emerald-300"
+              className="font-medium text-emerald-700 hover:text-emerald-600"
             >
               {CONTACT_EMAIL}
             </a>
@@ -436,7 +447,7 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800">
+      <footer className="border-t border-slate-200 bg-slate-50">
         <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-slate-500">
           <span>
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
@@ -444,17 +455,17 @@ export default function Home() {
           <nav className="flex flex-wrap gap-5">
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="hover:text-slate-300"
+              className="hover:text-slate-700"
             >
               {CONTACT_EMAIL}
             </a>
-            <Link href="/onepager" className="hover:text-slate-300">
+            <Link href="/onepager" className="hover:text-slate-700">
               One-pager
             </Link>
-            <Link href="/privacy" className="hover:text-slate-300">
+            <Link href="/privacy" className="hover:text-slate-700">
               Privacy notice
             </Link>
-            <Link href="/compliance" className="hover:text-slate-300">
+            <Link href="/compliance" className="hover:text-slate-700">
               Compliance
             </Link>
           </nav>
