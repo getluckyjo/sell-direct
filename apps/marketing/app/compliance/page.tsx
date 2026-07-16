@@ -43,18 +43,18 @@ const PILLARS = [
 export default function Compliance() {
   return (
     <div>
-      <header className="sticky top-0 z-10 border-b border-slate-100 bg-white/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/" className="text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-600">Direct</span>
+            Sold <span className="text-emerald-400">Direct</span>
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
-            <Link href="/" className="hover:text-slate-900">
+          <nav className="flex items-center gap-6 text-sm font-medium text-slate-300">
+            <Link href="/" className="hover:text-white">
               Home
             </Link>
             <Link
               href="/#waitlist"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-400"
             >
               Join waitlist
             </Link>
@@ -62,15 +62,15 @@ export default function Compliance() {
         </div>
       </header>
 
-      <section className="border-b border-slate-100 bg-slate-50">
+      <section className="border-b border-slate-800 bg-slate-900/40">
         <div className="mx-auto max-w-6xl px-6 py-16">
-          <p className="mb-3 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-inset ring-emerald-200">
+          <p className="mb-3 inline-flex rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
             Our compliance
           </p>
           <h1 className="max-w-3xl text-3xl font-extrabold tracking-tight sm:text-5xl">
             Selling direct, done properly.
           </h1>
-          <p className="mt-4 max-w-2xl text-lg text-slate-600">
+          <p className="mt-4 max-w-2xl text-lg text-slate-300">
             A private sale should be every bit as safe and compliant as a
             full-service one. Here is how we make sure it is — from your first
             message to registration at the Deeds Office.
@@ -83,20 +83,20 @@ export default function Compliance() {
           {PILLARS.map((p) => (
             <div
               key={p.title}
-              className="rounded-2xl border border-slate-200 p-6"
+              className="rounded-2xl border border-slate-800 bg-slate-950 p-6"
             >
-              <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              <span className="text-xs font-semibold uppercase tracking-wide text-emerald-300">
                 {p.tag}
               </span>
               <h2 className="mt-2 font-semibold">{p.title}</h2>
-              <p className="mt-2 text-sm text-slate-600">{p.body}</p>
+              <p className="mt-2 text-sm text-slate-300">{p.body}</p>
             </div>
           ))}
         </div>
 
-        <div className="mt-12 rounded-2xl border border-slate-200 bg-slate-50 p-6">
+        <div className="mt-12 rounded-2xl border border-slate-800 bg-slate-900/40 p-6">
           <h2 className="font-semibold">Questions or concerns?</h2>
-          <p className="mt-2 max-w-2xl text-sm text-slate-600">
+          <p className="mt-2 max-w-2xl text-sm text-slate-300">
             We take compliance questions seriously and answer them quickly.
             Message us on WhatsApp or write to us and a member of our team —
             including our registered practitioners — will respond. If we ever
@@ -106,7 +106,7 @@ export default function Compliance() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-100">
+      <footer className="border-t border-slate-800">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
           <span>
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.

@@ -1,6 +1,14 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { Section } from '@/components/Section';
+import { StickyCta } from '@/components/StickyCta';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
+
+const CONTACT_EMAIL = 'johannes@solddirect.co.za';
+
+const RIBBON =
+  '0% commission on the qualifying path — otherwise a simple, upfront 1% Flex fee. Always disclosed before you sign.';
 
 const STEPS = [
   {
@@ -60,31 +68,64 @@ const TIERS = [
   },
 ];
 
+const FAQ = [
+  {
+    q: 'Is it really 0% commission?',
+    a: 'Yes — on the qualifying path. You list exclusively with us for a fixed term, your buyer finances with a bond of 80% or more through our origination partner, and a panel conveyancer handles the transfer (with a conveyancing-fee discount passed to you). The banks pay us for the work around the deal, so you pay nothing.',
+  },
+  {
+    q: 'What if my buyer pays cash?',
+    a: 'On a cash sale, a smaller bond, or a deal outside our partner ecosystem, a simple 1% facilitation fee applies — agreed upfront in your mandate, never a surprise. That is still roughly six times less than a typical full-service commission (6% + VAT).',
+  },
+  {
+    q: 'What does the exclusive mandate involve? Can I cancel?',
+    a: 'The free tier uses a fixed-term exclusive mandate with plain-language terms you e-sign on WhatsApp — a proper, regulated instrument handled by our employed, registered property practitioners. Cancellation follows the mandate’s notice terms. Prefer no exclusivity? Flex at 1% is always available.',
+  },
+  {
+    q: 'Are you against estate agents?',
+    a: 'Not at all. Estate agents play a valuable role in South African property, and a full-service sale is the right choice for many sellers. We serve the growing group who choose to sell privately and do the work themselves — and we employ registered property practitioners to keep every step compliant.',
+  },
+  {
+    q: 'Is my information safe?',
+    a: 'We ask for explicit, timestamped consent before collecting anything, store only what each step needs, encrypt sensitive fields, and never sell your data — POPIA privacy-by-design from the first message. See our privacy notice and compliance page for the full picture.',
+  },
+];
+
 export default function Home() {
   return (
     <div>
+      <div
+        role="note"
+        className="border-b border-slate-800 bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
+      >
+        {RIBBON}
+      </div>
+
       {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-slate-100 bg-white/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-600">Direct</span>
+            Sold <span className="text-emerald-400">Direct</span>
           </span>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
-            <a href="#how" className="hover:text-slate-900">
+          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 sm:flex">
+            <a href="#how" className="hover:text-white">
               How it works
             </a>
-            <a href="#pricing" className="hover:text-slate-900">
+            <a href="#pricing" className="hover:text-white">
               Pricing
             </a>
-            <a href="#journey" className="hover:text-slate-900">
+            <a href="#journey" className="hover:text-white">
               See it work
             </a>
-            <a href="/compliance" className="hover:text-slate-900">
-              Compliance
+            <a href="#faq" className="hover:text-white">
+              FAQ
             </a>
+            <Link href="/compliance" className="hover:text-white">
+              Compliance
+            </Link>
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-500 px-4 py-2 font-semibold text-slate-950 hover:bg-emerald-400"
             >
               Join waitlist
             </a>
@@ -93,7 +134,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+      <section id="hero" className="relative isolate overflow-hidden">
         <Image
           src="/cape-town-hero.jpg"
           alt="Homes above the bay in Camps Bay, Cape Town, beneath the Twelve Apostles"
@@ -102,20 +143,19 @@ export default function Home() {
           sizes="100vw"
           className="-z-10 object-cover"
         />
-        {/* Dark gradient so the headline stays legible over the photo */}
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/55 to-slate-900/25"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/90 via-slate-950/70 to-slate-900/40"
         />
         <div className="mx-auto max-w-6xl px-6 pb-20 pt-20 sm:pb-28 sm:pt-28">
-          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1 text-sm font-medium text-white ring-1 ring-inset ring-white/30 backdrop-blur">
+          <p className="mb-4 inline-flex items-center gap-2 rounded-full bg-emerald-500/15 px-3 py-1 text-sm font-medium text-emerald-300 ring-1 ring-inset ring-emerald-400/30">
             Cape Town • WhatsApp-first • 0% commission
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
             Sell your home direct.{' '}
-            <span className="text-emerald-300">Keep your money.</span>
+            <span className="text-emerald-400">Keep your money.</span>
           </h1>
-          <p className="mt-6 max-w-2xl text-lg text-slate-100">
+          <p className="mt-6 max-w-2xl text-lg text-slate-200">
             The streamlined way to sell privately — guided end-to-end by our
             technology, concierge team and registered property practitioners,
             with 0% commission on the qualifying path. We get paid by the banks,
@@ -124,13 +164,13 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
             >
               Join the waitlist
             </a>
             <a
               href="#how"
-              className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
+              className="rounded-lg border border-slate-500 bg-slate-950/60 px-6 py-3 font-semibold text-white backdrop-blur transition hover:border-emerald-400 hover:text-emerald-300"
             >
               See how it works
             </a>
@@ -138,14 +178,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Who it's for */}
-      <section className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 sm:grid-cols-3">
+      {/* Who it's for + the saving */}
+      <Section
+        id="for"
+        tone="tinted"
+        eyebrow="Who it's for"
+        heading="Made for sellers who choose to sell direct."
+      >
+        <div className="mt-8 grid gap-8 sm:grid-cols-3">
           <div className="sm:col-span-2">
-            <h2 className="text-2xl font-bold sm:text-3xl">
-              Made for sellers who choose to sell direct.
-            </h2>
-            <p className="mt-3 max-w-xl text-slate-600">
+            <p className="max-w-xl text-slate-300">
               Estate agents play a valuable role in South African property, and
               a full-service sale is the right choice for many. Sold Direct is
               built for a different seller: the growing group who want to sell
@@ -153,91 +195,175 @@ export default function Home() {
               concierge and registered property practitioners streamline every
               step — so selling direct is simple, safe and fully compliant.
             </p>
+            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+              <p className="text-sm text-slate-300">
+                <span className="font-semibold text-emerald-300">
+                  People + technology, on your side.
+                </span>{' '}
+                Our team includes registered property practitioners (PPRA, with
+                a valid Fidelity Fund Certificate) and a WhatsApp concierge. The
+                technology does the admin — our people help you sell, from
+                mandate to registration.{' '}
+                <Link
+                  href="/compliance"
+                  className="font-semibold text-emerald-400 underline-offset-2 hover:underline"
+                >
+                  See how we keep it compliant →
+                </Link>
+              </p>
+            </div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
-            <p className="text-sm text-slate-500">
-              Typical full-service commission (5–7% + VAT)
+          <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+            <p className="text-sm text-slate-400">
+              Typical full-service commission on a R6m home (5–7% + VAT)
             </p>
-            <p className="mt-1 text-3xl font-extrabold text-slate-600">
+            <p className="mt-1 text-3xl font-extrabold text-slate-300">
               R345k–R483k
             </p>
-            <p className="mt-4 text-sm text-slate-500">
+            <p className="mt-4 text-sm text-slate-400">
               Sold Direct qualifying path
             </p>
-            <p className="mt-1 text-4xl font-extrabold text-emerald-600">R0</p>
-            <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">
+            <p className="mt-1 text-4xl font-extrabold text-emerald-400">R0</p>
+            <p className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
               Commission pays for a full-service agent. If you handle the
               viewings yourself — with our tools and team behind you — you keep
               it.
             </p>
           </div>
         </div>
-      </section>
-
-      {/* People + technology */}
-      <section className="mx-auto max-w-6xl px-6 pt-14">
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-6 sm:flex sm:items-center sm:gap-6">
-          <p className="text-sm text-emerald-900">
-            <span className="font-semibold">
-              People + technology, on your side.
-            </span>{' '}
-            Our team includes registered property practitioners (PPRA, with a
-            valid Fidelity Fund Certificate) and a WhatsApp concierge. The
-            technology does the admin — our people help you sell, from mandate
-            to registration.{' '}
-            <a
-              href="/compliance"
-              className="font-semibold underline hover:text-emerald-700"
-            >
-              See how we keep it compliant →
-            </a>
-          </p>
-        </div>
-      </section>
+      </Section>
 
       {/* How it works */}
-      <section id="how" className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="text-2xl font-bold sm:text-3xl">How it works</h2>
-        <p className="mt-2 text-slate-600">
-          A guided, digital version of the South African property journey —
-          start to registration.
-        </p>
+      <Section
+        id="how"
+        eyebrow="The journey"
+        heading="How it works"
+        intro="A guided, digital version of the South African property journey — start to registration."
+        backdrop={{
+          src: '/bo-kaap-street.jpg',
+          alt: 'Colourful Bo-Kaap houses beneath Lion’s Head, Cape Town',
+        }}
+      >
         <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, i) => (
             <li
               key={step.title}
-              className="rounded-2xl border border-slate-200 p-6"
+              className="rounded-2xl border border-slate-700 bg-slate-950/80 p-6 backdrop-blur"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 font-bold text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 font-bold text-slate-950">
                 {i + 1}
               </span>
-              <h3 className="mt-4 font-semibold">{step.title}</h3>
-              <p className="mt-2 text-sm text-slate-600">{step.body}</p>
+              <h3 className="mt-4 font-semibold text-white">{step.title}</h3>
+              <p className="mt-2 text-sm text-slate-300">{step.body}</p>
             </li>
           ))}
         </ol>
-      </section>
+      </Section>
+
+      {/* Interactive journey */}
+      <Section
+        id="journey"
+        tone="tinted"
+        eyebrow="See it work · interactive"
+        heading="The whole journey, inside WhatsApp."
+        intro="Follow one Cape Town home from listing to registered sale — consent, guided listing, buyer enquiry, in-chat bond pre-qualification, a binding offer, conveyancing and Deeds Office registration. Press Play, or step through it yourself."
+      >
+        <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
+          <WhatsAppDemo />
+        </div>
+      </Section>
+
+      {/* Pricing */}
+      <Section
+        id="pricing"
+        eyebrow="Pricing"
+        heading="Conditional 0% — with options"
+        intro="It's free when you list exclusively and transact through our partner ecosystem. Want freedom instead? The Flex tier is a simple 1% of the sale price — only payable when you sell."
+      >
+        <div className="mt-10 grid gap-6 lg:grid-cols-3">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.name}
+              className={`flex flex-col rounded-2xl border p-6 ${
+                tier.highlight
+                  ? 'border-emerald-500/40 bg-emerald-500/5 ring-1 ring-emerald-500/30'
+                  : 'border-slate-800 bg-slate-950'
+              }`}
+            >
+              <div className="flex items-baseline justify-between">
+                <h3 className="text-lg font-bold text-white">{tier.name}</h3>
+                <span className="text-xs font-medium uppercase tracking-wide text-emerald-300">
+                  {tier.tagline}
+                </span>
+              </div>
+              <p className="mt-2 text-3xl font-extrabold text-white">
+                {tier.price}
+              </p>
+              <ul className="mt-4 grid gap-2 text-sm text-slate-300">
+                {tier.points.map((point) => (
+                  <li key={point} className="flex gap-2">
+                    <span aria-hidden className="text-emerald-400">
+                      ✓
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 border-t border-slate-800 pt-4 text-sm text-slate-400">
+                {tier.foot}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-6 text-xs text-slate-500">
+          Pricing shown is indicative for our Cape Town launch and subject to
+          our terms. A genuine alternative is always available.
+        </p>
+      </Section>
+
+      {/* FAQ */}
+      <Section
+        id="faq"
+        tone="tinted"
+        eyebrow="Straight answers"
+        heading="Questions sellers ask"
+      >
+        <div className="mt-8 grid max-w-3xl gap-4">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group rounded-2xl border border-slate-800 bg-slate-950 p-5 open:border-emerald-500/40"
+            >
+              <summary className="cursor-pointer list-none font-semibold text-slate-100 marker:content-none">
+                <span className="mr-2 text-emerald-400">＋</span>
+                {item.q}
+              </summary>
+              <p className="mt-3 text-sm text-slate-300">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
 
       {/* City banner */}
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/cape-town-city.jpg"
-          alt="Aerial view of Cape Town, Table Mountain and the Atlantic seaboard"
+          src="/table-mountain-homes.jpg"
+          alt="Cape Town homes beneath Table Mountain"
           width={2000}
           height={1333}
           sizes="100vw"
-          className="h-[26rem] w-full object-cover saturate-[1.15] contrast-[1.04] sm:h-[34rem]"
+          className="h-[24rem] w-full object-cover sm:h-[30rem]"
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/25 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-slate-950/10"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
             <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
               Built for Cape Town, from the first listing to registration.
             </h2>
-            <p className="mt-3 max-w-xl text-lg text-slate-100 drop-shadow">
+            <p className="mt-3 max-w-xl text-lg text-slate-200 drop-shadow">
               A local, mobile-first way to buy and sell property — designed
               around how South African transfers actually work.
             </p>
@@ -245,108 +371,61 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Interactive journey */}
-      <section id="journey" className="mx-auto max-w-6xl px-6 py-16">
-        <p className="mb-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-          See it work · interactive
-        </p>
-        <h2 className="text-2xl font-bold sm:text-3xl">
-          The whole journey, inside WhatsApp.
-        </h2>
-        <p className="mt-2 max-w-2xl text-slate-600">
-          Follow one Cape Town home from listing to registered sale — consent,
-          guided listing, buyer enquiry, in-chat bond pre-qualification, a
-          binding offer, conveyancing and Deeds Office registration. Press{' '}
-          <span className="font-semibold">Play</span>, or step through it
-          yourself.
-        </p>
-        <div className="mt-10">
-          <WhatsAppDemo />
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <h2 className="text-2xl font-bold sm:text-3xl">
-            Conditional 0% — with options
-          </h2>
-          <p className="mt-2 max-w-2xl text-slate-600">
-            It&apos;s free when you list exclusively and transact through our
-            partner ecosystem. Want freedom instead? The Flex tier is a simple
-            1% of the sale price — only payable when you sell.
-          </p>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {TIERS.map((tier) => (
-              <div
-                key={tier.name}
-                className={`flex flex-col rounded-2xl border p-6 ${
-                  tier.highlight
-                    ? 'border-emerald-300 bg-white ring-2 ring-emerald-200'
-                    : 'border-slate-200 bg-white'
-                }`}
-              >
-                <div className="flex items-baseline justify-between">
-                  <h3 className="text-lg font-bold">{tier.name}</h3>
-                  <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">
-                    {tier.tagline}
-                  </span>
-                </div>
-                <p className="mt-2 text-3xl font-extrabold">{tier.price}</p>
-                <ul className="mt-4 grid gap-2 text-sm text-slate-600">
-                  {tier.points.map((point) => (
-                    <li key={point} className="flex gap-2">
-                      <span aria-hidden className="text-emerald-600">
-                        ✓
-                      </span>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 border-t border-slate-100 pt-4 text-sm text-slate-500">
-                  {tier.foot}
-                </p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 text-xs text-slate-500">
-            Pricing shown is indicative for our Cape Town launch and subject to
-            our terms. A genuine alternative is always available.
-          </p>
-        </div>
-      </section>
-
       {/* Waitlist */}
-      <section id="waitlist" className="mx-auto max-w-3xl px-6 py-16">
-        <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+      <section
+        id="waitlist"
+        className="mx-auto max-w-3xl scroll-mt-20 px-6 py-16"
+      >
+        <div className="rounded-3xl border border-slate-800 bg-slate-900 p-8">
           <h2 className="text-2xl font-bold sm:text-3xl">
             Be first in Cape Town
           </h2>
-          <p className="mt-2 text-slate-600">
+          <p className="mt-2 text-slate-300">
             We&apos;re opening up to a first group of sellers and buyers. Join
             the waitlist and we&apos;ll reach out as we go live.
           </p>
           <div className="mt-8">
             <WaitlistForm />
           </div>
+          <p className="mt-6 text-sm text-slate-400">
+            Prefer email?{' '}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-medium text-emerald-400 hover:text-emerald-300"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-100">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-slate-800">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-slate-500">
           <span>
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           </span>
-          <span>
-            0% commission ·{' '}
-            <a href="/compliance" className="underline hover:text-slate-700">
-              POPIA-compliant · PPRA registered
-            </a>{' '}
-            · We handle your data with care.
-          </span>
+          <nav className="flex flex-wrap gap-5">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="hover:text-slate-300"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <Link href="/onepager" className="hover:text-slate-300">
+              One-pager
+            </Link>
+            <Link href="/privacy" className="hover:text-slate-300">
+              Privacy notice
+            </Link>
+            <Link href="/compliance" className="hover:text-slate-300">
+              Compliance
+            </Link>
+          </nav>
         </div>
       </footer>
+
+      <StickyCta />
     </div>
   );
 }
