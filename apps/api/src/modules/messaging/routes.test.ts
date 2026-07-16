@@ -12,6 +12,10 @@ function fakeAdapter(
     verifySignature: () => true,
     parseInbound: () => [],
     send: vi.fn(),
+    fetchMedia: vi.fn(async () => ({
+      bytes: Buffer.from(''),
+      mimeType: 'image/jpeg',
+    })),
     ...overrides,
   };
 }

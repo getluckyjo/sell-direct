@@ -176,7 +176,7 @@ export const SCENES: Scene[] = [
     track: 0,
     from: 'bot',
     kind: 'text',
-    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). We act as a registered property practitioner, so this is a proper, regulated mandate.",
+    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). Our employed, registered property practitioners handle the mandate — a proper, regulated process.",
     note: {
       tag: 'Legal',
       title: 'Sole mandate & PPRA',
@@ -617,7 +617,7 @@ export const SCENES: Scene[] = [
       title: '🟢 0% commission',
       lines: [
         'Maria paid R0 commission',
-        'Kept ≈ R483 000 a full-service sale (7% + VAT) would have cost',
+        'Kept ≈ R414 000 a full-service sale (6% + VAT) would have cost',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',

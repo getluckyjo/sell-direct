@@ -35,6 +35,9 @@ enum DealStatus {
 /// Lifecycle of a listing, distinct from a deal's transfer status.
 enum ListingStatus {
   draft
+  /// Confirmed via intake but not publicly visible until the first photo
+  /// arrives (Property24-style portals effectively require photos).
+  awaiting_photos
   active
   under_offer
   sold
@@ -100,6 +103,15 @@ model Listing {
   priceZar            Decimal       @db.Decimal(12, 2)
   suburb              String?
   city                String        @default("Cape Town")
+  /// Street address — PRIVATE (POPIA: seller PII). Never shown to buyers;
+  /// used for price guidance (LOOM) and portal syndication only.
+  address             String?
+  /// Cached market-price estimate (via the ValuationAdapter, e.g. LOOM) —
+  /// one report per property; refreshed only by an explicit re-estimate.
+  estimateLowZar      Int?
+  estimateHighZar     Int?
+  estimatedAt         DateTime?
+  estimateSource      String?
   bedrooms            Int?
   bathrooms           Int?
   status              ListingStatus @default(draft)
@@ -109,9 +121,29 @@ model Listing {
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
   deals               Deal[]
+  photos              ListingPhoto[]
 
   @@index([status])
   @@map("listings")
+}
+
+/// A listing photo stored via the StorageProvider (bucket listing-photos —
+/// public marketing content). POPIA note: property images, low PII; EXIF/GPS
+/// stripping is a documented follow-up (needs an image library — see
+/// docs/POPIA-data-map.md).
+model ListingPhoto {
+  id          String   @id @default(cuid())
+  listingId   String
+  listing     Listing  @relation(fields: [listingId], references: [id])
+  storagePath String
+  /// Public URL captured at upload time; null only if URL construction failed.
+  url         String?
+  mimeType    String
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+
+  @@index([listingId, sortOrder])
+  @@map("listing_photos")
 }
 
 model Deal {
@@ -203,6 +235,42 @@ model Lead {
 
   @@index([kind, createdAt])
   @@map("leads")
+}
+
+/// Review state of an AI-drafted WhatsApp reply (shadow mode).
+enum AgentDraftStatus {
+  pending
+  approved
+  dismissed
+  /// Sent automatically (agent live mode) — stored for audit, no review needed.
+  sent
+}
+
+/// An AI-agent-drafted reply to an inbound WhatsApp message. In shadow mode
+/// nothing is sent until a concierge approves; in live mode the reply is sent
+/// immediately and the row is kept as the audit record. `toolCalls` lists the
+/// tools the agent used to compose the reply (names only — never tool output,
+/// which may contain PII).
+model AgentDraft {
+  id        String           @id @default(cuid())
+  /// The WhatsApp number the reply is addressed to (PII — the contact key).
+  phone     String
+  /// The inbound message body the draft responds to.
+  inbound   String
+  /// The agent's proposed reply text.
+  draft     String
+  /// Names of tools the agent invoked while drafting (audit trail).
+  toolCalls String[]         @default([])
+  /// The agent flagged this thread for human (concierge) takeover.
+  escalated Boolean          @default(false)
+  status    AgentDraftStatus @default(pending)
+  createdAt DateTime         @default(now())
+  /// When a concierge approved/dismissed the draft (null while pending/sent).
+  reviewedAt DateTime?
+
+  @@index([status, createdAt])
+  @@index([phone, createdAt])
+  @@map("agent_drafts")
 }
 
 /// Per-phone WhatsApp conversation state for guided flows (e.g. listing intake).

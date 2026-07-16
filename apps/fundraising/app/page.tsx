@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { InvestorForm } from '@/components/InvestorForm';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
@@ -468,7 +469,16 @@ export default function Investors() {
           <div className="mt-8">
             <InvestorForm />
           </div>
-          <p className="mt-6 text-xs leading-relaxed text-slate-500">
+          <p className="mt-6 text-sm text-slate-400">
+            Prefer email?{' '}
+            <a
+              href="mailto:johannes@solddirect.co.za"
+              className="font-medium text-emerald-400 hover:text-emerald-300"
+            >
+              johannes@solddirect.co.za
+            </a>
+          </p>
+          <p className="mt-4 text-xs leading-relaxed text-slate-500">
             {DISCLAIMER}
           </p>
         </div>
@@ -477,11 +487,27 @@ export default function Investors() {
       <footer className="border-t border-slate-800">
         <div className="mx-auto max-w-6xl px-6 py-10 text-sm text-slate-500">
           <p>{QUALIFYING_PATH_NOTE}</p>
-          <p className="mt-4">
-            © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
-            Confidential — do not distribute. Not an offer to the public;
-            private placement only.
-          </p>
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+            <p>
+              © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
+              Confidential — do not distribute. Not an offer to the public;
+              private placement only.
+            </p>
+            <nav className="flex gap-5">
+              <a
+                href="mailto:johannes@solddirect.co.za"
+                className="hover:text-slate-300"
+              >
+                johannes@solddirect.co.za
+              </a>
+              <Link href="/onepager" className="hover:text-slate-300">
+                One-pager
+              </Link>
+              <Link href="/privacy" className="hover:text-slate-300">
+                Privacy notice
+              </Link>
+            </nav>
+          </div>
         </div>
       </footer>
 

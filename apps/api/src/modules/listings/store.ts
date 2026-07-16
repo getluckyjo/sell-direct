@@ -20,13 +20,25 @@ export function createPrismaConversationStore(
       // conversation row may instead belong to another flow (e.g. buyer
       // pre-qualification), which this store must not misread as a draft.
       if (!row || row.flow !== 'listing_intake') return null;
+      // The cached price estimate rides inside the JSON under a reserved key
+      // (the row has no separate column); strip it back out of the draft.
+      const { _estimate, ...draft } = (row.data ?? {}) as Record<
+        string,
+        unknown
+      >;
       return {
         step: row.step as IntakeStep,
-        data: row.data as Partial<ListingDraft>,
+        data: draft as Partial<ListingDraft>,
+        ...(_estimate !== undefined
+          ? { estimate: _estimate as IntakeState['estimate'] }
+          : {}),
       };
     },
     async set(phone, state) {
-      const data = state.data as Prisma.InputJsonValue;
+      const data = {
+        ...state.data,
+        ...(state.estimate !== undefined ? { _estimate: state.estimate } : {}),
+      } as Prisma.InputJsonValue;
       await prisma.conversationState.upsert({
         where: { phone },
         create: { phone, flow: 'listing_intake', step: state.step, data },

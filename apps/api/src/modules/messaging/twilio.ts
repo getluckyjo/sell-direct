@@ -1,5 +1,7 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
+  FetchedMedia,
+  InboundMedia,
   InboundMessage,
   MessagingAdapter,
   OutboundMessage,
@@ -126,13 +128,27 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
           ? String(p.ButtonText)
           : undefined;
 
+    // WhatsApp delivers one media item per inbound message, so index 0 is
+    // sufficient (if NumMedia > 1 ever occurs, only the first is taken). The
+    // caption arrives in Body — it belongs on media, never on text, so a
+    // caption can't trigger keyword routing.
+    const media: InboundMedia | undefined =
+      numMedia > 0 && p.MediaUrl0
+        ? {
+            url: String(p.MediaUrl0),
+            mimeType: p.MediaContentType0,
+            caption: text,
+          }
+        : undefined;
+
     return [
       {
         waMessageId: String(sid),
         from: stripChannel(String(from)),
         to: stripChannel(String(p.To ?? '')),
         type,
-        text,
+        text: media ? undefined : text,
+        media,
         // Twilio's inbound webhook carries no message timestamp; use receipt time.
         timestamp: undefined,
         raw: p,
@@ -181,5 +197,29 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
 
     const data = (await res.json().catch(() => ({}))) as TwilioSendResponse;
     return { waMessageId: data.sid };
+  }
+
+  /**
+   * Twilio media is fetched from MediaUrlN with the account's Basic auth.
+   * Twilio 307-redirects to a signed S3 URL; fetch follows the redirect and
+   * drops the Authorization header cross-origin, which is exactly correct.
+   */
+  async fetchMedia(media: InboundMedia): Promise<FetchedMedia> {
+    if (!media.url) {
+      throw new Error('Twilio media fetch failed: no media url');
+    }
+    const auth = Buffer.from(
+      `${this.config.accountSid}:${this.config.authToken}`,
+    ).toString('base64');
+    const res = await fetch(media.url, {
+      headers: { Authorization: `Basic ${auth}` },
+    });
+    if (!res.ok) {
+      throw new Error(`Twilio media fetch failed: ${res.status}`);
+    }
+    const bytes = Buffer.from(await res.arrayBuffer());
+    const mimeType =
+      res.headers.get('content-type') ?? media.mimeType ?? 'image/jpeg';
+    return { bytes, mimeType };
   }
 }

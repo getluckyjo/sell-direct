@@ -1,6 +1,8 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
   ChallengeQuery,
+  FetchedMedia,
+  InboundMedia,
   InboundMessage,
   MessagingAdapter,
   OutboundMessage,
@@ -46,6 +48,11 @@ interface MetaMessage {
   type?: string;
   timestamp?: string;
   text?: { body?: string };
+  image?: { id?: string; mime_type?: string; caption?: string };
+}
+interface MetaMediaLookup {
+  url?: string;
+  mime_type?: string;
 }
 interface MetaChangeValue {
   metadata?: { display_phone_number?: string; phone_number_id?: string };
@@ -111,12 +118,22 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
           '';
         for (const m of messages) {
           if (!m.id || !m.from) continue;
+          const media: InboundMedia | undefined =
+            m.type === 'image' && m.image?.id
+              ? {
+                  id: String(m.image.id),
+                  mimeType: m.image.mime_type,
+                  caption: m.image.caption,
+                }
+              : undefined;
           out.push({
             waMessageId: String(m.id),
             from: String(m.from),
             to: String(to),
             type: String(m.type ?? 'unknown'),
+            // A caption stays on `media` — it must never trigger keyword routing.
             text: m.text?.body !== undefined ? String(m.text.body) : undefined,
+            media,
             timestamp: m.timestamp
               ? new Date(Number(m.timestamp) * 1000)
               : undefined,
@@ -154,5 +171,46 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
 
     const data = (await res.json().catch(() => ({}))) as WaSendResponse;
     return { waMessageId: data.messages?.[0]?.id };
+  }
+
+  /**
+   * Meta media download is two-step: resolve the media id to a short-lived
+   * URL via the Graph API, then fetch that URL — both with the Bearer token.
+   * Never logs the token or the media URL (it embeds access credentials).
+   */
+  async fetchMedia(media: InboundMedia): Promise<FetchedMedia> {
+    if (!media.id) {
+      throw new Error('WhatsApp media fetch failed: no media id');
+    }
+    const auth = { Authorization: `Bearer ${this.config.accessToken}` };
+
+    const lookupRes = await fetch(
+      `${this.config.graphBase}/${this.config.apiVersion}/${media.id}`,
+      { headers: auth },
+    );
+    if (!lookupRes.ok) {
+      const detail = await lookupRes.text().catch(() => '');
+      throw new Error(
+        `WhatsApp media lookup failed: ${lookupRes.status} ${detail.slice(0, 200)}`,
+      );
+    }
+    const lookup = (await lookupRes
+      .json()
+      .catch(() => ({}))) as MetaMediaLookup;
+    if (!lookup.url) {
+      throw new Error('WhatsApp media lookup failed: no url in response');
+    }
+
+    const mediaRes = await fetch(lookup.url, { headers: auth });
+    if (!mediaRes.ok) {
+      throw new Error(`WhatsApp media fetch failed: ${mediaRes.status}`);
+    }
+    const bytes = Buffer.from(await mediaRes.arrayBuffer());
+    const mimeType =
+      lookup.mime_type ??
+      mediaRes.headers.get('content-type') ??
+      media.mimeType ??
+      'image/jpeg';
+    return { bytes, mimeType };
   }
 }

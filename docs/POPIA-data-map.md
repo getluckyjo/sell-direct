@@ -41,6 +41,20 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 - **Logging:** the Prisma client logs only `warn`/`error` (never queries) outside
   development; sensitive values are never logged regardless.
 
+## Listing street address (`listings.address`)
+
+- **What:** the property's street address, given optionally by the seller at
+  listing time (the intake question is explicitly SKIP-able).
+- **Purpose:** accurate price guidance (valuation partner lookup, e.g. LOOM)
+  and portal syndication — both stated to the seller when asked.
+- **PII level:** medium (identifies the seller's home). **Never shown to
+  buyers** or any public surface; served only on the internal-token-guarded
+  dashboard endpoint.
+- **Sharing:** will be sent to the valuation partner (LOOM) for an estimate
+  once that integration is live — a documented processor hand-off; we do not
+  accept or store owner names/contact data from valuation responses (data
+  minimisation).
+
 ## Still to do (later PRs)
 
 - Appoint an **Information Officer** and register as required (Phase 0, business).
@@ -50,3 +64,17 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 - **Encrypt sensitive fields at rest** (`FIELD_ENCRYPTION_KEY`) when ID numbers,
   payslips and bank details are introduced (PR 5).
 - Consent capture UX + retention/erasure policy.
+
+## Listing photos (`listing_photos`)
+
+- **What:** property images sellers WhatsApp us, stored via the storage
+  provider (public `listing-photos` bucket — they are public marketing content
+  shown to buyers and, later, portals).
+- **PII level:** low (images of a property, not a person; the seller chose to
+  publish them).
+- **Follow-up (tracked):** inbound photos may carry **EXIF GPS coordinates**
+  of the location they were taken (typically the seller's home — already
+  disclosed by the listing itself, but metadata should still be stripped).
+  Stripping requires an image-processing dependency (e.g. `sharp`) — the
+  approved-dependency decision is pending; see the `TODO(POPIA)` in
+  `apps/api/src/modules/listings/photos.ts`.

@@ -1,8 +1,13 @@
 import type { InboundMessage } from '../messaging';
 import type { Notifier } from '../notifications';
 import {
+  handleDescriptionMessage,
+  handleInboundPhoto,
   handleListingIntakeMessage,
+  START_RE,
+  type DescriptionDeps,
   type ListingIntakeDeps,
+  type PhotoIntakeDeps,
 } from '../listings';
 import {
   handleBuyerEnquiry,
@@ -10,6 +15,7 @@ import {
   type EnquiryDeps,
 } from '../enquiry';
 import type { PrequalStore } from './prequal-store';
+import type { AgentHandler } from '../agent';
 
 /**
  * A buyer arrives via a deep link that pre-fills a message like
@@ -29,6 +35,10 @@ const UPSELL_REPLIES: Record<string, string> = {
     '👍 Great — we’ll line up trusted, accredited inspectors for your compliance ' +
     'certificates and WhatsApp you the quotes shortly. Booking early is the single ' +
     'best way to avoid transfer delays.',
+  consult:
+    '👍 Great — our team will WhatsApp you shortly for a free, no-obligation ' +
+    'pricing chat about your home. The asking price is always yours; we bring ' +
+    'the recent-sales data.',
   cover:
     '👍 Great — our concierge will WhatsApp you competitive homeowners-insurance ' +
     'quotes shortly. No obligation; your bank just needs cover in place before ' +
@@ -37,13 +47,28 @@ const UPSELL_REPLIES: Record<string, string> = {
     '👍 Great — our concierge will WhatsApp you trusted quotes for movers, fibre ' +
     'and anything else you need for the big day. No obligation.',
 };
-const UPSELL_RE = /^\s*(certs|cover|move)\b/i;
+const UPSELL_RE = /^\s*(certs|cover|move|consult)\b/i;
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
   enquiry: EnquiryDeps;
   prequalStore: PrequalStore;
   notifier: Notifier;
+  /**
+   * Optional inbound-photo handling: downloads, stores and attaches seller
+   * photos to their pending/active listing. Deterministic code in ALL modes
+   * — the model never touches bytes.
+   */
+  photoIntake?: PhotoIntakeDeps;
+  /** Optional post-publish description step (scripted, verbatim, SKIP-able). */
+  description?: DescriptionDeps;
+  /**
+   * Optional AI concierge. When present, messages no scripted flow claims
+   * (the intake help fallback) go to the agent instead of the canned help
+   * reply. In shadow mode the agent only drafts — the canned reply is still
+   * sent so the user is never left hanging.
+   */
+  agent?: AgentHandler;
   /** Optional logger for send/flow failures (never throws into the webhook). */
   log?: (message: string, error?: unknown) => void;
 }
@@ -70,6 +95,16 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
   async function route(message: InboundMessage): Promise<void> {
     const phone = message.from;
     const text = (message.text ?? '').trim();
+
+    // -1. Inbound media (a photo) — handled by code in every mode, above all
+    //     other routing. An image has empty text so no keyword route could
+    //     claim it anyway; a buyer mid-prequal who sends a photo gets a sane
+    //     photo reply and can still answer the consent question next.
+    if (message.media && deps.photoIntake) {
+      const result = await handleInboundPhoto(deps.photoIntake, message);
+      await deps.notifier.send(phone, result.reply);
+      return;
+    }
 
     // 0. Upsell keyword from a stage message (CERTS / COVER / MOVE):
     //    acknowledge and hand to the concierge — never the "reply list" fallback.
@@ -113,15 +148,72 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         buyerId: result.buyerId,
         listingId,
       });
+      // The deterministic work (buyer + deal + pending consent) is done
+      // above and never moves to the agent. When live, the agent may word
+      // the pre-qual invite itself — aware of the listing and anything the
+      // buyer already said. Consent stays the strict YES/NO in route 1.
+      if (deps.agent?.mode === 'live') {
+        try {
+          const outcome = await deps.agent.handle({ phone, text });
+          if (outcome.sent) return;
+        } catch (error) {
+          log('agent enquiry turn failed', error); // fall through to canned
+        }
+      }
       await deps.notifier.send(phone, result.reply);
       return;
     }
 
-    // 3. Seller listing intake (active draft / trigger / help fallback).
+    // 2.5 Post-publish description step: while an onboarding row exists, free
+    //     text is the seller's (optional) description — stored verbatim by
+    //     code even in live mode (the live agent normally clears this state
+    //     via its own tool first; this is the scripted safety net). Keyword
+    //     triggers fall through so "list" still starts a fresh intake.
+    if (deps.description) {
+      const result = await handleDescriptionMessage(deps.description, {
+        phone,
+        text,
+      });
+      if (result.handled && result.reply) {
+        await deps.notifier.send(phone, result.reply);
+        return;
+      }
+    }
+
+    // 3. Agent-led intake: when the AI concierge is LIVE it owns the listing
+    //    conversation (asks only for missing fields, natural wording). The
+    //    scripted flow below remains the fallback if the agent turn fails,
+    //    so the user is never stranded. Consent stays deterministic above.
+    if (
+      deps.agent?.mode === 'live' &&
+      (START_RE.test(text) || (await deps.intake.store.get(phone)) !== null)
+    ) {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) return;
+      } catch (error) {
+        log('agent intake turn failed', error); // fall through to scripted
+      }
+    }
+
+    // 4. Scripted listing intake (active draft / trigger / help fallback) —
+    //    now data-first with extraction, so it never re-asks a question.
     const result = await handleListingIntakeMessage(deps.intake, {
       phone,
       text,
     });
+
+    // 5. No scripted flow claimed the message → AI concierge, when enabled.
+    //    (Shadow mode drafts here; the canned reply below still goes out.)
+    if (result.fallback && deps.agent) {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) return; // live mode replied already
+      } catch (error) {
+        log('agent turn failed', error); // fall through to the canned reply
+      }
+    }
+
     await deps.notifier.send(phone, result.reply);
   }
 

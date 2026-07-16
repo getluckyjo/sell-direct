@@ -20,6 +20,8 @@ export function InvestorForm() {
       firm: String(form.get('firm') ?? '').trim() || undefined,
       message: String(form.get('message') ?? '').trim() || undefined,
       consent: form.get('consent') === 'on',
+      // Honeypot — hidden from humans; bots that fill it are dropped silently.
+      website: String(form.get('website') ?? '').trim() || undefined,
     };
 
     if (!payload.consent) {
@@ -38,7 +40,9 @@ export function InvestorForm() {
       setStatus('success');
     } catch {
       setStatus('error');
-      setError('Something went wrong. Please try again in a moment.');
+      setError(
+        'Something went wrong. Please try again in a moment — or email us directly at johannes@solddirect.co.za.',
+      );
     }
   }
 
@@ -99,6 +103,14 @@ export function InvestorForm() {
         </details>
       </div>
 
+      {/* Honeypot: invisible to humans, tempting to bots. */}
+      <div aria-hidden className="absolute left-[-9999px] top-[-9999px]">
+        <label>
+          Website
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" />
+        </label>
+      </div>
+
       <label className="flex items-start gap-2 text-sm text-slate-400">
         <input
           name="consent"
@@ -107,8 +119,16 @@ export function InvestorForm() {
         />
         <span>
           I agree to be contacted about this opportunity. My details are
-          processed per the Protection of Personal Information Act (POPIA)
-          privacy notice.
+          processed per the Protection of Personal Information Act (POPIA){' '}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+          >
+            privacy notice
+          </a>
+          .
         </span>
       </label>
 
