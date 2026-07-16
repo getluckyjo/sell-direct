@@ -8,24 +8,24 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
 const RIBBON =
-  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront — 6× less than full service.';
+  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront.';
 
 const STEPS = [
   {
     title: 'List on WhatsApp',
-    body: 'Answer a few guided questions and add photos. Self-guided on WhatsApp — your listing is live in minutes.',
+    body: 'A few guided questions, add your photos — live in minutes.',
   },
   {
     title: 'Buyers enquire & pre-qualify',
-    body: 'Interested buyers get pre-qualified for a bond right inside the chat, so you only deal with serious offers.',
+    body: 'Bond pre-qualification happens in the chat — you only deal with serious offers.',
   },
   {
     title: 'Accept an offer',
-    body: 'Compare offers, sign the Offer to Purchase, and hand off to a panel conveyancer — all guided, all tracked.',
+    body: 'Compare offers, sign the Offer to Purchase, hand off to a panel conveyancer.',
   },
   {
     title: 'Tracked to transfer',
-    body: 'Follow every stage from bond to Deeds Office registration. Always know exactly where your sale is.',
+    body: 'Every stage tracked, from bond to Deeds Office registration.',
   },
 ];
 
@@ -41,7 +41,7 @@ const TIERS = [
       'WhatsApp concierge from mandate to registration',
       'Exclusive with us for a fixed term',
     ],
-    foot: 'Cash buyer? A simple 1%, agreed upfront — still 6× less than full service.',
+    foot: 'Cash buyer? A simple 1%, agreed upfront.',
     highlight: true,
   },
   {
@@ -63,38 +63,38 @@ const TIERS = [
 const ADDONS = [
   {
     title: 'Photography & floor plans',
-    body: 'Professional shoots and floor plans that make your listing stand out on the portals.',
+    body: 'Professional shoots and floor plans that make your listing stand out.',
   },
   {
     title: 'Featured placement & social campaigns',
-    body: 'Boost your listing’s visibility with featured portal placement and targeted social campaigns.',
+    body: 'Featured portal placement and targeted social campaigns.',
   },
   {
     title: 'Compliance-certificate coordination',
-    body: 'We arrange the electrical, plumbing, gas, electric-fence and beetle certificates your transfer needs.',
+    body: 'We arrange every certificate your transfer needs — electrical, plumbing, gas and more.',
   },
 ];
 
 const FAQ = [
   {
     q: 'Is it really 0% commission?',
-    a: 'Yes — here’s how. Every property sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our origination partner and a panel conveyancer handles the transfer (with a fee discount passed to you), the bank pays us an origination commission — and you pay R0. Not a discount: the cost of selling, moved off your shoulders and onto the financial ecosystem.',
+    a: 'Yes. Every sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our partner and a panel conveyancer handles transfer, the bank pays us an origination commission — and you pay R0. The cost of selling moves off your shoulders and onto the banks.',
   },
   {
     q: 'What if my buyer pays cash?',
-    a: 'A cash offer is often your best offer — take it. With no bond, there’s no bank in the deal to pay us, so a simple 1% applies instead — agreed upfront in your mandate, never a surprise. On a R6m home that’s R60,000, versus around R414,000 for a typical full-service commission (6% + VAT). The principle never changes: someone always pays to sell a home, and we make sure it’s almost never you.',
+    a: 'Take it — a cash offer is often your best offer. With no bond there’s no bank to pay us, so a simple 1% applies, agreed upfront in your mandate. On a R6m home: R60,000, versus ~R414,000 for full service (6% + VAT).',
   },
   {
     q: 'What does the exclusive mandate involve? Can I cancel?',
-    a: 'The Free tier uses a fixed-term exclusive mandate with plain-language terms you e-sign on WhatsApp — a proper, regulated instrument handled by our employed, registered property practitioners. Cancellation follows the mandate’s notice terms. Prefer no exclusivity? Flex at 1% is always available.',
+    a: 'A fixed-term exclusive mandate with plain-language terms, e-signed on WhatsApp and handled by our registered practitioners. Cancellation follows its notice terms — or choose Flex, with no exclusivity.',
   },
   {
     q: 'Are you against estate agents?',
-    a: 'Not at all. Estate agents play a valuable role in South African property, and a full-service sale is the right choice for many sellers. We serve the growing group who choose to sell privately and do the work themselves — and we employ registered property practitioners to keep every step compliant.',
+    a: 'No. Full-service agents are the right choice for many sellers — we employ registered practitioners ourselves. We simply serve those who choose to sell privately.',
   },
   {
     q: 'Is my information safe?',
-    a: 'We ask for explicit, timestamped consent before collecting anything, store only what each step needs, encrypt sensitive fields, and never sell your data — POPIA privacy-by-design from the first message. See our privacy notice and compliance page for the full picture.',
+    a: 'Explicit consent before we collect anything, only what each step needs, sensitive fields encrypted, never sold — POPIA by design. See our privacy notice and compliance page.',
   },
 ];
 
@@ -163,9 +163,9 @@ export default function Home() {
             <span className="text-emerald-400">Keep your money.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-200">
-            The streamlined way to sell privately — guided end-to-end by our
-            technology, WhatsApp concierge and registered property
-            practitioners. 0% commission, because the banks pay us — not you.
+            Sell privately, guided end-to-end on WhatsApp — with our concierge
+            and registered practitioners behind you. 0% commission, because the
+            banks pay us — not you.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
@@ -274,7 +274,7 @@ export default function Home() {
         tone="tinted"
         eyebrow="See it work · interactive"
         heading="The whole journey, inside WhatsApp."
-        intro="Follow one Cape Town home from listing to registered sale — consent, guided listing, buyer enquiry, in-chat bond pre-qualification, a binding offer, conveyancing and Deeds Office registration. Press Play, or step through it yourself."
+        intro="One Cape Town home, from listing to registered sale. Press Play, or step through it yourself."
       >
         <div className="mt-8 rounded-3xl bg-white p-4 shadow-2xl sm:p-8">
           <WhatsAppDemo />
@@ -286,7 +286,7 @@ export default function Home() {
         id="pricing"
         eyebrow="Pricing"
         heading="Two ways to sell. One simple rule: the banks pay us, not you."
-        intro="When your buyer bonds through our partner, the bank pays us — and you pay 0%. No bond in the deal? A simple 1%, agreed upfront in your mandate."
+        intro="When your buyer bonds through our partner, the bank pays us — you pay 0%. No bond? A simple 1%, agreed upfront."
       >
         <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
           {TIERS.map((tier) => (
@@ -400,8 +400,7 @@ export default function Home() {
               Built for Cape Town, from the first listing to registration.
             </h2>
             <p className="mt-3 max-w-xl text-lg text-slate-200 drop-shadow">
-              A local, mobile-first way to buy and sell property — designed
-              around how South African transfers actually work.
+              Designed around how South African transfers actually work.
             </p>
           </div>
         </div>
@@ -417,8 +416,8 @@ export default function Home() {
             Be first in Cape Town
           </h2>
           <p className="mt-2 text-slate-300">
-            We&apos;re opening up to a first group of sellers and buyers. Join
-            the waitlist and we&apos;ll reach out as we go live.
+            Join the first group of Cape Town sellers and buyers — we&apos;ll
+            reach out as we go live.
           </p>
           <div className="mt-8">
             <WaitlistForm />
