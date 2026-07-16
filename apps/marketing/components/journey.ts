@@ -160,8 +160,8 @@ export const SCENES: Scene[] = [
     text: 'Two ways to sell, Maria:\n\n🟢 Free (0%) — list exclusively with us for 90 days and transact through our bond & legal partners.\n🔵 Flex — just 1% of the sale price, total freedom.\n\nWhich suits you?',
     note: {
       tag: 'Revenue',
-      title: 'Conditional 0% — the model',
-      body: 'Free to the consumer when they list exclusively and use our partner ecosystem (bond originator + a panel conveyancer, with a fee discount passed to you). Flex is the low-fee hedge for sellers who want freedom.',
+      title: 'The 0% mechanic',
+      body: "The bank in the buyer's bond pays us, so the seller pays R0 — free when they list exclusively and transact via our partners. No bond in the deal? A simple 1%, agreed upfront. Flex is the no-exclusivity option at the same 1%.",
     },
   },
   {
