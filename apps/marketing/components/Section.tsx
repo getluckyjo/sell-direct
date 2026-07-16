@@ -8,11 +8,12 @@ type SectionProps = {
   intro?: string;
   tone?: 'plain' | 'tinted';
   /**
-   * Optional full-bleed photo behind the section (with a dark overlay so
-   * content stays readable). Drop new images in public/ and pass them here
-   * to break up the page. Mirrors the investor site's Section component.
+   * Optional full-bleed photo behind the section. Drop new images in public/
+   * and pass them here to break up the page. `overlay` controls legibility:
+   * 'dark' washes the photo dark (content renders white), 'light' washes it
+   * white so the standard light-theme content stays readable on top.
    */
-  backdrop?: { src: string; alt: string };
+  backdrop?: { src: string; alt: string; overlay?: 'dark' | 'light' };
   children?: ReactNode;
 };
 
@@ -25,22 +26,44 @@ export function Section({
   backdrop,
   children,
 }: SectionProps) {
+  const onDarkPhoto = Boolean(backdrop) && backdrop?.overlay !== 'light';
+
   const inner = (
-    <div className="mx-auto max-w-6xl scroll-mt-20 px-6 py-16" id={id}>
+    <div className="mx-auto max-w-6xl scroll-mt-20 px-6 py-16 sm:py-20" id={id}>
       {eyebrow ? (
-        <p className="mb-2 inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300">
+        <p
+          className={`mb-3 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
+            onDarkPhoto
+              ? 'bg-white/10 text-emerald-300 ring-1 ring-inset ring-white/20 backdrop-blur'
+              : 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100'
+          }`}
+        >
           {eyebrow}
         </p>
       ) : null}
-      <h2 className="text-2xl font-bold sm:text-3xl">{heading}</h2>
-      {intro ? <p className="mt-3 max-w-3xl text-slate-300">{intro}</p> : null}
+      <h2
+        className={`text-2xl font-bold tracking-tight sm:text-3xl ${
+          onDarkPhoto ? 'text-white drop-shadow-sm' : 'text-slate-900'
+        }`}
+      >
+        {heading}
+      </h2>
+      {intro ? (
+        <p
+          className={`mt-3 max-w-3xl ${
+            onDarkPhoto ? 'text-slate-200 drop-shadow-sm' : 'text-slate-600'
+          }`}
+        >
+          {intro}
+        </p>
+      ) : null}
       {children}
     </div>
   );
 
   if (backdrop) {
     return (
-      <section className="relative isolate overflow-hidden border-y border-slate-800">
+      <section className="relative isolate overflow-hidden border-y border-slate-200">
         <Image
           src={backdrop.src}
           alt={backdrop.alt}
@@ -50,7 +73,11 @@ export function Section({
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/90 via-slate-950/65 to-slate-950/90"
+          className={`absolute inset-0 -z-10 ${
+            backdrop.overlay === 'light'
+              ? 'bg-gradient-to-b from-white via-white/70 to-white'
+              : 'bg-gradient-to-b from-slate-950/90 via-slate-950/65 to-slate-950/90'
+          }`}
         />
         {inner}
       </section>
@@ -59,7 +86,7 @@ export function Section({
 
   if (tone === 'tinted') {
     return (
-      <section className="border-y border-slate-800 bg-slate-900/40">
+      <section className="border-y border-slate-200/70 bg-slate-50">
         {inner}
       </section>
     );
