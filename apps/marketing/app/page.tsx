@@ -50,7 +50,7 @@ const TIERS = [
     points: [
       'Same platform, no exclusivity',
       'No partner requirements',
-      'A simple 1% fee — only when you sell',
+      'A simple 1% on sale — 6× less than full service',
     ],
     foot: 'For sellers who want freedom over the lowest price.',
   },
