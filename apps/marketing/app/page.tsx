@@ -260,11 +260,11 @@ export default function Home() {
             <p className="mt-4 text-sm text-slate-400">
               Sold Direct — buyer bonds via our partner
             </p>
-            <p className="mt-1 text-4xl font-extrabold text-emerald-400">R0</p>
+            <p className="mt-1 text-3xl font-extrabold text-emerald-400">R0</p>
             <p className="mt-4 text-sm text-slate-400">
               Sold Direct — cash buyer (1%, agreed upfront)
             </p>
-            <p className="mt-1 text-2xl font-extrabold text-emerald-300">
+            <p className="mt-1 text-3xl font-extrabold text-emerald-400">
               R60k
             </p>
             <p className="mt-4 border-t border-slate-800 pt-3 text-xs text-slate-500">
