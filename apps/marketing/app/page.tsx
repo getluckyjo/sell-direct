@@ -324,7 +324,7 @@ export default function Home() {
         heading="Someone always pays to sell a home. We make sure it's not you."
         intro="Every sale has banks and attorneys earning inside it. When your buyer bonds through our origination partner, the bank pays us — and you pay 0%. When there's no bond in the deal, a simple 1% covers it, agreed upfront in your mandate. Either way, you keep what a full-service commission would have cost."
       >
-        <div className="mt-8 grid max-w-4xl gap-4 sm:grid-cols-2">
+        <div className="mx-auto mt-8 grid max-w-4xl gap-4 sm:grid-cols-2">
           {OUTCOMES.map((o) => (
             <div
               key={o.when}
@@ -338,7 +338,7 @@ export default function Home() {
             </div>
           ))}
         </div>
-        <div className="mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
+        <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
           {TIERS.map((tier) => (
             <div
               key={tier.name}
