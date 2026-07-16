@@ -55,7 +55,7 @@ skews cash). Price/bonded inputs are live on the Assumptions tab (C15:G15 / C16:
 
 **Monetisation policy (legally clean — no bank exclusivity).** The free 0% tier requires a
 **qualifying ≥80% bond**; the **seller appoints a conveyancer from our panel** (a 30–40% fee
-discount is passed to the consumer) — the buyer keeps **full rate-choice across banks**. **In Year 1** the bond is placed via our multi-bank originator (**ooba**) and we earn the
+discount is passed to the consumer) — the buyer keeps **full rate-choice across banks**. **In Year 1** the bond is placed via our multi-bank originator (**BetterBond**) and we earn the
 **origination referral (~0.5% of bond)**. **From Year 2 we bring origination in-house, working
 directly with the banks** under our own aggregation agreements, capturing the **full origination
 commission (~1.5% of bond)** — roughly **3× the referral**. **Otherwise a 1% facilitation fee**
@@ -75,14 +75,14 @@ steering).
 >
 > ⚠️ **In-house origination is a regulatory step-up.** Operating as an originator direct with banks
 > needs **bank aggregation agreements** and **FAIS/FSP accreditation** — a departure from the
-> "refer to ooba, no own licence" starting stance. **Year 1 via ooba is the runway** to secure the
+> "refer to BetterBond, no own licence" starting stance. **Year 1 via BetterBond is the runway** to secure the
 > agreements and accreditation before the Year-2 switch. Modelled with an explicit origination cost
 > line + a one-off Y2 setup (see §D). Confirm the rate and terms against a real bank term sheet.
 
 | Line | Rate used | Source | Rel. |
 |---|---|---|---|
 | Bank origination commission (banks pay originators) | **1.0%–1.9% of loan** | ooba / realestateinsights | Medium |
-| **Origination referral share — Y1** (Sold Direct via ooba, multi-bank) | **~0.5% of bond** | ooba / IOL | Medium |
+| **Origination referral share — Y1** (Sold Direct via BetterBond, multi-bank) | **~0.5% of bond** | ooba / IOL (originator norms) | Medium |
 | **In-house origination — Y2+** (direct with banks, full commission) | **~1.5% of bond** (mid of 1.0–1.9%) | Assumption / bank norms | Low |
 | **Facilitation fee** on non-partner deals | **1.0% of price** (Sold Direct policy) | Policy | n/a |
 | → Origination-or-fee per deal, blended | Y1 `bonded%×0.5%×bond + (1−bonded%)×1%×price`; **Y2+ uses 1.5%** on the bonded portion | Derived | Medium |
@@ -174,7 +174,8 @@ fulfilment lift later years.
 2. Conveyancing fee at **R3.5m & R6m**, and the **exact panel referral-share %**.
 3. **SA-specific CAC** for property/mortgage leads.
 4. **Exact SA WhatsApp ZAR rates** and BSP/Twilio markup %.
-5. **ooba exact annual rand volume**; originator penetration figure is dated.
+5. **BetterBond referral terms** (the 0.5% Y1 share); originator market volumes /
+   penetration figures are dated (ooba-published data).
 6. Ops/sales **salary** benchmarks; PropertyFox/ooba **valuation multiples**.
 7. **In-house origination:** the **~1.5% commission we can capture direct**, the **bank
    aggregation terms**, and the **FAIS/FSP accreditation cost/timeline** — confirm against a real

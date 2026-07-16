@@ -16,7 +16,7 @@ export default tseslint.config(
   ...tseslint.configs.recommended,
   {
     // Plain Node utility scripts (run with `node scripts/...`), not TS builds.
-    files: ['scripts/**/*.mjs'],
+    files: ['scripts/**/*.mjs', 'apps/*/scripts/**/*.mjs'],
     languageOptions: {
       globals: {
         console: 'readonly',

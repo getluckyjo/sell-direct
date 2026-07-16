@@ -43,7 +43,9 @@ const fakeAdapter: MessagingAdapter = {
         to: 'businessnumber',
         type: p.image ? 'image' : 'text',
         text: p.image ? undefined : p.text,
-        media: p.image ? { id: `media-${p.id}`, mimeType: 'image/png' } : undefined,
+        media: p.image
+          ? { id: `media-${p.id}`, mimeType: 'image/png' }
+          : undefined,
         raw: {},
       } satisfies InboundMessage,
     ];
@@ -110,7 +112,10 @@ async function main() {
   });
   assert.equal(onboarding?.flow, 'listing_onboarding');
 
-  await say('r1.9', 'Sunny family home near great schools, walking distance to shops.');
+  await say(
+    'r1.9',
+    'Sunny family home near great schools, walking distance to shops.',
+  );
   assert.match(sent.at(-1)!.text, /description saved/i);
   listing = (await prisma.listing.findMany())[0];
   assert.equal(

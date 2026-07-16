@@ -77,7 +77,15 @@ describe('listing intake orchestrator', () => {
     const phone = '27820002222';
 
     const replies: string[] = [];
-    for (const text of ['list', '4 bedroom home in mowbray', 'SKIP', '5000000', '2', '90', 'YES']) {
+    for (const text of [
+      'list',
+      '4 bedroom home in mowbray',
+      'SKIP',
+      '5000000',
+      '2',
+      '90',
+      'YES',
+    ]) {
       const res = await handleListingIntakeMessage(deps, { phone, text });
       replies.push(res.reply);
     }
@@ -134,8 +142,15 @@ describe('listing intake orchestrator', () => {
     const phone = '27820005555';
 
     const replies: string[] = [];
-    for (const text of ['list', 'Cosy 2-bed in Gardens', 'Gardens', '12 Milner Road']) {
-      replies.push((await handleListingIntakeMessage(deps, { phone, text })).reply);
+    for (const text of [
+      'list',
+      'Cosy 2-bed in Gardens',
+      'Gardens',
+      '12 Milner Road',
+    ]) {
+      replies.push(
+        (await handleListingIntakeMessage(deps, { phone, text })).reply,
+      );
     }
     // The price prompt carries the attributed guidance line.
     expect(replies.at(-1)).toMatch(/asking price/i);

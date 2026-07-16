@@ -56,7 +56,9 @@ export type IntakeField = (typeof FIELD_ORDER)[number];
  * the required intake fields plus the optional street address.
  */
 export type ExtractableField = IntakeField | 'address';
-export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>> & {
+export type ExtractedListingFields = Partial<
+  Pick<ListingDraft, IntakeField>
+> & {
   address?: string;
 };
 
@@ -84,7 +86,10 @@ export interface IntakeResult {
   completed?: ListingDraft;
 }
 
-const FIELD_STEP: Record<IntakeField, Exclude<IntakeStep, 'awaiting_confirm' | 'completed'>> = {
+const FIELD_STEP: Record<
+  IntakeField,
+  Exclude<IntakeStep, 'awaiting_confirm' | 'completed'>
+> = {
   title: 'awaiting_title',
   suburb: 'awaiting_suburb',
   priceZar: 'awaiting_price',
@@ -175,20 +180,17 @@ export function validateField<K extends IntakeField>(
     case 'priceZar': {
       const n = typeof value === 'number' ? value : NaN;
       return (Number.isInteger(n) && n >= 100000 ? n : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
     case 'bedrooms':
     case 'bathrooms': {
       const n = typeof value === 'number' ? value : NaN;
       return (Number.isInteger(n) && n >= 0 && n <= 20 ? n : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
     case 'exclusivityTermDays': {
       return (value === 60 || value === 90 || value === 120 ? value : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
   }
 }
@@ -275,7 +277,10 @@ function describeField(
 }
 
 /** Templated acknowledgement of extracted fields — deterministic, shadow-safe. */
-function ackLine(applied: ExtractableField[], data: Partial<ListingDraft>): string {
+function ackLine(
+  applied: ExtractableField[],
+  data: Partial<ListingDraft>,
+): string {
   if (applied.length === 0) return '';
   return `Got it — ${applied.map((f) => describeField(f, data)).join(', ')}.\n`;
 }
@@ -365,12 +370,19 @@ export function advanceIntake(
   if (state.step === 'awaiting_confirm') {
     if (YES_RE.test(text)) {
       const completed = data as ListingDraft;
-      return { state: { step: 'completed', data }, reply: pendingReply(completed), completed };
+      return {
+        state: { step: 'completed', data },
+        reply: pendingReply(completed),
+        completed,
+      };
     }
     // An edit: extracted fields may overwrite ("price 4500000").
     const edit = applyExtracted(data, found, { overwrite: true });
     if (edit.applied.length > 0) {
-      const nextState: IntakeState = { step: nextStep(edit.data), data: edit.data };
+      const nextState: IntakeState = {
+        step: nextStep(edit.data),
+        data: edit.data,
+      };
       const ack = `Updated — ${edit.applied.map((f) => describeField(f, edit.data)).join(', ')}.\n`;
       if (nextState.step === 'awaiting_confirm') {
         return {
@@ -378,7 +390,10 @@ export function advanceIntake(
           reply: `${ack}${renderSummary(edit.data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
         };
       }
-      return { state: nextState, reply: `${ack}${PROMPTS[nextState.step as Exclude<IntakeStep, 'completed'>]}` };
+      return {
+        state: nextState,
+        reply: `${ack}${PROMPTS[nextState.step as Exclude<IntakeStep, 'completed'>]}`,
+      };
     }
     return {
       state,

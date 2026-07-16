@@ -166,9 +166,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const createListing = (phone: string, draft: ListingDraft) =>
     listingRepository.createFromDraft(phone, draft);
   const onboardingStore = createPrismaOnboardingStore(prisma);
-  const syndication = new Property24SyndicationStub((msg) =>
-    app.log.info(msg),
-  );
+  const syndication = new Property24SyndicationStub((msg) => app.log.info(msg));
   const extractor =
     process.env.ANTHROPIC_API_KEY && process.env.INTAKE_EXTRACTION !== 'false'
       ? createAnthropicIntakeExtractor({
@@ -231,7 +229,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       ? createAgentHandler({
           model: createAnthropicAgentModel({
             model: process.env.AGENT_MODEL,
-            effort: process.env.AGENT_EFFORT as 'low' | 'medium' | 'high' | undefined,
+            effort: process.env.AGENT_EFFORT as
+              'low' | 'medium' | 'high' | undefined,
           }),
           repository: agentRepository,
           data: createPrismaAgentDataSource(prisma),
@@ -319,7 +318,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
         return item;
       }),
       description,
-      agent: deps?.agent ?? makeAgent(demoNotifier, demoAgentMode, demoValuation),
+      agent:
+        deps?.agent ?? makeAgent(demoNotifier, demoAgentMode, demoValuation),
       log: (msg, err) => app.log.error({ err }, msg),
     });
     registerDemoRoutes(app, {

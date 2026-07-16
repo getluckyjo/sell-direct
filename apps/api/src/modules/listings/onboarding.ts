@@ -40,7 +40,11 @@ export function createPrismaOnboardingStore(
     async set(phone, state) {
       await prisma.conversationState.upsert({
         where: { phone },
-        update: { flow: FLOW, step: 'awaiting_description', data: { ...state } },
+        update: {
+          flow: FLOW,
+          step: 'awaiting_description',
+          data: { ...state },
+        },
         create: {
           phone,
           flow: FLOW,

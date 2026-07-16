@@ -36,7 +36,7 @@ describe('listing intake state machine', () => {
     // Summary + confirm replaces instant publish.
     expect(r.state.step).toBe('awaiting_confirm');
     expect(r.completed).toBeUndefined();
-    expect(r.reply).toMatch(/R2[\s,.  ]?100[\s,.  ]?000/);
+    expect(r.reply).toMatch(/R2[\s,.\u00a0\u202f]?100[\s,.\u00a0\u202f]?000/);
     expect(r.reply).toMatch(/reply yes/i);
 
     r = advanceIntake(r.state, 'YES');
@@ -192,7 +192,7 @@ describe('listing intake state machine', () => {
     expect(r.state.step).toBe('awaiting_confirm');
     expect(r.state.data.priceZar).toBe(4_500_000);
     expect(r.reply).toMatch(/updated/i);
-    expect(r.reply).toMatch(/4[\s,.  ]?500[\s,.  ]?000/);
+    expect(r.reply).toMatch(/4[\s,.\u00a0\u202f]?500[\s,.\u00a0\u202f]?000/);
     expect(r.completed).toBeUndefined();
 
     const junk = advanceIntake(base, 'hmmmm');

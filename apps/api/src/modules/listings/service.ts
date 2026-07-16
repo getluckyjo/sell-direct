@@ -117,9 +117,7 @@ export async function handleListingIntakeMessage(
             : []),
         ];
   const extracted =
-    editable.length > 0
-      ? await safeExtract(extractor, text, editable)
-      : {};
+    editable.length > 0 ? await safeExtract(extractor, text, editable) : {};
 
   const result = await withPriceGuidance(
     deps,

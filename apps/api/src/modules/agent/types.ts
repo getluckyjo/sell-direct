@@ -73,8 +73,5 @@ export interface AgentRepository {
   }): Promise<{ id: string }>;
   listDrafts(status?: AgentDraftRecord['status']): Promise<AgentDraftRecord[]>;
   getDraft(id: string): Promise<AgentDraftRecord | null>;
-  markReviewed(
-    id: string,
-    status: 'approved' | 'dismissed',
-  ): Promise<void>;
+  markReviewed(id: string, status: 'approved' | 'dismissed'): Promise<void>;
 }

@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+import process from 'node:process';
 
 // The WhatsApp demo simulator lives on the API (Railway). Proxy it through
 // the public site so it's playable at www.solddirect.co.za/demo — the page

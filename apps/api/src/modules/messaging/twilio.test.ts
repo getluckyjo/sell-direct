@@ -229,7 +229,10 @@ describe('TwilioWhatsAppAdapter media', () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('https://api.twilio.example/media/ME123');
     const expectedAuth =
-      'Basic ' + Buffer.from(`${config.accountSid}:${config.authToken}`).toString('base64');
+      'Basic ' +
+      Buffer.from(`${config.accountSid}:${config.authToken}`).toString(
+        'base64',
+      );
     expect(init.headers.Authorization).toBe(expectedAuth);
   });
 });

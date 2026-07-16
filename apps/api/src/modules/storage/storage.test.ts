@@ -35,12 +35,18 @@ describe('local storage provider', () => {
       'http://localhost:4000/api/storage/listing-photos/listings/l1/1.jpg',
     );
 
-    const read = await readLocalObject(baseDir, 'listing-photos', 'listings/l1/1.jpg');
+    const read = await readLocalObject(
+      baseDir,
+      'listing-photos',
+      'listings/l1/1.jpg',
+    );
     expect(read?.toString()).toBe('jpeg-bytes');
   });
 
   it('rejects path traversal', async () => {
-    expect(() => safeStoragePath('bucket', '../../etc/passwd')).toThrow(/unsafe/);
+    expect(() => safeStoragePath('bucket', '../../etc/passwd')).toThrow(
+      /unsafe/,
+    );
     expect(await readLocalObject('/tmp', 'bucket', '../etc/passwd')).toBeNull();
   });
 
@@ -140,9 +146,9 @@ describe('supabase storage provider', () => {
 describe('storage factory', () => {
   it('selects supabase only when both env keys are set', () => {
     expect(selectedStorage({} as NodeJS.ProcessEnv)).toBe('local');
-    expect(
-      selectedStorage({ SUPABASE_URL: 'x' } as NodeJS.ProcessEnv),
-    ).toBe('local');
+    expect(selectedStorage({ SUPABASE_URL: 'x' } as NodeJS.ProcessEnv)).toBe(
+      'local',
+    );
     expect(
       selectedStorage({
         SUPABASE_URL: 'x',

@@ -70,7 +70,10 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
       // normally already ends with this message. Guard for the empty case
       // (fresh DB in tests, media-only bodies) so the model always has a turn.
       let messages = await deps.repository.conversation(message.phone);
-      if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
+      if (
+        messages.length === 0 ||
+        messages[messages.length - 1].role !== 'user'
+      ) {
         messages = [...messages, { role: 'user', content: message.text }];
       }
 
@@ -96,7 +99,9 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
           status: 'sent',
         });
         if (escalated) {
-          log(`agent escalated thread ${message.phone}: ${ctx.escalationReason ?? 'no text reply'}`);
+          log(
+            `agent escalated thread ${message.phone}: ${ctx.escalationReason ?? 'no text reply'}`,
+          );
         }
         return { sent: true, draftId: draft.id };
       }

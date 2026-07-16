@@ -27,8 +27,10 @@ export function createDemoValuationAdapter(): ValuationAdapter {
         [...request.suburb.toLowerCase()].reduce(
           (a, c) => a + c.charCodeAt(0),
           0,
-        ) + (request.bedrooms ?? 2) * 7;
-      const mid = 1_500_000 + (seed % 40) * 100_000 + (request.bedrooms ?? 2) * 450_000;
+        ) +
+        (request.bedrooms ?? 2) * 7;
+      const mid =
+        1_500_000 + (seed % 40) * 100_000 + (request.bedrooms ?? 2) * 450_000;
       const spread = Math.round(mid * 0.08);
       const round = (n: number) => Math.round(n / 50_000) * 50_000;
       return {

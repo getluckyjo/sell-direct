@@ -205,11 +205,20 @@ describe('agent intake write tools', () => {
   }
 
   it('write tools appear only when intake access is provided', async () => {
-    const withIntake = buildAgentTools(emptyData, '+27820000001', { escalated: false }, intakeAccess());
-    const withoutIntake = buildAgentTools(emptyData, '+27820000001', { escalated: false });
+    const withIntake = buildAgentTools(
+      emptyData,
+      '+27820000001',
+      { escalated: false },
+      intakeAccess(),
+    );
+    const withoutIntake = buildAgentTools(emptyData, '+27820000001', {
+      escalated: false,
+    });
     expect(withIntake.map((t) => t.name)).toContain('update_listing_draft');
     expect(withIntake.map((t) => t.name)).toContain('publish_listing');
-    expect(withoutIntake.map((t) => t.name)).not.toContain('update_listing_draft');
+    expect(withoutIntake.map((t) => t.name)).not.toContain(
+      'update_listing_draft',
+    );
   });
 
   it('get_price_estimate appears with a valuation adapter and keeps the framing', async () => {
@@ -244,7 +253,9 @@ describe('agent intake write tools', () => {
     expect(empty).toMatch(/consultation/i);
 
     // No valuation adapter → no tool at all.
-    const without = buildAgentTools(emptyData, '+27820000009', { escalated: false });
+    const without = buildAgentTools(emptyData, '+27820000009', {
+      escalated: false,
+    });
     expect(without.map((t) => t.name)).not.toContain('get_price_estimate');
   });
 
@@ -279,7 +290,12 @@ describe('agent intake write tools', () => {
 
   it('update_listing_draft validates, persists and reports missing fields', async () => {
     const access = intakeAccess();
-    const tools = buildAgentTools(emptyData, '+27820000002', { escalated: false }, access);
+    const tools = buildAgentTools(
+      emptyData,
+      '+27820000002',
+      { escalated: false },
+      access,
+    );
     const update = tools.find((t) => t.name === 'update_listing_draft')!;
 
     const result = await update.run({
@@ -290,7 +306,9 @@ describe('agent intake write tools', () => {
     });
 
     expect(result).toContain('price_zar=5000 rejected');
-    expect(result).toContain('Still missing: priceZar, bathrooms, exclusivityTermDays');
+    expect(result).toContain(
+      'Still missing: priceZar, bathrooms, exclusivityTermDays',
+    );
     expect(result).toContain('Street address: not asked yet');
     const state = await access.store.get('+27820000002');
     expect(state?.data).toMatchObject({
@@ -313,7 +331,12 @@ describe('agent intake write tools', () => {
 
   it('publish_listing refuses without confirm or with an incomplete draft', async () => {
     const access = intakeAccess();
-    const tools = buildAgentTools(emptyData, '+27820000003', { escalated: false }, access);
+    const tools = buildAgentTools(
+      emptyData,
+      '+27820000003',
+      { escalated: false },
+      access,
+    );
     const update = tools.find((t) => t.name === 'update_listing_draft')!;
     const publish = tools.find((t) => t.name === 'publish_listing')!;
 
@@ -322,7 +345,12 @@ describe('agent intake write tools', () => {
     expect(await publish.run({ confirm: true })).toContain('incomplete');
     expect(access.createListing).not.toHaveBeenCalled();
 
-    await update.run({ price_zar: 2_000_000, bedrooms: 2, bathrooms: 1, exclusivity_term_days: 90 });
+    await update.run({
+      price_zar: 2_000_000,
+      bedrooms: 2,
+      bathrooms: 1,
+      exclusivity_term_days: 90,
+    });
     const result = await publish.run({ confirm: true });
 
     expect(result).toContain('Saved listing listing_9');

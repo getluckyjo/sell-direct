@@ -28,7 +28,7 @@ const CHAPTERS = [
     points: [
       'Taps “Enquire on WhatsApp” from the portal listing',
       'POPIA consent; viewing arranged',
-      'In-chat bond pre-qualification via ooba (our originator)',
+      'In-chat bond pre-qualification via BetterBond (our originator)',
       'Pre-approved amount, rate & repayment — buyer is bond-ready',
     ],
   },
@@ -48,7 +48,7 @@ const CHAPTERS = [
     title: 'Bond, legal & transfer',
     who: 'Conveyancing',
     points: [
-      'Multi-bank bond application via ooba → bond granted',
+      'Multi-bank bond application via BetterBond → bond granted',
       'Three attorneys: transferring, bond, cancellation',
       'FICA both parties; title deed, rates figures & SARS transfer duty',
       'Compliance certificates; rates clearance; bank guarantees',
@@ -58,7 +58,7 @@ const CHAPTERS = [
 ];
 
 const REVENUE = [
-  'Bond origination share from the bank (via ooba) — paid by the bank',
+  'Bond origination share from the bank (via BetterBond) — paid by the bank',
   'Conveyancer panel advertising (fixed subscriptions — no referral fees, per LPC rules)',
   'Optional add-ons: photography, compliance coordination, insurance',
 ];

@@ -139,7 +139,8 @@ export function buildAgentTools(
         properties: {
           query: {
             type: 'string',
-            description: 'Suburb or keywords, e.g. "Sea Point" or "2 bed apartment"',
+            description:
+              'Suburb or keywords, e.g. "Sea Point" or "2 bed apartment"',
           },
         },
         required: ['query'],
@@ -236,7 +237,8 @@ export function buildAgentTools(
         properties: {
           reason: {
             type: 'string',
-            description: 'One line for the concierge: what does this person need?',
+            description:
+              'One line for the concierge: what does this person need?',
           },
         },
         required: ['reason'],
@@ -374,7 +376,10 @@ function buildIntakeWriteTools(
       inputSchema: {
         type: 'object',
         properties: {
-          title: { type: 'string', description: 'Short listing headline, verbatim from the seller' },
+          title: {
+            type: 'string',
+            description: 'Short listing headline, verbatim from the seller',
+          },
           suburb: { type: 'string', description: 'Cape Town suburb' },
           address: {
             type: 'string',
@@ -385,7 +390,10 @@ function buildIntakeWriteTools(
             type: 'boolean',
             description: 'True when the seller declined to give the address',
           },
-          price_zar: { type: 'integer', description: 'Asking price in whole Rand (min 100000)' },
+          price_zar: {
+            type: 'integer',
+            description: 'Asking price in whole Rand (min 100000)',
+          },
           bedrooms: { type: 'integer' },
           bathrooms: { type: 'integer' },
           exclusivity_term_days: {
@@ -422,9 +430,15 @@ function buildIntakeWriteTools(
         const address = validateAddress(provided.address);
         if (address !== null) {
           data.address = address;
-        } else if (provided.address_skipped === true && data.address === undefined) {
+        } else if (
+          provided.address_skipped === true &&
+          data.address === undefined
+        ) {
           data.address = null;
-        } else if (provided.address !== undefined && provided.address !== null) {
+        } else if (
+          provided.address !== undefined &&
+          provided.address !== null
+        ) {
           rejected.push(
             `address=${JSON.stringify(provided.address)} rejected (too short — a street address needs a number and street name)`,
           );

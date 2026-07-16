@@ -24,7 +24,9 @@ function inbound(text: string): InboundMessage {
 
 function fakeAgent(
   mode: AgentMode,
-  handle: AgentHandler['handle'] = vi.fn(async () => ({ sent: mode === 'live' })),
+  handle: AgentHandler['handle'] = vi.fn(async () => ({
+    sent: mode === 'live',
+  })),
 ): AgentHandler {
   return { mode, handle };
 }
@@ -104,7 +106,10 @@ describe('dispatcher × AI concierge', () => {
   });
 
   it('shadow agent: the "list" trigger stays with the scripted flow', async () => {
-    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => ({ sent: false })),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('list'));
@@ -191,7 +196,10 @@ describe('dispatcher × AI concierge', () => {
   });
 
   it('shadow agent: the canned enquiry invite is sent unchanged', async () => {
-    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => ({ sent: false })),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('ENQUIRE listing-42'));

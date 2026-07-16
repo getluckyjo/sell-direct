@@ -213,7 +213,10 @@ describe('WhatsAppCloudAdapter media', () => {
       .fn()
       .mockResolvedValueOnce(
         new Response(
-          JSON.stringify({ url: 'https://lookaside.example/media/abc', mime_type: 'image/png' }),
+          JSON.stringify({
+            url: 'https://lookaside.example/media/abc',
+            mime_type: 'image/png',
+          }),
           { status: 200 },
         ),
       )

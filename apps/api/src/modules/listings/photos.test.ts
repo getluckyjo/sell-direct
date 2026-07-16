@@ -43,7 +43,10 @@ function makeDeps(
   const storage = fakeStorage();
   const photos: unknown[] = [];
   const activate = vi.fn(async () => target?.status === 'awaiting_photos');
-  const publish = vi.fn(async () => ({ ref: 'p24-stub-x', portal: 'property24' }));
+  const publish = vi.fn(async () => ({
+    ref: 'p24-stub-x',
+    portal: 'property24',
+  }));
   const deps: PhotoIntakeDeps = {
     listings: {
       findPhotoTarget: vi.fn(async () => target),
@@ -96,9 +99,12 @@ describe('handleInboundPhoto', () => {
   });
 
   it('subsequent photos just count up (no re-activation, no re-syndication)', async () => {
-    const { deps, publish } = makeDeps(
-      { id: 'l1', title: '4-bed in Mowbray', status: 'active', photoCount: 3 },
-    );
+    const { deps, publish } = makeDeps({
+      id: 'l1',
+      title: '4-bed in Mowbray',
+      status: 'active',
+      photoCount: 3,
+    });
 
     const result = await handleInboundPhoto(deps, imageMessage());
 
@@ -114,7 +120,9 @@ describe('handleInboundPhoto', () => {
       status: 'awaiting_photos',
       photoCount: 0,
     });
-    (deps.listings.activate as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+    (deps.listings.activate as ReturnType<typeof vi.fn>).mockResolvedValue(
+      false,
+    );
 
     const result = await handleInboundPhoto(deps, imageMessage());
 
