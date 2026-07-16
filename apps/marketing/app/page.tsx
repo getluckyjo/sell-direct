@@ -211,6 +211,28 @@ export default function Home() {
               concierge and registered property practitioners streamline every
               step — so selling direct is simple, safe and fully compliant.
             </p>
+            <ul className="grid gap-3 text-sm text-slate-300">
+              <li className="flex gap-3">
+                <span aria-hidden className="text-emerald-400">
+                  ✓
+                </span>
+                You host the viewings and choose the offer — we do the admin,
+                paperwork and chasing.
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden className="text-emerald-400">
+                  ✓
+                </span>
+                A WhatsApp concierge with you from mandate to Deeds Office
+                registration.
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden className="text-emerald-400">
+                  ✓
+                </span>
+                Your listing on the major property portals from day one.
+              </li>
+            </ul>
             <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
               <p className="text-sm text-slate-300">
                 <span className="font-semibold text-emerald-300">
