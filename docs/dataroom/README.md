@@ -13,6 +13,8 @@ model-grade (see sourcing caveats in each document).
 | [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied upper-market share (stress test + positioning), and consumer commission saved |
 | [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model (CA-reviewed)** — 12 linked tabs (Home · Assumptions · P&L · COGS Build · Scenarios · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Competitive Landscape · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
+| [`partner-brief-paysoft.html`](./partner-brief-paysoft.html) | Print-ready technology-partnership brief for Paysoft |
+| [`partner-brief-property24.html`](./partner-brief-property24.html) | Print-ready syndication brief for Property24 — the incremental-inventory case and the rate structure we're negotiating for (research in `00-assumptions.md` §D) |
 
 ## Strategy: land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
 
