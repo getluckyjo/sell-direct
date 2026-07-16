@@ -215,7 +215,8 @@ export default function Home() {
                 <span aria-hidden className="text-emerald-400">
                   ✓
                 </span>
-                On the major property portals from day one
+                On the major property portals — doors normally closed to private
+                sellers
               </li>
             </ul>
             <p className="text-sm text-slate-400">

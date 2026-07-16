@@ -57,6 +57,10 @@ upper-market** — a far more defensible ask. Sensitivity to the (estimated) poo
 | 50,000 | **5.8%** |
 
 **Positioning:**
+- **The portal-gap wedge:** prime private sellers cannot list on Property24 (private
+  self-service caps at R500k) — as a registered practitioner we are the compliant route to
+  the portal audience, at 0%. This converts “why act now” into a structural moat
+  (see `docs/LAUNCH-PLAN.md`).
 - We **land at prime** (biggest rand savings + bond, lowest-CAC word-of-mouth) and **broaden down**
   to the upper-market as the brand earns trust — so the SOM is a single-digit share of a real,
   large segment, not a fifth of a tiny niche.

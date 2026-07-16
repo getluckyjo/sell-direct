@@ -6,6 +6,9 @@
 
 > listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to property transfer.
 
+Go-to-market lives in `docs/LAUNCH-PLAN.md` — built around the portal-gap wedge (prime
+private sellers can't list on Property24; our practitioner status is the compliant bridge).
+
 The repo is currently **empty** (fresh git repo, no commits). This document is the agreed end-to-end roadmap. Per the kickoff guidance we build in **small, reviewable chunks — one feature per PR** — and **no code is written until this roadmap is approved**. Each subsequent PR will still get its own short plan + approval before implementation.
 
 Source context: `CLAUDE.md`, `README.md`, `KICKOFFPROMPTS.md` (uploaded). The business-strategy doc `Sell-Direct-Project-Plan.md` was **not** provided; we proceed without it. If it contains changes to the deal stages or data model, that should be flagged before Chunk 2.
