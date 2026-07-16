@@ -204,7 +204,7 @@ export default function Home() {
         heading="Made for sellers who choose to sell direct."
       >
         <div className="mt-8 grid gap-8 sm:grid-cols-3">
-          <div className="sm:col-span-2">
+          <div className="flex flex-col justify-between gap-6 sm:col-span-2">
             <p className="max-w-xl text-slate-300">
               Estate agents play a valuable role in South African property, and
               a full-service sale is the right choice for many. Sold Direct is
@@ -213,7 +213,7 @@ export default function Home() {
               concierge and registered property practitioners streamline every
               step — so selling direct is simple, safe and fully compliant.
             </p>
-            <div className="mt-6 rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
+            <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-5">
               <p className="text-sm text-slate-300">
                 <span className="font-semibold text-emerald-300">
                   People + technology, on your side.
