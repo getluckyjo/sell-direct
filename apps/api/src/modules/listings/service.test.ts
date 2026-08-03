@@ -89,7 +89,15 @@ describe('listing intake orchestrator', () => {
     const phone = '27820002222';
 
     const replies: string[] = [];
-    for (const text of ['list', '4 bedroom home in mowbray', 'SKIP', '5000000', '2', '90', 'YES']) {
+    for (const text of [
+      'list',
+      '4 bedroom home in mowbray',
+      'SKIP',
+      '5000000',
+      '2',
+      '90',
+      'YES',
+    ]) {
       const res = await handleListingIntakeMessage(deps, { phone, text });
       replies.push(res.reply);
     }
@@ -161,11 +169,7 @@ describe('listing intake orchestrator', () => {
     // are built in the orchestrator — they must not be lost.
     expect(last?.options).toMatchObject({
       kind: 'buttons',
-      options: [
-        { id: '2400000' },
-        { id: '2550000' },
-        { id: '2700000' },
-      ],
+      options: [{ id: '2400000' }, { id: '2550000' }, { id: '2700000' }],
     });
     // The price prompt carries the attributed guidance line.
     expect(replies.at(-1)).toMatch(/asking price/i);
@@ -195,12 +199,24 @@ describe('listing intake orchestrator', () => {
     const createListing = vi.fn();
     const deps = { store, createListing };
     const phone = '27820007777';
-    for (const text of ['list', 'house', 'Gardens', 'SKIP', '2100000', '2', '1', '90']) {
+    for (const text of [
+      'list',
+      'house',
+      'Gardens',
+      'SKIP',
+      '2100000',
+      '2',
+      '1',
+      '90',
+    ]) {
       await handleListingIntakeMessage(deps, { phone, text });
     }
     expect(await store.get(phone)).not.toBeNull();
 
-    const res = await handleListingIntakeMessage(deps, { phone, text: 'CANCEL' });
+    const res = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'CANCEL',
+    });
 
     expect(res.reply).toMatch(/discarded/i);
     expect(createListing).not.toHaveBeenCalled();
@@ -258,12 +274,26 @@ describe('listing intake orchestrator', () => {
       valuation: {
         estimate: vi
           .fn()
-          .mockResolvedValue({ lowZar: 2_000_000, highZar: 2_400_000, source: 'test' }),
+          .mockResolvedValue({
+            lowZar: 2_000_000,
+            highZar: 2_400_000,
+            source: 'test',
+          }),
       },
     };
     const phone = '27820008888';
     let last;
-    for (const text of ['list', 'house', 'Gardens', 'SKIP', '2100000', '2', '1', '90', 'YES']) {
+    for (const text of [
+      'list',
+      'house',
+      'Gardens',
+      'SKIP',
+      '2100000',
+      '2',
+      '1',
+      '90',
+      'YES',
+    ]) {
       last = await handleListingIntakeMessage(deps, { phone, text });
     }
     expect(last?.listingId).toBe('listing_x');

@@ -180,9 +180,7 @@ describe('TwilioWhatsAppAdapter.send', () => {
       },
     });
 
-    const body = new URLSearchParams(
-      fetchMock.mock.calls[0][1].body as string,
-    );
+    const body = new URLSearchParams(fetchMock.mock.calls[0][1].body as string);
     const sent = body.get('Body') ?? '';
     expect(sent).toContain('Exclusive listing term?');
     for (const id of ['60', '90', '120']) expect(sent).toContain(`• ${id} —`);
@@ -282,7 +280,10 @@ describe('TwilioWhatsAppAdapter media', () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('https://api.twilio.example/media/ME123');
     const expectedAuth =
-      'Basic ' + Buffer.from(`${config.accountSid}:${config.authToken}`).toString('base64');
+      'Basic ' +
+      Buffer.from(`${config.accountSid}:${config.authToken}`).toString(
+        'base64',
+      );
     expect(init.headers.Authorization).toBe(expectedAuth);
   });
 });

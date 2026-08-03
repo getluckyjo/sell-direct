@@ -53,7 +53,16 @@ describe('normaliseOptions', () => {
     const flat = flattenOptions(result);
     expect(flat).toHaveLength(WA_LIMITS.rowsTotal);
     expect(flat.map((r) => r.id)).toEqual([
-      'a0', 'a1', 'a2', 'a3', 'a4', 'a5', 'a6', 'b0', 'b1', 'b2',
+      'a0',
+      'a1',
+      'a2',
+      'a3',
+      'a4',
+      'a5',
+      'a6',
+      'b0',
+      'b1',
+      'b2',
     ]);
   });
 
@@ -86,7 +95,9 @@ describe('normaliseOptions', () => {
   it('returns null when nothing usable survives', () => {
     expect(normaliseOptions(buttons([]))).toBeNull();
     expect(normaliseOptions(buttons([{ id: '  ', title: '  ' }]))).toBeNull();
-    expect(normaliseOptions({ kind: 'list', sections: [{ rows: [] }] })).toBeNull();
+    expect(
+      normaliseOptions({ kind: 'list', sections: [{ rows: [] }] }),
+    ).toBeNull();
   });
 });
 
@@ -141,7 +152,10 @@ describe('buildMetaInteractive', () => {
   });
 
   it('omits header and footer keys entirely when unset', () => {
-    const payload = buildMetaInteractive('Body', buttons([{ id: 'YES', title: 'Yes' }]))!;
+    const payload = buildMetaInteractive(
+      'Body',
+      buttons([{ id: 'YES', title: 'Yes' }]),
+    )!;
     expect('header' in payload).toBe(false);
     expect('footer' in payload).toBe(false);
   });
@@ -151,7 +165,9 @@ describe('buildMetaInteractive', () => {
       'b'.repeat(2000),
       buttons([{ id: 'YES', title: 'Yes' }]),
     )!;
-    expect((payload.body as { text: string }).text).toHaveLength(WA_LIMITS.body);
+    expect((payload.body as { text: string }).text).toHaveLength(
+      WA_LIMITS.body,
+    );
   });
 
   it('returns null when the options are unusable', () => {
@@ -176,7 +192,10 @@ describe('renderKeywordFallback', () => {
   });
 
   it('does not repeat the id when it equals the title', () => {
-    const text = renderKeywordFallback('Confirm?', buttons([{ id: 'YES', title: 'yes' }]));
+    const text = renderKeywordFallback(
+      'Confirm?',
+      buttons([{ id: 'YES', title: 'yes' }]),
+    );
     expect(text).toContain('• YES');
     expect(text).not.toContain('• YES — ');
   });

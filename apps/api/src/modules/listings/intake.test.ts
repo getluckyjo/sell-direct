@@ -42,7 +42,7 @@ describe('listing intake state machine', () => {
     // Summary + confirm replaces instant publish.
     expect(r.state.step).toBe('awaiting_confirm');
     expect(r.completed).toBeUndefined();
-    expect(r.reply).toMatch(/R2[\s,.  ]?100[\s,.  ]?000/);
+    expect(r.reply).toMatch(/R2[\s,.\u00a0\u202f]?100[\s,.\u00a0\u202f]?000/);
     expect(r.reply).toMatch(/publish now/i);
 
     r = advanceIntake(r.state, 'YES');
@@ -206,7 +206,7 @@ describe('listing intake state machine', () => {
     expect(r.state.step).toBe('awaiting_confirm');
     expect(r.state.data.priceZar).toBe(4_500_000);
     expect(r.reply).toMatch(/updated/i);
-    expect(r.reply).toMatch(/4[\s,.  ]?500[\s,.  ]?000/);
+    expect(r.reply).toMatch(/4[\s,.\u00a0\u202f]?500[\s,.\u00a0\u202f]?000/);
     expect(r.completed).toBeUndefined();
 
     const junk = advanceIntake(base, 'hmmmm');
@@ -316,16 +316,25 @@ describe('intake reply options', () => {
   });
 
   it('offers bedrooms as a list including studio, bathrooms without', () => {
-    const bed = optionsFor('awaiting_bedrooms', { step: 'awaiting_bedrooms', data: {} });
+    const bed = optionsFor('awaiting_bedrooms', {
+      step: 'awaiting_bedrooms',
+      data: {},
+    });
     expect(bed?.kind).toBe('list');
     expect(ids(bed)).toEqual(['0', '1', '2', '3', '4', '5', '6', '7']);
-    const bath = optionsFor('awaiting_bathrooms', { step: 'awaiting_bathrooms', data: {} });
+    const bath = optionsFor('awaiting_bathrooms', {
+      step: 'awaiting_bathrooms',
+      data: {},
+    });
     expect(ids(bath)).toEqual(['1', '2', '3', '4', '5', '6', '7']);
   });
 
   it('offers a skip button on the optional address step', () => {
-    expect(ids(optionsFor('awaiting_address', { step: 'awaiting_address', data: {} })))
-      .toEqual(['SKIP']);
+    expect(
+      ids(
+        optionsFor('awaiting_address', { step: 'awaiting_address', data: {} }),
+      ),
+    ).toEqual(['SKIP']);
   });
 
   it('offers price buttons only when an estimate is known', () => {
@@ -400,7 +409,13 @@ describe('intake option ids are valid typed answers', () => {
       step: 'awaiting_bedrooms',
       state: () => ({
         step: 'awaiting_bedrooms',
-        data: { propertyType: 'house', suburb: 's', address: null, priceZar: 2100000, tier: 'free' },
+        data: {
+          propertyType: 'house',
+          suburb: 's',
+          address: null,
+          priceZar: 2100000,
+          tier: 'free',
+        },
       }),
     },
     {
@@ -490,7 +505,9 @@ describe('confirm-step controls', () => {
     const opened = advanceIntake(confirmState(), 'EDIT');
     const picked = advanceIntake(opened.state, 'EDIT:address');
     expect(picked.state.step).toBe('awaiting_address');
-    expect(advanceIntake(picked.state, 'SKIP').state.step).toBe('awaiting_confirm');
+    expect(advanceIntake(picked.state, 'SKIP').state.step).toBe(
+      'awaiting_confirm',
+    );
   });
 
   it('ignores an unknown field id and keeps the picker on screen', () => {
@@ -560,7 +577,9 @@ describe('two-tap suburb picker', () => {
         pending: { region: region.id },
       };
       // suburbs + "Other" + "Another region"
-      expect(ids(optionsFor('awaiting_suburb_pick', state)).length).toBeLessThanOrEqual(10);
+      expect(
+        ids(optionsFor('awaiting_suburb_pick', state)).length,
+      ).toBeLessThanOrEqual(10);
     }
   });
 
@@ -575,13 +594,17 @@ describe('two-tap suburb picker', () => {
   it('never stores a control id as the suburb', () => {
     // "REGION:southern" and "OTHER" are >= 2 chars, so validateField would
     // happily accept them — the control branch has to win.
-    expect(advanceIntake(start(), 'REGION:southern').state.data.suburb).toBeUndefined();
+    expect(
+      advanceIntake(start(), 'REGION:southern').state.data.suburb,
+    ).toBeUndefined();
     const other = advanceIntake(start(), 'OTHER');
     expect(other.state.data.suburb).toBeUndefined();
     expect(other.reply).toMatch(/what’s the suburb called/i);
 
     const picked = advanceIntake(start(), 'REGION:southern');
-    expect(advanceIntake(picked.state, 'OTHER').state.data.suburb).toBeUndefined();
+    expect(
+      advanceIntake(picked.state, 'OTHER').state.data.suburb,
+    ).toBeUndefined();
   });
 
   it('still accepts a typed suburb at the region step', () => {
@@ -619,17 +642,29 @@ describe('property type picker and composed headline', () => {
 
   it('composes a headline from the taps', () => {
     expect(
-      composeTitle({ propertyType: 'apartment', suburb: 'Sea Point', bedrooms: 3 }),
+      composeTitle({
+        propertyType: 'apartment',
+        suburb: 'Sea Point',
+        bedrooms: 3,
+      }),
     ).toBe('3-bed apartment in Sea Point');
     expect(
-      composeTitle({ propertyType: 'apartment', suburb: 'Sea Point', bedrooms: 0 }),
+      composeTitle({
+        propertyType: 'apartment',
+        suburb: 'Sea Point',
+        bedrooms: 0,
+      }),
     ).toBe('Studio apartment in Sea Point');
-    expect(composeTitle({ propertyType: 'land', suburb: 'Noordhoek', bedrooms: 0 })).toBe(
-      'Vacant land in Noordhoek',
-    );
-    expect(composeTitle({ propertyType: 'estate', suburb: 'Durbanville', bedrooms: 4 })).toBe(
-      '4-bed home in a secure estate in Durbanville',
-    );
+    expect(
+      composeTitle({ propertyType: 'land', suburb: 'Noordhoek', bedrooms: 0 }),
+    ).toBe('Vacant land in Noordhoek');
+    expect(
+      composeTitle({
+        propertyType: 'estate',
+        suburb: 'Durbanville',
+        bedrooms: 4,
+      }),
+    ).toBe('4-bed home in a secure estate in Durbanville');
     // Not enough to say anything real yet.
     expect(composeTitle({ propertyType: 'house' })).toBeUndefined();
     expect(composeTitle({ suburb: 'Newlands' })).toBeUndefined();
@@ -669,7 +704,10 @@ describe('property type picker and composed headline', () => {
       ...confirmState(),
       data: { ...confirmState().data, title: undefined },
     };
-    const picked = advanceIntake(advanceIntake(noTitle, 'EDIT').state, 'EDIT:propertyType');
+    const picked = advanceIntake(
+      advanceIntake(noTitle, 'EDIT').state,
+      'EDIT:propertyType',
+    );
     expect(picked.state.step).toBe('awaiting_property_type');
     const done = advanceIntake(picked.state, 'townhouse');
     expect(done.state.step).toBe('awaiting_confirm');

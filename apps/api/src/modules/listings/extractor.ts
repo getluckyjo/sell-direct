@@ -44,7 +44,15 @@ const EXTRACTION_SCHEMA = {
     title: { type: ['string', 'null'] },
     property_type: {
       type: ['string', 'null'],
-      enum: ['house', 'apartment', 'townhouse', 'estate', 'land', 'other', null],
+      enum: [
+        'house',
+        'apartment',
+        'townhouse',
+        'estate',
+        'land',
+        'other',
+        null,
+      ],
     },
     suburb: { type: ['string', 'null'] },
     address: { type: ['string', 'null'] },

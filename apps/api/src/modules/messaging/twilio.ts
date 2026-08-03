@@ -130,8 +130,7 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
         : p.ListTitle !== undefined
           ? String(p.ListTitle)
           : undefined;
-    const text =
-      p.Body !== undefined && p.Body !== '' ? String(p.Body) : label;
+    const text = p.Body !== undefined && p.Body !== '' ? String(p.Body) : label;
     const replyId =
       p.ButtonPayload !== undefined
         ? String(p.ButtonPayload)

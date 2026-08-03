@@ -238,7 +238,9 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
         `WhatsApp media lookup failed: ${lookupRes.status} ${detail.slice(0, 200)}`,
       );
     }
-    const lookup = (await lookupRes.json().catch(() => ({}))) as MetaMediaLookup;
+    const lookup = (await lookupRes
+      .json()
+      .catch(() => ({}))) as MetaMediaLookup;
     if (!lookup.url) {
       throw new Error('WhatsApp media lookup failed: no url in response');
     }

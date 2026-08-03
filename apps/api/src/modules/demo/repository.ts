@@ -12,7 +12,13 @@ export function createPrismaDemoRepository(
         where: { OR: [{ fromPhone: phone }, { toPhone: phone }] },
         orderBy: { createdAt: 'asc' },
         take: 200,
-        select: { direction: true, body: true, type: true, raw: true, createdAt: true },
+        select: {
+          direction: true,
+          body: true,
+          type: true,
+          raw: true,
+          createdAt: true,
+        },
       });
       return rows
         .filter((r) => (r.body ?? '').trim() !== '' || r.type === 'image')

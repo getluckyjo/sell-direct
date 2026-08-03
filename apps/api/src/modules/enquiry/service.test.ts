@@ -94,7 +94,10 @@ describe('buyer consent buttons', () => {
           recordBuyerFinancialConsent: async () => {},
         },
         deals: {
-          createOrGetEnquiryDeal: async () => ({ id: 'deal-1', status: 'enquiry' }),
+          createOrGetEnquiryDeal: async () => ({
+            id: 'deal-1',
+            status: 'enquiry',
+          }),
           list: async () => [],
           getWithTimeline: async () => null,
           getNotificationContext: async () => null,

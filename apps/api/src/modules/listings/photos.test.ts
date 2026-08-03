@@ -43,7 +43,10 @@ function makeDeps(
   const storage = fakeStorage();
   const photos: unknown[] = [];
   const activate = vi.fn(async () => target?.status === 'awaiting_photos');
-  const publish = vi.fn(async () => ({ ref: 'p24-stub-x', portal: 'property24' }));
+  const publish = vi.fn(async () => ({
+    ref: 'p24-stub-x',
+    portal: 'property24',
+  }));
   const deps: PhotoIntakeDeps = {
     listings: {
       findPhotoTarget: vi.fn(async () => target),
@@ -106,9 +109,12 @@ describe('handleInboundPhoto', () => {
   });
 
   it('subsequent photos just count up (no re-activation, no re-syndication)', async () => {
-    const { deps, publish } = makeDeps(
-      { id: 'l1', title: '4-bed in Mowbray', status: 'active', photoCount: 3 },
-    );
+    const { deps, publish } = makeDeps({
+      id: 'l1',
+      title: '4-bed in Mowbray',
+      status: 'active',
+      photoCount: 3,
+    });
 
     const result = await handleInboundPhoto(deps, imageMessage());
 
@@ -124,7 +130,9 @@ describe('handleInboundPhoto', () => {
       status: 'awaiting_photos',
       photoCount: 0,
     });
-    (deps.listings.activate as ReturnType<typeof vi.fn>).mockResolvedValue(false);
+    (deps.listings.activate as ReturnType<typeof vi.fn>).mockResolvedValue(
+      false,
+    );
 
     const result = await handleInboundPhoto(deps, imageMessage());
 
@@ -241,7 +249,9 @@ describe('handleDescriptionMessage', () => {
 });
 
 describe('description drafting ("Write it for me")', () => {
-  function setup(draft: string | null = 'A two-bedroom apartment in Sea Point.') {
+  function setup(
+    draft: string | null = 'A two-bedroom apartment in Sea Point.',
+  ) {
     const onboarding = createInMemoryOnboardingStore();
     const setDescription = vi.fn(async () => {});
     const drafter = { draft: vi.fn(async () => draft) };
@@ -296,7 +306,10 @@ describe('description drafting ("Write it for me")', () => {
     const { deps, onboarding, setDescription } = setup();
     await onboarding.set('+27820001111', { listingId: 'l1' });
 
-    await handleDescriptionMessage(deps, { phone: '+27820001111', text: 'Use' });
+    await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'Use',
+    });
 
     expect(setDescription).toHaveBeenCalledWith('l1', 'Use');
   });

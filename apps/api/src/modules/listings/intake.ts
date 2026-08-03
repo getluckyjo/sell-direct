@@ -1,4 +1,8 @@
-import { PROPERTY_TYPES, type DealTier, type PropertyType } from '@sell-direct/shared';
+import {
+  PROPERTY_TYPES,
+  type DealTier,
+  type PropertyType,
+} from '@sell-direct/shared';
 // Imported from the leaf module (not '../messaging') so the pure state
 // machine never pulls adapter runtime code into its dependency graph.
 import type { ReplyOptions } from '../messaging/interactive';
@@ -78,7 +82,9 @@ export type IntakeField = (typeof FIELD_ORDER)[number];
  * the required intake fields plus the optional street address.
  */
 export type ExtractableField = IntakeField | 'address' | 'title';
-export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>> & {
+export type ExtractedListingFields = Partial<
+  Pick<ListingDraft, IntakeField>
+> & {
   address?: string;
   title?: string;
 };
@@ -255,27 +261,26 @@ export function validateField<K extends IntakeField>(
     case 'priceZar': {
       const n = typeof value === 'number' ? value : NaN;
       return (Number.isInteger(n) && n >= 100000 ? n : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
     case 'bedrooms':
     case 'bathrooms': {
       const n = typeof value === 'number' ? value : NaN;
       return (Number.isInteger(n) && n >= 0 && n <= 20 ? n : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
     case 'exclusivityTermDays': {
       return (value === 60 || value === 90 || value === 120 ? value : null) as
-        | ListingDraft[K]
-        | null;
+        ListingDraft[K] | null;
     }
     case 'propertyType': {
       if (typeof value !== 'string') return null;
       const key = value.trim().toLowerCase();
-      return (PROPERTY_TYPES.includes(key as PropertyType)
-        ? (key as PropertyType)
-        : null) as ListingDraft[K] | null;
+      return (
+        PROPERTY_TYPES.includes(key as PropertyType)
+          ? (key as PropertyType)
+          : null
+      ) as ListingDraft[K] | null;
     }
   }
 }
@@ -305,9 +310,7 @@ const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
  * apartment in Sea Point". Land has no bedroom count; a studio is not
  * "0-bed". Returns undefined until there is enough to say something real.
  */
-export function composeTitle(
-  data: Partial<ListingDraft>,
-): string | undefined {
+export function composeTitle(data: Partial<ListingDraft>): string | undefined {
   const { propertyType, suburb, bedrooms } = data;
   if (!propertyType || !suburb) return undefined;
   const noun = PROPERTY_TYPE_NOUN[propertyType];
@@ -482,8 +485,7 @@ function countOptions(
 function priceOptions(
   estimate: NonNullable<IntakeState['estimate']>,
 ): ReplyOptions | undefined {
-  const round = (n: number) =>
-    Math.max(100000, Math.round(n / 50000) * 50000);
+  const round = (n: number) => Math.max(100000, Math.round(n / 50000) * 50000);
   const values = [
     ...new Set([
       round(estimate.lowZar),
@@ -621,7 +623,10 @@ export function optionsFor(
 }
 
 /** Templated acknowledgement of extracted fields — deterministic, shadow-safe. */
-function ackLine(applied: ExtractableField[], data: Partial<ListingDraft>): string {
+function ackLine(
+  applied: ExtractableField[],
+  data: Partial<ListingDraft>,
+): string {
   if (applied.length === 0) return '';
   return `Got it — ${applied.map((f) => describeField(f, data)).join(', ')}.\n`;
 }
@@ -660,7 +665,9 @@ function promptFor(
   const ack = ackLine(applied, state.data);
   const options = optionsFor(state.step, state);
   if (state.step === 'awaiting_confirm') {
-    const summary = renderSummary(withComposedTitle(state.data) as ListingDraft);
+    const summary = renderSummary(
+      withComposedTitle(state.data) as ListingDraft,
+    );
     return {
       state,
       reply: `${ack}${summary}\n\n${PROMPTS.awaiting_confirm}`,
@@ -702,7 +709,11 @@ export function startIntake(extracted?: ExtractedListingFields): IntakeResult {
   const { data, applied } = applyExtracted({ tier: 'free' }, extracted ?? {});
   const state: IntakeState = { step: nextStep(data), data };
   if (state.step === 'awaiting_title' && applied.length === 0) {
-    return { state, reply: PROMPTS.awaiting_title, options: optionsFor(state.step, state) };
+    return {
+      state,
+      reply: PROMPTS.awaiting_title,
+      options: optionsFor(state.step, state),
+    };
   }
   return promptFor(state, applied);
 }
@@ -733,14 +744,22 @@ export function advanceIntake(
   // The suburb picker's control ids ("REGION:southern", "OTHER") are valid
   // suburb strings as far as validateField is concerned, so they MUST be
   // intercepted before any parsing of the suburb steps below.
-  if (state.step === 'awaiting_suburb' || state.step === 'awaiting_suburb_pick') {
+  if (
+    state.step === 'awaiting_suburb' ||
+    state.step === 'awaiting_suburb_pick'
+  ) {
     const region = REGION_RE.exec(text)?.[1];
     if (region !== undefined) {
       // "← Another region" (REGION:back) has no match — fall back to the
       // region list rather than stranding the seller.
       const chosen = findRegion(region);
       const next: IntakeState = chosen
-        ? { ...state, step: 'awaiting_suburb_pick', data, pending: { region: chosen.id } }
+        ? {
+            ...state,
+            step: 'awaiting_suburb_pick',
+            data,
+            pending: { region: chosen.id },
+          }
         : { ...state, step: 'awaiting_suburb', data, pending: undefined };
       return {
         state: next,

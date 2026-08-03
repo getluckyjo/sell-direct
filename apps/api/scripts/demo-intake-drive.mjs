@@ -49,7 +49,7 @@ reply = await say('2'); // bathrooms — the only count still missing
 assert.match(reply, /60, 90 or 120/i, `expected term question, got: ${reply}`);
 reply = await say('90');
 assert.match(reply, /reply yes/i, `expected confirm summary, got: ${reply}`);
-assert.match(reply, /5[\s,.  ]?000[\s,.  ]?000/);
+assert.match(reply, /5[\s,.\u00a0\u202f]?000[\s,.\u00a0\u202f]?000/);
 await page.screenshot({ path: 'demo-intake-2-confirm-summary.png' });
 
 reply = await say('YES');

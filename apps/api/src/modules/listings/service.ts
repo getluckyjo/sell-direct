@@ -132,9 +132,7 @@ export async function handleListingIntakeMessage(
             : []),
         ];
   const extracted =
-    editable.length > 0
-      ? await safeExtract(extractor, text, editable)
-      : {};
+    editable.length > 0 ? await safeExtract(extractor, text, editable) : {};
 
   const result = await withPriceGuidance(
     deps,
@@ -153,7 +151,11 @@ export async function handleListingIntakeMessage(
     }
     await deps.store.clear(message.phone);
     await deps.onboarding?.set(message.phone, { listingId: listing.id });
-    return { reply: result.reply, options: result.options, listingId: listing.id };
+    return {
+      reply: result.reply,
+      options: result.options,
+      listingId: listing.id,
+    };
   }
 
   await deps.store.set(message.phone, result.state);

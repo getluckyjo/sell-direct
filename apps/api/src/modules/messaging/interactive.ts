@@ -117,7 +117,10 @@ export function normaliseOptions(options: ReplyOptions): ReplyOptions | null {
   if (options.kind === 'buttons') {
     const cleaned = options.options
       .map((o) =>
-        cleanOption(o, { title: WA_LIMITS.buttonTitle, id: WA_LIMITS.buttonId }),
+        cleanOption(o, {
+          title: WA_LIMITS.buttonTitle,
+          id: WA_LIMITS.buttonId,
+        }),
       )
       .filter((o): o is ReplyOption => o !== null)
       .slice(0, WA_LIMITS.buttons);
@@ -143,7 +146,10 @@ export function normaliseOptions(options: ReplyOptions): ReplyOptions | null {
     if (rows.length === 0) continue;
     budget -= rows.length;
     sections.push({
-      title: clamp(section.title ?? DEFAULT_SECTION_TITLE, WA_LIMITS.sectionTitle),
+      title: clamp(
+        section.title ?? DEFAULT_SECTION_TITLE,
+        WA_LIMITS.sectionTitle,
+      ),
       rows,
     });
   }
