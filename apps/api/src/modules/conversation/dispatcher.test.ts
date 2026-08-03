@@ -19,6 +19,18 @@ function inbound(text: string): InboundMessage {
     raw: {},
   };
 }
+/** A tapped button/list row: the id routes, the label is what the user saw. */
+function tap(replyId: string, label: string): InboundMessage {
+  return {
+    waMessageId: `wamid.${Math.abs(hash(replyId + label))}`,
+    from: PHONE,
+    to: '+14155238886',
+    type: 'interactive',
+    text: label,
+    replyId,
+    raw: {},
+  };
+}
 function hash(s: string): number {
   let h = 0;
   for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) | 0;
@@ -154,5 +166,27 @@ describe('conversation dispatcher', () => {
     expect(d.sent[3].text).toMatch(/asking price is always yours/i);
     // no flows were started by upsell replies
     expect(await d.intakeStore.get(PHONE)).toBeNull();
+  });
+
+  it('routes a tapped option by its id, not its label', async () => {
+    const d = makeDeps();
+    // The label alone would never match UPSELL_RE — only the id does.
+    await d.dispatcher.handle(tap('CERTS', 'Book my certificates'));
+    expect(d.sent[0].text).toMatch(/inspectors/i);
+    expect(d.sent[0].text).not.toMatch(/reply "list"/i);
+  });
+
+  it('starts intake from a tapped welcome button', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(tap('list', 'List my property'));
+    expect(await d.intakeStore.get(PHONE)).not.toBeNull();
+  });
+
+  it('takes a tapped YES as pre-qualification consent', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('ENQUIRE listing-1'));
+    await d.dispatcher.handle(tap('YES', 'Yes, pre-qualify me'));
+    expect(d.profiles.recordBuyerFinancialConsent).toHaveBeenCalledOnce();
+    expect(d.sent[1].text).toMatch(/ooba/i);
   });
 });

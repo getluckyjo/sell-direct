@@ -94,7 +94,11 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
 
   async function route(message: InboundMessage): Promise<void> {
     const phone = message.from;
-    const text = (message.text ?? '').trim();
+    // A tapped button/list row carries its id in `replyId` and its label in
+    // `text`. Routing keys off the id: option ids are chosen to be keywords
+    // the parsers below already accept, so a tap and the equivalent typed
+    // reply follow exactly the same path.
+    const text = (message.replyId ?? message.text ?? '').trim();
 
     // -1. Inbound media (a photo) — handled by code in every mode, above all
     //     other routing. An image has empty text so no keyword route could
