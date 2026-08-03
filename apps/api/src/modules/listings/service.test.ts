@@ -12,7 +12,12 @@ describe('listing intake orchestrator', () => {
       { store, createListing },
       { phone: '27820001111', text: 'hello' },
     );
-    expect(res.reply).toMatch(/reply "list"/i);
+    expect(res.reply).toMatch(/0% commission/i);
+    // The welcome menu: one tap to start, and still claimable by the agent.
+    expect(res.options).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: 'list' }, { id: 'HOW' }, { id: 'CONSULT' }],
+    });
     expect(res.fallback).toBe(true);
     expect(createListing).not.toHaveBeenCalled();
   });
@@ -40,7 +45,7 @@ describe('listing intake orchestrator', () => {
 
     // The confirm step gates publishing now.
     expect(createListing).not.toHaveBeenCalled();
-    expect(last?.reply).toMatch(/reply yes/i);
+    expect(last?.reply).toMatch(/publish now/i);
 
     last = await handleListingIntakeMessage(deps, { phone, text: 'YES' });
 
@@ -134,9 +139,21 @@ describe('listing intake orchestrator', () => {
     const phone = '27820005555';
 
     const replies: string[] = [];
+    let last;
     for (const text of ['list', 'Cosy 2-bed in Gardens', 'Gardens', '12 Milner Road']) {
-      replies.push((await handleListingIntakeMessage(deps, { phone, text })).reply);
+      last = await handleListingIntakeMessage(deps, { phone, text });
+      replies.push(last.reply);
     }
+    // The estimate arrives after the state machine ran, so the price buttons
+    // are built in the orchestrator — they must not be lost.
+    expect(last?.options).toMatchObject({
+      kind: 'buttons',
+      options: [
+        { id: '2400000' },
+        { id: '2550000' },
+        { id: '2700000' },
+      ],
+    });
     // The price prompt carries the attributed guidance line.
     expect(replies.at(-1)).toMatch(/asking price/i);
     expect(replies.at(-1)).toMatch(/R2[\s,.  ]?400[\s,.  ]?000/);
@@ -158,6 +175,23 @@ describe('listing intake orchestrator', () => {
       highZar: 2_700_000,
       source: 'LOOM Property Insights',
     });
+  });
+
+  it('CANCEL at the summary discards the draft', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn();
+    const deps = { store, createListing };
+    const phone = '27820007777';
+    for (const text of ['list', 'Home in Gardens', 'Gardens', 'SKIP', '2100000', '2', '1', '90']) {
+      await handleListingIntakeMessage(deps, { phone, text });
+    }
+    expect(await store.get(phone)).not.toBeNull();
+
+    const res = await handleListingIntakeMessage(deps, { phone, text: 'CANCEL' });
+
+    expect(res.reply).toMatch(/discarded/i);
+    expect(createListing).not.toHaveBeenCalled();
+    expect(await store.get(phone)).toBeNull();
   });
 
   it('no adapter (or a null estimate) means the plain price prompt — never a fabricated range', async () => {

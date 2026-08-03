@@ -1,6 +1,7 @@
 import {
   advanceIntake,
   missingFields,
+  optionsFor,
   startIntake,
   FIELD_ORDER,
   type ExtractableField,
@@ -10,6 +11,7 @@ import {
   type ListingDraft,
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
+import type { ReplyOptions } from '../messaging/interactive';
 import type { ConversationStore } from './store';
 import type { OnboardingStore } from './onboarding';
 import {
@@ -53,6 +55,8 @@ export interface IntakeMessage {
 
 export interface IntakeReply {
   reply: string;
+  /** Tappable options to send with the reply (one-tap answers). */
+  options?: ReplyOptions;
   /** Set when this message completed the flow and created a listing. */
   listingId?: string;
   /**
@@ -95,11 +99,22 @@ export async function handleListingIntakeMessage(
       }
       const started = await withPriceGuidance(deps, startIntake(extracted));
       await deps.store.set(message.phone, started.state);
-      return { reply: started.reply };
+      return { reply: started.reply, options: started.options };
     }
     return {
       reply:
-        'Hi! Reply "list" to put your property on the market with 0% commission.',
+        'Hi! I can put your property on the market with 0% commission — you ' +
+        'stay in control, our team handles the admin. What would you like to do?',
+      // `fallback` still lets the AI concierge claim the turn; when it does,
+      // its own reply goes out instead of this menu.
+      options: {
+        kind: 'buttons',
+        options: [
+          { id: 'list', title: 'List my property' },
+          { id: 'HOW', title: 'How it works' },
+          { id: 'CONSULT', title: 'Talk to us' },
+        ],
+      },
       fallback: true,
     };
   }
@@ -126,6 +141,10 @@ export async function handleListingIntakeMessage(
     advanceIntake(existing, text, extracted),
     existing,
   );
+  if (result.cancelled) {
+    await deps.store.clear(message.phone);
+    return { reply: result.reply };
+  }
   if (result.completed) {
     const listing = await deps.createListing(message.phone, result.completed);
     // The estimate the seller saw at the price step sticks to the listing.
@@ -134,11 +153,11 @@ export async function handleListingIntakeMessage(
     }
     await deps.store.clear(message.phone);
     await deps.onboarding?.set(message.phone, { listingId: listing.id });
-    return { reply: result.reply, listingId: listing.id };
+    return { reply: result.reply, options: result.options, listingId: listing.id };
   }
 
   await deps.store.set(message.phone, result.state);
-  return { reply: result.reply };
+  return { reply: result.reply, options: result.options };
 }
 
 /**
@@ -158,7 +177,9 @@ async function withPriceGuidance(
     state = { ...state, estimate: previous.estimate };
   }
   if (!deps.valuation || result.completed || state.step !== 'awaiting_price') {
-    return { ...result, state };
+    // The estimate may have been carried over above, and the price buttons
+    // are derived from it — recompute rather than ship a button-less re-ask.
+    return { ...result, state, options: optionsFor(state.step, state) };
   }
   if (state.estimate === undefined) {
     let estimate: PriceEstimate | null = null;
@@ -178,7 +199,9 @@ async function withPriceGuidance(
     state.estimate && /asking price/i.test(result.reply)
       ? `${result.reply}\n${renderEstimateLine(state.estimate)}`
       : result.reply;
-  return { ...result, state, reply };
+  // The estimate arrives after the machine ran, so the price buttons (built
+  // from the band) can only be computed here.
+  return { ...result, state, reply, options: optionsFor(state.step, state) };
 }
 
 /** Extraction is best-effort — a failure must never stall the conversation. */

@@ -6,9 +6,12 @@ import {
   nextStep,
   renderSummary,
   startIntake,
+  optionsFor,
   validateField,
   type IntakeState,
+  type IntakeStep,
 } from './intake';
+import type { ReplyOptions } from '../messaging/interactive';
 
 const DOUBLE_QUESTION = /which suburb|how many bedrooms/i;
 
@@ -37,7 +40,7 @@ describe('listing intake state machine', () => {
     expect(r.state.step).toBe('awaiting_confirm');
     expect(r.completed).toBeUndefined();
     expect(r.reply).toMatch(/R2[\s,.  ]?100[\s,.  ]?000/);
-    expect(r.reply).toMatch(/reply yes/i);
+    expect(r.reply).toMatch(/publish now/i);
 
     r = advanceIntake(r.state, 'YES');
     expect(r.state.step).toBe('completed');
@@ -197,7 +200,7 @@ describe('listing intake state machine', () => {
 
     const junk = advanceIntake(base, 'hmmmm');
     expect(junk.state.step).toBe('awaiting_confirm');
-    expect(junk.reply).toMatch(/reply yes/i);
+    expect(junk.reply).toMatch(/publish now/i);
   });
 
   it('startIntake with extracted trigger fields skips answered questions', () => {
@@ -260,5 +263,242 @@ describe('listing intake state machine', () => {
         tier: 'free',
       }),
     ).toMatch(/90-day exclusive/);
+  });
+});
+
+/** A complete draft sitting at the confirm step. */
+function confirmState(): IntakeState {
+  return {
+    step: 'awaiting_confirm',
+    data: {
+      title: '2-bed apartment in Sea Point',
+      suburb: 'Sea Point',
+      address: '12 Milner Road',
+      priceZar: 2100000,
+      bedrooms: 2,
+      bathrooms: 1,
+      exclusivityTermDays: 90,
+      tier: 'free',
+    },
+  };
+}
+
+function ids(options: ReplyOptions | undefined): string[] {
+  if (!options) return [];
+  return options.kind === 'buttons'
+    ? options.options.map((o) => o.id)
+    : options.sections.flatMap((s) => s.rows.map((r) => r.id));
+}
+
+describe('intake reply options', () => {
+  it('offers the exclusivity term as three buttons', () => {
+    const state: IntakeState = { step: 'awaiting_exclusivity', data: {} };
+    const options = optionsFor('awaiting_exclusivity', state);
+    expect(options?.kind).toBe('buttons');
+    expect(ids(options)).toEqual(['60', '90', '120']);
+  });
+
+  it('offers bedrooms as a list including studio, bathrooms without', () => {
+    const bed = optionsFor('awaiting_bedrooms', { step: 'awaiting_bedrooms', data: {} });
+    expect(bed?.kind).toBe('list');
+    expect(ids(bed)).toEqual(['0', '1', '2', '3', '4', '5', '6', '7']);
+    const bath = optionsFor('awaiting_bathrooms', { step: 'awaiting_bathrooms', data: {} });
+    expect(ids(bath)).toEqual(['1', '2', '3', '4', '5', '6', '7']);
+  });
+
+  it('offers a skip button on the optional address step', () => {
+    expect(ids(optionsFor('awaiting_address', { step: 'awaiting_address', data: {} })))
+      .toEqual(['SKIP']);
+  });
+
+  it('offers price buttons only when an estimate is known', () => {
+    const without: IntakeState = { step: 'awaiting_price', data: {} };
+    expect(optionsFor('awaiting_price', without)).toBeUndefined();
+
+    const withEstimate: IntakeState = {
+      step: 'awaiting_price',
+      data: {},
+      estimate: { lowZar: 1_900_000, highZar: 2_300_000, source: 'test' },
+    };
+    // Rounded to R50k: low / mid / high of the band.
+    expect(ids(optionsFor('awaiting_price', withEstimate))).toEqual([
+      '1900000',
+      '2100000',
+      '2300000',
+    ]);
+  });
+
+  it('dedupes price buttons when the band is narrow', () => {
+    const state: IntakeState = {
+      step: 'awaiting_price',
+      data: {},
+      estimate: { lowZar: 2_000_000, highZar: 2_010_000, source: 'test' },
+    };
+    expect(ids(optionsFor('awaiting_price', state))).toEqual(['2000000']);
+  });
+
+  it('never exceeds WhatsApp limits: 3 buttons, 10 list rows', () => {
+    const steps: IntakeStep[] = [
+      'awaiting_address',
+      'awaiting_price',
+      'awaiting_bedrooms',
+      'awaiting_bathrooms',
+      'awaiting_exclusivity',
+      'awaiting_confirm',
+      'awaiting_edit_choice',
+    ];
+    for (const step of steps) {
+      const options = optionsFor(step, confirmState());
+      if (!options) continue;
+      if (options.kind === 'buttons') {
+        expect(options.options.length).toBeLessThanOrEqual(3);
+      } else {
+        expect(ids(options).length).toBeLessThanOrEqual(10);
+      }
+    }
+  });
+});
+
+describe('intake option ids are valid typed answers', () => {
+  // The invariant the whole design rests on: tapping an option must be
+  // exactly equivalent to typing its id, so a tap and a typed reply share
+  // one code path and keyword-only providers lose nothing.
+  const cases: { step: IntakeStep; state: () => IntakeState }[] = [
+    {
+      step: 'awaiting_exclusivity',
+      state: () => ({
+        step: 'awaiting_exclusivity',
+        data: {
+          title: 't',
+          suburb: 's',
+          address: null,
+          priceZar: 2100000,
+          bedrooms: 2,
+          bathrooms: 1,
+          tier: 'free',
+        },
+      }),
+    },
+    {
+      step: 'awaiting_bedrooms',
+      state: () => ({
+        step: 'awaiting_bedrooms',
+        data: { title: 't', suburb: 's', address: null, priceZar: 2100000, tier: 'free' },
+      }),
+    },
+    {
+      step: 'awaiting_bathrooms',
+      state: () => ({
+        step: 'awaiting_bathrooms',
+        data: {
+          title: 't',
+          suburb: 's',
+          address: null,
+          priceZar: 2100000,
+          bedrooms: 2,
+          tier: 'free',
+        },
+      }),
+    },
+    {
+      step: 'awaiting_address',
+      state: () => ({
+        step: 'awaiting_address',
+        data: { title: 't', suburb: 's', tier: 'free' },
+      }),
+    },
+    { step: 'awaiting_confirm', state: confirmState },
+    {
+      step: 'awaiting_edit_choice',
+      state: () => ({ ...confirmState(), step: 'awaiting_edit_choice' }),
+    },
+  ];
+
+  for (const { step, state } of cases) {
+    it(`every ${step} option id is understood as text`, () => {
+      const base = state();
+      const options = optionsFor(step, base);
+      for (const id of ids(options)) {
+        const result = advanceIntake(base, id);
+        // Understood = it moved on (or completed/cancelled), never re-asked.
+        const movedOn =
+          result.state.step !== step ||
+          result.completed !== undefined ||
+          result.cancelled === true;
+        expect(movedOn, `"${id}" was not understood at ${step}`).toBe(true);
+      }
+    });
+  }
+
+  it('price button ids parse as prices', () => {
+    const state: IntakeState = {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', address: null, tier: 'free' },
+      estimate: { lowZar: 1_900_000, highZar: 2_300_000, source: 'test' },
+    };
+    for (const id of ids(optionsFor('awaiting_price', state))) {
+      const result = advanceIntake(state, id);
+      expect(result.state.data.priceZar).toBe(Number(id));
+    }
+  });
+});
+
+describe('confirm-step controls', () => {
+  it('EDIT opens the field picker, and BACK returns to the summary', () => {
+    const opened = advanceIntake(confirmState(), 'EDIT');
+    expect(opened.state.step).toBe('awaiting_edit_choice');
+    expect(ids(opened.options)).toContain('EDIT:priceZar');
+    expect(ids(opened.options)).toContain('BACK');
+
+    const back = advanceIntake(opened.state, 'BACK');
+    expect(back.state.step).toBe('awaiting_confirm');
+    expect(back.reply).toMatch(/here's your listing/i);
+  });
+
+  it('picking a field re-asks only that field, then returns to the summary', () => {
+    const opened = advanceIntake(confirmState(), 'EDIT');
+    const picked = advanceIntake(opened.state, 'EDIT:priceZar');
+    expect(picked.state.step).toBe('awaiting_price');
+    expect(picked.state.data.priceZar).toBeUndefined();
+    // Everything else survives the edit.
+    expect(picked.state.data.bedrooms).toBe(2);
+    expect(picked.state.data.suburb).toBe('Sea Point');
+
+    const answered = advanceIntake(picked.state, '2450000');
+    expect(answered.state.step).toBe('awaiting_confirm');
+    expect(answered.state.data.priceZar).toBe(2450000);
+  });
+
+  it('re-asking the address routes back through the address step', () => {
+    const opened = advanceIntake(confirmState(), 'EDIT');
+    const picked = advanceIntake(opened.state, 'EDIT:address');
+    expect(picked.state.step).toBe('awaiting_address');
+    expect(advanceIntake(picked.state, 'SKIP').state.step).toBe('awaiting_confirm');
+  });
+
+  it('ignores an unknown field id and keeps the picker on screen', () => {
+    const opened = advanceIntake(confirmState(), 'EDIT');
+    const bogus = advanceIntake(opened.state, 'EDIT:tier');
+    expect(bogus.state.step).toBe('awaiting_edit_choice');
+    expect(ids(bogus.options)).toContain('BACK');
+  });
+
+  it('CANCEL discards the draft', () => {
+    const cancelled = advanceIntake(confirmState(), 'CANCEL');
+    expect(cancelled.cancelled).toBe(true);
+    expect(cancelled.completed).toBeUndefined();
+    expect(cancelled.reply).toMatch(/discarded/i);
+  });
+
+  it('still publishes on a typed "yes"', () => {
+    expect(advanceIntake(confirmState(), 'yes').completed).toBeDefined();
+  });
+
+  it('still accepts a typed correction at the summary', () => {
+    const edited = advanceIntake(confirmState(), 'price 4500000', {
+      priceZar: 4500000,
+    });
+    expect(edited.state.data.priceZar).toBe(4500000);
+    expect(edited.state.step).toBe('awaiting_confirm');
   });
 });

@@ -1,4 +1,7 @@
 import type { DealTier } from '@sell-direct/shared';
+// Imported from the leaf module (not '../messaging') so the pure state
+// machine never pulls adapter runtime code into its dependency graph.
+import type { ReplyOptions } from '../messaging/interactive';
 
 /**
  * Guided WhatsApp listing-intake conversation, as a pure state machine.
@@ -22,6 +25,8 @@ export type IntakeStep =
   | 'awaiting_bathrooms'
   | 'awaiting_exclusivity'
   | 'awaiting_confirm'
+  /** "Change something" at the summary — pick which field to redo. */
+  | 'awaiting_edit_choice'
   | 'completed';
 
 export interface ListingDraft {
@@ -82,9 +87,19 @@ export interface IntakeResult {
   reply: string;
   /** Present only when the conversation just produced a complete listing. */
   completed?: ListingDraft;
+  /**
+   * Tappable options for this reply, so the seller answers with one tap.
+   * Every option id is also a valid typed answer — see `optionsFor`.
+   */
+  options?: ReplyOptions;
+  /** Set when the seller cancelled — the orchestrator clears the draft. */
+  cancelled?: true;
 }
 
-const FIELD_STEP: Record<IntakeField, Exclude<IntakeStep, 'awaiting_confirm' | 'completed'>> = {
+const FIELD_STEP: Record<
+  IntakeField,
+  Exclude<IntakeStep, 'awaiting_confirm' | 'awaiting_edit_choice' | 'completed'>
+> = {
   title: 'awaiting_title',
   suburb: 'awaiting_suburb',
   priceZar: 'awaiting_price',
@@ -115,9 +130,12 @@ const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
   awaiting_bedrooms: 'How many bedrooms?',
   awaiting_bathrooms: 'How many bathrooms?',
   awaiting_exclusivity:
-    'Exclusive listing term in days — reply 60, 90 or 120 (90 is recommended).',
+    'How long should the exclusive listing term run? 90 days is the South ' +
+    'African norm.',
   awaiting_confirm:
-    'Reply YES to go live, or tell me what to change (e.g. "price 4500000").',
+    'Tap Publish now to go live, or Change something to edit. (You can also ' +
+    'just type a correction, e.g. "price 4500000".)',
+  awaiting_edit_choice: 'What would you like to change?',
 };
 
 const REASKS: Partial<Record<IntakeStep, string>> = {
@@ -128,11 +146,18 @@ const REASKS: Partial<Record<IntakeStep, string>> = {
   awaiting_price: 'Please send the price as digits in Rand, e.g. 2100000.',
   awaiting_bedrooms: 'How many bedrooms? Please reply with a number.',
   awaiting_bathrooms: 'How many bathrooms? Please reply with a number.',
-  awaiting_exclusivity: 'Please reply 60, 90 or 120.',
+  awaiting_exclusivity: 'Please choose 60, 90 or 120 days.',
+  awaiting_edit_choice: 'Please pick one of the fields from the list.',
 };
 
 /** Mirrors the dispatcher's consent regex — a confirm must be unmistakable. */
 const YES_RE = /^\s*(yes|y|yeah|yep|ok|okay|sure|👍)\b/i;
+/** Confirm-step controls (also typeable). */
+const EDIT_RE = /^\s*edit\s*$/i;
+const CANCEL_RE = /^\s*cancel\b/i;
+const BACK_RE = /^\s*back\s*$/i;
+/** `EDIT:<field>` rows from the change-something list. */
+const EDIT_FIELD_RE = /^\s*edit:([a-z]+)\s*$/i;
 /** Mirrors description.ts: the optional address step is SKIP-able. */
 const SKIP_RE = /^\s*(skip|no|nope|later)\b/i;
 
@@ -252,7 +277,7 @@ export function formatPriceZar(price: number): string {
   return `R${price.toLocaleString('en-ZA')}`;
 }
 
-function describeField(
+export function describeField(
   field: ExtractableField,
   data: Partial<ListingDraft>,
 ): string {
@@ -271,6 +296,142 @@ function describeField(
       return `${data.bathrooms} bathroom${data.bathrooms === 1 ? '' : 's'}`;
     case 'exclusivityTermDays':
       return `${data.exclusivityTermDays}-day term`;
+  }
+}
+
+/**
+ * The fields the confirm-step "Change something" list offers, in display
+ * order. A whitelist, so an `EDIT:<field>` id can never reach an arbitrary
+ * key on the draft.
+ */
+const EDITABLE_FIELDS: { id: ExtractableField; label: string }[] = [
+  { id: 'priceZar', label: 'Asking price' },
+  { id: 'bedrooms', label: 'Bedrooms' },
+  { id: 'bathrooms', label: 'Bathrooms' },
+  { id: 'suburb', label: 'Suburb' },
+  { id: 'address', label: 'Street address' },
+  { id: 'title', label: 'Headline' },
+  { id: 'exclusivityTermDays', label: 'Exclusive term' },
+];
+
+/** Resolve an `EDIT:<field>` id against the whitelist. */
+function editableField(key: string): ExtractableField | undefined {
+  const lower = key.toLowerCase();
+  return EDITABLE_FIELDS.find((f) => f.id.toLowerCase() === lower)?.id;
+}
+
+/** A whole-number picker as a list: 1…6 plus a "7 or more" escape hatch. */
+function countOptions(
+  label: string,
+  opts: { studio?: boolean; noun: string },
+): ReplyOptions {
+  const rows = [
+    ...(opts.studio ? [{ id: '0', title: 'Studio' }] : []),
+    ...Array.from({ length: 6 }, (_, i) => ({
+      id: String(i + 1),
+      title: `${i + 1} ${opts.noun}${i === 0 ? '' : 's'}`,
+    })),
+    {
+      id: '7',
+      title: '7 or more',
+      description: 'Pick this, then type the exact number',
+    },
+  ];
+  return { kind: 'list', button: 'Choose', sections: [{ title: label, rows }] };
+}
+
+/**
+ * Price buttons around the market estimate: the low, mid and high of the
+ * band, rounded to the nearest R50 000 and deduped (a narrow band can
+ * collapse to one). Ids are pure digits, so they parse exactly like a typed
+ * price — the seller can always type their own instead.
+ */
+function priceOptions(
+  estimate: NonNullable<IntakeState['estimate']>,
+): ReplyOptions | undefined {
+  const round = (n: number) =>
+    Math.max(100000, Math.round(n / 50000) * 50000);
+  const values = [
+    ...new Set([
+      round(estimate.lowZar),
+      round((estimate.lowZar + estimate.highZar) / 2),
+      round(estimate.highZar),
+    ]),
+  ].slice(0, 3);
+  if (values.length === 0) return undefined;
+  return {
+    kind: 'buttons',
+    options: values.map((v) => ({ id: String(v), title: formatPriceZar(v) })),
+    footer: 'Or type any amount',
+  };
+}
+
+/**
+ * The tappable options for a step — the single source of truth for what the
+ * seller can tap, and pure so the whole table is unit-testable.
+ *
+ * INVARIANT: every id here must be an answer `advanceIntake` already accepts
+ * as text at that step. That is what lets a tap and a typed reply share one
+ * code path (and lets providers without buttons degrade to keywords).
+ */
+export function optionsFor(
+  step: IntakeStep,
+  state: IntakeState,
+): ReplyOptions | undefined {
+  switch (step) {
+    case 'awaiting_address':
+      return {
+        kind: 'buttons',
+        options: [{ id: 'SKIP', title: 'Skip — not now' }],
+      };
+    case 'awaiting_price':
+      return state.estimate ? priceOptions(state.estimate) : undefined;
+    case 'awaiting_bedrooms':
+      return countOptions('Bedrooms', { studio: true, noun: 'bedroom' });
+    case 'awaiting_bathrooms':
+      return countOptions('Bathrooms', { noun: 'bathroom' });
+    case 'awaiting_exclusivity':
+      return {
+        kind: 'buttons',
+        options: [
+          { id: '60', title: '60 days' },
+          { id: '90', title: '90 days ★' },
+          { id: '120', title: '120 days' },
+        ],
+        footer: '★ recommended',
+      };
+    case 'awaiting_confirm':
+      return {
+        kind: 'buttons',
+        options: [
+          { id: 'YES', title: '✅ Publish now' },
+          { id: 'EDIT', title: 'Change something' },
+          { id: 'CANCEL', title: 'Cancel listing' },
+        ],
+      };
+    case 'awaiting_edit_choice':
+      return {
+        kind: 'list',
+        button: 'Pick a field',
+        sections: [
+          {
+            title: 'Change',
+            rows: [
+              ...EDITABLE_FIELDS.map((f) => ({
+                id: `EDIT:${f.id}`,
+                title: f.label,
+                ...(state.data[f.id] !== undefined && state.data[f.id] !== null
+                  ? { description: describeField(f.id, state.data) }
+                  : {}),
+              })),
+              { id: 'BACK', title: '← Never mind' },
+            ],
+          },
+        ],
+      };
+    default:
+      // Title and suburb are free text (until PRs 3 and 4 give them pickers).
+      return undefined;
   }
 }
 
@@ -312,16 +473,38 @@ function promptFor(
   applied: ExtractableField[],
 ): IntakeResult {
   const ack = ackLine(applied, state.data);
+  const options = optionsFor(state.step, state);
   if (state.step === 'awaiting_confirm') {
     const summary = renderSummary(state.data as ListingDraft);
     return {
       state,
       reply: `${ack}${summary}\n\n${PROMPTS.awaiting_confirm}`,
+      options,
     };
   }
   return {
     state,
     reply: `${ack}${PROMPTS[state.step as Exclude<IntakeStep, 'completed'>]}`,
+    options,
+  };
+}
+
+/** The summary + its Publish/Change/Cancel buttons. */
+function confirmResult(state: IntakeState): IntakeResult {
+  const next: IntakeState = { ...state, step: 'awaiting_confirm' };
+  return {
+    state: next,
+    reply: `${renderSummary(next.data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
+    options: optionsFor('awaiting_confirm', next),
+  };
+}
+
+/** Re-ask the current step, keeping its options on screen. */
+function reask(state: IntakeState, message?: string): IntakeResult {
+  return {
+    state,
+    reply: message ?? REASKS[state.step]!,
+    options: optionsFor(state.step, state),
   };
 }
 
@@ -334,7 +517,7 @@ export function startIntake(extracted?: ExtractedListingFields): IntakeResult {
   const { data, applied } = applyExtracted({ tier: 'free' }, extracted ?? {});
   const state: IntakeState = { step: nextStep(data), data };
   if (state.step === 'awaiting_title' && applied.length === 0) {
-    return { state, reply: PROMPTS.awaiting_title };
+    return { state, reply: PROMPTS.awaiting_title, options: optionsFor(state.step, state) };
   }
   return promptFor(state, applied);
 }
@@ -362,28 +545,68 @@ export function advanceIntake(
     };
   }
 
+  // "Change something": offer the field picker rather than making the seller
+  // phrase a correction.
+  if (state.step === 'awaiting_edit_choice') {
+    if (BACK_RE.test(text)) return confirmResult(state);
+    const match = EDIT_FIELD_RE.exec(text);
+    const field = match ? editableField(match[1]) : undefined;
+    if (!field) return reask(state);
+    // Clearing the field is all it takes: the data-first `nextStep` routes
+    // straight to that question, and back to the summary once it is answered.
+    delete (data as Record<string, unknown>)[field];
+    return promptFor({ ...state, step: nextStep(data), data }, []);
+  }
+
   if (state.step === 'awaiting_confirm') {
     if (YES_RE.test(text)) {
       const completed = data as ListingDraft;
-      return { state: { step: 'completed', data }, reply: pendingReply(completed), completed };
+      return {
+        state: { step: 'completed', data },
+        reply: pendingReply(completed),
+        completed,
+      };
+    }
+    if (EDIT_RE.test(text)) {
+      const next: IntakeState = { ...state, step: 'awaiting_edit_choice' };
+      return {
+        state: next,
+        reply: PROMPTS.awaiting_edit_choice,
+        options: optionsFor('awaiting_edit_choice', next),
+      };
+    }
+    if (CANCEL_RE.test(text)) {
+      return {
+        state,
+        reply:
+          'No problem — that draft is discarded. Reply "list" whenever you\'re ready to start again.',
+        cancelled: true,
+      };
     }
     // An edit: extracted fields may overwrite ("price 4500000").
     const edit = applyExtracted(data, found, { overwrite: true });
     if (edit.applied.length > 0) {
-      const nextState: IntakeState = { step: nextStep(edit.data), data: edit.data };
+      const nextState: IntakeState = {
+        ...state,
+        step: nextStep(edit.data),
+        data: edit.data,
+      };
       const ack = `Updated — ${edit.applied.map((f) => describeField(f, edit.data)).join(', ')}.\n`;
+      const options = optionsFor(nextState.step, nextState);
       if (nextState.step === 'awaiting_confirm') {
         return {
           state: nextState,
           reply: `${ack}${renderSummary(edit.data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
+          options,
         };
       }
-      return { state: nextState, reply: `${ack}${PROMPTS[nextState.step as Exclude<IntakeStep, 'completed'>]}` };
+      return {
+        state: nextState,
+        reply: `${ack}${PROMPTS[nextState.step as Exclude<IntakeStep, 'completed'>]}`,
+        options,
+      };
     }
-    return {
-      state,
-      reply: `${renderSummary(data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
-    };
+    return confirmResult({ ...state, data });
   }
 
   // The optional address step: SKIP-able, never blocks the flow.
@@ -394,16 +617,13 @@ export function advanceIntake(
       const address = validateAddress(found.address) ?? validateAddress(text);
       if (address === null) {
         const merge = applyExtracted(data, found);
-        return {
-          state: { ...state, data: merge.data },
-          reply: REASKS.awaiting_address!,
-        };
+        return reask({ ...state, data: merge.data });
       }
       data.address = address;
     }
     const merge = applyExtracted(data, found);
     return promptFor(
-      { step: nextStep(merge.data), data: merge.data },
+      { ...state, step: nextStep(merge.data), data: merge.data },
       merge.applied.filter((f) => f !== 'address'),
     );
   }
@@ -450,9 +670,9 @@ export function advanceIntake(
   const applied = merge.applied.filter((f) => f !== currentField);
 
   if (!currentFilled && data[currentField] === undefined) {
-    return { state: { ...state, data }, reply: REASKS[state.step]! };
+    return reask({ ...state, data });
   }
 
   // 3. Ask for the first field still missing — or confirm.
-  return promptFor({ step: nextStep(data), data }, applied);
+  return promptFor({ ...state, step: nextStep(data), data }, applied);
 }

@@ -46,8 +46,29 @@ const UPSELL_REPLIES: Record<string, string> = {
   move:
     '👍 Great — our concierge will WhatsApp you trusted quotes for movers, fibre ' +
     'and anything else you need for the big day. No obligation.',
+  nothing:
+    '👌 No problem — everything above stays one message away whenever you ' +
+    'need it.',
 };
-const UPSELL_RE = /^\s*(certs|cover|move|consult)\b/i;
+const UPSELL_RE = /^\s*(certs|cover|move|consult|nothing)\b/i;
+
+/**
+ * "How it works", offered on the welcome menu. Deterministic so the menu
+ * works with the AI concierge switched off.
+ */
+const HOW_RE = /^\s*how\s*$/i;
+const HOW_REPLY =
+  'Here’s how Sold Direct works:\n\n' +
+  '1️⃣ You list your property here on WhatsApp — a few taps, no forms.\n' +
+  '2️⃣ We syndicate it and route buyer enquiries straight to you.\n' +
+  '3️⃣ Buyers get bond pre-qualification in the chat, so you know who’s real.\n' +
+  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
+  'the offer, FICA and transfer admin with you.\n\n' +
+  'It costs you 0% commission when you sell through our partners — on a ' +
+  'R2.1m home, what a full-service sale (5–7% + VAT) would have cost is ' +
+  'roughly R120 000–R170 000. Prefer a full-service agent? That’s a great ' +
+  'choice too — we’re built for sellers who want to do it themselves.\n\n' +
+  'Reply "list" whenever you’re ready.';
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
@@ -107,6 +128,21 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     if (message.media && deps.photoIntake) {
       const result = await handleInboundPhoto(deps.photoIntake, message);
       await deps.notifier.send(phone, result.reply);
+      return;
+    }
+
+    // 0. "How it works" from the welcome menu — a fixed explainer, so the
+    //    menu is answerable with the AI concierge off.
+    if (HOW_RE.test(text)) {
+      await deps.notifier.send(phone, HOW_REPLY, {
+        interactive: {
+          kind: 'buttons',
+          options: [
+            { id: 'list', title: 'List my property' },
+            { id: 'CONSULT', title: 'Talk to us' },
+          ],
+        },
+      });
       return;
     }
 
@@ -218,7 +254,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       }
     }
 
-    await deps.notifier.send(phone, result.reply);
+    await deps.notifier.send(phone, result.reply, {
+      interactive: result.options,
+    });
   }
 
   return {
