@@ -2,6 +2,7 @@ import type { DealTier } from '@sell-direct/shared';
 // Imported from the leaf module (not '../messaging') so the pure state
 // machine never pulls adapter runtime code into its dependency graph.
 import type { ReplyOptions } from '../messaging/interactive';
+import { CAPE_TOWN_REGIONS, findRegion } from './suburbs';
 
 /**
  * Guided WhatsApp listing-intake conversation, as a pure state machine.
@@ -18,7 +19,10 @@ import type { ReplyOptions } from '../messaging/interactive';
  */
 export type IntakeStep =
   | 'awaiting_title'
+  /** Pick a Cape Town region (or type the suburb). */
   | 'awaiting_suburb'
+  /** Pick a suburb inside the chosen region. */
+  | 'awaiting_suburb_pick'
   | 'awaiting_address'
   | 'awaiting_price'
   | 'awaiting_bedrooms'
@@ -80,6 +84,11 @@ export interface IntakeState {
     comparablesCount?: number;
     source: string;
   } | null;
+  /**
+   * Transient picker state (the region chosen while drilling into suburbs).
+   * Not part of the draft; persisted alongside it under a reserved key.
+   */
+  pending?: { region?: string };
 }
 
 export interface IntakeResult {
@@ -111,6 +120,9 @@ const FIELD_STEP: Record<
 const STEP_FIELD: Partial<Record<IntakeStep, IntakeField>> = {
   awaiting_title: 'title',
   awaiting_suburb: 'suburb',
+  // A tapped suburb (or a typed one) answers the same field — the generic
+  // parse below handles both, so the picker adds no new parsing rules.
+  awaiting_suburb_pick: 'suburb',
   awaiting_price: 'priceZar',
   awaiting_bedrooms: 'bedrooms',
   awaiting_bathrooms: 'bathrooms',
@@ -120,7 +132,9 @@ const STEP_FIELD: Partial<Record<IntakeStep, IntakeField>> = {
 const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
   awaiting_title:
     'Let\'s list your property — 0% commission. What\'s a short headline? (e.g. "2-bed apartment in Sea Point")',
-  awaiting_suburb: 'Which suburb is it in?',
+  awaiting_suburb:
+    'Which part of Cape Town is it in? Pick a region — or just type the suburb.',
+  awaiting_suburb_pick: 'And which suburb?',
   awaiting_address:
     "What's the street address? 🔒 Kept private — buyers never see it; we " +
     'use it for accurate price guidance and portal syndication. Reply SKIP ' +
@@ -141,6 +155,7 @@ const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
 const REASKS: Partial<Record<IntakeStep, string>> = {
   awaiting_title: 'Please give a short headline (at least 3 characters).',
   awaiting_suburb: 'Please tell me the suburb.',
+  awaiting_suburb_pick: 'Please pick a suburb, or type its name.',
   awaiting_address:
     'Please send the street address (e.g. 12 Milner Road), or reply SKIP.',
   awaiting_price: 'Please send the price as digits in Rand, e.g. 2100000.',
@@ -158,6 +173,10 @@ const CANCEL_RE = /^\s*cancel\b/i;
 const BACK_RE = /^\s*back\s*$/i;
 /** `EDIT:<field>` rows from the change-something list. */
 const EDIT_FIELD_RE = /^\s*edit:([a-z]+)\s*$/i;
+/** `REGION:<id>` rows from the suburb region list. */
+const REGION_RE = /^\s*region:([a-z]+)\s*$/i;
+/** "Other — type it", offered on both suburb pickers. */
+const OTHER_RE = /^\s*other\s*$/i;
 /** Mirrors description.ts: the optional address step is SKIP-able. */
 const SKIP_RE = /^\s*(skip|no|nope|later)\b/i;
 
@@ -379,6 +398,44 @@ export function optionsFor(
   state: IntakeState,
 ): ReplyOptions | undefined {
   switch (step) {
+    case 'awaiting_suburb':
+      return {
+        kind: 'list',
+        button: 'Pick a region',
+        sections: [
+          {
+            title: 'Cape Town',
+            rows: [
+              ...CAPE_TOWN_REGIONS.map((r) => ({
+                id: `REGION:${r.id}`,
+                title: r.title,
+                description: r.hint,
+              })),
+              { id: 'OTHER', title: 'Other — type it' },
+            ],
+          },
+        ],
+      };
+    case 'awaiting_suburb_pick': {
+      const region = findRegion(state.pending?.region ?? '');
+      if (!region) return undefined;
+      return {
+        kind: 'list',
+        button: 'Pick a suburb',
+        sections: [
+          {
+            title: region.title,
+            rows: [
+              // The row id IS the suburb name, so a tap is identical to
+              // typing it — no mapping table to drift out of sync.
+              ...region.suburbs.map((s) => ({ id: s, title: s })),
+              { id: 'OTHER', title: 'Other — type it' },
+              { id: 'REGION:back', title: '← Another region' },
+            ],
+          },
+        ],
+      };
+    }
     case 'awaiting_address':
       return {
         kind: 'buttons',
@@ -543,6 +600,32 @@ export function advanceIntake(
       reply:
         'Your listing is already in. Reply "list" to add another property.',
     };
+  }
+
+  // The suburb picker's control ids ("REGION:southern", "OTHER") are valid
+  // suburb strings as far as validateField is concerned, so they MUST be
+  // intercepted before any parsing of the suburb steps below.
+  if (state.step === 'awaiting_suburb' || state.step === 'awaiting_suburb_pick') {
+    const region = REGION_RE.exec(text)?.[1];
+    if (region !== undefined) {
+      // "← Another region" (REGION:back) has no match — fall back to the
+      // region list rather than stranding the seller.
+      const chosen = findRegion(region);
+      const next: IntakeState = chosen
+        ? { ...state, step: 'awaiting_suburb_pick', data, pending: { region: chosen.id } }
+        : { ...state, step: 'awaiting_suburb', data, pending: undefined };
+      return {
+        state: next,
+        reply: PROMPTS[next.step as Exclude<IntakeStep, 'completed'>],
+        options: optionsFor(next.step, next),
+      };
+    }
+    if (OTHER_RE.test(text)) {
+      return {
+        state: { ...state, data },
+        reply: 'No problem — what’s the suburb called?',
+      };
+    }
   }
 
   // "Change something": offer the field picker rather than making the seller

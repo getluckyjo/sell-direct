@@ -1,4 +1,5 @@
 export * from './intake';
+export * from './suburbs';
 export * from './extractor';
 export * from './store';
 export * from './onboarding';

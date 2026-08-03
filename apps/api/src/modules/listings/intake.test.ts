@@ -12,6 +12,7 @@ import {
   type IntakeStep,
 } from './intake';
 import type { ReplyOptions } from '../messaging/interactive';
+import { CAPE_TOWN_REGIONS, MAX_SUBURBS_PER_REGION } from './suburbs';
 
 const DOUBLE_QUESTION = /which suburb|how many bedrooms/i;
 
@@ -500,5 +501,81 @@ describe('confirm-step controls', () => {
     });
     expect(edited.state.data.priceZar).toBe(4500000);
     expect(edited.state.step).toBe('awaiting_confirm');
+  });
+});
+
+describe('two-tap suburb picker', () => {
+  const start = (): IntakeState => ({
+    step: 'awaiting_suburb',
+    data: { title: 'Sunny 3-bed', tier: 'free' },
+  });
+
+  it('offers the regions, plus a way out to free text', () => {
+    const options = optionsFor('awaiting_suburb', start());
+    expect(options?.kind).toBe('list');
+    expect(ids(options)).toEqual([
+      'REGION:atlantic',
+      'REGION:citybowl',
+      'REGION:southern',
+      'REGION:northern',
+      'REGION:falsebay',
+      'REGION:westcoast',
+      'OTHER',
+    ]);
+  });
+
+  it('drills from a region into its suburbs and sets the suburb', () => {
+    const picked = advanceIntake(start(), 'REGION:southern');
+    expect(picked.state.step).toBe('awaiting_suburb_pick');
+    expect(picked.state.pending?.region).toBe('southern');
+    expect(ids(picked.options)).toContain('Newlands');
+
+    const chosen = advanceIntake(picked.state, 'Newlands');
+    expect(chosen.state.data.suburb).toBe('Newlands');
+    expect(chosen.state.step).not.toBe('awaiting_suburb_pick');
+  });
+
+  it('keeps every suburb list inside WhatsApp’s 10-row limit', () => {
+    for (const region of CAPE_TOWN_REGIONS) {
+      expect(region.suburbs.length).toBeLessThanOrEqual(MAX_SUBURBS_PER_REGION);
+      const state: IntakeState = {
+        step: 'awaiting_suburb_pick',
+        data: {},
+        pending: { region: region.id },
+      };
+      // suburbs + "Other" + "Another region"
+      expect(ids(optionsFor('awaiting_suburb_pick', state)).length).toBeLessThanOrEqual(10);
+    }
+  });
+
+  it('goes back to the region list from a suburb list', () => {
+    const picked = advanceIntake(start(), 'REGION:southern');
+    const back = advanceIntake(picked.state, 'REGION:back');
+    expect(back.state.step).toBe('awaiting_suburb');
+    expect(ids(back.options)).toContain('REGION:atlantic');
+    expect(back.state.data.suburb).toBeUndefined();
+  });
+
+  it('never stores a control id as the suburb', () => {
+    // "REGION:southern" and "OTHER" are >= 2 chars, so validateField would
+    // happily accept them — the control branch has to win.
+    expect(advanceIntake(start(), 'REGION:southern').state.data.suburb).toBeUndefined();
+    const other = advanceIntake(start(), 'OTHER');
+    expect(other.state.data.suburb).toBeUndefined();
+    expect(other.reply).toMatch(/what’s the suburb called/i);
+
+    const picked = advanceIntake(start(), 'REGION:southern');
+    expect(advanceIntake(picked.state, 'OTHER').state.data.suburb).toBeUndefined();
+  });
+
+  it('still accepts a typed suburb at the region step', () => {
+    const typed = advanceIntake(start(), 'Mowbray');
+    expect(typed.state.data.suburb).toBe('Mowbray');
+  });
+
+  it('accepts a typed suburb that is not on the region list', () => {
+    const picked = advanceIntake(start(), 'REGION:southern');
+    const typed = advanceIntake(picked.state, 'Harfield Village');
+    expect(typed.state.data.suburb).toBe('Harfield Village');
   });
 });
