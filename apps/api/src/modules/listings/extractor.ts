@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { betaJSONSchemaOutputFormat } from '@anthropic-ai/sdk/helpers/beta/json-schema';
 import {
   validateAddress,
+  validateTitle,
   validateField,
   type ExtractableField,
   type ExtractedListingFields,
@@ -41,6 +42,10 @@ const EXTRACTION_SCHEMA = {
   type: 'object',
   properties: {
     title: { type: ['string', 'null'] },
+    property_type: {
+      type: ['string', 'null'],
+      enum: ['house', 'apartment', 'townhouse', 'estate', 'land', 'other', null],
+    },
     suburb: { type: ['string', 'null'] },
     address: { type: ['string', 'null'] },
     price_zar: { type: ['integer', 'null'] },
@@ -50,6 +55,7 @@ const EXTRACTION_SCHEMA = {
   },
   required: [
     'title',
+    'property_type',
     'suburb',
     'address',
     'price_zar',
@@ -62,6 +68,7 @@ const EXTRACTION_SCHEMA = {
 
 const WIRE_TO_FIELD: Record<string, ExtractableField> = {
   title: 'title',
+  property_type: 'propertyType',
   suburb: 'suburb',
   address: 'address',
   price_zar: 'priceZar',
@@ -85,7 +92,8 @@ Rules:
 - suburb is a Cape Town area name the seller mentions as the location (e.g. Mowbray, Sea Point, Gardens).
 - address only when the message states a street address (number and street, e.g. "12 Milner Road"); a suburb alone is never an address.
 - exclusivity_term_days only when the seller names a listing term in days (60, 90 or 120).
-- title only when the message reads as a listing headline or description of the property.
+- property_type only when the message names the kind of property: house, apartment (flat), townhouse (duplex), estate (a home in a secure estate/complex), land (vacant plot/erf), or other.
+- title only when the message reads as a listing headline the seller wrote for buyers — never a bare description you assembled yourself.
 - You never write user-facing text; your output is consumed by software.`;
 
 /** Pure mapper: raw parsed output → validated fields (exported for tests). */
@@ -102,7 +110,9 @@ export function toExtractedFields(
     const valid =
       field === 'address'
         ? validateAddress(value)
-        : validateField(field as IntakeField, value);
+        : field === 'title'
+          ? validateTitle(value)
+          : validateField(field as IntakeField, value);
     if (valid === null) continue;
     (out as Record<string, unknown>)[field] = valid;
   }

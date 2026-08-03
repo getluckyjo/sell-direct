@@ -121,7 +121,7 @@ describe('dispatcher × AI concierge', () => {
     await d.dispatcher.handle(inbound('list'));
 
     expect(agent.handle).not.toHaveBeenCalled();
-    expect(d.sent[0].text).toContain('headline'); // scripted intake started
+    expect(d.sent[0].text).toContain('kind of home'); // scripted intake started
   });
 
   it('live agent: the "list" trigger routes to agent-led intake', async () => {
@@ -163,7 +163,7 @@ describe('dispatcher × AI concierge', () => {
     await d.dispatcher.handle(inbound('list'));
 
     expect(d.sent).toHaveLength(1);
-    expect(d.sent[0].text).toContain('headline'); // scripted intake took over
+    expect(d.sent[0].text).toContain('kind of home'); // scripted intake took over
   });
 
   it('an agent failure on freeform falls back to the canned help reply', async () => {

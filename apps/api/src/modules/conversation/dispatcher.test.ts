@@ -200,8 +200,8 @@ describe('dispatcher option threading', () => {
   it('sends the intake step options along with the reply', async () => {
     const d = makeDeps();
     await d.dispatcher.handle(inbound('list'));
-    await d.dispatcher.handle(inbound('Sunny 3-bed in Newlands'));
-    await d.dispatcher.handle(inbound('Newlands'));
+    await d.dispatcher.handle(tap('house', 'House'));
+    await d.dispatcher.handle(tap('Newlands', 'Newlands'));
     // The address step offers a one-tap skip.
     expect(d.sent.at(-1)?.opts?.interactive).toMatchObject({
       kind: 'buttons',

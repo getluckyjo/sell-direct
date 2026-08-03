@@ -99,6 +99,10 @@ model Listing {
   sellerId            String
   seller              Seller        @relation(fields: [sellerId], references: [id])
   title               String
+  /// Tapped in the WhatsApp intake (house/apartment/townhouse/estate/land/
+  /// other) and used to compose the headline. Null on listings created
+  /// before the picker existed.
+  propertyType        String?
   description         String?
   priceZar            Decimal       @db.Decimal(12, 2)
   suburb              String?

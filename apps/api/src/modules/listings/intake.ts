@@ -1,4 +1,4 @@
-import type { DealTier } from '@sell-direct/shared';
+import { PROPERTY_TYPES, type DealTier, type PropertyType } from '@sell-direct/shared';
 // Imported from the leaf module (not '../messaging') so the pure state
 // machine never pulls adapter runtime code into its dependency graph.
 import type { ReplyOptions } from '../messaging/interactive';
@@ -18,6 +18,9 @@ import { CAPE_TOWN_REGIONS, findRegion } from './suburbs';
  * turn — the user is never asked for something they already said.
  */
 export type IntakeStep =
+  /** Tap a property type — the first question, and the headline's basis. */
+  | 'awaiting_property_type'
+  /** Only reached via "Change something" — the headline is composed, not asked. */
   | 'awaiting_title'
   /** Pick a Cape Town region (or type the suburb). */
   | 'awaiting_suburb'
@@ -34,7 +37,14 @@ export type IntakeStep =
   | 'completed';
 
 export interface ListingDraft {
+  /**
+   * The buyer-facing headline. Composed from property type + bedrooms +
+   * suburb (`composeTitle`) rather than asked for — a seller only types one
+   * if they choose "Headline" from the confirm-step edit list, or states one
+   * in their opening message.
+   */
   title: string;
+  propertyType: PropertyType;
   suburb: string;
   /**
    * Street address — OPTIONAL and PRIVATE (never shown to buyers; used for
@@ -49,9 +59,12 @@ export interface ListingDraft {
   tier: DealTier;
 }
 
-/** The user-supplied fields, in the order we ask for them. */
+/**
+ * The user-supplied fields, in the order we ask for them. `title` is NOT
+ * here: it is composed, not asked (see `composeTitle`).
+ */
 export const FIELD_ORDER = [
-  'title',
+  'propertyType',
   'suburb',
   'priceZar',
   'bedrooms',
@@ -64,9 +77,10 @@ export type IntakeField = (typeof FIELD_ORDER)[number];
  * Fields an extractor (LLM or agent) may supply from a freeform message —
  * the required intake fields plus the optional street address.
  */
-export type ExtractableField = IntakeField | 'address';
+export type ExtractableField = IntakeField | 'address' | 'title';
 export type ExtractedListingFields = Partial<Pick<ListingDraft, IntakeField>> & {
   address?: string;
+  title?: string;
 };
 
 export interface IntakeState {
@@ -109,7 +123,7 @@ const FIELD_STEP: Record<
   IntakeField,
   Exclude<IntakeStep, 'awaiting_confirm' | 'awaiting_edit_choice' | 'completed'>
 > = {
-  title: 'awaiting_title',
+  propertyType: 'awaiting_property_type',
   suburb: 'awaiting_suburb',
   priceZar: 'awaiting_price',
   bedrooms: 'awaiting_bedrooms',
@@ -118,7 +132,7 @@ const FIELD_STEP: Record<
 };
 
 const STEP_FIELD: Partial<Record<IntakeStep, IntakeField>> = {
-  awaiting_title: 'title',
+  awaiting_property_type: 'propertyType',
   awaiting_suburb: 'suburb',
   // A tapped suburb (or a typed one) answers the same field — the generic
   // parse below handles both, so the picker adds no new parsing rules.
@@ -130,8 +144,10 @@ const STEP_FIELD: Partial<Record<IntakeStep, IntakeField>> = {
 };
 
 const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
+  awaiting_property_type:
+    'Let’s list your property — 0% commission. What kind of home is it?',
   awaiting_title:
-    'Let\'s list your property — 0% commission. What\'s a short headline? (e.g. "2-bed apartment in Sea Point")',
+    'What headline should buyers see? (e.g. "Sunny 2-bed with mountain views")',
   awaiting_suburb:
     'Which part of Cape Town is it in? Pick a region — or just type the suburb.',
   awaiting_suburb_pick: 'And which suburb?',
@@ -153,6 +169,7 @@ const PROMPTS: Record<Exclude<IntakeStep, 'completed'>, string> = {
 };
 
 const REASKS: Partial<Record<IntakeStep, string>> = {
+  awaiting_property_type: 'Please pick the kind of home from the list.',
   awaiting_title: 'Please give a short headline (at least 3 characters).',
   awaiting_suburb: 'Please tell me the suburb.',
   awaiting_suburb_pick: 'Please pick a suburb, or type its name.',
@@ -184,6 +201,16 @@ const SKIP_RE = /^\s*(skip|no|nope|later)\b/i;
  * The optional street address: minimum something like "12 Milner Rd". Not
  * part of validateField — address is not an IntakeField (never required).
  */
+/**
+ * The headline. Not an IntakeField — it is composed by default and only
+ * typed when a seller states one or edits it deliberately.
+ */
+export function validateTitle(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  const text = value.trim();
+  return text.length >= 3 ? text : null;
+}
+
 export function validateAddress(value: unknown): string | null {
   if (typeof value !== 'string') return null;
   const text = value.trim();
@@ -206,11 +233,6 @@ export function validateField<K extends IntakeField>(
   value: unknown,
 ): ListingDraft[K] | null {
   switch (field) {
-    case 'title': {
-      if (typeof value !== 'string') return null;
-      const text = value.trim();
-      return (text.length >= 3 ? text : null) as ListingDraft[K] | null;
-    }
     case 'suburb': {
       if (typeof value !== 'string') return null;
       const text = value.trim();
@@ -234,7 +256,69 @@ export function validateField<K extends IntakeField>(
         | ListingDraft[K]
         | null;
     }
+    case 'propertyType': {
+      if (typeof value !== 'string') return null;
+      const key = value.trim().toLowerCase();
+      return (PROPERTY_TYPES.includes(key as PropertyType)
+        ? (key as PropertyType)
+        : null) as ListingDraft[K] | null;
+    }
   }
+}
+
+/** How each property type reads inside a composed headline. */
+const PROPERTY_TYPE_NOUN: Record<PropertyType, string> = {
+  house: 'house',
+  apartment: 'apartment',
+  townhouse: 'townhouse',
+  estate: 'home in a secure estate',
+  land: 'vacant land',
+  other: 'property',
+};
+
+/** Picker labels — also what a seller could reasonably type. */
+const PROPERTY_TYPE_LABEL: Record<PropertyType, string> = {
+  house: 'House',
+  apartment: 'Apartment / flat',
+  townhouse: 'Townhouse / duplex',
+  estate: 'Secure estate',
+  land: 'Vacant land / plot',
+  other: 'Something else',
+};
+
+/**
+ * The buyer-facing headline, composed rather than asked for: "3-bed
+ * apartment in Sea Point". Land has no bedroom count; a studio is not
+ * "0-bed". Returns undefined until there is enough to say something real.
+ */
+export function composeTitle(
+  data: Partial<ListingDraft>,
+): string | undefined {
+  const { propertyType, suburb, bedrooms } = data;
+  if (!propertyType || !suburb) return undefined;
+  const noun = PROPERTY_TYPE_NOUN[propertyType];
+  const where = ` in ${suburb}`;
+  if (propertyType === 'land') return `Vacant land${where}`;
+  if (bedrooms === undefined) return `${capitalise(noun)}${where}`;
+  if (bedrooms === 0) return `Studio ${noun}${where}`;
+  return `${bedrooms}-bed ${noun}${where}`;
+}
+
+function capitalise(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/**
+ * The draft as it will be published: a seller-written headline wins, and
+ * otherwise the composed one fills in. Applied at summary and publish time,
+ * so field order never matters.
+ */
+export function withComposedTitle(
+  data: Partial<ListingDraft>,
+): Partial<ListingDraft> {
+  if (data.title !== undefined) return data;
+  const title = composeTitle(data);
+  return title === undefined ? data : { ...data, title };
 }
 
 export function missingFields(data: Partial<ListingDraft>): IntakeField[] {
@@ -289,6 +373,17 @@ export function applyExtracted(
     next.address = address;
     applied.push('address');
   }
+  // A stated headline ("sell my sunny cottage with sea views") always beats
+  // the composed one — but only when the seller actually wrote one.
+  const title = validateTitle(extracted.title);
+  if (
+    title !== null &&
+    next.title !== title &&
+    (opts.overwrite || next.title === undefined)
+  ) {
+    next.title = title;
+    applied.push('title');
+  }
   return { data: next, applied };
 }
 
@@ -302,7 +397,11 @@ export function describeField(
 ): string {
   switch (field) {
     case 'title':
-      return `"${data.title}"`;
+      return `"${data.title ?? composeTitle(data) ?? ''}"`;
+    case 'propertyType':
+      return data.propertyType
+        ? PROPERTY_TYPE_LABEL[data.propertyType].toLowerCase()
+        : '';
     case 'suburb':
       return data.suburb ?? '';
     case 'address':
@@ -329,6 +428,7 @@ const EDITABLE_FIELDS: { id: ExtractableField; label: string }[] = [
   { id: 'bathrooms', label: 'Bathrooms' },
   { id: 'suburb', label: 'Suburb' },
   { id: 'address', label: 'Street address' },
+  { id: 'propertyType', label: 'Property type' },
   { id: 'title', label: 'Headline' },
   { id: 'exclusivityTermDays', label: 'Exclusive term' },
 ];
@@ -398,6 +498,20 @@ export function optionsFor(
   state: IntakeState,
 ): ReplyOptions | undefined {
   switch (step) {
+    case 'awaiting_property_type':
+      return {
+        kind: 'list',
+        button: 'Choose',
+        sections: [
+          {
+            title: 'Property type',
+            rows: PROPERTY_TYPES.map((t) => ({
+              id: t,
+              title: PROPERTY_TYPE_LABEL[t],
+            })),
+          },
+        ],
+      };
     case 'awaiting_suburb':
       return {
         kind: 'list',
@@ -532,7 +646,7 @@ function promptFor(
   const ack = ackLine(applied, state.data);
   const options = optionsFor(state.step, state);
   if (state.step === 'awaiting_confirm') {
-    const summary = renderSummary(state.data as ListingDraft);
+    const summary = renderSummary(withComposedTitle(state.data) as ListingDraft);
     return {
       state,
       reply: `${ack}${summary}\n\n${PROMPTS.awaiting_confirm}`,
@@ -551,7 +665,7 @@ function confirmResult(state: IntakeState): IntakeResult {
   const next: IntakeState = { ...state, step: 'awaiting_confirm' };
   return {
     state: next,
-    reply: `${renderSummary(next.data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
+    reply: `${renderSummary(withComposedTitle(next.data) as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
     options: optionsFor('awaiting_confirm', next),
   };
 }
@@ -638,14 +752,18 @@ export function advanceIntake(
     // Clearing the field is all it takes: the data-first `nextStep` routes
     // straight to that question, and back to the summary once it is answered.
     delete (data as Record<string, unknown>)[field];
-    return promptFor({ ...state, step: nextStep(data), data }, []);
+    // …except the headline, which `nextStep` never asks for (it is composed).
+    const step = field === 'title' ? 'awaiting_title' : nextStep(data);
+    return promptFor({ ...state, step, data }, []);
   }
 
   if (state.step === 'awaiting_confirm') {
     if (YES_RE.test(text)) {
-      const completed = data as ListingDraft;
+      // The composed headline is materialised exactly once, at publish.
+      const published = withComposedTitle(data);
+      const completed = published as ListingDraft;
       return {
-        state: { step: 'completed', data },
+        state: { step: 'completed', data: published },
         reply: pendingReply(completed),
         completed,
       };
@@ -679,7 +797,7 @@ export function advanceIntake(
       if (nextState.step === 'awaiting_confirm') {
         return {
           state: nextState,
-          reply: `${ack}${renderSummary(edit.data as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
+          reply: `${ack}${renderSummary(withComposedTitle(edit.data) as ListingDraft)}\n\n${PROMPTS.awaiting_confirm}`,
           options,
         };
       }
@@ -690,6 +808,19 @@ export function advanceIntake(
       };
     }
     return confirmResult({ ...state, data });
+  }
+
+  // The headline is only asked when the seller chose to write one; it is
+  // always their verbatim text.
+  if (state.step === 'awaiting_title') {
+    const title = validateTitle(text);
+    if (title === null) return reask(state);
+    data.title = title;
+    const merge = applyExtracted(data, found);
+    return promptFor(
+      { ...state, step: nextStep(merge.data), data: merge.data },
+      merge.applied.filter((f) => f !== 'title'),
+    );
   }
 
   // The optional address step: SKIP-able, never blocks the flow.
@@ -715,10 +846,15 @@ export function advanceIntake(
   const currentField = STEP_FIELD[state.step]!;
   let currentFilled = false;
   switch (currentField) {
-    case 'title': {
-      const title = validateField('title', text);
-      if (title !== null) {
-        data.title = title; // the headline is always the user's verbatim text
+    case 'propertyType': {
+      // The picker's ids are the type keys, so a tap parses directly; a
+      // typed "apartment" works the same way, and anything else falls to
+      // the extractor.
+      const value =
+        validateField('propertyType', text) ??
+        validateField('propertyType', found.propertyType);
+      if (value !== null) {
+        data.propertyType = value;
         currentFilled = true;
       }
       break;

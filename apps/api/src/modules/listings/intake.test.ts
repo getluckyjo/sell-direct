@@ -6,8 +6,10 @@ import {
   nextStep,
   renderSummary,
   startIntake,
+  composeTitle,
   optionsFor,
   validateField,
+  withComposedTitle,
   type IntakeState,
   type IntakeStep,
 } from './intake';
@@ -19,9 +21,9 @@ const DOUBLE_QUESTION = /which suburb|how many bedrooms/i;
 describe('listing intake state machine', () => {
   it('walks a full happy path to a confirmed listing', () => {
     let r = startIntake();
-    expect(r.state.step).toBe('awaiting_title');
+    expect(r.state.step).toBe('awaiting_property_type');
 
-    r = advanceIntake(r.state, '2-bed apartment in Sea Point');
+    r = advanceIntake(r.state, 'apartment');
     expect(r.state.step).toBe('awaiting_suburb');
     r = advanceIntake(r.state, 'Sea Point');
     // The optional address is asked once, just before the price.
@@ -51,7 +53,9 @@ describe('listing intake state machine', () => {
     expect(r.reply).toMatch(/skip/i);
     expect(r.reply).not.toMatch(/is live/i);
     expect(r.completed).toEqual({
+      // Composed from the taps — the seller never typed a headline.
       title: '2-bed apartment in Sea Point',
+      propertyType: 'apartment',
       suburb: 'Sea Point',
       address: '12 Milner Road',
       priceZar: 2100000,
@@ -65,7 +69,7 @@ describe('listing intake state machine', () => {
   it('the address step is optional: SKIP records null and moves to price', () => {
     const state: IntakeState = {
       step: 'awaiting_address',
-      data: { title: 'x', suburb: 'Sea Point', tier: 'free' },
+      data: { propertyType: 'house', suburb: 'Sea Point', tier: 'free' },
     };
     const r = advanceIntake(state, 'skip');
     expect(r.state.data.address).toBeNull();
@@ -80,6 +84,7 @@ describe('listing intake state machine', () => {
     expect(
       renderSummary({
         title: 't',
+        propertyType: 'house',
         suburb: 's',
         address: '12 Milner Road',
         priceZar: 2_000_000,
@@ -94,8 +99,10 @@ describe('listing intake state machine', () => {
   it('never re-asks fields the headline already answered (the Mowbray bug)', () => {
     let r = startIntake();
     r = advanceIntake(r.state, '4 bedroom home in mowbray', {
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
+      title: '4 bedroom home in mowbray',
     });
 
     // Suburb + bedrooms skipped; the optional address slots in before price.
@@ -112,6 +119,7 @@ describe('listing intake state machine', () => {
   it('a multi-field message jumps straight to the last missing field', () => {
     let r = startIntake();
     r = advanceIntake(r.state, 'Family home in Mowbray', {
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 3,
       bathrooms: 2,
@@ -124,7 +132,7 @@ describe('listing intake state machine', () => {
   it('extraction can answer the current numeric question in words', () => {
     const state: IntakeState = {
       step: 'awaiting_price',
-      data: { title: 'x', suburb: 'y', tier: 'free' },
+      data: { propertyType: 'house', suburb: 'y', tier: 'free' },
     };
     const r = advanceIntake(state, 'five million rand', {
       priceZar: 5_000_000,
@@ -135,7 +143,7 @@ describe('listing intake state machine', () => {
 
   it('drops invalid extracted values instead of applying them', () => {
     let r = startIntake();
-    r = advanceIntake(r.state, '50 bedroom palace for R5000', {
+    r = advanceIntake(r.state, 'house', {
       bedrooms: 50, // > 20 → rejected
       priceZar: 5000, // < 100000 → rejected
     });
@@ -147,7 +155,7 @@ describe('listing intake state machine', () => {
   it('re-asks on an unparseable price and keeps the step', () => {
     const state: IntakeState = {
       step: 'awaiting_price',
-      data: { title: 'x', suburb: 'y', tier: 'free' },
+      data: { propertyType: 'house', suburb: 'y', tier: 'free' },
     };
     const r = advanceIntake(state, 'about two million');
     expect(r.state.step).toBe('awaiting_price');
@@ -159,7 +167,7 @@ describe('listing intake state machine', () => {
     const base: IntakeState = {
       step: 'awaiting_exclusivity',
       data: {
-        title: 't',
+        propertyType: 'house',
         suburb: 's',
         priceZar: 2000000,
         bedrooms: 2,
@@ -181,6 +189,7 @@ describe('listing intake state machine', () => {
       step: 'awaiting_confirm',
       data: {
         title: '4 bedroom home in mowbray',
+        propertyType: 'house',
         suburb: 'Mowbray',
         address: null, // asked and skipped on the way here
         priceZar: 5_000_000,
@@ -206,7 +215,7 @@ describe('listing intake state machine', () => {
 
   it('startIntake with extracted trigger fields skips answered questions', () => {
     const r = startIntake({
-      title: '4 bed in Mowbray',
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
     });
@@ -215,7 +224,7 @@ describe('listing intake state machine', () => {
 
     // A trigger that already states the address skips that question too.
     const withAddress = startIntake({
-      title: '4 bed at 12 Milner Rd',
+      propertyType: 'house',
       suburb: 'Mowbray',
       address: '12 Milner Rd',
       bedrooms: 4,
@@ -231,7 +240,11 @@ describe('listing intake state machine', () => {
     expect(validateField('exclusivityTermDays', 61)).toBeNull();
     expect(validateField('suburb', ' Mowbray ')).toBe('Mowbray');
 
-    const data = { title: 't', suburb: 's', tier: 'free' as const };
+    const data = {
+      propertyType: 'house' as const,
+      suburb: 's',
+      tier: 'free' as const,
+    };
     expect(missingFields(data)).toEqual([
       'priceZar',
       'bedrooms',
@@ -256,6 +269,7 @@ describe('listing intake state machine', () => {
     expect(
       renderSummary({
         title: 't',
+        propertyType: 'house',
         suburb: 's',
         priceZar: 2_000_000,
         bedrooms: 2,
@@ -273,6 +287,7 @@ function confirmState(): IntakeState {
     step: 'awaiting_confirm',
     data: {
       title: '2-bed apartment in Sea Point',
+      propertyType: 'apartment',
       suburb: 'Sea Point',
       address: '12 Milner Road',
       priceZar: 2100000,
@@ -370,7 +385,7 @@ describe('intake option ids are valid typed answers', () => {
       state: () => ({
         step: 'awaiting_exclusivity',
         data: {
-          title: 't',
+          propertyType: 'house',
           suburb: 's',
           address: null,
           priceZar: 2100000,
@@ -384,7 +399,7 @@ describe('intake option ids are valid typed answers', () => {
       step: 'awaiting_bedrooms',
       state: () => ({
         step: 'awaiting_bedrooms',
-        data: { title: 't', suburb: 's', address: null, priceZar: 2100000, tier: 'free' },
+        data: { propertyType: 'house', suburb: 's', address: null, priceZar: 2100000, tier: 'free' },
       }),
     },
     {
@@ -392,7 +407,7 @@ describe('intake option ids are valid typed answers', () => {
       state: () => ({
         step: 'awaiting_bathrooms',
         data: {
-          title: 't',
+          propertyType: 'house',
           suburb: 's',
           address: null,
           priceZar: 2100000,
@@ -405,7 +420,7 @@ describe('intake option ids are valid typed answers', () => {
       step: 'awaiting_address',
       state: () => ({
         step: 'awaiting_address',
-        data: { title: 't', suburb: 's', tier: 'free' },
+        data: { propertyType: 'house', suburb: 's', tier: 'free' },
       }),
     },
     { step: 'awaiting_confirm', state: confirmState },
@@ -434,7 +449,7 @@ describe('intake option ids are valid typed answers', () => {
   it('price button ids parse as prices', () => {
     const state: IntakeState = {
       step: 'awaiting_price',
-      data: { title: 't', suburb: 's', address: null, tier: 'free' },
+      data: { propertyType: 'house', suburb: 's', address: null, tier: 'free' },
       estimate: { lowZar: 1_900_000, highZar: 2_300_000, source: 'test' },
     };
     for (const id of ids(optionsFor('awaiting_price', state))) {
@@ -507,7 +522,7 @@ describe('confirm-step controls', () => {
 describe('two-tap suburb picker', () => {
   const start = (): IntakeState => ({
     step: 'awaiting_suburb',
-    data: { title: 'Sunny 3-bed', tier: 'free' },
+    data: { propertyType: 'house', tier: 'free' },
   });
 
   it('offers the regions, plus a way out to free text', () => {
@@ -577,5 +592,91 @@ describe('two-tap suburb picker', () => {
     const picked = advanceIntake(start(), 'REGION:southern');
     const typed = advanceIntake(picked.state, 'Harfield Village');
     expect(typed.state.data.suburb).toBe('Harfield Village');
+  });
+});
+
+describe('property type picker and composed headline', () => {
+  it('asks for the property type first, as a list', () => {
+    const r = startIntake();
+    expect(r.state.step).toBe('awaiting_property_type');
+    expect(ids(r.options)).toEqual([
+      'house',
+      'apartment',
+      'townhouse',
+      'estate',
+      'land',
+      'other',
+    ]);
+  });
+
+  it('every property-type id is understood as text', () => {
+    const base = startIntake().state;
+    for (const id of ids(optionsFor('awaiting_property_type', base))) {
+      expect(advanceIntake(base, id).state.data.propertyType).toBe(id);
+    }
+  });
+
+  it('composes a headline from the taps', () => {
+    expect(
+      composeTitle({ propertyType: 'apartment', suburb: 'Sea Point', bedrooms: 3 }),
+    ).toBe('3-bed apartment in Sea Point');
+    expect(
+      composeTitle({ propertyType: 'apartment', suburb: 'Sea Point', bedrooms: 0 }),
+    ).toBe('Studio apartment in Sea Point');
+    expect(composeTitle({ propertyType: 'land', suburb: 'Noordhoek', bedrooms: 0 })).toBe(
+      'Vacant land in Noordhoek',
+    );
+    expect(composeTitle({ propertyType: 'estate', suburb: 'Durbanville', bedrooms: 4 })).toBe(
+      '4-bed home in a secure estate in Durbanville',
+    );
+    // Not enough to say anything real yet.
+    expect(composeTitle({ propertyType: 'house' })).toBeUndefined();
+    expect(composeTitle({ suburb: 'Newlands' })).toBeUndefined();
+    // Bedrooms not yet known — still a usable headline.
+    expect(composeTitle({ propertyType: 'house', suburb: 'Newlands' })).toBe(
+      'House in Newlands',
+    );
+  });
+
+  it('a seller-written headline always beats the composed one', () => {
+    const stated = withComposedTitle({
+      title: 'Sunny cottage with mountain views',
+      propertyType: 'house',
+      suburb: 'Newlands',
+      bedrooms: 3,
+    });
+    expect(stated.title).toBe('Sunny cottage with mountain views');
+  });
+
+  it('lets a seller write their own headline from the edit list', () => {
+    const opened = advanceIntake(confirmState(), 'EDIT');
+    expect(ids(opened.options)).toContain('EDIT:title');
+    const picked = advanceIntake(opened.state, 'EDIT:title');
+    expect(picked.state.step).toBe('awaiting_title');
+    expect(picked.state.data.title).toBeUndefined();
+
+    const written = advanceIntake(picked.state, 'Sunny 2-bed with sea views');
+    expect(written.state.data.title).toBe('Sunny 2-bed with sea views');
+    expect(written.state.step).toBe('awaiting_confirm');
+
+    // Too short → re-asked, not silently accepted.
+    expect(advanceIntake(picked.state, 'x').state.step).toBe('awaiting_title');
+  });
+
+  it('re-picking the property type recomposes the headline', () => {
+    const noTitle: IntakeState = {
+      ...confirmState(),
+      data: { ...confirmState().data, title: undefined },
+    };
+    const picked = advanceIntake(advanceIntake(noTitle, 'EDIT').state, 'EDIT:propertyType');
+    expect(picked.state.step).toBe('awaiting_property_type');
+    const done = advanceIntake(picked.state, 'townhouse');
+    expect(done.state.step).toBe('awaiting_confirm');
+    expect(done.reply).toContain('2-bed townhouse in Sea Point');
+  });
+
+  it('rejects a property type that is not on the list', () => {
+    expect(validateField('propertyType', 'castle')).toBeNull();
+    expect(validateField('propertyType', 'HOUSE')).toBe('house');
   });
 });

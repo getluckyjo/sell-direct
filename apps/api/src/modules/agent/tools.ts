@@ -5,6 +5,8 @@ import {
   nextStep,
   renderSummary,
   validateAddress,
+  validateTitle,
+  withComposedTitle,
   validateField,
   type ConversationStore,
   type IntakeField,
@@ -321,7 +323,7 @@ export function buildAgentTools(
 }
 
 const WIRE_TO_FIELD: Record<string, IntakeField> = {
-  title: 'title',
+  property_type: 'propertyType',
   suburb: 'suburb',
   price_zar: 'priceZar',
   bedrooms: 'bedrooms',
@@ -374,7 +376,18 @@ function buildIntakeWriteTools(
       inputSchema: {
         type: 'object',
         properties: {
-          title: { type: 'string', description: 'Short listing headline, verbatim from the seller' },
+          title: {
+            type: 'string',
+            description:
+              'Listing headline, verbatim — only when the seller wrote one. ' +
+              'Leave unset otherwise: the headline is composed from the ' +
+              'property type, bedrooms and suburb.',
+          },
+          property_type: {
+            type: 'string',
+            enum: ['house', 'apartment', 'townhouse', 'estate', 'land', 'other'],
+            description: 'Kind of property the seller is listing',
+          },
           suburb: { type: 'string', description: 'Cape Town suburb' },
           address: {
             type: 'string',
@@ -417,6 +430,10 @@ function buildIntakeWriteTools(
           }
           (data as Record<string, unknown>)[field] = valid;
         }
+        // The headline is composed, not required — but a seller-written one
+        // always wins (same rule as the scripted flow).
+        const title = validateTitle(provided.title);
+        if (title !== null) data.title = title;
         // Optional address: a stated address wins; an explicit decline is
         // recorded as null so the scripted flow never re-asks it either.
         const address = validateAddress(provided.address);
@@ -466,7 +483,12 @@ function buildIntakeWriteTools(
         if (missing.length > 0) {
           return `Refused: the draft is incomplete. Still missing: ${missing.join(', ')}. Collect these first.`;
         }
-        const listing = await intake.createListing(phone, data as ListingDraft);
+        // The headline is composed unless the seller wrote one, so it is
+        // never part of `missingFields` — fill it in here or publish untitled.
+        const listing = await intake.createListing(
+          phone,
+          withComposedTitle(data) as ListingDraft,
+        );
         await intake.store.clear(phone);
         // Scripted safety net: if this agent dies before the description is
         // handled, the scripted description step picks the thread up.

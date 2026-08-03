@@ -30,7 +30,7 @@ describe('listing intake orchestrator', () => {
 
     const script = [
       'list',
-      'Sunny 3-bed in Newlands',
+      'house', // the property-type picker replaces the headline question
       'Newlands',
       '15 Kildare Road', // the optional address, asked before the price
       '3 250 000',
@@ -52,7 +52,9 @@ describe('listing intake orchestrator', () => {
     expect(createListing).toHaveBeenCalledOnce();
     expect(createListing.mock.calls[0][0]).toBe(phone);
     expect(createListing.mock.calls[0][1]).toMatchObject({
-      title: 'Sunny 3-bed in Newlands',
+      // Composed, not typed.
+      title: '3-bed house in Newlands',
+      propertyType: 'house',
       suburb: 'Newlands',
       address: '15 Kildare Road',
       priceZar: 3250000,
@@ -73,7 +75,12 @@ describe('listing intake orchestrator', () => {
     const extractor: IntakeFieldExtractor = {
       async extract(message): Promise<ExtractedListingFields> {
         if (/4 bedroom home in mowbray/i.test(message)) {
-          return { suburb: 'Mowbray', bedrooms: 4 };
+          return {
+            propertyType: 'house' as const,
+            suburb: 'Mowbray',
+            bedrooms: 4,
+            title: '4 bedroom home in mowbray',
+          };
         }
         return {};
       },
@@ -104,18 +111,24 @@ describe('listing intake orchestrator', () => {
     const store = createInMemoryConversationStore();
     const createListing = vi.fn();
     const extractor: IntakeFieldExtractor = {
-      extract: vi.fn(async () => ({ suburb: 'Mowbray', bedrooms: 4 })),
+      extract: vi.fn(async () => ({
+        propertyType: 'house' as const,
+        suburb: 'Mowbray',
+        bedrooms: 4,
+      })),
     };
     const res = await handleListingIntakeMessage(
       { store, createListing, extractor },
       { phone: '27820003333', text: 'sell my 4 bed in Mowbray' },
     );
 
-    // Title+suburb+beds all known → the next ask is the optional address.
+    // Type+suburb+beds all known → the next ask is the optional address.
     expect(res.reply).toMatch(/street address/i);
     const state = await store.get('27820003333');
     expect(state?.data).toMatchObject({
+      // The trigger's remainder is still taken as a seller-written headline.
       title: '4 bed in Mowbray',
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
     });
@@ -140,7 +153,7 @@ describe('listing intake orchestrator', () => {
 
     const replies: string[] = [];
     let last;
-    for (const text of ['list', 'Cosy 2-bed in Gardens', 'Gardens', '12 Milner Road']) {
+    for (const text of ['list', 'apartment', 'Gardens', '12 Milner Road']) {
       last = await handleListingIntakeMessage(deps, { phone, text });
       replies.push(last.reply);
     }
@@ -182,7 +195,7 @@ describe('listing intake orchestrator', () => {
     const createListing = vi.fn();
     const deps = { store, createListing };
     const phone = '27820007777';
-    for (const text of ['list', 'Home in Gardens', 'Gardens', 'SKIP', '2100000', '2', '1', '90']) {
+    for (const text of ['list', 'house', 'Gardens', 'SKIP', '2100000', '2', '1', '90']) {
       await handleListingIntakeMessage(deps, { phone, text });
     }
     expect(await store.get(phone)).not.toBeNull();
@@ -203,7 +216,7 @@ describe('listing intake orchestrator', () => {
     };
     const phone = '27820006666';
     let reply = '';
-    for (const text of ['list', 'Home in Gardens', 'Gardens', 'skip']) {
+    for (const text of ['list', 'house', 'Gardens', 'skip']) {
       reply = (await handleListingIntakeMessage(deps, { phone, text })).reply;
     }
     expect(reply).toMatch(/asking price/i);
@@ -230,8 +243,8 @@ describe('listing intake orchestrator', () => {
     extract.mockRejectedValueOnce(new Error('llm down'));
     const res = await handleListingIntakeMessage(deps, {
       phone,
-      text: 'Cosy cottage',
+      text: 'apartment',
     });
-    expect(res.reply).toMatch(/suburb/i); // flow continues scripted
+    expect(res.reply).toMatch(/region|suburb/i); // flow continues scripted
   });
 });
