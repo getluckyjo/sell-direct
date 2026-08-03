@@ -127,7 +127,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     //     photo reply and can still answer the consent question next.
     if (message.media && deps.photoIntake) {
       const result = await handleInboundPhoto(deps.photoIntake, message);
-      await deps.notifier.send(phone, result.reply);
+      await deps.notifier.send(phone, result.reply, {
+        interactive: result.options,
+      });
       return;
     }
 
@@ -200,7 +202,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
           log('agent enquiry turn failed', error); // fall through to canned
         }
       }
-      await deps.notifier.send(phone, result.reply);
+      await deps.notifier.send(phone, result.reply, {
+        interactive: result.options,
+      });
       return;
     }
 
@@ -215,7 +219,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         text,
       });
       if (result.handled && result.reply) {
-        await deps.notifier.send(phone, result.reply);
+        await deps.notifier.send(phone, result.reply, {
+          interactive: result.options,
+        });
         return;
       }
     }

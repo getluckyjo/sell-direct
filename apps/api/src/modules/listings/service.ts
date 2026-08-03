@@ -177,9 +177,18 @@ async function withPriceGuidance(
     state = { ...state, estimate: previous.estimate };
   }
   if (!deps.valuation || result.completed || state.step !== 'awaiting_price') {
-    // The estimate may have been carried over above, and the price buttons
-    // are derived from it — recompute rather than ship a button-less re-ask.
-    return { ...result, state, options: optionsFor(state.step, state) };
+    // Only the price step's options depend on the estimate. Everything else
+    // keeps what the machine produced — recomputing here would wipe options
+    // the machine attached outside the step table (e.g. the description
+    // buttons on the publish confirmation).
+    return {
+      ...result,
+      state,
+      options:
+        state.step === 'awaiting_price' && !result.completed
+          ? optionsFor(state.step, state)
+          : result.options,
+    };
   }
   if (state.estimate === undefined) {
     let estimate: PriceEstimate | null = null;

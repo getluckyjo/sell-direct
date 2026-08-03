@@ -182,6 +182,20 @@ const REASKS: Partial<Record<IntakeStep, string>> = {
   awaiting_edit_choice: 'Please pick one of the fields from the list.',
 };
 
+/**
+ * The post-publish description choices. Defined here (the leaf) rather than
+ * in description.ts, which depends on service.ts, which depends on this
+ * module — importing it back would close an import cycle.
+ */
+export const DESCRIPTION_OPTIONS: ReplyOptions = {
+  kind: 'buttons',
+  options: [
+    { id: 'DRAFT', title: '✍️ Write it for me' },
+    { id: 'TYPE', title: 'I’ll write it' },
+    { id: 'SKIP', title: 'Skip for now' },
+  ],
+};
+
 /** Mirrors the dispatcher's consent regex — a confirm must be unmistakable. */
 const YES_RE = /^\s*(yes|y|yeah|yep|ok|okay|sure|👍)\b/i;
 /** Confirm-step controls (also typeable). */
@@ -631,8 +645,8 @@ function pendingReply(completed: ListingDraft): string {
   return (
     `Perfect — your listing "${completed.title}" in ${completed.suburb} at ` +
     `${formatPriceZar(completed.priceZar)} is confirmed!\n\n` +
-    `📝 Optional: reply with a short description buyers will read (a sentence ` +
-    `or two about what makes it special), or reply SKIP.\n` +
+    `📝 Optional: a short description buyers will read. I can draft one from ` +
+    `your details — you approve it before anything is saved.\n` +
     `📸 Then send 5–10 photos whenever you're ready — your listing goes live ` +
     `the moment your first photo arrives.`
   );
@@ -765,6 +779,7 @@ export function advanceIntake(
       return {
         state: { step: 'completed', data: published },
         reply: pendingReply(completed),
+        options: DESCRIPTION_OPTIONS,
         completed,
       };
     }

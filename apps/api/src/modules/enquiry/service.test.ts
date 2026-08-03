@@ -4,6 +4,7 @@ import {
   requestPreQualification,
   type EnquiryDeps,
 } from './service';
+import { ObaReferralStub } from '../finance';
 
 function makeDeps() {
   const profiles = {
@@ -81,5 +82,33 @@ describe('bond pre-qualification (consent-gated)', () => {
     expect(deps.finance.submitReferral).toHaveBeenCalledOnce();
     expect(res.accepted).toBe(true);
     expect(res.referenceId).toBe('ooba-stub-buyer_1');
+  });
+});
+
+describe('buyer consent buttons', () => {
+  it('offers one-tap consent, matching the dispatcher’s YES/NO routing', async () => {
+    const result = await handleBuyerEnquiry(
+      {
+        profiles: {
+          upsertBuyerByPhone: async () => ({ id: 'buyer-1' }),
+          recordBuyerFinancialConsent: async () => {},
+        },
+        deals: {
+          createOrGetEnquiryDeal: async () => ({ id: 'deal-1', status: 'enquiry' }),
+          list: async () => [],
+          getWithTimeline: async () => null,
+          getNotificationContext: async () => null,
+        },
+        finance: new ObaReferralStub(),
+      },
+      { phone: '+27820001111', listingId: 'listing-1' },
+    );
+
+    expect(result.options).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: 'YES' }, { id: 'NO' }],
+    });
+    // The copy no longer tells them to type YES — the buttons say it.
+    expect(result.reply).not.toMatch(/reply yes/i);
   });
 });

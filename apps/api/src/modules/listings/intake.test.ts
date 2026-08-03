@@ -50,7 +50,8 @@ describe('listing intake state machine', () => {
     // Listing now pends until the first photo arrives.
     expect(r.reply).toMatch(/confirmed/i);
     expect(r.reply).toMatch(/photos/i);
-    expect(r.reply).toMatch(/skip/i);
+    // The description choices are buttons now, not a typed SKIP.
+    expect(ids(r.options)).toEqual(['DRAFT', 'TYPE', 'SKIP']);
     expect(r.reply).not.toMatch(/is live/i);
     expect(r.completed).toEqual({
       // Composed from the taps — the seller never typed a headline.

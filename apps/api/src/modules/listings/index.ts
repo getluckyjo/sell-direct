@@ -1,6 +1,7 @@
 export * from './intake';
 export * from './suburbs';
 export * from './extractor';
+export * from './drafter';
 export * from './store';
 export * from './onboarding';
 export * from './description';

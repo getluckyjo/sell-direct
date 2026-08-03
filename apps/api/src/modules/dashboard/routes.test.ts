@@ -13,6 +13,7 @@ function fakeListings(): ListingRepository {
     setDescription: vi.fn(),
     saveEstimate: vi.fn(),
     getForSyndication: vi.fn().mockResolvedValue(null),
+    getFacts: vi.fn().mockResolvedValue(null),
   };
 }
 
