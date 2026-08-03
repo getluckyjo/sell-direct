@@ -72,8 +72,14 @@ const scriptedModel: AgentModel = {
     assert.ok(update && publish, 'write tools must be offered in live mode');
 
     if (/^list my home in gardens/i.test(last)) {
-      const result = await update.run({ title: 'Home in Gardens', suburb: 'Gardens' });
-      assert.match(result, /Still missing: priceZar, bedrooms, bathrooms, exclusivityTermDays/);
+      const result = await update.run({
+        title: 'Home in Gardens',
+        suburb: 'Gardens',
+      });
+      assert.match(
+        result,
+        /Still missing: priceZar, bedrooms, bathrooms, exclusivityTermDays/,
+      );
       return {
         text: 'Lovely — a home in Gardens. What is the asking price, and how many bedrooms and bathrooms?',
         toolCalls: ['update_listing_draft'],
@@ -167,7 +173,9 @@ async function main() {
   assert.equal(Number(listings[0].priceZar), 2_500_000);
   assert.equal(await store.get(PHONE), null, 'conversation state cleared');
 
-  const audits = await prisma.agentDraft.findMany({ orderBy: { createdAt: 'asc' } });
+  const audits = await prisma.agentDraft.findMany({
+    orderBy: { createdAt: 'asc' },
+  });
   assert.equal(audits.length, 3, 'every live turn audited');
   assert.deepEqual(audits.at(-1)?.toolCalls, ['publish_listing']);
 

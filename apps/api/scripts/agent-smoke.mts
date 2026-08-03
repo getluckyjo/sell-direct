@@ -78,7 +78,9 @@ async function main() {
   await prisma.listing.deleteMany();
   await prisma.seller.deleteMany();
 
-  const seller = await prisma.seller.create({ data: { phone: '+27829998888' } });
+  const seller = await prisma.seller.create({
+    data: { phone: '+27829998888' },
+  });
   await prisma.listing.create({
     data: {
       sellerId: seller.id,
@@ -111,7 +113,10 @@ async function main() {
   const webhook = await app.inject({
     method: 'POST',
     url: '/api/webhooks/whatsapp',
-    payload: { id: 'wamid.smoke.1', text: 'what 2 beds are for sale in Sea Point?' },
+    payload: {
+      id: 'wamid.smoke.1',
+      text: 'what 2 beds are for sale in Sea Point?',
+    },
   });
   assert.equal(webhook.statusCode, 200, `webhook ack: ${webhook.body}`);
   // The dispatcher runs after the ack; give the promise chain a beat.

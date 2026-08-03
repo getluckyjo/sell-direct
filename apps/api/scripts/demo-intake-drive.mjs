@@ -39,7 +39,11 @@ async function say(text, wait = 4000) {
 // The reported bug, end to end: headline carries suburb + bedrooms.
 await say('list', 2500);
 let reply = await say('4 bedroom home in mowbray');
-assert.doesNotMatch(reply, /which suburb|how many bedrooms/i, `re-asked: ${reply}`);
+assert.doesNotMatch(
+  reply,
+  /which suburb|how many bedrooms/i,
+  `re-asked: ${reply}`,
+);
 assert.match(reply, /asking price/i, `expected price question, got: ${reply}`);
 await page.screenshot({ path: 'demo-intake-1-no-double-question.png' });
 

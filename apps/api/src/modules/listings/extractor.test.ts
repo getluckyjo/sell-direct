@@ -7,7 +7,9 @@ import {
 } from './extractor';
 import { FIELD_ORDER } from './intake';
 
-function fakeClient(parse: (...args: unknown[]) => Promise<unknown>): Anthropic {
+function fakeClient(
+  parse: (...args: unknown[]) => Promise<unknown>,
+): Anthropic {
   return { beta: { messages: { parse } } } as unknown as Anthropic;
 }
 
@@ -24,12 +26,23 @@ describe('toExtractedFields', () => {
       },
       FIELD_ORDER,
     );
-    expect(out).toEqual({ suburb: 'Mowbray', priceZar: 5_000_000, bedrooms: 4 });
+    expect(out).toEqual({
+      suburb: 'Mowbray',
+      priceZar: 5_000_000,
+      bedrooms: 4,
+    });
   });
 
   it('drops fields outside the allowed list', () => {
     const out = toExtractedFields(
-      { suburb: 'Mowbray', bedrooms: 4, title: null, price_zar: null, bathrooms: null, exclusivity_term_days: null },
+      {
+        suburb: 'Mowbray',
+        bedrooms: 4,
+        title: null,
+        price_zar: null,
+        bathrooms: null,
+        exclusivity_term_days: null,
+      },
       ['bedrooms'],
     );
     expect(out).toEqual({ bedrooms: 4 });
@@ -44,7 +57,10 @@ describe('toExtractedFields', () => {
 
 describe('extractors', () => {
   it('noop extractor always returns {}', async () => {
-    const out = await createNoopExtractor().extract('4 bed in Mowbray', FIELD_ORDER);
+    const out = await createNoopExtractor().extract(
+      '4 bed in Mowbray',
+      FIELD_ORDER,
+    );
     expect(out).toEqual({});
   });
 
@@ -59,9 +75,14 @@ describe('extractors', () => {
         exclusivity_term_days: null,
       },
     });
-    const extractor = createAnthropicIntakeExtractor({ client: fakeClient(parse) });
+    const extractor = createAnthropicIntakeExtractor({
+      client: fakeClient(parse),
+    });
 
-    const out = await extractor.extract('4 bedroom home in mowbray', FIELD_ORDER);
+    const out = await extractor.extract(
+      '4 bedroom home in mowbray',
+      FIELD_ORDER,
+    );
 
     expect(out).toEqual({ suburb: 'Mowbray', bedrooms: 4 });
     const params = parse.mock.calls[0][0] as {
@@ -88,7 +109,9 @@ describe('extractors', () => {
 
   it('skips the API entirely for empty input or empty field list', async () => {
     const parse = vi.fn();
-    const extractor = createAnthropicIntakeExtractor({ client: fakeClient(parse) });
+    const extractor = createAnthropicIntakeExtractor({
+      client: fakeClient(parse),
+    });
     expect(await extractor.extract('   ', FIELD_ORDER)).toEqual({});
     expect(await extractor.extract('hello', [])).toEqual({});
     expect(parse).not.toHaveBeenCalled();

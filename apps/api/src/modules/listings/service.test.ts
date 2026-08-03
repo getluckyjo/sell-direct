@@ -272,13 +272,11 @@ describe('listing intake orchestrator', () => {
       // A valuation adapter is configured — its guidance must not clobber
       // options attached outside the step table.
       valuation: {
-        estimate: vi
-          .fn()
-          .mockResolvedValue({
-            lowZar: 2_000_000,
-            highZar: 2_400_000,
-            source: 'test',
-          }),
+        estimate: vi.fn().mockResolvedValue({
+          lowZar: 2_000_000,
+          highZar: 2_400_000,
+          source: 'test',
+        }),
       },
     };
     const phone = '27820008888';

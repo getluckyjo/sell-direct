@@ -14,9 +14,13 @@ afterEach(() => {
 
 describe('valuation adapters', () => {
   it('factory: noop unless BOTH LOOM env vars are set (production safety)', async () => {
-    expect(await createValuationAdapter().estimate({ suburb: 'Mowbray' })).toBeNull();
+    expect(
+      await createValuationAdapter().estimate({ suburb: 'Mowbray' }),
+    ).toBeNull();
     process.env.LOOM_API_URL = 'https://api.loom.example';
-    expect(await createValuationAdapter().estimate({ suburb: 'Mowbray' })).toBeNull();
+    expect(
+      await createValuationAdapter().estimate({ suburb: 'Mowbray' }),
+    ).toBeNull();
     process.env.LOOM_API_KEY = 'k';
     // Fully configured → the LOOM adapter (whose fetch will fail here and
     // degrade to null — never a fabricated range).
@@ -45,7 +49,11 @@ describe('valuation adapters', () => {
 
   it('LOOM adapter maps a good response and nulls everything else', async () => {
     expect(
-      mapResponse({ low_zar: 2_400_000, high_zar: 2_700_000, comparables_count: 9 }),
+      mapResponse({
+        low_zar: 2_400_000,
+        high_zar: 2_700_000,
+        comparables_count: 9,
+      }),
     ).toEqual({
       lowZar: 2_400_000,
       highZar: 2_700_000,
@@ -79,11 +87,16 @@ describe('valuation adapters', () => {
       apiUrl: 'https://api.loom.example',
       apiKey: 'k',
       fetchImpl: async () =>
-        new Response(JSON.stringify({ low_zar: 2_000_000, high_zar: 2_300_000 }), {
-          status: 200,
-        }),
+        new Response(
+          JSON.stringify({ low_zar: 2_000_000, high_zar: 2_300_000 }),
+          {
+            status: 200,
+          },
+        ),
     });
-    expect(await ok.estimate({ suburb: 'Mowbray', address: '12 Milner Rd' })).toMatchObject({
+    expect(
+      await ok.estimate({ suburb: 'Mowbray', address: '12 Milner Rd' }),
+    ).toMatchObject({
       lowZar: 2_000_000,
       highZar: 2_300_000,
     });

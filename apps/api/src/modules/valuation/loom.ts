@@ -1,8 +1,4 @@
-import type {
-  EstimateRequest,
-  PriceEstimate,
-  ValuationAdapter,
-} from './types';
+import type { EstimateRequest, PriceEstimate, ValuationAdapter } from './types';
 
 export interface LoomConfig {
   apiUrl: string;
@@ -24,7 +20,9 @@ export interface LoomConfig {
  * failure logs and returns null (callers silently skip guidance), and owner
  * PII in responses is never read (data minimisation, see types.ts).
  */
-export function createLoomValuationAdapter(config: LoomConfig): ValuationAdapter {
+export function createLoomValuationAdapter(
+  config: LoomConfig,
+): ValuationAdapter {
   const log = config.log ?? (() => {});
   const doFetch = config.fetchImpl ?? fetch;
 
