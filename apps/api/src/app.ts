@@ -25,6 +25,8 @@ import {
 import {
   createAnthropicIntakeExtractor,
   createNoopExtractor,
+  createAnthropicDescriptionDrafter,
+  createNoopDescriptionDrafter,
   createPrismaConversationStore,
   createPrismaListingRepository,
   type ListingDraft,
@@ -190,9 +192,22 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     valuation,
     saveEstimate,
   };
+  // "Write it for me": drafts the optional description from the listing's
+  // own facts, for the seller to approve. Degrades to a noop without an API
+  // key (the button then simply invites them to type one).
+  const drafter =
+    process.env.ANTHROPIC_API_KEY &&
+    process.env.DESCRIPTION_DRAFTING !== 'false'
+      ? createAnthropicDescriptionDrafter({
+          model: process.env.DESCRIPTION_DRAFTER_MODEL,
+          log: (msg, err) => app.log.warn({ err }, msg),
+        })
+      : createNoopDescriptionDrafter();
   const description: DescriptionDeps = {
     onboarding: onboardingStore,
     setDescription: (id, text) => listingRepository.setDescription(id, text),
+    drafter,
+    listingFacts: (id) => listingRepository.getFacts(id),
   };
   const makePhotoIntake = (
     fetchMedia: PhotoIntakeDeps['fetchMedia'],

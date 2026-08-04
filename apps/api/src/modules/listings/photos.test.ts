@@ -93,7 +93,17 @@ describe('handleInboundPhoto', () => {
 
     expect(result.activated).toBe(true);
     expect(result.reply).toMatch(/now LIVE/i);
-    expect(result.reply).toMatch(/CERTS/);
+    // The certificate pricing stays in the body; the keywords are now a menu.
+    expect(result.reply).toMatch(/electrical/i);
+    const rows =
+      result.options?.kind === 'list' ? result.options.sections[0].rows : [];
+    expect(rows.map((r) => r.id)).toEqual([
+      'CERTS',
+      'COVER',
+      'MOVE',
+      'CONSULT',
+      'NOTHING',
+    ]);
     expect(storage.objects[0]).toMatch(/^listings\/l1\/\d+-1\.jpg$/);
     expect(publish).toHaveBeenCalledOnce();
   });
@@ -235,5 +245,119 @@ describe('handleDescriptionMessage', () => {
     expect(result.handled).toBe(false);
     expect(setDescription).not.toHaveBeenCalled();
     expect(await onboarding.get('+27820001111')).toBeNull(); // abandoned
+  });
+});
+
+describe('description drafting ("Write it for me")', () => {
+  function setup(
+    draft: string | null = 'A two-bedroom apartment in Sea Point.',
+  ) {
+    const onboarding = createInMemoryOnboardingStore();
+    const setDescription = vi.fn(async () => {});
+    const drafter = { draft: vi.fn(async () => draft) };
+    const listingFacts = vi.fn(async () => ({
+      title: '2-bed apartment in Sea Point',
+      propertyType: 'apartment' as const,
+      suburb: 'Sea Point',
+      bedrooms: 2,
+      bathrooms: 1,
+      priceZar: 2_100_000,
+    }));
+    return {
+      deps: { onboarding, setDescription, drafter, listingFacts },
+      onboarding,
+      setDescription,
+      drafter,
+    };
+  }
+
+  it('drafts on DRAFT but saves nothing until the seller approves', async () => {
+    const { deps, onboarding, setDescription, drafter } = setup();
+    await onboarding.set('+27820001111', { listingId: 'l1' });
+
+    const proposed = await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'DRAFT',
+    });
+
+    expect(drafter.draft).toHaveBeenCalledOnce();
+    expect(proposed.reply).toContain('A two-bedroom apartment in Sea Point.');
+    expect(proposed.reply).toMatch(/nothing is saved/i);
+    // Nothing written yet, and the state still exists to approve against.
+    expect(setDescription).not.toHaveBeenCalled();
+    expect((await onboarding.get('+27820001111'))?.draft).toBe(
+      'A two-bedroom apartment in Sea Point.',
+    );
+
+    const approved = await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'USE',
+    });
+
+    expect(setDescription).toHaveBeenCalledWith(
+      'l1',
+      'A two-bedroom apartment in Sea Point.',
+    );
+    expect(approved.reply).toMatch(/description saved/i);
+    expect(await onboarding.get('+27820001111')).toBeNull();
+  });
+
+  it('USE without a pending draft is stored as the seller’s own text', async () => {
+    const { deps, onboarding, setDescription } = setup();
+    await onboarding.set('+27820001111', { listingId: 'l1' });
+
+    await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'Use',
+    });
+
+    expect(setDescription).toHaveBeenCalledWith('l1', 'Use');
+  });
+
+  it('a drafting failure invites the seller to type one instead', async () => {
+    const { deps, onboarding, setDescription } = setup(null);
+    await onboarding.set('+27820001111', { listingId: 'l1' });
+
+    const result = await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'DRAFT',
+    });
+
+    expect(result.handled).toBe(true);
+    expect(result.reply).toMatch(/couldn’t draft/i);
+    expect(setDescription).not.toHaveBeenCalled();
+    // Still in the flow: they can retry, type, or skip.
+    expect(await onboarding.get('+27820001111')).not.toBeNull();
+  });
+
+  it('a seller’s own text still wins over any pending draft', async () => {
+    const { deps, onboarding, setDescription } = setup();
+    await onboarding.set('+27820001111', {
+      listingId: 'l1',
+      draft: 'The AI version.',
+    });
+
+    await handleDescriptionMessage(deps, {
+      phone: '+27820001111',
+      text: 'Sunny home, walking distance to the promenade.',
+    });
+
+    expect(setDescription).toHaveBeenCalledWith(
+      'l1',
+      'Sunny home, walking distance to the promenade.',
+    );
+  });
+
+  it('without a drafter configured, DRAFT is treated as the seller’s text', async () => {
+    const onboarding = createInMemoryOnboardingStore();
+    const setDescription = vi.fn(async () => {});
+    await onboarding.set('+27820001111', { listingId: 'l1' });
+
+    await handleDescriptionMessage(
+      { onboarding, setDescription },
+      { phone: '+27820001111', text: 'DRAFT' },
+    );
+
+    expect(setDescription).toHaveBeenCalledWith('l1', 'DRAFT');
   });
 });

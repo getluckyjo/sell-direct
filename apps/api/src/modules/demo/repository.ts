@@ -1,6 +1,6 @@
 import type { PrismaClient } from '@prisma/client';
 import type { Notifier } from '../notifications';
-import type { MessageRepository } from '../messaging';
+import type { MessageRepository, ReplyOptions } from '../messaging';
 import type { DemoMessage, DemoRepository } from './types';
 
 export function createPrismaDemoRepository(
@@ -29,6 +29,9 @@ export function createPrismaDemoRepository(
           mediaId:
             (r.raw as { demoMediaId?: string } | null)?.demoMediaId ??
             undefined,
+          options:
+            (r.raw as { interactive?: ReplyOptions } | null)?.interactive ??
+            undefined,
           createdAt: r.createdAt,
         }));
     },
@@ -44,12 +47,15 @@ let demoOutboundSeq = 0;
  */
 export function createDemoNotifier(repository: MessageRepository): Notifier {
   return {
-    async send(to, text) {
+    async send(to, text, opts) {
       demoOutboundSeq += 1;
       await repository.recordOutbound({
         to,
         text,
         from: 'demo',
+        // Carried so the simulator can render the same chips the real
+        // WhatsApp client would show as buttons.
+        interactive: opts?.interactive,
         waMessageId: `wamid.demo.out.${Date.now()}.${demoOutboundSeq}`,
       });
     },
