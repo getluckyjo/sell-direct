@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { createDispatcher } from './dispatcher';
 import { createInMemoryPrequalStore } from './prequal-store';
 import { createInMemoryConversationStore } from '../listings';
-import { ObaReferralStub } from '../finance';
+import { BetterBondReferralStub } from '../finance';
 import type { ProfileRepository } from '../profiles';
 import type { DealRepository } from '../deals';
 import type { InboundMessage } from '../messaging';
@@ -68,7 +68,7 @@ function makeDeps(overrides: { notifierThrows?: boolean } = {}) {
 
   const dispatcher = createDispatcher({
     intake: { store: intakeStore, createListing },
-    enquiry: { profiles, deals, finance: new ObaReferralStub() },
+    enquiry: { profiles, deals, finance: new BetterBondReferralStub() },
     prequalStore,
     notifier,
     log,
@@ -109,7 +109,7 @@ describe('conversation dispatcher', () => {
     });
   });
 
-  it('handles a buyer enquiry deep link, then a YES consent → ooba hand-off', async () => {
+  it('handles a buyer enquiry deep link, then a YES consent → BetterBond hand-off', async () => {
     const d = makeDeps();
 
     await d.dispatcher.handle(inbound('ENQUIRE listing-1'));
@@ -126,7 +126,7 @@ describe('conversation dispatcher', () => {
 
     await d.dispatcher.handle(inbound('YES'));
     expect(d.profiles.recordBuyerFinancialConsent).toHaveBeenCalledOnce();
-    expect(d.sent[1].text).toMatch(/ooba/i);
+    expect(d.sent[1].text).toMatch(/BetterBond/i);
     // conversation cleared after the hand-off
     expect(await d.prequalStore.get(PHONE)).toBeNull();
   });
@@ -192,7 +192,7 @@ describe('conversation dispatcher', () => {
     await d.dispatcher.handle(inbound('ENQUIRE listing-1'));
     await d.dispatcher.handle(tap('YES', 'Yes, pre-qualify me'));
     expect(d.profiles.recordBuyerFinancialConsent).toHaveBeenCalledOnce();
-    expect(d.sent[1].text).toMatch(/ooba/i);
+    expect(d.sent[1].text).toMatch(/BetterBond/i);
   });
 });
 

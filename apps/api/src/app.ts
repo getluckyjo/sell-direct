@@ -41,7 +41,7 @@ import {
 } from './modules/deals';
 import { createPrismaDeadlineRepository } from './modules/deadlines';
 import { createPrismaProfileRepository } from './modules/profiles';
-import { ObaReferralStub } from './modules/finance';
+import { BetterBondReferralStub } from './modules/finance';
 import { registerDashboardRoutes } from './modules/dashboard';
 import {
   createAgentHandler,
@@ -274,7 +274,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
-        finance: new ObaReferralStub((msg) => app.log.info(msg)),
+        finance: new BetterBondReferralStub((msg) => app.log.info(msg)),
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier,
@@ -323,7 +323,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
-        finance: new ObaReferralStub((msg) => app.log.info(msg)),
+        finance: new BetterBondReferralStub((msg) => app.log.info(msg)),
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier: demoNotifier,

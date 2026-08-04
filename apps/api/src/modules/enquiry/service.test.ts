@@ -4,7 +4,7 @@ import {
   requestPreQualification,
   type EnquiryDeps,
 } from './service';
-import { ObaReferralStub } from '../finance';
+import { BetterBondReferralStub } from '../finance';
 
 function makeDeps() {
   const profiles = {
@@ -20,9 +20,10 @@ function makeDeps() {
     getNotificationContext: vi.fn().mockResolvedValue(null),
   };
   const finance = {
-    submitReferral: vi
-      .fn()
-      .mockResolvedValue({ referenceId: 'ooba-stub-buyer_1', partner: 'ooba' }),
+    submitReferral: vi.fn().mockResolvedValue({
+      referenceId: 'betterbond-stub-buyer_1',
+      partner: 'BetterBond',
+    }),
   };
   return { profiles, deals, finance } satisfies EnquiryDeps & {
     profiles: typeof profiles;
@@ -81,7 +82,7 @@ describe('bond pre-qualification (consent-gated)', () => {
     );
     expect(deps.finance.submitReferral).toHaveBeenCalledOnce();
     expect(res.accepted).toBe(true);
-    expect(res.referenceId).toBe('ooba-stub-buyer_1');
+    expect(res.referenceId).toBe('betterbond-stub-buyer_1');
   });
 });
 
@@ -102,7 +103,7 @@ describe('buyer consent buttons', () => {
           getWithTimeline: async () => null,
           getNotificationContext: async () => null,
         },
-        finance: new ObaReferralStub(),
+        finance: new BetterBondReferralStub(),
       },
       { phone: '+27820001111', listingId: 'listing-1' },
     );
