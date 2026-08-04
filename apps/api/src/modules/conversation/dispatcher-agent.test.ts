@@ -5,7 +5,7 @@ import {
   createInMemoryConversationStore,
   createInMemoryOnboardingStore,
 } from '../listings';
-import { ObaReferralStub } from '../finance';
+import { BetterBondReferralStub } from '../finance';
 import type { AgentHandler, AgentMode } from '../agent';
 import type { InboundMessage } from '../messaging';
 import type { SendOptions } from '../notifications';
@@ -70,7 +70,7 @@ function makeDeps(agent?: AgentHandler, extra: Partial<DispatcherDeps> = {}) {
         recordBuyerFinancialConsent: vi.fn(async () => {}),
       },
       deals,
-      finance: new ObaReferralStub(),
+      finance: new BetterBondReferralStub(),
     },
     prequalStore,
     notifier,

@@ -18,7 +18,7 @@ export interface SyndicationAdapter {
   publish(listing: SyndicationListing): Promise<SyndicationResult>;
 }
 
-/** Logs what WOULD be syndicated — mirrors the ObaReferralStub pattern. */
+/** Logs what WOULD be syndicated — mirrors the BetterBondReferralStub pattern. */
 export class Property24SyndicationStub implements SyndicationAdapter {
   constructor(private readonly log: (message: string) => void = () => {}) {}
 

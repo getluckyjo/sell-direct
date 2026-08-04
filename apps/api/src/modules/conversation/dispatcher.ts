@@ -102,7 +102,7 @@ export interface Dispatcher {
  * Routes an inbound WhatsApp message to the right flow and sends the reply.
  *
  * Order (each returns before the next):
- *   1. Buyer awaiting pre-qual consent → YES/NO drives the ooba hand-off.
+ *   1. Buyer awaiting pre-qual consent → YES/NO drives the BetterBond hand-off.
  *   2. `ENQUIRE <listingId>` deep link → create buyer + enquiry deal, invite consent.
  *   3. Otherwise → listing intake (handles an active seller draft, the
  *      list/sell trigger, and the help fallback internally).
