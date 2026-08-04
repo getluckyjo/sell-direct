@@ -23,3 +23,19 @@ export type DealStage = (typeof DEAL_STAGES)[number];
 
 /** Commercial path a deal is on (affects the conditional 0% commission). */
 export type DealTier = 'free' | 'flex';
+
+/**
+ * Property types offered in the WhatsApp intake picker. Kept deliberately
+ * short — it exists so the seller taps instead of typing, and so we can
+ * compose a headline ("3-bed apartment in Sea Point") without asking for one.
+ */
+export const PROPERTY_TYPES = [
+  'house',
+  'apartment',
+  'townhouse',
+  'estate',
+  'land',
+  'other',
+] as const;
+
+export type PropertyType = (typeof PROPERTY_TYPES)[number];

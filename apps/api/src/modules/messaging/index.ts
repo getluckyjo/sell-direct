@@ -1,3 +1,4 @@
+export * from './interactive';
 export * from './types';
 export * from './whatsapp-cloud';
 export * from './twilio';

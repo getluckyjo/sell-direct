@@ -52,7 +52,7 @@ export default async function ListingsPage() {
                       <div>
                         <div className="font-medium">{l.title}</div>
                         <div className="text-slate-500">
-                          {[l.address, l.suburb, l.city]
+                          {[l.propertyType, l.address, l.suburb, l.city]
                             .filter(Boolean)
                             .join(', ')}
                           {l.bedrooms != null ? ` · ${l.bedrooms} bed` : ''}

@@ -8,6 +8,7 @@ import {
 import { ObaReferralStub } from '../finance';
 import type { AgentHandler, AgentMode } from '../agent';
 import type { InboundMessage } from '../messaging';
+import type { SendOptions } from '../notifications';
 
 const PHONE = '+27820001111';
 
@@ -22,18 +23,29 @@ function inbound(text: string): InboundMessage {
   };
 }
 
+/** The ids offered with a reply, in display order. */
+function optionIds(opts?: SendOptions): string[] {
+  const o = opts?.interactive;
+  if (!o) return [];
+  return o.kind === 'buttons'
+    ? o.options.map((x) => x.id)
+    : o.sections.flatMap((s) => s.rows.map((r) => r.id));
+}
+
 function fakeAgent(
   mode: AgentMode,
-  handle: AgentHandler['handle'] = vi.fn(async () => ({ sent: mode === 'live' })),
+  handle: AgentHandler['handle'] = vi.fn(async () => ({
+    sent: mode === 'live',
+  })),
 ): AgentHandler {
   return { mode, handle };
 }
 
 function makeDeps(agent?: AgentHandler, extra: Partial<DispatcherDeps> = {}) {
-  const sent: { to: string; text: string }[] = [];
+  const sent: { to: string; text: string; opts?: SendOptions }[] = [];
   const notifier = {
-    send: vi.fn(async (to: string, text: string) => {
-      sent.push({ to, text });
+    send: vi.fn(async (to: string, text: string, opts?: SendOptions) => {
+      sent.push({ to, text, opts });
     }),
   };
   const intakeStore = createInMemoryConversationStore();
@@ -100,17 +112,21 @@ describe('dispatcher × AI concierge', () => {
 
     expect(agent.handle).toHaveBeenCalled();
     expect(d.sent).toHaveLength(1);
-    expect(d.sent[0].text).toContain('Reply "list"');
+    expect(d.sent[0].text).toMatch(/0% commission/i);
+    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
   });
 
   it('shadow agent: the "list" trigger stays with the scripted flow', async () => {
-    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => ({ sent: false })),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('list'));
 
     expect(agent.handle).not.toHaveBeenCalled();
-    expect(d.sent[0].text).toContain('headline'); // scripted intake started
+    expect(d.sent[0].text).toContain('kind of home'); // scripted intake started
   });
 
   it('live agent: the "list" trigger routes to agent-led intake', async () => {
@@ -152,7 +168,7 @@ describe('dispatcher × AI concierge', () => {
     await d.dispatcher.handle(inbound('list'));
 
     expect(d.sent).toHaveLength(1);
-    expect(d.sent[0].text).toContain('headline'); // scripted intake took over
+    expect(d.sent[0].text).toContain('kind of home'); // scripted intake took over
   });
 
   it('an agent failure on freeform falls back to the canned help reply', async () => {
@@ -167,7 +183,8 @@ describe('dispatcher × AI concierge', () => {
     await d.dispatcher.handle(inbound('random question'));
 
     expect(d.sent).toHaveLength(1);
-    expect(d.sent[0].text).toContain('Reply "list"');
+    expect(d.sent[0].text).toMatch(/0% commission/i);
+    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
   });
 
   it('live agent composes the enquiry invite; deterministic work still runs', async () => {
@@ -191,7 +208,10 @@ describe('dispatcher × AI concierge', () => {
   });
 
   it('shadow agent: the canned enquiry invite is sent unchanged', async () => {
-    const agent = fakeAgent('shadow', vi.fn(async () => ({ sent: false })));
+    const agent = fakeAgent(
+      'shadow',
+      vi.fn(async () => ({ sent: false })),
+    );
     const d = makeDeps(agent);
 
     await d.dispatcher.handle(inbound('ENQUIRE listing-42'));
@@ -207,7 +227,8 @@ describe('dispatcher × AI concierge', () => {
     await d.dispatcher.handle(inbound('random question'));
 
     expect(d.sent).toHaveLength(1);
-    expect(d.sent[0].text).toContain('Reply "list"');
+    expect(d.sent[0].text).toMatch(/0% commission/i);
+    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
   });
 
   it('an inbound photo is handled by code even in live mode — never the agent', async () => {

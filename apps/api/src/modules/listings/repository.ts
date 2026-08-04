@@ -1,5 +1,7 @@
 import type { PrismaClient } from '@prisma/client';
 import type { ListingDraft } from './intake';
+import type { ListingFacts } from './drafter';
+import type { PropertyType } from '@sell-direct/shared';
 
 /** The listing an inbound seller photo should attach to. */
 export interface PhotoTarget {
@@ -51,6 +53,12 @@ export interface ListingRepository {
     estimate: { lowZar: number; highZar: number; source: string },
   ): Promise<void>;
   getForSyndication(listingId: string): Promise<SyndicationListing | null>;
+  /**
+   * The facts the description drafter may use — deliberately only what the
+   * seller told us, so a draft can never introduce a feature they didn't
+   * state. No address, no seller PII.
+   */
+  getFacts(listingId: string): Promise<ListingFacts | null>;
 }
 
 export function createPrismaListingRepository(
@@ -90,6 +98,7 @@ export function createPrismaListingRepository(
         data: {
           sellerId: seller.id,
           title: draft.title,
+          propertyType: draft.propertyType,
           suburb: draft.suburb,
           city: 'Cape Town',
           // Private (POPIA): never exposed on buyer-facing surfaces.
@@ -114,6 +123,7 @@ export function createPrismaListingRepository(
         select: {
           id: true,
           title: true,
+          propertyType: true,
           suburb: true,
           city: true,
           // Internal dashboard only — never a buyer-facing endpoint.
@@ -175,6 +185,31 @@ export function createPrismaListingRepository(
           estimatedAt: new Date(),
         },
       });
+    },
+
+    async getFacts(listingId) {
+      const listing = await prisma.listing.findUnique({
+        where: { id: listingId },
+        select: {
+          title: true,
+          propertyType: true,
+          suburb: true,
+          bedrooms: true,
+          bathrooms: true,
+          priceZar: true,
+          _count: { select: { photos: true } },
+        },
+      });
+      if (!listing) return null;
+      return {
+        title: listing.title,
+        propertyType: (listing.propertyType as PropertyType | null) ?? null,
+        suburb: listing.suburb,
+        bedrooms: listing.bedrooms,
+        bathrooms: listing.bathrooms,
+        priceZar: Number(listing.priceZar),
+        photoCount: listing._count.photos,
+      };
     },
 
     async getForSyndication(listingId) {

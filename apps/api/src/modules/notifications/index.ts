@@ -1,5 +1,6 @@
 import type { MessagingAdapter } from '../messaging';
 import type { MessageRepository } from '../messaging';
+import type { ReplyOptions } from '../messaging';
 
 export * from './templates';
 
@@ -7,6 +8,12 @@ export interface SendOptions {
   /** Send an approved template (Twilio Content SID / Meta template name). */
   templateId?: string;
   variables?: Record<string, string>;
+  /**
+   * Tappable reply options. Rendered natively where the provider supports it,
+   * degraded to a keyword list where it does not — either way the flow works,
+   * because every option id is a keyword the flows already parse.
+   */
+  interactive?: ReplyOptions;
 }
 
 /**
@@ -37,11 +44,13 @@ export function createNotifier(
         text,
         templateId: opts?.templateId,
         variables: opts?.variables,
+        interactive: opts?.interactive,
       });
       await repository.recordOutbound({
         to,
         from: fromNumber,
         text,
+        interactive: opts?.interactive,
         waMessageId: result.waMessageId,
       });
     },

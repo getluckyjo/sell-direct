@@ -66,8 +66,21 @@ export const DEMO_PAGE_HTML = `<!doctype html>
   .typing { display: none; font-size: 12px; color: var(--muted); padding: 0 12px 6px; }
   .typing.on { display: block; }
 
+  /* Per-message reply options — the simulator's stand-in for WhatsApp's
+     native reply buttons / list menu. */
+  .opts { display: flex; flex-wrap: wrap; gap: 6px; max-width: 92%; margin: 2px 0 8px; }
+  .opts button { border: 1px solid var(--wa-accent); background: #fff; color: #075E54;
+                 border-radius: 14px; padding: 7px 12px; font-size: 13px;
+                 cursor: pointer; text-align: left; font-weight: 600; }
+  .opts button small { display: block; font-weight: 400; font-size: 11px;
+                       color: var(--muted); margin-top: 2px; }
+  .opts button:hover { background: #F0FFF6; }
+  .opts .kind { width: 100%; font-size: 10.5px; color: var(--muted);
+                text-transform: uppercase; letter-spacing: .06em; }
+
   .chips { display: flex; gap: 6px; overflow-x: auto; padding: 6px 10px;
            background: #f6f5f3; }
+  .chips.hidden { display: none; }
   .chips button { flex: none; border: 1px solid #d7d3cc; background: #fff;
                   border-radius: 999px; padding: 6px 12px; font-size: 12.5px;
                   cursor: pointer; color: var(--ink); }
@@ -193,8 +206,21 @@ export const DEMO_PAGE_HTML = `<!doctype html>
     return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
   }
 
+  // Flatten a ReplyOptions payload (buttons or list sections) to its rows.
+  function flatten(o) {
+    if (!o) return [];
+    if (o.kind === 'buttons') return o.options || [];
+    return (o.sections || []).reduce(function (acc, s) {
+      return acc.concat(s.rows || []);
+    }, []);
+  }
+
   function render(state) {
     var html = '';
+    // Only the newest reply's options stay tappable — an old menu is stale.
+    var last = state.messages.length
+      ? state.messages[state.messages.length - 1] : null;
+    var liveOptions = last && last.direction === 'outbound' ? last.options : null;
     state.messages.forEach(function (m) {
       var me = m.direction === 'inbound'; // you play the customer
       if (m.type === 'image') {
@@ -213,6 +239,24 @@ export const DEMO_PAGE_HTML = `<!doctype html>
         + esc(m.body)
         + '<div class="meta">' + time(m.createdAt) + '</div></div></div>';
     });
+    if (liveOptions) {
+      var rows = flatten(liveOptions);
+      html += '<div class="row them"><div class="opts">'
+        + '<span class="kind">'
+        + (liveOptions.kind === 'list'
+            ? esc(liveOptions.button || 'Choose') + ' ▾' : 'Tap to reply')
+        + '</span>'
+        + rows.map(function (r) {
+            return '<button data-id="' + esc(r.id) + '" data-title="' + esc(r.title) + '">'
+              + esc(r.title)
+              + (r.description ? '<small>' + esc(r.description) + '</small>' : '')
+              + '</button>';
+          }).join('')
+        + '</div></div>';
+    }
+    // Two competing affordances read badly — hide the FAQ chips while a
+    // reply menu is on screen.
+    chips.classList.toggle('hidden', !!liveOptions);
     state.drafts.forEach(function (d) {
       html += '<div class="row them"><div class="draft">'
         + '<span class="tag">🤖 AI draft — awaiting your approval (shadow mode)</span>'
@@ -225,6 +269,13 @@ export const DEMO_PAGE_HTML = `<!doctype html>
         + '</div></div>';
     });
     chat.innerHTML = html;
+    chat.querySelectorAll('.opts button').forEach(function (b) {
+      b.onclick = function () {
+        // Post the label as the body and the id as replyId — exactly the
+        // shape a tapped WhatsApp button produces.
+        send(b.dataset.title, b.dataset.id);
+      };
+    });
     chat.querySelectorAll('.draft button').forEach(function (b) {
       b.onclick = function () {
         api('/api/demo/drafts/' + b.dataset.id + '/' + b.dataset.act, {
@@ -241,11 +292,12 @@ export const DEMO_PAGE_HTML = `<!doctype html>
       .then(render).catch(function () {});
   }
 
-  function send() {
-    var text = box.value.trim();
+  // label + replyId are set when a reply option was tapped.
+  function send(label, replyId) {
+    var text = typeof label === 'string' ? label : box.value.trim();
     if (!text) return;
     if (!token()) { askToken(); return; }
-    box.value = '';
+    if (typeof label !== 'string') box.value = '';
     // optimistic echo
     var row = document.createElement('div');
     row.className = 'row me';
@@ -255,14 +307,14 @@ export const DEMO_PAGE_HTML = `<!doctype html>
     typing.classList.add('on');
     api('/api/demo/messages', {
       method: 'POST',
-      body: JSON.stringify({ phone: phone, text: text })
+      body: JSON.stringify({ phone: phone, text: text, replyId: replyId })
     }).then(function (state) {
       typing.classList.remove('on');
       render(state);
     }).catch(function () { typing.classList.remove('on'); });
   }
 
-  document.getElementById('send').onclick = send;
+  document.getElementById('send').onclick = function () { send(); };
   box.addEventListener('keydown', function (e) { if (e.key === 'Enter') send(); });
 
   // Photo upload: read each file as a data URL, optimistic bubble, POST.
