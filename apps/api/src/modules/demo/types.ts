@@ -8,16 +8,20 @@
  * can never collide with a real WhatsApp user once the BSP goes live.
  */
 
+import type { ReplyOptions } from '../messaging';
+
 /** Only numbers in this shape may enter the demo pipeline. */
 export const DEMO_PHONE_RE = /^\+2700\d{7}$/;
 
 export interface DemoMessage {
   direction: 'inbound' | 'outbound';
   body: string;
-  /** 'text' | 'image' — image bubbles render via mediaId. */
+  /** 'text' | 'image' | 'interactive' — image bubbles render via mediaId. */
   type: string;
   /** Serve the image via GET /api/demo/media/:id (in-memory stash). */
   mediaId?: string;
+  /** Tappable options offered with this reply, rendered as chips. */
+  options?: ReplyOptions;
   createdAt: Date;
 }
 

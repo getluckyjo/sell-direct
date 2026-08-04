@@ -77,9 +77,16 @@ export function registerDemoRoutes(
     '/api/demo/messages',
     { preHandler: guard },
     async (request, reply) => {
-      const body = (request.body ?? {}) as { phone?: string; text?: string };
+      const body = (request.body ?? {}) as {
+        phone?: string;
+        text?: string;
+        replyId?: string;
+      };
       const phone = body.phone ?? '';
       const text = (body.text ?? '').trim();
+      // A tapped chip posts the option's id alongside its label, exactly like
+      // a real interactive reply — so the demo exercises the production path.
+      const replyId = (body.replyId ?? '').trim() || undefined;
       if (!DEMO_PHONE_RE.test(phone)) {
         return reply.code(400).send({ error: 'invalid_demo_phone' });
       }
@@ -92,8 +99,9 @@ export function registerDemoRoutes(
         waMessageId: `wamid.demo.in.${Date.now()}.${demoInboundSeq}`,
         from: phone,
         to: 'demo',
-        type: 'text',
+        type: replyId ? 'interactive' : 'text',
         text,
+        replyId,
         raw: { demo: true },
       };
       await deps.messages.recordInbound(message);

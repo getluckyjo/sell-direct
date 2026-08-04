@@ -12,7 +12,12 @@ describe('listing intake orchestrator', () => {
       { store, createListing },
       { phone: '27820001111', text: 'hello' },
     );
-    expect(res.reply).toMatch(/reply "list"/i);
+    expect(res.reply).toMatch(/0% commission/i);
+    // The welcome menu: one tap to start, and still claimable by the agent.
+    expect(res.options).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: 'list' }, { id: 'HOW' }, { id: 'CONSULT' }],
+    });
     expect(res.fallback).toBe(true);
     expect(createListing).not.toHaveBeenCalled();
   });
@@ -25,7 +30,7 @@ describe('listing intake orchestrator', () => {
 
     const script = [
       'list',
-      'Sunny 3-bed in Newlands',
+      'house', // the property-type picker replaces the headline question
       'Newlands',
       '15 Kildare Road', // the optional address, asked before the price
       '3 250 000',
@@ -40,14 +45,16 @@ describe('listing intake orchestrator', () => {
 
     // The confirm step gates publishing now.
     expect(createListing).not.toHaveBeenCalled();
-    expect(last?.reply).toMatch(/reply yes/i);
+    expect(last?.reply).toMatch(/publish now/i);
 
     last = await handleListingIntakeMessage(deps, { phone, text: 'YES' });
 
     expect(createListing).toHaveBeenCalledOnce();
     expect(createListing.mock.calls[0][0]).toBe(phone);
     expect(createListing.mock.calls[0][1]).toMatchObject({
-      title: 'Sunny 3-bed in Newlands',
+      // Composed, not typed.
+      title: '3-bed house in Newlands',
+      propertyType: 'house',
       suburb: 'Newlands',
       address: '15 Kildare Road',
       priceZar: 3250000,
@@ -68,7 +75,12 @@ describe('listing intake orchestrator', () => {
     const extractor: IntakeFieldExtractor = {
       async extract(message): Promise<ExtractedListingFields> {
         if (/4 bedroom home in mowbray/i.test(message)) {
-          return { suburb: 'Mowbray', bedrooms: 4 };
+          return {
+            propertyType: 'house' as const,
+            suburb: 'Mowbray',
+            bedrooms: 4,
+            title: '4 bedroom home in mowbray',
+          };
         }
         return {};
       },
@@ -107,18 +119,24 @@ describe('listing intake orchestrator', () => {
     const store = createInMemoryConversationStore();
     const createListing = vi.fn();
     const extractor: IntakeFieldExtractor = {
-      extract: vi.fn(async () => ({ suburb: 'Mowbray', bedrooms: 4 })),
+      extract: vi.fn(async () => ({
+        propertyType: 'house' as const,
+        suburb: 'Mowbray',
+        bedrooms: 4,
+      })),
     };
     const res = await handleListingIntakeMessage(
       { store, createListing, extractor },
       { phone: '27820003333', text: 'sell my 4 bed in Mowbray' },
     );
 
-    // Title+suburb+beds all known → the next ask is the optional address.
+    // Type+suburb+beds all known → the next ask is the optional address.
     expect(res.reply).toMatch(/street address/i);
     const state = await store.get('27820003333');
     expect(state?.data).toMatchObject({
+      // The trigger's remainder is still taken as a seller-written headline.
       title: '4 bed in Mowbray',
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
     });
@@ -142,16 +160,17 @@ describe('listing intake orchestrator', () => {
     const phone = '27820005555';
 
     const replies: string[] = [];
-    for (const text of [
-      'list',
-      'Cosy 2-bed in Gardens',
-      'Gardens',
-      '12 Milner Road',
-    ]) {
-      replies.push(
-        (await handleListingIntakeMessage(deps, { phone, text })).reply,
-      );
+    let last;
+    for (const text of ['list', 'apartment', 'Gardens', '12 Milner Road']) {
+      last = await handleListingIntakeMessage(deps, { phone, text });
+      replies.push(last.reply);
     }
+    // The estimate arrives after the state machine ran, so the price buttons
+    // are built in the orchestrator — they must not be lost.
+    expect(last?.options).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: '2400000' }, { id: '2550000' }, { id: '2700000' }],
+    });
     // The price prompt carries the attributed guidance line.
     expect(replies.at(-1)).toMatch(/asking price/i);
     expect(replies.at(-1)).toMatch(/R2[\s,.  ]?400[\s,.  ]?000/);
@@ -175,6 +194,35 @@ describe('listing intake orchestrator', () => {
     });
   });
 
+  it('CANCEL at the summary discards the draft', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn();
+    const deps = { store, createListing };
+    const phone = '27820007777';
+    for (const text of [
+      'list',
+      'house',
+      'Gardens',
+      'SKIP',
+      '2100000',
+      '2',
+      '1',
+      '90',
+    ]) {
+      await handleListingIntakeMessage(deps, { phone, text });
+    }
+    expect(await store.get(phone)).not.toBeNull();
+
+    const res = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'CANCEL',
+    });
+
+    expect(res.reply).toMatch(/discarded/i);
+    expect(createListing).not.toHaveBeenCalled();
+    expect(await store.get(phone)).toBeNull();
+  });
+
   it('no adapter (or a null estimate) means the plain price prompt — never a fabricated range', async () => {
     const store = createInMemoryConversationStore();
     const deps = {
@@ -184,7 +232,7 @@ describe('listing intake orchestrator', () => {
     };
     const phone = '27820006666';
     let reply = '';
-    for (const text of ['list', 'Home in Gardens', 'Gardens', 'skip']) {
+    for (const text of ['list', 'house', 'Gardens', 'skip']) {
       reply = (await handleListingIntakeMessage(deps, { phone, text })).reply;
     }
     expect(reply).toMatch(/asking price/i);
@@ -211,8 +259,45 @@ describe('listing intake orchestrator', () => {
     extract.mockRejectedValueOnce(new Error('llm down'));
     const res = await handleListingIntakeMessage(deps, {
       phone,
-      text: 'Cosy cottage',
+      text: 'apartment',
     });
-    expect(res.reply).toMatch(/suburb/i); // flow continues scripted
+    expect(res.reply).toMatch(/region|suburb/i); // flow continues scripted
+  });
+
+  it('keeps the description buttons on the publish confirmation', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = {
+      store,
+      createListing: vi.fn().mockResolvedValue({ id: 'listing_x' }),
+      // A valuation adapter is configured — its guidance must not clobber
+      // options attached outside the step table.
+      valuation: {
+        estimate: vi.fn().mockResolvedValue({
+          lowZar: 2_000_000,
+          highZar: 2_400_000,
+          source: 'test',
+        }),
+      },
+    };
+    const phone = '27820008888';
+    let last;
+    for (const text of [
+      'list',
+      'house',
+      'Gardens',
+      'SKIP',
+      '2100000',
+      '2',
+      '1',
+      '90',
+      'YES',
+    ]) {
+      last = await handleListingIntakeMessage(deps, { phone, text });
+    }
+    expect(last?.listingId).toBe('listing_x');
+    expect(last?.options).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: 'DRAFT' }, { id: 'TYPE' }, { id: 'SKIP' }],
+    });
   });
 });

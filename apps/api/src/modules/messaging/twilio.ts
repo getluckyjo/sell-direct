@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { renderKeywordFallback } from './interactive';
 import type {
   FetchedMedia,
   InboundMedia,
@@ -120,12 +121,21 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
     const numMedia = Number(p.NumMedia ?? '0');
     const type =
       numMedia > 0 ? (p.MediaContentType0?.split('/')[0] ?? 'media') : 'text';
-    // Quick-reply / list buttons arrive as ButtonText; fall back to Body.
-    const text =
-      p.Body !== undefined && p.Body !== ''
-        ? String(p.Body)
-        : p.ButtonText !== undefined
-          ? String(p.ButtonText)
+    // Quick-reply / list buttons arrive as ButtonText / ListTitle (the label);
+    // fall back to Body. The machine-readable payload is carried separately as
+    // `replyId`, which is what routing keys off.
+    const label =
+      p.ButtonText !== undefined
+        ? String(p.ButtonText)
+        : p.ListTitle !== undefined
+          ? String(p.ListTitle)
+          : undefined;
+    const text = p.Body !== undefined && p.Body !== '' ? String(p.Body) : label;
+    const replyId =
+      p.ButtonPayload !== undefined
+        ? String(p.ButtonPayload)
+        : p.ListId !== undefined
+          ? String(p.ListId)
           : undefined;
 
     // WhatsApp delivers one media item per inbound message, so index 0 is
@@ -149,6 +159,7 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
         type,
         text: media ? undefined : text,
         media,
+        replyId: media ? undefined : replyId,
         // Twilio's inbound webhook carries no message timestamp; use receipt time.
         timestamp: undefined,
         raw: p,
@@ -156,6 +167,13 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
     ];
   }
 
+  /**
+   * Twilio's REST Messages API has no session-level interactive message —
+   * buttons exist only inside pre-approved Content templates, which are
+   * business-initiated. So `interactive` degrades to a keyword list appended
+   * to the body. That is lossless in practice: every option id is a keyword
+   * the flows already parse, so typing "90" does what tapping "90 days" does.
+   */
   async send(message: OutboundMessage): Promise<SendResult> {
     const url = `${this.config.apiBase}/2010-04-01/Accounts/${this.config.accountSid}/Messages.json`;
     const form = new URLSearchParams();
@@ -172,7 +190,12 @@ export class TwilioWhatsAppAdapter implements MessagingAdapter {
         form.set('ContentVariables', JSON.stringify(message.variables));
       }
     } else {
-      form.set('Body', message.text);
+      form.set(
+        'Body',
+        message.interactive
+          ? renderKeywordFallback(message.text, message.interactive)
+          : message.text,
+      );
     }
 
     const auth = Buffer.from(

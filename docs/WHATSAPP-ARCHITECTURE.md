@@ -45,18 +45,18 @@ flowchart LR
 
 | Component | Path | Status | Notes |
 |---|---|---|---|
-| Messaging adapter interface | `apps/api/src/modules/messaging/types.ts` | ✅ | `MessagingAdapter`: `verifyChallenge`, `verifySignature`, `parseInbound`, `send`. `OutboundMessage` is **text-only**. |
-| WhatsApp Cloud adapter | `.../messaging/whatsapp-cloud.ts` | ✅ | Meta Graph API. HMAC-**SHA256** over raw body vs `x-hub-signature-256`. Sends **text only** to `graph.facebook.com/{ver}/{phoneId}/messages`. |
+| Messaging adapter interface | `apps/api/src/modules/messaging/types.ts` | ✅ | `MessagingAdapter`: `verifyChallenge`, `verifySignature`, `parseInbound`, `send`, `fetchMedia`. `OutboundMessage` carries optional **`interactive`** reply options (buttons / list menu, `messaging/interactive.ts`); `text` stays the body and the degraded fallback. `InboundMessage.replyId` carries a tapped option's id. |
+| WhatsApp Cloud adapter | `.../messaging/whatsapp-cloud.ts` | ✅ | Meta Graph API. HMAC-**SHA256** over raw body vs `x-hub-signature-256`. Sends `type: 'text'` or `type: 'interactive'` (button / list) to `graph.facebook.com/{ver}/{phoneId}/messages`; `parseInbound` reads text, images, and tapped buttons/list rows. |
 | Webhook routes | `.../messaging/routes.ts` | ✅ | `GET /api/webhooks/whatsapp` (challenge) + `POST` (verify → parse → persist → `200`). |
 | Message persistence | `.../messaging/repository.ts` | ✅ | Writes `messages`; idempotent on `waMessageId` (swallows Prisma `P2002`). `recordOutbound` exists but is **never called**. |
 | Server wiring + raw body | `apps/api/src/app.ts` | ✅ | Registers webhook, leads, dashboard; raw-body JSON parser feeds signature check; `GET /health`. |
-| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_title→suburb→price→bedrooms→bathrooms→exclusivity→completed`; trigger `^(list\|sell)`. **Wired via the dispatcher** (seller flow). |
+| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_property_type→suburb(→suburb_pick)→address→price→bedrooms→bathrooms→exclusivity→confirm(→edit_choice)→completed`; trigger `^(list\|sell)`. Answers are **one-tap** (`optionsFor`); the headline is composed, not asked. **Wired via the dispatcher** (seller flow). |
 | Deal state machine | `.../deals/state-machine.ts`, `service.ts`, `routes.ts` | ✅ | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. **`POST /api/deals/:id/transition`** (internal-token guarded) advances a deal and fires the stage's WhatsApp template to buyer/seller (`stage-notifications.ts`). |
 | Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
 | Finance / BetterBond referral | `.../finance/ooba-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **ObaReferralStub logs only** (real BetterBond API pending). |
 | Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
 | Notifications | `.../notifications/index.ts` | ✅ | `Notifier` sends via the adapter and persists the outbound message. |
-| Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates). Select with `WHATSAPP_BSP=twilio`. |
+| Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates); reply options degrade to a keyword list, since Twilio's REST API has no session-level interactive message. Select with `WHATSAPP_BSP=twilio`. |
 
 **Deal stages (SA transfer journey):**
 `enquiry → offer_otp → bond_application → bond_granted → documents_fica → clearance → lodgement → registered` (plus `cancelled` from any non-terminal stage). Transitions are strictly forward one step; every change writes a timestamped, actor-stamped `deal_events` row. **Actor types today:** `seller | buyer | agent | system` — no external-party actor.

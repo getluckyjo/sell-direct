@@ -300,6 +300,7 @@ describe('agent intake write tools', () => {
 
     const result = await update.run({
       title: '4 bed home in Mowbray',
+      property_type: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
       price_zar: 5000, // below minimum → rejected with explanation
@@ -313,6 +314,7 @@ describe('agent intake write tools', () => {
     const state = await access.store.get('+27820000002');
     expect(state?.data).toMatchObject({
       title: '4 bed home in Mowbray',
+      propertyType: 'house',
       suburb: 'Mowbray',
       bedrooms: 4,
     });
@@ -341,7 +343,11 @@ describe('agent intake write tools', () => {
     const publish = tools.find((t) => t.name === 'publish_listing')!;
 
     expect(await publish.run({ confirm: false })).toContain('Refused');
-    await update.run({ title: 'Home', suburb: 'Gardens' });
+    await update.run({
+      title: 'Home',
+      property_type: 'house',
+      suburb: 'Gardens',
+    });
     expect(await publish.run({ confirm: true })).toContain('incomplete');
     expect(access.createListing).not.toHaveBeenCalled();
 
@@ -357,6 +363,7 @@ describe('agent intake write tools', () => {
     expect(result).toContain('PENDING PHOTOS');
     expect(access.createListing).toHaveBeenCalledWith('+27820000003', {
       title: 'Home',
+      propertyType: 'house',
       suburb: 'Gardens',
       priceZar: 2_000_000,
       bedrooms: 2,

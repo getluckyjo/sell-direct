@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import { buildMetaInteractive } from './interactive';
 import type {
   ChallengeQuery,
   FetchedMedia,
@@ -42,6 +43,13 @@ export function loadWhatsAppConfigFromEnv(
 }
 
 // Minimal shape of the parts of Meta's webhook payload we consume.
+interface MetaInteractive {
+  type?: string;
+  button_reply?: { id?: string; title?: string };
+  list_reply?: { id?: string; title?: string; description?: string };
+  /** WhatsApp Flows completion payload — captured as text, never as an id. */
+  nfm_reply?: { name?: string; body?: string; response_json?: string };
+}
 interface MetaMessage {
   id?: string;
   from?: string;
@@ -49,6 +57,10 @@ interface MetaMessage {
   timestamp?: string;
   text?: { body?: string };
   image?: { id?: string; mime_type?: string; caption?: string };
+  /** A tapped reply button or list row (session interactive message). */
+  interactive?: MetaInteractive;
+  /** A tapped quick-reply button on an approved template. */
+  button?: { payload?: string; text?: string };
 }
 interface MetaMediaLookup {
   url?: string;
@@ -126,14 +138,34 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
                   caption: m.image.caption,
                 }
               : undefined;
+          // A tap carries a machine-readable id plus a human label. The id
+          // drives routing; the label becomes `text` so the message log,
+          // agent history and demo thread read like a normal conversation.
+          const interactive = m.interactive;
+          const replyId =
+            interactive?.button_reply?.id ??
+            interactive?.list_reply?.id ??
+            m.button?.payload;
+          const label =
+            interactive?.button_reply?.title ??
+            interactive?.list_reply?.title ??
+            m.button?.text ??
+            interactive?.nfm_reply?.body;
+
           out.push({
             waMessageId: String(m.id),
             from: String(m.from),
             to: String(to),
             type: String(m.type ?? 'unknown'),
             // A caption stays on `media` — it must never trigger keyword routing.
-            text: m.text?.body !== undefined ? String(m.text.body) : undefined,
+            text:
+              m.text?.body !== undefined
+                ? String(m.text.body)
+                : label !== undefined
+                  ? String(label)
+                  : undefined,
             media,
+            replyId: replyId !== undefined ? String(replyId) : undefined,
             timestamp: m.timestamp
               ? new Date(Number(m.timestamp) * 1000)
               : undefined,
@@ -145,8 +177,19 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
     return out;
   }
 
+  /**
+   * Send a session message. When `interactive` is set the message goes as a
+   * native reply-button / list message; `message.text` becomes its body.
+   * Interactive is skipped when `templateId` is set (an approved template
+   * carries its own buttons, and Meta rejects `type: 'interactive'` outside
+   * the 24-hour session window anyway).
+   */
   async send(message: OutboundMessage): Promise<SendResult> {
     const url = `${this.config.graphBase}/${this.config.apiVersion}/${this.config.phoneNumberId}/messages`;
+    const interactive =
+      message.interactive && !message.templateId
+        ? buildMetaInteractive(message.text, message.interactive)
+        : null;
     const res = await fetch(url, {
       method: 'POST',
       headers: {
@@ -157,8 +200,9 @@ export class WhatsAppCloudAdapter implements MessagingAdapter {
         messaging_product: 'whatsapp',
         recipient_type: 'individual',
         to: message.to,
-        type: 'text',
-        text: { body: message.text },
+        ...(interactive
+          ? { type: 'interactive', interactive }
+          : { type: 'text', text: { body: message.text } }),
       }),
     });
 

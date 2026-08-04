@@ -15,8 +15,10 @@ export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    // Plain Node utility scripts (run with `node scripts/...`), not TS builds.
-    files: ['scripts/**/*.mjs', 'apps/*/scripts/**/*.mjs'],
+    // Plain Node utility scripts (run with `node scripts/...`) and Next
+    // config files — not TS builds. The glob is workspace-wide: these also
+    // live under apps/*/, which the old root-only pattern missed.
+    files: ['**/scripts/**/*.mjs', '**/next.config.mjs'],
     languageOptions: {
       globals: {
         console: 'readonly',

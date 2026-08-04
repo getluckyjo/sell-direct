@@ -1,4 +1,9 @@
-import type { FetchedMedia, InboundMedia, InboundMessage } from '../messaging';
+import type {
+  FetchedMedia,
+  InboundMedia,
+  InboundMessage,
+  ReplyOptions,
+} from '../messaging';
 import type { StorageProvider } from '../storage';
 import type { SyndicationAdapter } from '../syndication';
 import type { ListingRepository } from './repository';
@@ -31,10 +36,49 @@ export interface PhotoIntakeDeps {
 
 export interface PhotoIntakeResult {
   reply: string;
+  /** Tappable follow-ups (the post-activation services menu). */
+  options?: ReplyOptions;
   listingId?: string;
   activated?: boolean;
   photoCount?: number;
 }
+
+/**
+ * Post-activation services menu. Ids are the dispatcher's existing upsell
+ * keywords, so a tap and a typed "CERTS" are the same message.
+ */
+const SERVICES_MENU: ReplyOptions = {
+  kind: 'list',
+  button: 'See services',
+  sections: [
+    {
+      title: 'Get set up',
+      rows: [
+        {
+          id: 'CERTS',
+          title: 'Book my certificates',
+          description: 'Electrical, water, gas, beetle — booked early',
+        },
+        {
+          id: 'COVER',
+          title: 'Insurance quotes',
+          description: 'Homeowners cover your buyer’s bank will require',
+        },
+        {
+          id: 'MOVE',
+          title: 'Movers & fibre',
+          description: 'Trusted quotes for moving day',
+        },
+        {
+          id: 'CONSULT',
+          title: 'Free pricing chat',
+          description: 'Recent-sales data, no obligation',
+        },
+        { id: 'NOTHING', title: 'Nothing right now' },
+      ],
+    },
+  ],
+};
 
 const EXT_BY_MIME: Record<string, string> = {
   'image/jpeg': 'jpg',
@@ -133,8 +177,12 @@ export async function handleInboundPhoto(
           `💡 Plan ahead — every Cape Town sale needs compliance certificates before transfer: ` +
           `electrical (from ~R800), water installation (Cape Town-only, from ~R500, must be fresh ` +
           `for each transfer), gas (from ~R650), electric fence (from ~R600) and usually a beetle ` +
-          `certificate (from ~R400). Repairs are extra. Reply CERTS and we’ll book trusted ` +
-          `inspectors early — sellers who sort these now avoid weeks of delay later.`,
+          `certificate (from ~R400). Repairs are extra. Sellers who sort these now avoid ` +
+          `weeks of delay later.\n\nWhat can we line up for you?`,
+        // The keywords the dispatcher already answers, as one tap each. The
+        // pricing detail stays in the body so it survives on providers that
+        // degrade menus to text.
+        options: SERVICES_MENU,
         listingId: target.id,
         activated: true,
         photoCount,

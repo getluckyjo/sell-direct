@@ -9,6 +9,11 @@ import type { PrismaClient } from '@prisma/client';
  */
 export interface OnboardingState {
   listingId: string;
+  /**
+   * An AI-written description awaiting the seller's approval. Held here, not
+   * on the listing: nothing is saved until the seller taps "Use this".
+   */
+  draft?: string;
 }
 
 export interface OnboardingStore {
@@ -18,6 +23,13 @@ export interface OnboardingStore {
 }
 
 const FLOW = 'listing_onboarding';
+
+/** Purely informational on the row — routing reads `draft`, not the step. */
+function stepFor(state: OnboardingState): string {
+  return state.draft === undefined
+    ? 'awaiting_description'
+    : 'awaiting_draft_approval';
+}
 
 /**
  * Reuses the conversation_states table (unique per phone, flow-scoped read —
@@ -34,21 +46,21 @@ export function createPrismaOnboardingStore(
         where: { phone },
       });
       if (!row || row.flow !== FLOW) return null;
-      const data = row.data as { listingId?: string };
-      return data.listingId ? { listingId: data.listingId } : null;
+      const data = row.data as { listingId?: string; draft?: string };
+      if (!data.listingId) return null;
+      return {
+        listingId: data.listingId,
+        ...(typeof data.draft === 'string' ? { draft: data.draft } : {}),
+      };
     },
     async set(phone, state) {
       await prisma.conversationState.upsert({
         where: { phone },
-        update: {
-          flow: FLOW,
-          step: 'awaiting_description',
-          data: { ...state },
-        },
+        update: { flow: FLOW, step: stepFor(state), data: { ...state } },
         create: {
           phone,
           flow: FLOW,
-          step: 'awaiting_description',
+          step: stepFor(state),
           data: { ...state },
         },
       });

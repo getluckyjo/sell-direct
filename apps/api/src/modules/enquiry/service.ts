@@ -1,6 +1,7 @@
 import type { ProfileRepository } from '../profiles';
 import type { DealRepository } from '../deals';
 import type { FinanceReferralAdapter } from '../finance';
+import type { ReplyOptions } from '../messaging/interactive';
 
 export interface EnquiryDeps {
   profiles: ProfileRepository;
@@ -18,6 +19,8 @@ export interface EnquiryResult {
   buyerId: string;
   dealId: string;
   reply: string;
+  /** Consent buttons — the dispatcher reads YES/NO exactly as before. */
+  options?: ReplyOptions;
 }
 
 /**
@@ -44,7 +47,16 @@ export async function handleBuyerEnquiry(
       'pre-qualification right here? Buyers applying through our multi-bank ' +
       'partner achieved an average rate of prime −0.67% last quarter, and ' +
       'many first-time buyers qualify for 100% (zero-deposit) loans. ' +
-      'Reply YES and we’ll ask your consent before sharing anything.',
+      'We’ll ask your consent before sharing anything.',
+    options: {
+      kind: 'buttons',
+      options: [
+        // `YES` matches the dispatcher's consent regex; anything else is a
+        // decline, exactly as a typed reply has always been.
+        { id: 'YES', title: 'Yes, pre-qualify me' },
+        { id: 'NO', title: 'Not now' },
+      ],
+    },
   };
 }
 
