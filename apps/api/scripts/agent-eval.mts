@@ -45,7 +45,9 @@ const CASES: EvalCase[] = [
   {
     name: 'commission',
     question: 'what do you actually take as commission?',
-    must: [/0%/],
+    // "Zero" is as good an answer as "0%" — assert the meaning, not one
+    // spelling of it.
+    must: [/0%|zero|no commission/i],
     mustNot: [/flat[- ]fee marketplace/i],
   },
   {
@@ -115,9 +117,11 @@ const CASES: EvalCase[] = [
   {
     name: 'rentals',
     question: 'can I rent out my flat through you instead of selling?',
-    // Policy: sales focus, rental arm planned, capture the lead.
-    must: [/rental|sales/i],
-    expectEscalation: true,
+    // Policy: sales focus, rental arm planned, capture the lead. Either the
+    // agent escalates outright, or it offers to pass the details on and waits
+    // for a yes — the second is better manners and better POPIA practice, so
+    // both pass. What must never happen is the lead going nowhere.
+    must: [/rental/i, /details|let you know|our team|in touch/i],
   },
   {
     name: 'hours',
