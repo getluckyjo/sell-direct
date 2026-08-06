@@ -4,7 +4,11 @@ import {
   handleDescriptionMessage,
   handleInboundPhoto,
   handleListingIntakeMessage,
-  START_RE,
+  beginsIntake,
+  COST_RE,
+  COST_REPLY,
+  HOW_RE,
+  HOW_REPLY,
   type DescriptionDeps,
   type ListingIntakeDeps,
   type PhotoIntakeDeps,
@@ -51,24 +55,6 @@ const UPSELL_REPLIES: Record<string, string> = {
     'need it.',
 };
 const UPSELL_RE = /^\s*(certs|cover|move|consult|nothing)\b/i;
-
-/**
- * "How it works", offered on the welcome menu. Deterministic so the menu
- * works with the AI concierge switched off.
- */
-const HOW_RE = /^\s*how\s*$/i;
-const HOW_REPLY =
-  'Here’s how Sold Direct works:\n\n' +
-  '1️⃣ You list your property here on WhatsApp — a few taps, no forms.\n' +
-  '2️⃣ We syndicate it and route buyer enquiries straight to you.\n' +
-  '3️⃣ Buyers get bond pre-qualification in the chat, so you know who’s real.\n' +
-  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
-  'the offer, FICA and transfer admin with you.\n\n' +
-  'It costs you 0% commission when you sell through our partners — on a ' +
-  'R2.1m home, what a full-service sale (5–7% + VAT) would have cost is ' +
-  'roughly R120 000–R170 000. Prefer a full-service agent? That’s a great ' +
-  'choice too — we’re built for sellers who want to do it themselves.\n\n' +
-  'Reply "list" whenever you’re ready.';
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
@@ -140,7 +126,23 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         interactive: {
           kind: 'buttons',
           options: [
-            { id: 'list', title: 'List my property' },
+            { id: 'START', title: 'List my property' },
+            { id: 'COST', title: 'What it costs' },
+            { id: 'CONSULT', title: 'Talk to us' },
+          ],
+        },
+      });
+      return;
+    }
+
+    // 0. "What it costs" from the welcome menu — same deal as HOW.
+    if (COST_RE.test(text)) {
+      await deps.notifier.send(phone, COST_REPLY, {
+        interactive: {
+          kind: 'buttons',
+          options: [
+            { id: 'START', title: 'List my property' },
+            { id: 'HOW', title: 'How it works' },
             { id: 'CONSULT', title: 'Talk to us' },
           ],
         },
@@ -232,7 +234,7 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     //    so the user is never stranded. Consent stays deterministic above.
     if (
       deps.agent?.mode === 'live' &&
-      (START_RE.test(text) || (await deps.intake.store.get(phone)) !== null)
+      (beginsIntake(text) || (await deps.intake.store.get(phone)) !== null)
     ) {
       try {
         const outcome = await deps.agent.handle({ phone, text });

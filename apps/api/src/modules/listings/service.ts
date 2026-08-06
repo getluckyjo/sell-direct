@@ -11,6 +11,13 @@ import {
   type ListingDraft,
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
+import {
+  BEGIN_RE,
+  START_RE,
+  TRIGGER_PREFIX_RE,
+  WELCOME_REPLY,
+  welcomeMenu,
+} from './welcome';
 import type { ReplyOptions } from '../messaging/interactive';
 import type { ConversationStore } from './store';
 import type { OnboardingStore } from './onboarding';
@@ -67,10 +74,6 @@ export interface IntakeReply {
   fallback?: boolean;
 }
 
-export const START_RE = /^(list|sell)\b/i;
-/** Trigger words + filler to strip when the trigger message carries a headline. */
-const TRIGGER_PREFIX_RE = /^(list|sell)\b[\s:,-]*(my\s+|our\s+|the\s+)?/i;
-
 /**
  * Orchestrate one inbound message through the listing-intake flow: look up the
  * conversation, extract any fields the message already contains, advance the
@@ -86,15 +89,26 @@ export async function handleListingIntakeMessage(
   const existing = await deps.store.get(message.phone);
 
   if (!existing) {
+    // "List my property" from the welcome menu — skip the bio, ask question 1.
+    if (BEGIN_RE.test(text)) {
+      const started = await withPriceGuidance(deps, startIntake({}));
+      await deps.store.set(message.phone, started.state);
+      return { reply: started.reply, options: started.options };
+    }
     if (START_RE.test(text)) {
       // "sell my 4 bed in Mowbray" — the trigger message itself may carry
-      // fields, and its remainder may be a perfectly good headline.
+      // fields, and its remainder may be a perfectly good headline. A seller
+      // who already told us something should never be sent back to a menu.
       const remainder = text.replace(TRIGGER_PREFIX_RE, '').trim();
+      if (remainder.length < 3) {
+        // Bare "list" — the advertised opener. Orient first, then the menu.
+        return { reply: WELCOME_REPLY, options: welcomeMenu() };
+      }
       const extracted = await safeExtract(extractor, text, [
         ...FIELD_ORDER,
         'address',
       ]);
-      if (remainder.length >= 3 && extracted.title === undefined) {
+      if (extracted.title === undefined) {
         extracted.title = remainder;
       }
       const started = await withPriceGuidance(deps, startIntake(extracted));
@@ -102,19 +116,10 @@ export async function handleListingIntakeMessage(
       return { reply: started.reply, options: started.options };
     }
     return {
-      reply:
-        'Hi! I can put your property on the market with 0% commission — you ' +
-        'stay in control, our team handles the admin. What would you like to do?',
+      reply: WELCOME_REPLY,
+      options: welcomeMenu(),
       // `fallback` still lets the AI concierge claim the turn; when it does,
       // its own reply goes out instead of this menu.
-      options: {
-        kind: 'buttons',
-        options: [
-          { id: 'list', title: 'List my property' },
-          { id: 'HOW', title: 'How it works' },
-          { id: 'CONSULT', title: 'Talk to us' },
-        ],
-      },
       fallback: true,
     };
   }

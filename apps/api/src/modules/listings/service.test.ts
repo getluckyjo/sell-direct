@@ -13,13 +13,60 @@ describe('listing intake orchestrator', () => {
       { phone: '27820001111', text: 'hello' },
     );
     expect(res.reply).toMatch(/0% commission/i);
-    // The welcome menu: one tap to start, and still claimable by the agent.
+    // The welcome dropdown: one tap to start, and still claimable by the agent.
     expect(res.options).toMatchObject({
-      kind: 'buttons',
-      options: [{ id: 'list' }, { id: 'HOW' }, { id: 'CONSULT' }],
+      kind: 'list',
+      sections: [
+        {
+          rows: [
+            { id: 'START' },
+            { id: 'HOW' },
+            { id: 'COST' },
+            { id: 'CONSULT' },
+          ],
+        },
+      ],
     });
     expect(res.fallback).toBe(true);
     expect(createListing).not.toHaveBeenCalled();
+  });
+
+  it('a bare "list" opens the how-it-works bio and the dropdown, not question 1', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn();
+    const res = await handleListingIntakeMessage(
+      { store, createListing },
+      { phone: '27820001111', text: 'list' },
+    );
+    // The advertised opener orients before it interrogates.
+    expect(res.reply).toMatch(/how it works/i);
+    expect(res.reply).not.toMatch(/kind of home/i);
+    expect(res.options).toMatchObject({ kind: 'list' });
+    // Nothing is persisted until the seller actually starts.
+    expect(await store.get('27820001111')).toBeNull();
+  });
+
+  it('START from the welcome menu begins the intake', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn();
+    const res = await handleListingIntakeMessage(
+      { store, createListing },
+      { phone: '27820001111', text: 'START' },
+    );
+    expect(res.reply).toMatch(/kind of home/i);
+    expect(await store.get('27820001111')).not.toBeNull();
+  });
+
+  it('a "list" that already carries details skips the menu entirely', async () => {
+    const store = createInMemoryConversationStore();
+    const createListing = vi.fn();
+    const res = await handleListingIntakeMessage(
+      { store, createListing },
+      { phone: '27820001111', text: 'list my 4 bed in Mowbray' },
+    );
+    // A seller who has already told us something is never sent back to a menu.
+    expect(res.reply).not.toMatch(/how it works/i);
+    expect(await store.get('27820001111')).not.toBeNull();
   });
 
   it('drives a scripted conversation that creates a listing after YES', async () => {
@@ -29,7 +76,7 @@ describe('listing intake orchestrator', () => {
     const phone = '27820001111';
 
     const script = [
-      'list',
+      'START',
       'house', // the property-type picker replaces the headline question
       'Newlands',
       '15 Kildare Road', // the optional address, asked before the price
@@ -90,7 +137,7 @@ describe('listing intake orchestrator', () => {
 
     const replies: string[] = [];
     for (const text of [
-      'list',
+      'START',
       '4 bedroom home in mowbray',
       'SKIP',
       '5000000',
@@ -161,7 +208,7 @@ describe('listing intake orchestrator', () => {
 
     const replies: string[] = [];
     let last;
-    for (const text of ['list', 'apartment', 'Gardens', '12 Milner Road']) {
+    for (const text of ['START', 'apartment', 'Gardens', '12 Milner Road']) {
       last = await handleListingIntakeMessage(deps, { phone, text });
       replies.push(last.reply);
     }
@@ -200,7 +247,7 @@ describe('listing intake orchestrator', () => {
     const deps = { store, createListing };
     const phone = '27820007777';
     for (const text of [
-      'list',
+      'START',
       'house',
       'Gardens',
       'SKIP',
@@ -232,7 +279,7 @@ describe('listing intake orchestrator', () => {
     };
     const phone = '27820006666';
     let reply = '';
-    for (const text of ['list', 'house', 'Gardens', 'skip']) {
+    for (const text of ['START', 'house', 'Gardens', 'skip']) {
       reply = (await handleListingIntakeMessage(deps, { phone, text })).reply;
     }
     expect(reply).toMatch(/asking price/i);
@@ -252,8 +299,10 @@ describe('listing intake orchestrator', () => {
     };
     const phone = '27820004444';
 
-    await handleListingIntakeMessage(deps, { phone, text: 'list' });
-    expect(extract).toHaveBeenCalledTimes(1); // trigger message is extracted
+    // "START" is a menu tap carrying no detail — there is nothing to extract,
+    // so the flow must not spend an LLM call on it.
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    expect(extract).not.toHaveBeenCalled();
 
     // Extractor failures never stall the flow.
     extract.mockRejectedValueOnce(new Error('llm down'));
@@ -282,7 +331,7 @@ describe('listing intake orchestrator', () => {
     const phone = '27820008888';
     let last;
     for (const text of [
-      'list',
+      'START',
       'house',
       'Gardens',
       'SKIP',

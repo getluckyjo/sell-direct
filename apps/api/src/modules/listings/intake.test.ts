@@ -7,6 +7,7 @@ import {
   renderSummary,
   startIntake,
   composeTitle,
+  formatPriceZar,
   optionsFor,
   validateField,
   withComposedTitle,
@@ -717,5 +718,20 @@ describe('property type picker and composed headline', () => {
   it('rejects a property type that is not on the list', () => {
     expect(validateField('propertyType', 'castle')).toBeNull();
     expect(validateField('propertyType', 'HOUSE')).toBe('house');
+  });
+});
+
+describe('rand formatting', () => {
+  it('groups with spaces regardless of the host ICU build', () => {
+    // Sellers read these in WhatsApp — the grouping must not depend on
+    // whether the runtime ships full ICU (Node) or its own (a browser).
+    expect(formatPriceZar(2_100_000)).toBe('R2 100 000');
+    expect(formatPriceZar(950_000)).toBe('R950 000');
+    expect(formatPriceZar(999)).toBe('R999');
+    expect(formatPriceZar(12_345_678)).toBe('R12 345 678');
+  });
+
+  it('never emits a comma, which would read as a decimal point in en-ZA', () => {
+    expect(formatPriceZar(5_600_000)).not.toContain(',');
   });
 });

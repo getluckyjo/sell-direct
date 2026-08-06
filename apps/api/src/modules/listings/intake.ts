@@ -1,4 +1,5 @@
 import {
+  formatZar,
   PROPERTY_TYPES,
   type DealTier,
   type PropertyType,
@@ -405,7 +406,7 @@ export function applyExtracted(
 }
 
 export function formatPriceZar(price: number): string {
-  return `R${price.toLocaleString('en-ZA')}`;
+  return formatZar(price);
 }
 
 export function describeField(

@@ -1,4 +1,4 @@
-import { START_RE } from './service';
+import { START_RE } from './welcome';
 import { DESCRIPTION_OPTIONS } from './intake';
 import type { OnboardingStore } from './onboarding';
 import type { DescriptionDrafter, ListingFacts } from './drafter';
