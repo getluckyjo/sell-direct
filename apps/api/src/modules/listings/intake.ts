@@ -195,7 +195,9 @@ const REASKS: Partial<Record<IntakeStep, string>> = {
   awaiting_suburb_pick: 'Please pick a suburb, or type its name.',
   awaiting_address:
     'Please send the street address (e.g. 12 Milner Road), or reply SKIP.',
-  awaiting_price: 'Please send the price as digits in Rand, e.g. 2100000.',
+  awaiting_price:
+    'I didn’t catch that as a price. Tap one of the amounts above, or send ' +
+    'it like 2100000 or R2.1m.',
   awaiting_bedrooms: 'How many bedrooms? Please reply with a number.',
   awaiting_bathrooms: 'How many bathrooms? Please reply with a number.',
   awaiting_exclusivity: 'Please choose 60, 90 or 120 days.',
@@ -253,6 +255,42 @@ export function validateAddress(value: unknown): string | null {
 
 export function parseWholeNumber(input: string): number | null {
   const digits = input.replace(/[\s,rR]/g, '');
+  if (!/^\d+$/.test(digits)) return null;
+  return Number.parseInt(digits, 10);
+}
+
+/** "m" / "mil" / "million" and "k" / "thousand", the way sellers write them. */
+const AMOUNT_SUFFIX_RE = /^(.*?)(m|mil|million|k|thousand)$/;
+
+/**
+ * A rand amount as people actually type it: "2100000", "R3 500 000",
+ * "3,500,000", "3.5m", "R3,5m", "3.5 mil", "950k".
+ *
+ * Kept separate from `parseWholeNumber` because the multiplier suffixes are
+ * meaningful for money only — "3m" bedrooms is not three million bedrooms.
+ *
+ * The decimal separator is the awkward part: South Africans write both "3.5m"
+ * and "3,5m", while "3,500,000" uses the comma as a thousands separator. A
+ * comma is therefore read as a decimal point ONLY in front of a multiplier.
+ */
+export function parseZarAmount(input: string): number | null {
+  const cleaned = input.trim().toLowerCase().replace(/[\sr]/g, '');
+  if (cleaned === '') return null;
+
+  const suffixed = AMOUNT_SUFFIX_RE.exec(cleaned);
+  if (suffixed) {
+    const [, rawNumber, suffix] = suffixed;
+    // One comma or period, used as the decimal point.
+    const normalised = rawNumber.replace(',', '.');
+    if (!/^\d+(\.\d+)?$/.test(normalised)) return null;
+    const magnitude =
+      suffix.startsWith('k') || suffix === 'thousand' ? 1e3 : 1e6;
+    const amount = Number.parseFloat(normalised) * magnitude;
+    return Number.isFinite(amount) ? Math.round(amount) : null;
+  }
+
+  // No suffix: commas and periods are thousands separators ("3,500,000").
+  const digits = cleaned.replace(/[,.]/g, '');
   if (!/^\d+$/.test(digits)) return null;
   return Number.parseInt(digits, 10);
 }
@@ -921,8 +959,14 @@ export function advanceIntake(
     }
     default: {
       // Numeric fields: the deterministic parse of the reply wins; extraction
-      // fills in when the user answered in words ("five million").
-      const parsed = validateField(currentField, parseWholeNumber(text));
+      // fills in when the user answered in words ("five million"). Money gets
+      // the richer parser — "3.5m" is a normal way to state an asking price.
+      const parsed = validateField(
+        currentField,
+        currentField === 'priceZar'
+          ? parseZarAmount(text)
+          : parseWholeNumber(text),
+      );
       const value = parsed ?? validateField(currentField, found[currentField]);
       if (value !== null) {
         (data as Record<string, unknown>)[currentField] = value;
