@@ -4,6 +4,9 @@ import {
   missingFields,
   nextStep,
   renderSummary,
+  validateAddress,
+  validateTitle,
+  withComposedTitle,
   validateField,
   type ConversationStore,
   type IntakeField,
@@ -11,6 +14,7 @@ import {
   type ListingRepository,
   type OnboardingStore,
 } from '../listings';
+import type { ValuationAdapter } from '../valuation';
 import type { AgentToolDefinition } from './types';
 
 /**
@@ -123,6 +127,7 @@ export function buildAgentTools(
   phone: string,
   ctx: AgentTurnContext,
   intake?: AgentIntakeAccess,
+  valuation?: ValuationAdapter,
 ): AgentToolDefinition[] {
   const tools: AgentToolDefinition[] = [
     {
@@ -136,7 +141,8 @@ export function buildAgentTools(
         properties: {
           query: {
             type: 'string',
-            description: 'Suburb or keywords, e.g. "Sea Point" or "2 bed apartment"',
+            description:
+              'Suburb or keywords, e.g. "Sea Point" or "2 bed apartment"',
           },
         },
         required: ['query'],
@@ -233,7 +239,8 @@ export function buildAgentTools(
         properties: {
           reason: {
             type: 'string',
-            description: 'One line for the concierge: what does this person need?',
+            description:
+              'One line for the concierge: what does this person need?',
           },
         },
         required: ['reason'],
@@ -248,6 +255,69 @@ export function buildAgentTools(
     },
   ];
 
+  if (valuation) {
+    tools.push({
+      name: 'get_price_estimate',
+      description:
+        'Get a market price estimate (a range) for a property from our ' +
+        'data partner, based on recent confirmed sales. Pass whatever the ' +
+        'person has told you — at minimum the suburb; a street address makes ' +
+        'it much more accurate. Share the result WITH its attribution, as an ' +
+        'estimate (never a formal valuation), and remind them the asking ' +
+        'price is theirs. If it returns no data, do not invent a range — ' +
+        'offer the free pricing consultation instead (reply CONSULT).',
+      inputSchema: {
+        type: 'object',
+        properties: {
+          suburb: { type: 'string', description: 'Cape Town suburb' },
+          address: {
+            type: 'string',
+            description: 'Street address if the person gave one',
+          },
+          bedrooms: { type: 'integer' },
+          bathrooms: { type: 'integer' },
+        },
+        required: ['suburb'],
+        additionalProperties: false,
+      },
+      async run(input) {
+        const p = (input ?? {}) as {
+          suburb?: string;
+          address?: string;
+          bedrooms?: number;
+          bathrooms?: number;
+        };
+        if (!p.suburb || p.suburb.trim().length < 2) {
+          return 'A suburb is required for an estimate — ask which suburb the home is in.';
+        }
+        try {
+          const estimate = await valuation.estimate({
+            suburb: p.suburb.trim(),
+            address: p.address,
+            bedrooms: p.bedrooms,
+            bathrooms: p.bathrooms,
+          });
+          if (!estimate) {
+            return (
+              'No estimate available for this property. Do NOT invent a range. ' +
+              'Offer the free pricing consultation with the concierge team instead (they can reply CONSULT).'
+            );
+          }
+          const fmt = (n: number) => `R${n.toLocaleString('en-ZA')}`;
+          return (
+            `Estimated range: ${fmt(estimate.lowZar)}–${fmt(estimate.highZar)} ` +
+            `(source: ${estimate.source}` +
+            (estimate.comparablesCount
+              ? `, ${estimate.comparablesCount} recent comparable sales`
+              : '') +
+            `). Present this as an estimate based on recent confirmed sales, with the source named — never as a valuation or a promise.`
+          );
+        } catch {
+          return 'The estimate lookup failed. Do NOT invent a range — offer the free pricing consultation instead.';
+        }
+      },
+    });
+  }
   if (intake) {
     tools.push(...buildIntakeWriteTools(intake, phone));
   }
@@ -255,7 +325,7 @@ export function buildAgentTools(
 }
 
 const WIRE_TO_FIELD: Record<string, IntakeField> = {
-  title: 'title',
+  property_type: 'propertyType',
   suburb: 'suburb',
   price_zar: 'priceZar',
   bedrooms: 'bedrooms',
@@ -268,11 +338,17 @@ function draftStatus(data: Partial<ListingDraft>): string {
   const have = FIELD_ORDER.filter((f) => data[f] !== undefined)
     .map((f) => `${f}: ${String(data[f])}`)
     .join('; ');
+  const addressNote =
+    data.address === undefined
+      ? '\nStreet address: not asked yet — optional; ask once (kept private), accept a decline.'
+      : data.address === null
+        ? '\nStreet address: seller declined — do not ask again.'
+        : `\nStreet address: ${data.address} (private).`;
   if (missing.length > 0) {
-    return `Draft so far — ${have || 'nothing yet'}.\nStill missing: ${missing.join(', ')}. Ask only for these.`;
+    return `Draft so far — ${have || 'nothing yet'}.${addressNote}\nStill missing: ${missing.join(', ')}. Ask only for these.`;
   }
   return (
-    `All fields present:\n${renderSummary(data as ListingDraft)}\n` +
+    `All fields present:${addressNote}\n${renderSummary(data as ListingDraft)}\n` +
     `Show the seller this summary and get an explicit YES before calling publish_listing.`
   );
 }
@@ -295,13 +371,46 @@ function buildIntakeWriteTools(
         'Returns the current draft and which fields are still missing — ask ' +
         'only for those. Never invent or assume a value the seller did not ' +
         'give. Constraints: price min R100,000; bedrooms/bathrooms 0–20; ' +
-        'exclusivity term 60, 90 or 120 days.',
+        'exclusivity term 60, 90 or 120 days. Also ask ONCE for the street ' +
+        'address (kept private — buyers never see it; used for price ' +
+        'guidance and portal syndication); it is optional, so if the seller ' +
+        'declines, pass address_skipped=true and move on.',
       inputSchema: {
         type: 'object',
         properties: {
-          title: { type: 'string', description: 'Short listing headline, verbatim from the seller' },
+          title: {
+            type: 'string',
+            description:
+              'Listing headline, verbatim — only when the seller wrote one. ' +
+              'Leave unset otherwise: the headline is composed from the ' +
+              'property type, bedrooms and suburb.',
+          },
+          property_type: {
+            type: 'string',
+            enum: [
+              'house',
+              'apartment',
+              'townhouse',
+              'estate',
+              'land',
+              'other',
+            ],
+            description: 'Kind of property the seller is listing',
+          },
           suburb: { type: 'string', description: 'Cape Town suburb' },
-          price_zar: { type: 'integer', description: 'Asking price in whole Rand (min 100000)' },
+          address: {
+            type: 'string',
+            description:
+              'Street address, verbatim (kept private; never shown to buyers)',
+          },
+          address_skipped: {
+            type: 'boolean',
+            description: 'True when the seller declined to give the address',
+          },
+          price_zar: {
+            type: 'integer',
+            description: 'Asking price in whole Rand (min 100000)',
+          },
           bedrooms: { type: 'integer' },
           bathrooms: { type: 'integer' },
           exclusivity_term_days: {
@@ -333,7 +442,35 @@ function buildIntakeWriteTools(
           }
           (data as Record<string, unknown>)[field] = valid;
         }
-        await intake.store.set(phone, { step: nextStep(data), data });
+        // The headline is composed, not required — but a seller-written one
+        // always wins (same rule as the scripted flow).
+        const title = validateTitle(provided.title);
+        if (title !== null) data.title = title;
+        // Optional address: a stated address wins; an explicit decline is
+        // recorded as null so the scripted flow never re-asks it either.
+        const address = validateAddress(provided.address);
+        if (address !== null) {
+          data.address = address;
+        } else if (
+          provided.address_skipped === true &&
+          data.address === undefined
+        ) {
+          data.address = null;
+        } else if (
+          provided.address !== undefined &&
+          provided.address !== null
+        ) {
+          rejected.push(
+            `address=${JSON.stringify(provided.address)} rejected (too short — a street address needs a number and street name)`,
+          );
+        }
+        // Mark the conversation agent-led so the dispatcher keeps routing it
+        // here instead of dropping the seller into the scripted questions.
+        await intake.store.set(phone, {
+          step: nextStep(data),
+          data,
+          owner: 'agent',
+        });
         const rejectedNote = rejected.length ? `${rejected.join('\n')}\n` : '';
         return `${rejectedNote}${draftStatus(data)}`;
       },
@@ -370,7 +507,12 @@ function buildIntakeWriteTools(
         if (missing.length > 0) {
           return `Refused: the draft is incomplete. Still missing: ${missing.join(', ')}. Collect these first.`;
         }
-        const listing = await intake.createListing(phone, data as ListingDraft);
+        // The headline is composed unless the seller wrote one, so it is
+        // never part of `missingFields` — fill it in here or publish untitled.
+        const listing = await intake.createListing(
+          phone,
+          withComposedTitle(data) as ListingDraft,
+        );
         await intake.store.clear(phone);
         // Scripted safety net: if this agent dies before the description is
         // handled, the scripted description step picks the thread up.

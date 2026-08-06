@@ -1,15 +1,31 @@
 import {
   advanceIntake,
   missingFields,
+  optionsFor,
   startIntake,
   FIELD_ORDER,
+  type ExtractableField,
   type ExtractedListingFields,
-  type IntakeField,
+  type IntakeResult,
+  type IntakeState,
   type ListingDraft,
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
+import {
+  BEGIN_RE,
+  START_RE,
+  TRIGGER_PREFIX_RE,
+  WELCOME_REPLY,
+  welcomeMenu,
+} from './welcome';
+import type { ReplyOptions } from '../messaging/interactive';
 import type { ConversationStore } from './store';
 import type { OnboardingStore } from './onboarding';
+import {
+  renderEstimateLine,
+  type PriceEstimate,
+  type ValuationAdapter,
+} from '../valuation';
 
 export interface ListingIntakeDeps {
   store: ConversationStore;
@@ -28,6 +44,15 @@ export interface ListingIntakeDeps {
    * treated as the (optional, SKIP-able) listing description.
    */
   onboarding?: OnboardingStore;
+  /**
+   * Optional price guidance (LOOM). Looked up ONCE per conversation when the
+   * price question is reached; null (the production default while
+   * unconfigured) means guidance is silently skipped — a fabricated range
+   * must never reach a real seller.
+   */
+  valuation?: ValuationAdapter;
+  /** Persists the shown estimate onto the listing at publish time. */
+  saveEstimate?: (listingId: string, estimate: PriceEstimate) => Promise<void>;
 }
 
 export interface IntakeMessage {
@@ -37,6 +62,8 @@ export interface IntakeMessage {
 
 export interface IntakeReply {
   reply: string;
+  /** Tappable options to send with the reply (one-tap answers). */
+  options?: ReplyOptions;
   /** Set when this message completed the flow and created a listing. */
   listingId?: string;
   /**
@@ -45,11 +72,13 @@ export interface IntakeReply {
    * the AI concierge instead.
    */
   fallback?: boolean;
+  /**
+   * Set when a mid-flow message answered nothing AND reads like a question.
+   * The seller wants to know something before they carry on — the dispatcher
+   * may let the concierge answer it, then send `reply` to re-ask.
+   */
+  askedQuestion?: boolean;
 }
-
-export const START_RE = /^(list|sell)\b/i;
-/** Trigger words + filler to strip when the trigger message carries a headline. */
-const TRIGGER_PREFIX_RE = /^(list|sell)\b[\s:,-]*(my\s+|our\s+|the\s+)?/i;
 
 /**
  * Orchestrate one inbound message through the listing-intake flow: look up the
@@ -66,53 +95,175 @@ export async function handleListingIntakeMessage(
   const existing = await deps.store.get(message.phone);
 
   if (!existing) {
+    // "List my property" from the welcome menu — skip the bio, ask question 1.
+    if (BEGIN_RE.test(text)) {
+      const started = await withPriceGuidance(deps, startIntake({}));
+      await deps.store.set(message.phone, {
+        ...started.state,
+        owner: 'scripted',
+      });
+      return { reply: started.reply, options: started.options };
+    }
     if (START_RE.test(text)) {
       // "sell my 4 bed in Mowbray" — the trigger message itself may carry
-      // fields, and its remainder may be a perfectly good headline.
+      // fields, and its remainder may be a perfectly good headline. A seller
+      // who already told us something should never be sent back to a menu.
       const remainder = text.replace(TRIGGER_PREFIX_RE, '').trim();
-      const extracted = await safeExtract(extractor, text, FIELD_ORDER);
-      if (remainder.length >= 3 && extracted.title === undefined) {
+      if (remainder.length < 3) {
+        // Bare "list" — the advertised opener. Orient first, then the menu.
+        return { reply: WELCOME_REPLY, options: welcomeMenu() };
+      }
+      const extracted = await safeExtract(extractor, text, [
+        ...FIELD_ORDER,
+        'address',
+      ]);
+      if (extracted.title === undefined) {
         extracted.title = remainder;
       }
-      const started = startIntake(extracted);
-      await deps.store.set(message.phone, started.state);
-      return { reply: started.reply };
+      const started = await withPriceGuidance(deps, startIntake(extracted));
+      await deps.store.set(message.phone, {
+        ...started.state,
+        owner: 'scripted',
+      });
+      return { reply: started.reply, options: started.options };
     }
     return {
-      reply:
-        'Hi! Reply "list" to put your property on the market with 0% commission.',
+      reply: WELCOME_REPLY,
+      options: welcomeMenu(),
+      // `fallback` still lets the AI concierge claim the turn; when it does,
+      // its own reply goes out instead of this menu.
       fallback: true,
     };
   }
 
-  // Editable set: the missing fields — or everything at the confirm step,
-  // where "price 4500000" style corrections may overwrite.
-  const editable: readonly IntakeField[] =
+  // Editable set: the missing fields (plus the optional address while it is
+  // unanswered) — or everything at the confirm step, where "price 4500000"
+  // style corrections may overwrite.
+  const editable: readonly ExtractableField[] =
     existing.step === 'awaiting_confirm'
-      ? FIELD_ORDER
-      : missingFields(existing.data);
+      ? [...FIELD_ORDER, 'address']
+      : [
+          ...missingFields(existing.data),
+          ...(existing.data.address === undefined
+            ? (['address'] as const)
+            : []),
+        ];
   const extracted =
-    editable.length > 0
-      ? await safeExtract(extractor, text, editable)
-      : {};
+    editable.length > 0 ? await safeExtract(extractor, text, editable) : {};
 
-  const result = advanceIntake(existing, text, extracted);
+  const result = await withPriceGuidance(
+    deps,
+    advanceIntake(existing, text, extracted),
+    existing,
+  );
+  if (result.cancelled) {
+    await deps.store.clear(message.phone);
+    return { reply: result.reply };
+  }
   if (result.completed) {
     const listing = await deps.createListing(message.phone, result.completed);
+    // The estimate the seller saw at the price step sticks to the listing.
+    if (existing.estimate && deps.saveEstimate) {
+      await deps.saveEstimate(listing.id, existing.estimate);
+    }
     await deps.store.clear(message.phone);
     await deps.onboarding?.set(message.phone, { listingId: listing.id });
-    return { reply: result.reply, listingId: listing.id };
+    return {
+      reply: result.reply,
+      options: result.options,
+      listingId: listing.id,
+    };
   }
 
-  await deps.store.set(message.phone, result.state);
-  return { reply: result.reply };
+  await deps.store.set(message.phone, {
+    ...result.state,
+    owner: existing.owner ?? 'scripted',
+  });
+  return {
+    reply: result.reply,
+    options: result.options,
+    ...(result.rejected && looksLikeAQuestion(text)
+      ? { askedQuestion: true }
+      : {}),
+  };
+}
+
+/**
+ * A seller mid-flow who types something we cannot parse has usually either
+ * fat-fingered an answer or asked us something. Only the second deserves the
+ * concierge, so the test is deliberately narrow: an explicit question mark, or
+ * an opening interrogative with enough words to be a real sentence.
+ *
+ * "3.5" is a botched price. "how much do you charge?" is a question.
+ */
+const INTERROGATIVE_RE =
+  /^\s*(how|what|why|when|who|where|which|can|could|do|does|did|is|are|will|would|should|must|may)\b/i;
+
+export function looksLikeAQuestion(text: string): boolean {
+  const trimmed = text.trim();
+  if (trimmed.length < 6) return false;
+  if (trimmed.includes('?')) return true;
+  return INTERROGATIVE_RE.test(trimmed) && trimmed.split(/\s+/).length >= 3;
+}
+
+/**
+ * When the conversation lands on the price question, fetch the market
+ * estimate ONCE (cached on the conversation state — `null` records a lookup
+ * with no data) and append the guidance line to the price prompt. Best
+ * effort: any failure records null and the prompt goes out unchanged.
+ */
+async function withPriceGuidance(
+  deps: ListingIntakeDeps,
+  result: IntakeResult,
+  previous?: IntakeState,
+): Promise<IntakeResult> {
+  // The pure machine builds fresh states — carry the cached estimate over.
+  let state: IntakeState = { ...result.state };
+  if (state.estimate === undefined && previous?.estimate !== undefined) {
+    state = { ...state, estimate: previous.estimate };
+  }
+  if (!deps.valuation || result.completed || state.step !== 'awaiting_price') {
+    // Only the price step's options depend on the estimate. Everything else
+    // keeps what the machine produced — recomputing here would wipe options
+    // the machine attached outside the step table (e.g. the description
+    // buttons on the publish confirmation).
+    return {
+      ...result,
+      state,
+      options:
+        state.step === 'awaiting_price' && !result.completed
+          ? optionsFor(state.step, state)
+          : result.options,
+    };
+  }
+  if (state.estimate === undefined) {
+    let estimate: PriceEstimate | null = null;
+    try {
+      estimate = await deps.valuation.estimate({
+        address: state.data.address,
+        suburb: state.data.suburb ?? '',
+        bedrooms: state.data.bedrooms,
+        bathrooms: state.data.bathrooms,
+      });
+    } catch {
+      estimate = null;
+    }
+    state = { ...state, estimate };
+  }
+  const reply =
+    state.estimate && /asking price/i.test(result.reply)
+      ? `${result.reply}\n${renderEstimateLine(state.estimate)}`
+      : result.reply;
+  // The estimate arrives after the machine ran, so the price buttons (built
+  // from the band) can only be computed here.
+  return { ...result, state, reply, options: optionsFor(state.step, state) };
 }
 
 /** Extraction is best-effort — a failure must never stall the conversation. */
 async function safeExtract(
   extractor: IntakeFieldExtractor,
   text: string,
-  fields: readonly IntakeField[],
+  fields: readonly ExtractableField[],
 ): Promise<ExtractedListingFields> {
   try {
     return await extractor.extract(text, fields);

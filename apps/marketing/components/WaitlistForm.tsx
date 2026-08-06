@@ -20,6 +20,8 @@ export function WaitlistForm() {
       phone: String(form.get('phone') ?? '').trim() || undefined,
       role: String(form.get('role') ?? '') || undefined,
       consent: form.get('consent') === 'on',
+      // Honeypot — hidden from humans; bots that fill it are dropped silently.
+      website: String(form.get('website') ?? '').trim() || undefined,
     };
 
     if (!payload.consent) {
@@ -38,7 +40,9 @@ export function WaitlistForm() {
       setStatus('success');
     } catch {
       setStatus('error');
-      setError('Something went wrong. Please try again in a moment.');
+      setError(
+        'Something went wrong. Please try again in a moment — or email us at johannes@solddirect.co.za.',
+      );
     }
   }
 
@@ -55,6 +59,9 @@ export function WaitlistForm() {
     );
   }
 
+  const field =
+    'rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200';
+
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
       <div className="grid gap-4 sm:grid-cols-2">
@@ -64,7 +71,7 @@ export function WaitlistForm() {
             name="name"
             type="text"
             autoComplete="name"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="Thabo M."
           />
         </label>
@@ -77,7 +84,7 @@ export function WaitlistForm() {
             type="email"
             required
             autoComplete="email"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="you@example.co.za"
           />
         </label>
@@ -87,21 +94,25 @@ export function WaitlistForm() {
             name="phone"
             type="tel"
             autoComplete="tel"
-            className="rounded-lg border border-slate-300 px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
+            className={field}
             placeholder="+27 82 000 0000"
           />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="font-medium text-slate-700">I want to…</span>
-          <select
-            name="role"
-            defaultValue="seller"
-            className="rounded-lg border border-slate-300 bg-white px-3 py-2 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200"
-          >
+          <select name="role" defaultValue="seller" className={field}>
             <option value="seller">Sell a property</option>
             <option value="buyer">Buy a property</option>
             <option value="other">Just keeping an eye out</option>
           </select>
+        </label>
+      </div>
+
+      {/* Honeypot: invisible to humans, tempting to bots. */}
+      <div aria-hidden className="absolute left-[-9999px] top-[-9999px]">
+        <label>
+          Website
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -113,7 +124,16 @@ export function WaitlistForm() {
         />
         <span>
           I agree to be contacted about Sold Direct and accept that my details
-          are processed per the POPIA privacy notice.
+          are processed per the{' '}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-emerald-700 underline-offset-2 hover:underline"
+          >
+            POPIA privacy notice
+          </a>
+          .
         </span>
       </label>
 

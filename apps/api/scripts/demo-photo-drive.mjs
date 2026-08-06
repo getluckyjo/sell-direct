@@ -52,6 +52,22 @@ if (/which suburb/i.test(reply)) {
   // extractor off — answer scripted
   await say('Mowbray');
 }
+reply = await lastBubble();
+if (/street address/i.test(reply)) {
+  // the optional pre-price address question
+  reply = await say('12 Milner Road');
+}
+// The demo's mock valuation adapter decorates the price prompt.
+assert.match(
+  reply,
+  /Price guidance/i,
+  `expected price guidance, got: ${reply}`,
+);
+assert.match(
+  reply,
+  /via LOOM Property Insights/,
+  `expected attribution, got: ${reply}`,
+);
 await say('5000000');
 reply = await lastBubble();
 if (/how many bedrooms/i.test(reply)) await say('4');
@@ -75,7 +91,11 @@ assert.match(reply, /description saved/i, `got: ${reply}`);
 await page.setInputFiles('#file', join(here, 'fixtures/demo-house.png'));
 await page.waitForTimeout(3000);
 reply = await lastBubble();
-assert.match(reply, /now LIVE/i, `expected LIVE after first photo, got: ${reply}`);
+assert.match(
+  reply,
+  /now LIVE/i,
+  `expected LIVE after first photo, got: ${reply}`,
+);
 assert.match(reply, /CERTS/);
 const photoBubbles = await page.locator('.bubble.photo img').count();
 assert.ok(photoBubbles >= 1, 'photo bubble rendered');

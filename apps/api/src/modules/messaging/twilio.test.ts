@@ -104,6 +104,30 @@ describe('TwilioWhatsAppAdapter.parseInbound', () => {
     expect(msg.text).toBe('YES');
   });
 
+  it('reads a quick-reply payload into replyId, keeping the label as text', () => {
+    const [msg] = adapter.parseInbound({
+      MessageSid: 'SM10',
+      From: 'whatsapp:+27820001111',
+      Body: '',
+      ButtonText: 'Publish now',
+      ButtonPayload: 'YES',
+    });
+    expect(msg.replyId).toBe('YES');
+    expect(msg.text).toBe('Publish now');
+  });
+
+  it('reads a list reply into replyId', () => {
+    const [msg] = adapter.parseInbound({
+      MessageSid: 'SM11',
+      From: 'whatsapp:+27820001111',
+      Body: '',
+      ListTitle: 'Book my certificates',
+      ListId: 'CERTS',
+    });
+    expect(msg.replyId).toBe('CERTS');
+    expect(msg.text).toBe('Book my certificates');
+  });
+
   it('returns [] for a non-message payload', () => {
     expect(adapter.parseInbound({ AccountSid: 'AC' })).toEqual([]);
     expect(adapter.parseInbound(null)).toEqual([]);
@@ -133,6 +157,33 @@ describe('TwilioWhatsAppAdapter.send', () => {
     expect(body.get('To')).toBe('whatsapp:+27820001111');
     expect(body.get('From')).toBe('whatsapp:+14155238886');
     expect(body.get('Body')).toBe('Yes!');
+  });
+
+  it('degrades reply options to a keyword list in the body', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(
+        new Response(JSON.stringify({ sid: 'SMopt' }), { status: 201 }),
+      );
+    vi.stubGlobal('fetch', fetchMock);
+
+    await adapter.send({
+      to: '+27820001111',
+      text: 'Exclusive listing term?',
+      interactive: {
+        kind: 'buttons',
+        options: [
+          { id: '60', title: '60 days' },
+          { id: '90', title: '90 days' },
+          { id: '120', title: '120 days' },
+        ],
+      },
+    });
+
+    const body = new URLSearchParams(fetchMock.mock.calls[0][1].body as string);
+    const sent = body.get('Body') ?? '';
+    expect(sent).toContain('Exclusive listing term?');
+    for (const id of ['60', '90', '120']) expect(sent).toContain(`• ${id} —`);
   });
 
   it('sends a template via ContentSid + ContentVariables', async () => {
@@ -229,7 +280,10 @@ describe('TwilioWhatsAppAdapter media', () => {
     const [url, init] = fetchMock.mock.calls[0];
     expect(url).toBe('https://api.twilio.example/media/ME123');
     const expectedAuth =
-      'Basic ' + Buffer.from(`${config.accountSid}:${config.authToken}`).toString('base64');
+      'Basic ' +
+      Buffer.from(`${config.accountSid}:${config.authToken}`).toString(
+        'base64',
+      );
     expect(init.headers.Authorization).toBe(expectedAuth);
   });
 });

@@ -35,6 +35,8 @@ describe('agent knowledge base', () => {
       'CERTS',
       'COVER',
       'MOVE',
+      'CONSULT',
+      'never call it a valuation',
     ]) {
       expect(AGENT_SYSTEM_PROMPT).toContain(fact);
     }
@@ -58,7 +60,10 @@ describe('agent knowledge base', () => {
   });
 
   it('keeps the mandatory attribution framings', () => {
-    expect(AGENT_SYSTEM_PROMPT).toContain('resubmitted via our originator');
+    // The 45.5% figure is ooba's published data, not our partner's book —
+    // the prompt must attribute it to the source, never to us.
+    expect(AGENT_SYSTEM_PROMPT).toContain('oobarometer');
+    expect(AGENT_SYSTEM_PROMPT).not.toContain('via our originator');
     expect(AGENT_SYSTEM_PROMPT).toContain(
       "customarily the seller's responsibility under the offer to purchase",
     );

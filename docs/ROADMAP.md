@@ -2,9 +2,12 @@
 
 ## Context
 
-**Sold Direct** is a WhatsApp-first, **0%-commission** property marketplace for Cape Town, South Africa. Consumers pay nothing; revenue comes from the financial ecosystem around each deal (bond origination referrals to a partner — initially **ooba** — plus conveyancing/insurance upside). This repo is the **lean MVP** whose job is to prove one loop end to end:
+**Sold Direct** is a WhatsApp-first, **0%-commission** property marketplace for Cape Town, South Africa. Consumers pay nothing; revenue comes from the financial ecosystem around each deal (bond origination referrals to a partner — initially **BetterBond** — plus conveyancing/insurance upside). This repo is the **lean MVP** whose job is to prove one loop end to end:
 
 > listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to property transfer.
+
+Go-to-market lives in `docs/LAUNCH-PLAN.md` — built around the portal-gap wedge (prime
+private sellers can't list on Property24; our practitioner status is the compliant bridge).
 
 The repo is currently **empty** (fresh git repo, no commits). This document is the agreed end-to-end roadmap. Per the kickoff guidance we build in **small, reviewable chunks — one feature per PR** — and **no code is written until this roadmap is approved**. Each subsequent PR will still get its own short plan + approval before implementation.
 
@@ -46,7 +49,7 @@ sell-direct/
 │   │       │   ├── listings/     # property listings + intake flow
 │   │       │   ├── deals/        # deal state machine (core)
 │   │       │   ├── profiles/     # buyer & seller profiles
-│   │       │   ├── finance/      # originator referral hand-off (ooba)
+│   │       │   ├── finance/      # originator referral hand-off (BetterBond)
 │   │       │   └── notifications/
 │   │       ├── db/               # prisma schema + migrations + client
 │   │       └── server.ts         # Fastify bootstrap, /health
@@ -134,7 +137,7 @@ Each chunk = its own short plan → approval → implementation → PR → revie
 
 ### PR 5 — Buyer enquiry + bond pre-qual referral hand-off
 - Buyer enquires on a listing via WhatsApp → create/attach a `buyers` profile + a `deal` in `enquiry`.
-- Optionally capture bond pre-qualification intent → build a **referral hand-off payload** behind a **finance adapter** (ooba). **Stub the API**, log only the consented payload.
+- Optionally capture bond pre-qualification intent → build a **referral hand-off payload** behind a **finance adapter** (BetterBond). **Stub the API**, log only the consented payload.
 - **Enforce explicit consent (timestamped) before any financial data is captured.** Tests included.
 - **Done when:** enquiry creates buyer + deal; consented referral payload built + logged via the stubbed adapter; consent enforced and tested.
 
@@ -168,7 +171,22 @@ A seller can list a property over WhatsApp; a buyer can enquire and be captured 
 - **`Sell-Direct-Project-Plan.md`** — provided and reviewed; the deal stages and listing fields were validated against it (exclusivity corrected to days: 60/90/120, default 90).
 - **BSP choice** for the first WhatsApp adapter (Cloud API direct vs Clickatell/360dialog/Twilio) — needed before PR 3; the adapter interface makes it swappable regardless.
 - **Managed auth/storage** — decided: **Supabase** (Postgres + Auth + Storage), behind interfaces; concrete Auth adapter at PR 6, Storage when uploads land.
-- **External accounts** (Meta WhatsApp Business, BSP, ooba referral, Vercel, Railway/Render) — needed before PR 3 and PR 7; these are your sign-ups and I'll guide you step by step.
+- **External accounts** (Meta WhatsApp Business, BSP, BetterBond referral, Vercel, Railway/Render) — needed before PR 3 and PR 7; these are your sign-ups and I'll guide you step by step.
+
+## Integration — LOOM price guidance (built, awaiting credentials)
+
+Price guidance (BOTTLENECKS.md row 1) is built behind
+`modules/valuation/`: at the intake price question sellers see "homes like
+yours recently sold for R…–R… (based on confirmed sales via LOOM Property
+Insights)", framed as an estimate (never "valuation"), with a CONSULT
+keyword for a free human pricing chat; the AI concierge gets a
+`get_price_estimate` tool with the same framing. Production shows NOTHING
+until `LOOM_API_URL` + `LOOM_API_KEY` are set (no fabricated ranges); the
+demo uses a deterministic mock. Business to-dos: LOOM subscription
+(portal.loom.co.za, ~R724.50/m basic), confirm API tier + consumer-display
+rights + POPIA terms (no owner data returned), then finalise the endpoint
+mapping in `modules/valuation/loom.ts`. Day-30/60 price-review nudge is a
+follow-up (needs the scheduler).
 
 ## Note on progress
 

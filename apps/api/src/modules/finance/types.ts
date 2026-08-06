@@ -1,6 +1,6 @@
 /**
  * Finance referral seam. Buyer pre-qualification is handed off to a licensed
- * bond originator (initially ooba) behind this interface — no own FSP licence,
+ * bond originator (initially BetterBond) behind this interface — no own FSP licence,
  * and the partner can be swapped without touching business logic.
  */
 export interface ReferralPayload {

@@ -160,8 +160,8 @@ export const SCENES: Scene[] = [
     text: 'Two ways to sell, Maria:\n\n🟢 Free (0%) — list exclusively with us for 90 days and transact through our bond & legal partners.\n🔵 Flex — just 1% of the sale price, total freedom.\n\nWhich suits you?',
     note: {
       tag: 'Revenue',
-      title: 'Conditional 0% — the model',
-      body: 'Free to the consumer when they list exclusively and use our partner ecosystem (bond originator + a panel conveyancer, with a fee discount passed to you). Flex is the low-fee hedge for sellers who want freedom.',
+      title: 'The 0% mechanic',
+      body: "The bank in the buyer's bond pays us, so the seller pays R0 — free when they list exclusively and transact via our partners. No bond in the deal? A simple 1%, agreed upfront. Flex is the no-exclusivity option at the same 1%.",
     },
   },
   {
@@ -176,7 +176,7 @@ export const SCENES: Scene[] = [
     track: 0,
     from: 'bot',
     kind: 'text',
-    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). We act as a registered property practitioner, so this is a proper, regulated mandate.",
+    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). Our employed, registered property practitioners handle the mandate — a proper, regulated process.",
     note: {
       tag: 'Legal',
       title: 'Sole mandate & PPRA',
@@ -286,10 +286,10 @@ export const SCENES: Scene[] = [
     track: 1,
     from: 'bot',
     kind: 'text',
-    text: 'Great — this is handled securely by ooba, our bond origination partner. A few questions on income, expenses and deposit, plus consent for a credit check.',
+    text: 'Great — this is handled securely by BetterBond, our bond origination partner. A few questions on income, expenses and deposit, plus consent for a credit check.',
     note: {
       tag: 'Revenue',
-      title: 'Bond origination referral (ooba)',
+      title: 'Bond origination referral (BetterBond)',
       body: 'A consented hand-off to our originator partner. The bank pays an origination share on a successful bond — at zero cost to the buyer or seller. This is our primary revenue engine.',
     },
   },
@@ -416,11 +416,11 @@ export const SCENES: Scene[] = [
     track: 3,
     from: 'bot',
     kind: 'text',
-    text: "Now I'll submit John's bond application to several banks at once via ooba, to secure the best rate.",
+    text: "Now I'll submit John's bond application to several banks at once via BetterBond, to secure the best rate.",
     note: {
       tag: 'Finance',
       title: 'Multi-bank bond application',
-      body: 'ooba submits to multiple banks simultaneously and negotiates — historically winning better rates than going to one bank.',
+      body: 'BetterBond submits to multiple banks simultaneously and negotiates — historically winning better rates than going to one bank.',
     },
   },
   {
@@ -469,7 +469,7 @@ export const SCENES: Scene[] = [
     note: {
       tag: 'Revenue',
       title: 'Panel conveyancing',
-      body: 'The transferring attorney comes from our panel — a second, consented revenue line (referral / fee share), again at no extra cost to the consumer.',
+      body: 'The transferring attorney comes from our panel — the seller gets a fee discount, and panel firms pay fixed advertising subscriptions (no referral fees, per Legal Practice Council rules).',
     },
   },
   {
@@ -617,7 +617,7 @@ export const SCENES: Scene[] = [
       title: '🟢 0% commission',
       lines: [
         'Maria paid R0 commission',
-        'Kept ≈ R483 000 a full-service sale (7% + VAT) would have cost',
+        'Kept ≈ R414 000 a full-service sale (6% + VAT) would have cost',
         'Sold Direct earned from partners — not the seller',
       ],
       tone: 'win',

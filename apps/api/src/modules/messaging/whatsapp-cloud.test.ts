@@ -34,6 +34,24 @@ function ctx(rawBody: string, signature?: string) {
   };
 }
 
+/** Wrap a single Meta message node in the webhook envelope. */
+function inboundWith(message: Record<string, unknown>) {
+  return {
+    entry: [
+      {
+        changes: [
+          {
+            value: {
+              metadata: { display_phone_number: '27210000000' },
+              messages: [message],
+            },
+          },
+        ],
+      },
+    ],
+  };
+}
+
 const SAMPLE_INBOUND = {
   object: 'whatsapp_business_account',
   entry: [
@@ -127,6 +145,72 @@ describe('WhatsAppCloudAdapter.parseInbound', () => {
     expect(adapter.parseInbound({})).toEqual([]);
     expect(adapter.parseInbound(null)).toEqual([]);
   });
+
+  it('leaves replyId undefined for a plain text message', () => {
+    const [msg] = adapter.parseInbound(SAMPLE_INBOUND);
+    expect(msg.replyId).toBeUndefined();
+  });
+
+  it('parses a tapped reply button into replyId + label', () => {
+    const [msg] = adapter.parseInbound(
+      inboundWith({
+        id: 'wamid.BTN',
+        from: '27820001111',
+        type: 'interactive',
+        interactive: {
+          type: 'button_reply',
+          button_reply: { id: '90', title: '90 days ★' },
+        },
+      }),
+    );
+    expect(msg.replyId).toBe('90');
+    expect(msg.text).toBe('90 days ★'); // the label reads naturally in the log
+  });
+
+  it('parses a tapped list row into replyId + label', () => {
+    const [msg] = adapter.parseInbound(
+      inboundWith({
+        id: 'wamid.LIST',
+        from: '27820001111',
+        type: 'interactive',
+        interactive: {
+          type: 'list_reply',
+          list_reply: { id: 'CERTS', title: 'Book my certificates' },
+        },
+      }),
+    );
+    expect(msg.replyId).toBe('CERTS');
+    expect(msg.text).toBe('Book my certificates');
+  });
+
+  it('parses a template quick-reply button payload', () => {
+    const [msg] = adapter.parseInbound(
+      inboundWith({
+        id: 'wamid.QR',
+        from: '27820001111',
+        type: 'button',
+        button: { payload: 'YES', text: 'Yes, I agree' },
+      }),
+    );
+    expect(msg.replyId).toBe('YES');
+    expect(msg.text).toBe('Yes, I agree');
+  });
+
+  it('reads a Flows completion as text with no replyId', () => {
+    const [msg] = adapter.parseInbound(
+      inboundWith({
+        id: 'wamid.FLOW',
+        from: '27820001111',
+        type: 'interactive',
+        interactive: {
+          type: 'nfm_reply',
+          nfm_reply: { name: 'flow', body: 'Sent' },
+        },
+      }),
+    );
+    expect(msg.replyId).toBeUndefined();
+    expect(msg.text).toBe('Sent');
+  });
 });
 
 describe('WhatsAppCloudAdapter.send', () => {
@@ -152,6 +236,82 @@ describe('WhatsAppCloudAdapter.send', () => {
       to: '27820001111',
       text: { body: 'Yes!' },
     });
+  });
+
+  it('sends reply buttons as a native interactive message', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await adapter.send({
+      to: '27820001111',
+      text: 'Exclusive listing term?',
+      interactive: {
+        kind: 'buttons',
+        options: [
+          { id: '60', title: '60 days' },
+          { id: '90', title: '90 days ★' },
+          { id: '120', title: '120 days' },
+        ],
+      },
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.type).toBe('interactive');
+    expect(body.text).toBeUndefined();
+    expect(body.interactive.type).toBe('button');
+    expect(body.interactive.body).toEqual({ text: 'Exclusive listing term?' });
+    expect(body.interactive.action.buttons).toEqual([
+      { type: 'reply', reply: { id: '60', title: '60 days' } },
+      { type: 'reply', reply: { id: '90', title: '90 days ★' } },
+      { type: 'reply', reply: { id: '120', title: '120 days' } },
+    ]);
+  });
+
+  it('sends a list menu as a native interactive message', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await adapter.send({
+      to: '27820001111',
+      text: 'How many bedrooms?',
+      interactive: {
+        kind: 'list',
+        button: 'Choose',
+        sections: [
+          { title: 'Bedrooms', rows: [{ id: '2', title: '2 bedrooms' }] },
+        ],
+      },
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.type).toBe('interactive');
+    expect(body.interactive.type).toBe('list');
+    expect(body.interactive.action.button).toBe('Choose');
+    expect(body.interactive.action.sections).toEqual([
+      { title: 'Bedrooms', rows: [{ id: '2', title: '2 bedrooms' }] },
+    ]);
+  });
+
+  it('ignores interactive options when a template is requested', async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValue(new Response(JSON.stringify({}), { status: 200 }));
+    vi.stubGlobal('fetch', fetchMock);
+
+    await adapter.send({
+      to: '27820001111',
+      text: 'Your bond was approved.',
+      templateId: 'bond_approved',
+      interactive: { kind: 'buttons', options: [{ id: 'YES', title: 'Yes' }] },
+    });
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body);
+    expect(body.type).toBe('text');
+    expect(body.interactive).toBeUndefined();
   });
 
   it('throws on a non-2xx response', async () => {
@@ -213,7 +373,10 @@ describe('WhatsAppCloudAdapter media', () => {
       .fn()
       .mockResolvedValueOnce(
         new Response(
-          JSON.stringify({ url: 'https://lookaside.example/media/abc', mime_type: 'image/png' }),
+          JSON.stringify({
+            url: 'https://lookaside.example/media/abc',
+            mime_type: 'image/png',
+          }),
           { status: 200 },
         ),
       )

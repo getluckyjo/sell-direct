@@ -4,6 +4,8 @@
  * Clickatell / 360dialog) can be swapped without touching business logic.
  */
 
+import type { ReplyOptions } from './interactive';
+
 /**
  * A normalised inbound media attachment. Providers reference media
  * differently: Meta sends an id that must be resolved via the Graph API;
@@ -42,6 +44,15 @@ export interface InboundMessage {
   text?: string;
   /** Present when the message carries media (images for now). */
   media?: InboundMedia;
+  /**
+   * The machine-readable payload of a tapped button / list row
+   * (Meta: interactive.button_reply.id, interactive.list_reply.id,
+   * button.payload; Twilio: ButtonPayload, ListId). `text` carries the
+   * human-readable label. Routing uses `replyId ?? text` — the ids are
+   * chosen to be keywords the text parsers already accept, so a tap and a
+   * typed reply are the same code path.
+   */
+  replyId?: string;
   timestamp?: Date;
   /** The raw provider message node (must be free of secrets before persisting). */
   raw: unknown;
@@ -61,6 +72,12 @@ export interface OutboundMessage {
   templateId?: string;
   /** Template variable substitutions, keyed by the template's placeholders. */
   variables?: Record<string, string>;
+  /**
+   * Tappable reply options. `text` remains the message body AND the degraded
+   * fallback for providers without native interactivity. Ignored when
+   * `templateId` is set — an approved template carries its own buttons.
+   */
+  interactive?: ReplyOptions;
 }
 
 export interface SendResult {

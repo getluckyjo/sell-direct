@@ -1,70 +1,115 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { Section } from '@/components/Section';
+import { StickyCta } from '@/components/StickyCta';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
+
+const CONTACT_EMAIL = 'johannes@solddirect.co.za';
+
+const RIBBON =
+  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront.';
 
 const STEPS = [
   {
     title: 'List on WhatsApp',
-    body: 'Answer a few guided questions and add photos. Self-guided on WhatsApp — your listing is live in minutes.',
+    body: 'A few guided questions, add your photos — live in minutes.',
   },
   {
     title: 'Buyers enquire & pre-qualify',
-    body: 'Interested buyers get pre-qualified for a bond right inside the chat, so you only deal with serious offers.',
+    body: 'Bond pre-qualification happens in the chat — you only deal with serious offers.',
   },
   {
     title: 'Accept an offer',
-    body: 'Compare offers, sign the Offer to Purchase, and hand off to a panel conveyancer — all guided, all tracked.',
+    body: 'Compare offers, sign the Offer to Purchase, hand off to a panel conveyancer.',
   },
   {
     title: 'Tracked to transfer',
-    body: 'Follow every stage from bond to Deeds Office registration. Always know exactly where your sale is.',
+    body: 'Every stage tracked, from bond to Deeds Office registration.',
   },
 ];
 
 const TIERS = [
   {
     name: 'Free',
-    price: 'R0',
     tagline: '0% commission',
-    highlight: true,
+    price: 'R0',
+    mechanic:
+      'Your buyer bonds through our partner and a panel conveyancer handles transfer. The bank pays us — you pay nothing.',
     points: [
-      'Full listing + WhatsApp tools + deal tracker',
-      'Syndicated to major property portals',
-      'List exclusively for a fixed term and transact via our partners',
+      'Full listing, portal syndication & deal tracker',
+      'WhatsApp concierge from mandate to registration',
+      'Exclusive with us for a fixed term',
     ],
-    foot: 'Free because the banks pay us — not you.',
+    foot: 'Cash buyer? A simple 1%, agreed upfront.',
+    highlight: true,
   },
   {
     name: 'Flex',
-    price: '1% of sale',
     tagline: 'No lock-in',
-    highlight: false,
+    price: '1%',
+    mechanic:
+      'No exclusivity, no partner requirements — one simple fee, only when you sell.',
     points: [
-      'Same platform, no exclusivity',
-      'No partner requirements',
-      'A simple 1% fee — only when you sell',
+      'The same platform, tools and concierge',
+      'Any buyer, any bank, any conveyancer',
+      'Nothing to pay until your home sells',
     ],
-    foot: 'For sellers who want freedom over the lowest price.',
+    foot: 'For sellers who want total freedom.',
+    highlight: false,
+  },
+];
+
+const ADDONS = [
+  {
+    title: 'Photography & floor plans',
+    body: 'Professional shoots and floor plans that make your listing stand out.',
   },
   {
-    name: 'Add-ons',
-    price: 'Per service',
-    tagline: 'À la carte',
-    highlight: false,
-    points: [
-      'Professional photography & floor plans',
-      'Featured placement & social campaigns',
-      'Compliance-certificate coordination',
-    ],
-    foot: 'Optional extras to make your home shine.',
+    title: 'Featured placement & social campaigns',
+    body: 'Featured portal placement and targeted social campaigns.',
+  },
+  {
+    title: 'Compliance-certificate coordination',
+    body: 'We arrange every certificate your transfer needs — electrical, plumbing, gas and more.',
+  },
+];
+
+const FAQ = [
+  {
+    q: 'Is it really 0% commission?',
+    a: 'Yes. Every sale already has a bank earning inside it. When your buyer takes a bond of 80% or more through our partner and a panel conveyancer handles transfer, the bank pays us an origination commission — and you pay R0. The cost of selling moves off your shoulders and onto the banks.',
+  },
+  {
+    q: 'What if my buyer pays cash?',
+    a: 'Take it — a cash offer is often your best offer. With no bond there’s no bank to pay us, so a simple 1% applies, agreed upfront in your mandate. On a R6m home: R60,000, versus ~R414,000 for full service (6% + VAT).',
+  },
+  {
+    q: 'What does the exclusive mandate involve? Can I cancel?',
+    a: 'A fixed-term exclusive mandate with plain-language terms, e-signed on WhatsApp and handled by our registered practitioners. Cancellation follows its notice terms — or choose Flex, with no exclusivity.',
+  },
+  {
+    q: 'Are you against estate agents?',
+    a: 'No. Full-service agents are the right choice for many sellers — we employ registered practitioners ourselves. We simply serve those who choose to sell privately.',
+  },
+  {
+    q: 'Is my information safe?',
+    a: 'Explicit consent before we collect anything, only what each step needs, sensitive fields encrypted, never sold — POPIA by design. See our privacy notice and compliance page.',
   },
 ];
 
 export default function Home() {
   return (
     <div>
+      <div
+        role="note"
+        className="bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
+      >
+        {RIBBON}
+      </div>
+
       {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-slate-100 bg-white/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <span className="text-lg font-bold tracking-tight">
             Sold <span className="text-emerald-600">Direct</span>
@@ -79,12 +124,15 @@ export default function Home() {
             <a href="#journey" className="hover:text-slate-900">
               See it work
             </a>
-            <a href="/compliance" className="hover:text-slate-900">
-              Compliance
+            <a href="#faq" className="hover:text-slate-900">
+              FAQ
             </a>
+            <Link href="/compliance" className="hover:text-slate-900">
+              Compliance
+            </Link>
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-4 py-2 text-white hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-emerald-700"
             >
               Join waitlist
             </a>
@@ -93,7 +141,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section className="relative isolate overflow-hidden">
+      <section id="hero" className="relative isolate overflow-hidden">
         <Image
           src="/cape-town-hero.jpg"
           alt="Homes above the bay in Camps Bay, Cape Town, beneath the Twelve Apostles"
@@ -102,7 +150,6 @@ export default function Home() {
           sizes="100vw"
           className="-z-10 object-cover"
         />
-        {/* Dark gradient so the headline stays legible over the photo */}
         <div
           aria-hidden
           className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/80 via-slate-900/55 to-slate-900/25"
@@ -116,15 +163,14 @@ export default function Home() {
             <span className="text-emerald-300">Keep your money.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-100">
-            The streamlined way to sell privately — guided end-to-end by our
-            technology, concierge team and registered property practitioners,
-            with 0% commission on the qualifying path. We get paid by the banks,
-            not by you.
+            Sell privately, guided end-to-end on WhatsApp — with our concierge
+            and registered practitioners behind you. 0% commission, because the
+            banks pay us — not you.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white transition hover:bg-emerald-700"
+              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-950/20 transition hover:bg-emerald-500"
             >
               Join the waitlist
             </a>
@@ -138,95 +184,223 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Who it's for */}
-      <section className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto grid max-w-6xl gap-8 px-6 py-14 sm:grid-cols-3">
-          <div className="sm:col-span-2">
-            <h2 className="text-2xl font-bold sm:text-3xl">
-              Made for sellers who choose to sell direct.
-            </h2>
-            <p className="mt-3 max-w-xl text-slate-600">
-              Estate agents play a valuable role in South African property, and
-              a full-service sale is the right choice for many. Sold Direct is
-              built for a different seller: the growing group who want to sell
-              privately and do the work themselves. Our technology, WhatsApp
-              concierge and registered property practitioners streamline every
-              step — so selling direct is simple, safe and fully compliant.
+      {/* Who it's for + the saving */}
+      <Section
+        id="for"
+        tone="tinted"
+        eyebrow="Who it's for"
+        heading="Made for sellers who choose to sell direct."
+      >
+        <div className="mt-8 grid items-center gap-10 sm:grid-cols-3">
+          <div className="grid gap-6 sm:col-span-2">
+            <p className="max-w-xl text-slate-600">
+              Full-service agents are the right choice for many. Sold Direct is
+              for sellers who&apos;d rather do it themselves — with our
+              technology and people handling every step.
             </p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-6">
+            <ul className="grid gap-3 text-slate-600">
+              <li className="flex gap-3">
+                <span aria-hidden className="font-semibold text-emerald-600">
+                  ✓
+                </span>
+                You host the viewings — we do the paperwork
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden className="font-semibold text-emerald-600">
+                  ✓
+                </span>
+                A WhatsApp concierge from mandate to registration
+              </li>
+              <li className="flex gap-3">
+                <span aria-hidden className="font-semibold text-emerald-600">
+                  ✓
+                </span>
+                On the major property portals — doors normally closed to private
+                sellers
+              </li>
+            </ul>
             <p className="text-sm text-slate-500">
-              Typical full-service commission (5–7% + VAT)
-            </p>
-            <p className="mt-1 text-3xl font-extrabold text-slate-600">
-              R345k–R483k
-            </p>
-            <p className="mt-4 text-sm text-slate-500">
-              Sold Direct qualifying path
-            </p>
-            <p className="mt-1 text-4xl font-extrabold text-emerald-600">R0</p>
-            <p className="mt-4 border-t border-slate-100 pt-3 text-xs text-slate-500">
-              Commission pays for a full-service agent. If you handle the
-              viewings yourself — with our tools and team behind you — you keep
-              it.
+              Our team includes PPRA-registered property practitioners.{' '}
+              <Link
+                href="/compliance"
+                className="font-medium text-emerald-700 underline-offset-2 hover:underline"
+              >
+                How we keep it compliant →
+              </Link>
             </p>
           </div>
+          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+            <p className="text-sm text-slate-500">
+              Agent commission on a R6m home
+            </p>
+            <p className="mt-1 text-4xl font-extrabold text-slate-600">
+              ~R414k
+            </p>
+            <p className="mt-6 text-sm text-slate-500">With Sold Direct</p>
+            <p className="mt-1 text-5xl font-extrabold text-emerald-600">R0</p>
+          </div>
         </div>
-      </section>
-
-      {/* People + technology */}
-      <section className="mx-auto max-w-6xl px-6 pt-14">
-        <div className="rounded-2xl border border-emerald-100 bg-emerald-50/60 p-6 sm:flex sm:items-center sm:gap-6">
-          <p className="text-sm text-emerald-900">
-            <span className="font-semibold">
-              People + technology, on your side.
-            </span>{' '}
-            Our team includes registered property practitioners (PPRA, with a
-            valid Fidelity Fund Certificate) and a WhatsApp concierge. The
-            technology does the admin — our people help you sell, from mandate
-            to registration.{' '}
-            <a
-              href="/compliance"
-              className="font-semibold underline hover:text-emerald-700"
-            >
-              See how we keep it compliant →
-            </a>
-          </p>
-        </div>
-      </section>
+      </Section>
 
       {/* How it works */}
-      <section id="how" className="mx-auto max-w-6xl px-6 py-16">
-        <h2 className="text-2xl font-bold sm:text-3xl">How it works</h2>
-        <p className="mt-2 text-slate-600">
-          A guided, digital version of the South African property journey —
-          start to registration.
-        </p>
+      <Section
+        id="how"
+        eyebrow="The journey"
+        heading="How it works"
+        intro="A guided, digital version of the South African property journey — start to registration."
+        backdrop={{
+          src: '/bo-kaap-street.jpg',
+          alt: 'Colourful Bo-Kaap houses beneath Lion’s Head, Cape Town',
+        }}
+      >
         <ol className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {STEPS.map((step, i) => (
             <li
               key={step.title}
-              className="rounded-2xl border border-slate-200 p-6"
+              className="rounded-2xl border border-white/50 bg-white/90 p-6 shadow-lg backdrop-blur"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 font-bold text-white">
                 {i + 1}
               </span>
-              <h3 className="mt-4 font-semibold">{step.title}</h3>
+              <h3 className="mt-4 font-semibold text-slate-900">
+                {step.title}
+              </h3>
               <p className="mt-2 text-sm text-slate-600">{step.body}</p>
             </li>
           ))}
         </ol>
-      </section>
+      </Section>
+
+      {/* Interactive journey */}
+      <Section
+        id="journey"
+        tone="tinted"
+        eyebrow="See it work · interactive"
+        heading="The whole journey, inside WhatsApp."
+        intro="One Cape Town home, from listing to registered sale. Press Play, or step through it yourself."
+      >
+        <div className="mt-8 rounded-3xl bg-white p-4 shadow-xl ring-1 ring-slate-200 sm:p-8">
+          <WhatsAppDemo />
+        </div>
+      </Section>
+
+      {/* Pricing */}
+      <Section
+        id="pricing"
+        eyebrow="Pricing"
+        heading="Two ways to sell. One simple rule: the banks pay us, not you."
+        intro="When your buyer bonds through our partner, the bank pays us — you pay 0%. No bond? A simple 1%, agreed upfront."
+      >
+        <div className="mx-auto mt-10 grid max-w-4xl gap-6 sm:grid-cols-2">
+          {TIERS.map((tier) => (
+            <div
+              key={tier.name}
+              className={`flex flex-col rounded-2xl border p-8 ${
+                tier.highlight
+                  ? 'border-emerald-300 bg-white shadow-lg ring-2 ring-emerald-200'
+                  : 'border-slate-200 bg-white shadow-sm'
+              }`}
+            >
+              <div className="flex items-baseline justify-between">
+                <h3 className="text-lg font-bold text-slate-900">
+                  {tier.name}
+                </h3>
+                <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                  {tier.tagline}
+                </span>
+              </div>
+              <p className="mt-4 text-6xl font-extrabold tracking-tight text-slate-900">
+                {tier.price}
+              </p>
+              <p className="mt-4 text-sm text-slate-600">{tier.mechanic}</p>
+              <ul className="mt-6 grid gap-2.5 text-sm text-slate-600">
+                {tier.points.map((point) => (
+                  <li key={point} className="flex gap-2">
+                    <span
+                      aria-hidden
+                      className="font-semibold text-emerald-600"
+                    >
+                      ✓
+                    </span>
+                    {point}
+                  </li>
+                ))}
+              </ul>
+              <div aria-hidden className="min-h-6 flex-1" />
+              <p className="border-t border-slate-100 pt-4 text-sm text-slate-500">
+                {tier.foot}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p className="mx-auto mt-8 max-w-4xl text-center text-sm text-slate-600">
+          On a R6m home, that&apos;s{' '}
+          <span className="font-semibold text-emerald-700">R0</span> or{' '}
+          <span className="font-semibold text-emerald-700">R60k</span> — versus
+          ~R414k for a typical full-service commission (6% + VAT).
+        </p>
+        <p className="mx-auto mt-3 max-w-4xl text-center text-xs text-slate-400">
+          Pricing shown is indicative for our Cape Town launch and subject to
+          our terms.
+        </p>
+      </Section>
+
+      {/* Add-ons */}
+      <Section
+        id="addons"
+        eyebrow="À la carte"
+        heading="Optional add-ons"
+        intro="Extras to make your home shine — priced per service."
+        backdrop={{
+          src: '/living-room-interior.jpg',
+          alt: 'A bright, professionally styled living room, ready for viewings',
+          overlay: 'light',
+        }}
+      >
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {ADDONS.map((a) => (
+            <div
+              key={a.title}
+              className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur"
+            >
+              <h3 className="font-semibold text-emerald-700">{a.title}</h3>
+              <p className="mt-2 text-sm text-slate-600">{a.body}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {/* FAQ */}
+      <Section
+        id="faq"
+        eyebrow="Straight answers"
+        heading="Questions sellers ask"
+      >
+        <div className="mt-8 grid max-w-3xl gap-4">
+          {FAQ.map((item) => (
+            <details
+              key={item.q}
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm open:border-emerald-300"
+            >
+              <summary className="cursor-pointer list-none font-semibold text-slate-900 marker:content-none">
+                <span className="mr-2 text-emerald-600">＋</span>
+                {item.q}
+              </summary>
+              <p className="mt-3 text-sm text-slate-600">{item.a}</p>
+            </details>
+          ))}
+        </div>
+      </Section>
 
       {/* City banner */}
       <section className="relative isolate overflow-hidden">
         <Image
-          src="/cape-town-city.jpg"
-          alt="Aerial view of Cape Town, Table Mountain and the Atlantic seaboard"
+          src="/green-point-aerial.jpg"
+          alt="Aerial view of Green Point and the Atlantic coast beneath a tablecloth cloud pouring over Table Mountain"
           width={2000}
-          height={1333}
+          height={1500}
           sizes="100vw"
-          className="h-[26rem] w-full object-cover saturate-[1.15] contrast-[1.04] sm:h-[34rem]"
+          className="h-[22rem] w-full object-cover object-[50%_30%] saturate-[1.1] sm:h-[30rem]"
         />
         <div
           aria-hidden
@@ -237,116 +411,68 @@ export default function Home() {
             <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
               Built for Cape Town, from the first listing to registration.
             </h2>
-            <p className="mt-3 max-w-xl text-lg text-slate-100 drop-shadow">
-              A local, mobile-first way to buy and sell property — designed
-              around how South African transfers actually work.
+            <p className="mt-3 max-w-xl text-lg text-slate-200 drop-shadow">
+              Designed around how South African transfers actually work.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Interactive journey */}
-      <section id="journey" className="mx-auto max-w-6xl px-6 py-16">
-        <p className="mb-2 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
-          See it work · interactive
-        </p>
-        <h2 className="text-2xl font-bold sm:text-3xl">
-          The whole journey, inside WhatsApp.
-        </h2>
-        <p className="mt-2 max-w-2xl text-slate-600">
-          Follow one Cape Town home from listing to registered sale — consent,
-          guided listing, buyer enquiry, in-chat bond pre-qualification, a
-          binding offer, conveyancing and Deeds Office registration. Press{' '}
-          <span className="font-semibold">Play</span>, or step through it
-          yourself.
-        </p>
-        <div className="mt-10">
-          <WhatsAppDemo />
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="border-y border-slate-100 bg-slate-50">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <h2 className="text-2xl font-bold sm:text-3xl">
-            Conditional 0% — with options
-          </h2>
-          <p className="mt-2 max-w-2xl text-slate-600">
-            It&apos;s free when you list exclusively and transact through our
-            partner ecosystem. Want freedom instead? The Flex tier is a simple
-            1% of the sale price — only payable when you sell.
-          </p>
-          <div className="mt-10 grid gap-6 lg:grid-cols-3">
-            {TIERS.map((tier) => (
-              <div
-                key={tier.name}
-                className={`flex flex-col rounded-2xl border p-6 ${
-                  tier.highlight
-                    ? 'border-emerald-300 bg-white ring-2 ring-emerald-200'
-                    : 'border-slate-200 bg-white'
-                }`}
-              >
-                <div className="flex items-baseline justify-between">
-                  <h3 className="text-lg font-bold">{tier.name}</h3>
-                  <span className="text-xs font-medium uppercase tracking-wide text-emerald-700">
-                    {tier.tagline}
-                  </span>
-                </div>
-                <p className="mt-2 text-3xl font-extrabold">{tier.price}</p>
-                <ul className="mt-4 grid gap-2 text-sm text-slate-600">
-                  {tier.points.map((point) => (
-                    <li key={point} className="flex gap-2">
-                      <span aria-hidden className="text-emerald-600">
-                        ✓
-                      </span>
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 border-t border-slate-100 pt-4 text-sm text-slate-500">
-                  {tier.foot}
-                </p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-6 text-xs text-slate-500">
-            Pricing shown is indicative for our Cape Town launch and subject to
-            our terms. A genuine alternative is always available.
-          </p>
-        </div>
-      </section>
-
       {/* Waitlist */}
-      <section id="waitlist" className="mx-auto max-w-3xl px-6 py-16">
+      <section
+        id="waitlist"
+        className="mx-auto max-w-3xl scroll-mt-20 px-6 py-16"
+      >
         <div className="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
-          <h2 className="text-2xl font-bold sm:text-3xl">
+          <h2 className="text-2xl font-bold text-slate-900 sm:text-3xl">
             Be first in Cape Town
           </h2>
           <p className="mt-2 text-slate-600">
-            We&apos;re opening up to a first group of sellers and buyers. Join
-            the waitlist and we&apos;ll reach out as we go live.
+            Join the first group of Cape Town sellers and buyers — we&apos;ll
+            reach out as we go live.
           </p>
           <div className="mt-8">
             <WaitlistForm />
           </div>
+          <p className="mt-6 text-sm text-slate-500">
+            Prefer email?{' '}
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="font-medium text-emerald-700 hover:text-emerald-600"
+            >
+              {CONTACT_EMAIL}
+            </a>
+          </p>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-100">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="border-t border-slate-200 bg-slate-50">
+        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-slate-500">
           <span>
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           </span>
-          <span>
-            0% commission ·{' '}
-            <a href="/compliance" className="underline hover:text-slate-700">
-              POPIA-compliant · PPRA registered
-            </a>{' '}
-            · We handle your data with care.
-          </span>
+          <nav className="flex flex-wrap gap-5">
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="hover:text-slate-700"
+            >
+              {CONTACT_EMAIL}
+            </a>
+            <Link href="/onepager" className="hover:text-slate-700">
+              One-pager
+            </Link>
+            <Link href="/privacy" className="hover:text-slate-700">
+              Privacy notice
+            </Link>
+            <Link href="/compliance" className="hover:text-slate-700">
+              Compliance
+            </Link>
+          </nav>
         </div>
       </footer>
+
+      <StickyCta />
     </div>
   );
 }

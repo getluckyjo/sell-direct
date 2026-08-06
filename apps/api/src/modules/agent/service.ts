@@ -1,4 +1,5 @@
 import type { Notifier } from '../notifications';
+import type { ValuationAdapter } from '../valuation';
 import { AGENT_SYSTEM_PROMPT } from './knowledge';
 import {
   buildAgentTools,
@@ -23,6 +24,8 @@ export interface AgentServiceDeps {
    * agent must never mutate drafts while users receive the canned replies.
    */
   intake?: AgentIntakeAccess;
+  /** Optional market price estimates (read-only tool; both modes). */
+  valuation?: ValuationAdapter;
   log?: (message: string, error?: unknown) => void;
 }
 
@@ -60,13 +63,17 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
         message.phone,
         ctx,
         deps.mode === 'live' ? deps.intake : undefined,
+        deps.valuation,
       );
 
       // The webhook persists the inbound before dispatching, so the history
       // normally already ends with this message. Guard for the empty case
       // (fresh DB in tests, media-only bodies) so the model always has a turn.
       let messages = await deps.repository.conversation(message.phone);
-      if (messages.length === 0 || messages[messages.length - 1].role !== 'user') {
+      if (
+        messages.length === 0 ||
+        messages[messages.length - 1].role !== 'user'
+      ) {
         messages = [...messages, { role: 'user', content: message.text }];
       }
 
@@ -92,7 +99,9 @@ export function createAgentHandler(deps: AgentServiceDeps): AgentHandler {
           status: 'sent',
         });
         if (escalated) {
-          log(`agent escalated thread ${message.phone}: ${ctx.escalationReason ?? 'no text reply'}`);
+          log(
+            `agent escalated thread ${message.phone}: ${ctx.escalationReason ?? 'no text reply'}`,
+          );
         }
         return { sent: true, draftId: draft.id };
       }

@@ -20,6 +20,8 @@ export function InvestorForm() {
       firm: String(form.get('firm') ?? '').trim() || undefined,
       message: String(form.get('message') ?? '').trim() || undefined,
       consent: form.get('consent') === 'on',
+      // Honeypot — hidden from humans; bots that fill it are dropped silently.
+      website: String(form.get('website') ?? '').trim() || undefined,
     };
 
     if (!payload.consent) {
@@ -38,7 +40,9 @@ export function InvestorForm() {
       setStatus('success');
     } catch {
       setStatus('error');
-      setError('Something went wrong. Please try again in a moment.');
+      setError(
+        'Something went wrong. Please try again in a moment — or email us directly at johannes@solddirect.co.za.',
+      );
     }
   }
 
@@ -87,9 +91,23 @@ export function InvestorForm() {
           <span className="font-medium text-slate-300">Firm / fund</span>
           <input name="firm" type="text" className={field} />
         </label>
-        <label className="grid gap-1 text-sm sm:col-span-2">
-          <span className="font-medium text-slate-300">Anything to add?</span>
-          <textarea name="message" rows={3} className={field} />
+        <details className="text-sm sm:col-span-2">
+          <summary className="cursor-pointer font-medium text-slate-400 hover:text-slate-300">
+            Add a note (optional)
+          </summary>
+          <textarea
+            name="message"
+            rows={3}
+            className={`${field} mt-2 w-full`}
+          />
+        </details>
+      </div>
+
+      {/* Honeypot: invisible to humans, tempting to bots. */}
+      <div aria-hidden className="absolute left-[-9999px] top-[-9999px]">
+        <label>
+          Website
+          <input name="website" type="text" tabIndex={-1} autoComplete="off" />
         </label>
       </div>
 
@@ -101,7 +119,16 @@ export function InvestorForm() {
         />
         <span>
           I agree to be contacted about this opportunity. My details are
-          processed per the POPIA privacy notice.
+          processed per the Protection of Personal Information Act (POPIA){' '}
+          <a
+            href="/privacy"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+          >
+            privacy notice
+          </a>
+          .
         </span>
       </label>
 
@@ -114,6 +141,10 @@ export function InvestorForm() {
       >
         {status === 'submitting' ? 'Sending…' : 'Request data-room access'}
       </button>
+      <p className="text-sm text-slate-400">
+        We reply within one business day. NDA covers detailed financials, cap
+        table and partner terms.
+      </p>
     </form>
   );
 }

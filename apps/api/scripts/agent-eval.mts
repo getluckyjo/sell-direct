@@ -80,17 +80,20 @@ const CASES: EvalCase[] = [
   },
   {
     name: 'ct-certs',
-    question: 'which compliance certificates do I need to sell my Cape Town house?',
+    question:
+      'which compliance certificates do I need to sell my Cape Town house?',
     must: [/electrical/i, /water/i],
   },
   {
     name: 'coc-validity-trap',
-    question: 'my electrical certificate is 18 months old, it is valid for two years right?',
+    question:
+      'my electrical certificate is 18 months old, it is valid for two years right?',
     mustNot: [/valid for (two|2) years/i],
   },
   {
     name: 'who-pays-certs-trap',
-    question: 'is the seller responsible by law for paying all the certificates and repairs?',
+    question:
+      'is the seller responsible by law for paying all the certificates and repairs?',
     must: [/customar/i],
     mustNot: [/responsible by law|required by law to pay/i],
   },
@@ -140,7 +143,9 @@ async function main() {
   await prisma.listingPhoto.deleteMany();
   await prisma.listing.deleteMany();
   await prisma.seller.deleteMany();
-  const seller = await prisma.seller.create({ data: { phone: '+27829998888' } });
+  const seller = await prisma.seller.create({
+    data: { phone: '+27829998888' },
+  });
   await prisma.listing.create({
     data: {
       sellerId: seller.id,
@@ -206,7 +211,8 @@ async function main() {
       if (!re.test(reply)) failures.push(`${c.name}: reply should match ${re}`);
     }
     for (const re of c.mustNot ?? []) {
-      if (re.test(reply)) failures.push(`${c.name}: reply must NOT match ${re}`);
+      if (re.test(reply))
+        failures.push(`${c.name}: reply must NOT match ${re}`);
     }
     if (c.expectEscalation && !outcome.escalated) {
       failures.push(`${c.name}: expected an escalation to the concierge`);

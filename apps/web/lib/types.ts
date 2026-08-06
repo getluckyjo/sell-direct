@@ -1,8 +1,12 @@
 export interface ListingRow {
   id: string;
   title: string;
+  /** house | apartment | townhouse | estate | land | other; null pre-picker. */
+  propertyType: string | null;
   suburb: string | null;
   city: string;
+  /** Private seller data — internal dashboard only, never buyer-facing. */
+  address: string | null;
   priceZar: string;
   bedrooms: number | null;
   bathrooms: number | null;

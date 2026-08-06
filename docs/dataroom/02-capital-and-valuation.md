@@ -65,10 +65,10 @@ to an agreed value:
 
 | Holder | At Seed (inception) | Post-Series A |
 |---|---:|---:|
-| Johannes — Commercial Director | 30.0% | 25.0% |
-| Dean — COO | 30.0% | 25.0% |
+| Johannes — Marketing Director | 30.0% | 25.0% |
+| Dean — Managing Director | 30.0% | 25.0% |
 | Paysoft — Technology Partner | 10.0% | 8.3% |
-| Jan le Roux — Board (non-executive) | 5.0% | 4.2% |
+| Board seat (reserved — non-executive strategic) | 5.0% | 4.2% |
 | Strategic Funder / Seed Investor (R10m) | **25.0%** | 20.8% |
 | Series A Investor (R50m) | — | 16.7% |
 | **Total** | **100%** | **100%** |
@@ -79,7 +79,7 @@ to an agreed value:
 |---|---:|---:|---:|
 | Each working founder (×2) | sweat | **~R203m** | — |
 | Paysoft | dev delivery (vesting) | ~R68m | — |
-| Jan le Roux | board | ~R34m | — |
+| Board seat (reserved) | board | ~R34m | — |
 | Strategic Funder / Seed | R10m | **~R169m** | **~16.9×** |
 | Series A | R50m | ~R135m | ~2.7× |
 
@@ -98,7 +98,7 @@ Model-grade, not yet audit-grade. Confirm the highest-leverage inputs first:
    revenue line) — plus the FAIS/FSP accreditation cost/timeline.
 2. **Conveyancer panel-advertising subscriptions** (R0.36m→R2.4m) — confirm appetite and LPC-safe
    structuring with a panel firm; the consumer fee-discount pass-through too.
-3. The **0.5% Y1 referral share** with ooba.
+3. The **0.5% Y1 referral share** with BetterBond.
 4. **Upper-market (>~R4m) transfer counts** to firm the ramp and the ~8% share.
 5. **Bonded share** across the taper (we assume ~40–42% — confirm; prime skews cash).
 

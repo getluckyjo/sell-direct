@@ -41,6 +41,20 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 - **Logging:** the Prisma client logs only `warn`/`error` (never queries) outside
   development; sensitive values are never logged regardless.
 
+## Listing street address (`listings.address`)
+
+- **What:** the property's street address, given optionally by the seller at
+  listing time (the intake question is explicitly SKIP-able).
+- **Purpose:** accurate price guidance (valuation partner lookup, e.g. LOOM)
+  and portal syndication — both stated to the seller when asked.
+- **PII level:** medium (identifies the seller's home). **Never shown to
+  buyers** or any public surface; served only on the internal-token-guarded
+  dashboard endpoint.
+- **Sharing:** will be sent to the valuation partner (LOOM) for an estimate
+  once that integration is live — a documented processor hand-off; we do not
+  accept or store owner names/contact data from valuation responses (data
+  minimisation).
+
 ## Still to do (later PRs)
 
 - Appoint an **Information Officer** and register as required (Phase 0, business).

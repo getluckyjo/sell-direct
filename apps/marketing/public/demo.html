@@ -1,0 +1,1071 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Sold Direct — the WhatsApp seller onboarding flow, playable in your browser.">
+<meta name="robots" content="noindex">
+<meta name="color-scheme" content="light dark">
+<title>Sold Direct — seller onboarding demo</title>
+</head>
+<body>
+<style>
+  /* ---- Tokens -------------------------------------------------------- */
+  :root {
+    /* Neutrals biased green so the chrome belongs to the chat's world. */
+    --ground: #eaeeea;
+    --surface: #ffffff;
+    --surface-2: #f5f7f4;
+    --ink: #0f1a16;
+    --ink-soft: #55635d;
+    --ink-faint: #8b988f;
+    --line: #d6ded7;
+    --accent: #1f6f5c;
+    --accent-ink: #ffffff;
+    --notice: #8a6410;
+    --notice-bg: #fdf4dd;
+
+    /* The chat is product truth — WhatsApp's own palette, not ours. */
+    --wa-header: #075e54;
+    --wa-wall: #ece5dd;
+    --wa-out: #dcf8c6;
+    --wa-in: #ffffff;
+    --wa-ink: #111b21;
+    --wa-muted: #667781;
+    --wa-sheet: #ffffff;
+    --wa-line: #e6e2db;
+    --wa-accent: #25d366;
+    --wa-link: #027eb5;
+
+    --step: clamp(0.85rem, 0.8rem + 0.2vw, 0.95rem);
+    --radius: 14px;
+    --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    --sans:
+      ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica,
+      Arial, sans-serif;
+    --chat: -apple-system, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0b1210;
+      --surface: #141d1a;
+      --surface-2: #1a2521;
+      --ink: #e7efea;
+      --ink-soft: #93a39b;
+      --ink-faint: #6b7a73;
+      --line: #24322d;
+      --accent: #52c3a2;
+      --accent-ink: #06231b;
+      --notice: #dcae4c;
+      --notice-bg: #2a2313;
+
+      --wa-header: #1f2c33;
+      --wa-wall: #0b141a;
+      --wa-out: #005c4b;
+      --wa-in: #202c33;
+      --wa-ink: #e9edef;
+      --wa-muted: #8696a0;
+      --wa-sheet: #233138;
+      --wa-line: #2a3942;
+      --wa-accent: #00a884;
+      --wa-link: #53bdeb;
+    }
+  }
+  /* The viewer's explicit toggle must win over the OS preference, both ways. */
+  :root[data-theme='dark'] {
+    --ground: #0b1210;
+    --surface: #141d1a;
+    --surface-2: #1a2521;
+    --ink: #e7efea;
+    --ink-soft: #93a39b;
+    --ink-faint: #6b7a73;
+    --line: #24322d;
+    --accent: #52c3a2;
+    --accent-ink: #06231b;
+    --notice: #dcae4c;
+    --notice-bg: #2a2313;
+    --wa-header: #1f2c33;
+    --wa-wall: #0b141a;
+    --wa-out: #005c4b;
+    --wa-in: #202c33;
+    --wa-ink: #e9edef;
+    --wa-muted: #8696a0;
+    --wa-sheet: #233138;
+    --wa-line: #2a3942;
+    --wa-accent: #00a884;
+    --wa-link: #53bdeb;
+  }
+  :root[data-theme='light'] {
+    --ground: #eaeeea;
+    --surface: #ffffff;
+    --surface-2: #f5f7f4;
+    --ink: #0f1a16;
+    --ink-soft: #55635d;
+    --ink-faint: #8b988f;
+    --line: #d6ded7;
+    --accent: #1f6f5c;
+    --accent-ink: #ffffff;
+    --notice: #8a6410;
+    --notice-bg: #fdf4dd;
+    --wa-header: #075e54;
+    --wa-wall: #ece5dd;
+    --wa-out: #dcf8c6;
+    --wa-in: #ffffff;
+    --wa-ink: #111b21;
+    --wa-muted: #667781;
+    --wa-sheet: #ffffff;
+    --wa-line: #e6e2db;
+    --wa-accent: #25d366;
+    --wa-link: #027eb5;
+  }
+
+  /* ---- Base ---------------------------------------------------------- */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: var(--step);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 20px 56px;
+  }
+
+  /* ---- Masthead ------------------------------------------------------ */
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 16px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--line);
+  }
+  .mark {
+    font-size: 1.35rem;
+    font-weight: 660;
+    letter-spacing: -0.022em;
+    margin: 0;
+  }
+  .mark span {
+    color: var(--accent);
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .masthead p {
+    margin: 0;
+    flex-basis: 100%;
+    max-width: 62ch;
+    color: var(--ink-soft);
+  }
+
+  /* ---- Layout -------------------------------------------------------- */
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(0, 420px) minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+    margin-top: 26px;
+  }
+  @media (max-width: 860px) {
+    .stage {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+
+  /* ---- Phone --------------------------------------------------------- */
+  .phone {
+    background: var(--wa-wall);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: min(78vh, 720px);
+    box-shadow: 0 18px 40px -28px rgb(0 0 0 / 0.5);
+  }
+  .bar {
+    background: var(--wa-header);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 13px;
+    flex: none;
+  }
+  .glyph {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: var(--wa-accent);
+    color: #06231b;
+    display: grid;
+    place-items: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex: none;
+  }
+  .who {
+    flex: 1;
+    min-width: 0;
+    line-height: 1.25;
+  }
+  .who b {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .who span {
+    font-size: 0.72rem;
+    opacity: 0.75;
+  }
+  .bar button {
+    background: rgb(255 255 255 / 0.14);
+    color: #fff;
+    border: 0;
+    border-radius: 7px;
+    padding: 6px 10px;
+    font: inherit;
+    font-size: 0.72rem;
+    cursor: pointer;
+  }
+  .bar button:hover {
+    background: rgb(255 255 255 / 0.24);
+  }
+
+  .thread {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 11px 6px;
+    font-family: var(--chat);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .turn {
+    display: flex;
+  }
+  .turn.me {
+    justify-content: flex-end;
+  }
+  .bubble {
+    max-width: 84%;
+    padding: 7px 10px 6px;
+    border-radius: 8px;
+    font-size: 0.88rem;
+    line-height: 1.38;
+    color: var(--wa-ink);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    box-shadow: 0 1px 1px rgb(0 0 0 / 0.1);
+  }
+  .them .bubble {
+    background: var(--wa-in);
+    border-top-left-radius: 2px;
+  }
+  .me .bubble {
+    background: var(--wa-out);
+    border-top-right-radius: 2px;
+  }
+  .stamp {
+    display: block;
+    font-size: 0.62rem;
+    color: var(--wa-muted);
+    text-align: right;
+    margin-top: 2px;
+    font-variant-numeric: tabular-nums;
+  }
+  .me .stamp::after {
+    content: ' ✓✓';
+    color: var(--wa-link);
+  }
+
+  .typing .bubble {
+    background: var(--wa-in);
+    display: flex;
+    gap: 4px;
+    padding: 11px 12px;
+  }
+  .typing i {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--wa-muted);
+    animation: blink 1.2s infinite;
+  }
+  .typing i:nth-child(2) {
+    animation-delay: 0.18s;
+  }
+  .typing i:nth-child(3) {
+    animation-delay: 0.36s;
+  }
+  @keyframes blink {
+    0%,
+    60%,
+    100% {
+      opacity: 0.28;
+    }
+    30% {
+      opacity: 1;
+    }
+  }
+
+  /* Reply buttons sit under the bubble, as WhatsApp renders them. */
+  .replies {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 84%;
+    margin: -2px 0 4px;
+  }
+  .replies button,
+  .opener {
+    background: var(--wa-in);
+    color: var(--wa-link);
+    border: 0;
+    border-top: 1px solid var(--wa-line);
+    padding: 9px 10px;
+    font: inherit;
+    font-family: var(--chat);
+    font-size: 0.85rem;
+    cursor: pointer;
+    width: 100%;
+    text-align: center;
+  }
+  .replies button:first-child {
+    border-top: 0;
+    border-radius: 8px 8px 0 0;
+  }
+  .replies button:last-child {
+    border-radius: 0 0 8px 8px;
+  }
+  .replies button:only-child {
+    border-radius: 8px;
+  }
+  .replies button:hover,
+  .opener:hover {
+    background: var(--wa-sheet);
+    filter: brightness(0.97);
+  }
+  .opener {
+    border-radius: 8px;
+    max-width: 84%;
+    margin: -2px 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    font-weight: 500;
+  }
+
+  /* The list menu — WhatsApp opens these as a bottom sheet. */
+  .sheet-scrim {
+    position: absolute;
+    inset: 0;
+    background: rgb(0 0 0 / 0.42);
+    display: flex;
+    align-items: flex-end;
+    z-index: 5;
+  }
+  .sheet-scrim[hidden] {
+    display: none;
+  }
+  .sheet {
+    background: var(--wa-sheet);
+    width: 100%;
+    max-height: 74%;
+    overflow-y: auto;
+    border-radius: 12px 12px 0 0;
+    font-family: var(--chat);
+    animation: rise 0.18s ease-out;
+  }
+  @keyframes rise {
+    from {
+      transform: translateY(14px);
+    }
+  }
+  .sheet header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 13px 15px;
+    border-bottom: 1px solid var(--wa-line);
+    font-weight: 600;
+    color: var(--wa-ink);
+    font-size: 0.9rem;
+    position: sticky;
+    top: 0;
+    background: var(--wa-sheet);
+  }
+  .sheet header button {
+    background: none;
+    border: 0;
+    font-size: 1.15rem;
+    line-height: 1;
+    cursor: pointer;
+    color: var(--wa-muted);
+    padding: 0 2px;
+  }
+  .sheet .group {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--wa-accent);
+    padding: 11px 15px 5px;
+    font-weight: 600;
+  }
+  .sheet .row {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: 0;
+    border-bottom: 1px solid var(--wa-line);
+    padding: 11px 15px;
+    font: inherit;
+    font-family: var(--chat);
+    cursor: pointer;
+    color: var(--wa-ink);
+  }
+  .sheet .row:hover {
+    background: rgb(127 127 127 / 0.1);
+  }
+  .sheet .row b {
+    display: block;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  .sheet .row span {
+    display: block;
+    font-size: 0.76rem;
+    color: var(--wa-muted);
+    margin-top: 1px;
+  }
+
+  .composer {
+    display: flex;
+    gap: 7px;
+    padding: 8px;
+    background: var(--wa-sheet);
+    border-top: 1px solid var(--wa-line);
+    flex: none;
+  }
+  .composer input {
+    flex: 1;
+    min-width: 0;
+    border: 1px solid var(--wa-line);
+    background: var(--wa-in);
+    color: var(--wa-ink);
+    border-radius: 20px;
+    padding: 9px 14px;
+    font: inherit;
+    font-family: var(--chat);
+  }
+  .composer input::placeholder {
+    color: var(--wa-muted);
+  }
+  .composer button {
+    background: var(--wa-accent);
+    color: #04241b;
+    border: 0;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    font-size: 1rem;
+    cursor: pointer;
+    flex: none;
+  }
+  .composer button:disabled {
+    opacity: 0.45;
+    cursor: default;
+  }
+
+  .frame {
+    position: relative;
+  }
+
+  /* ---- Record rail --------------------------------------------------- */
+  .rail {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: 17px 18px;
+  }
+  /* Matches whether the heading is bare or wrapped in .cardhead. */
+  .card h2 {
+    margin: 0;
+    font-size: 0.9rem;
+    font-weight: 620;
+    letter-spacing: -0.012em;
+  }
+  .card .lede {
+    margin: 6px 0 0;
+    color: var(--ink-soft);
+    font-size: 0.79rem;
+    max-width: 54ch;
+  }
+  .cardhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .chip {
+    font-family: var(--mono);
+    font-size: 0.63rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    color: var(--ink-soft);
+    white-space: nowrap;
+  }
+  .chip.on {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--accent-ink);
+  }
+
+  .record {
+    list-style: none;
+    margin: 14px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: 9px;
+    overflow: hidden;
+  }
+  .record li {
+    display: grid;
+    grid-template-columns: 8.5rem minmax(0, 1fr);
+    gap: 10px;
+    background: var(--surface);
+    padding: 8px 11px;
+    align-items: baseline;
+  }
+  @media (max-width: 420px) {
+    .record li {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1px;
+    }
+  }
+  .record dfn {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 0.66rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+  .record var {
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    overflow-wrap: anywhere;
+  }
+  .record li.empty var {
+    color: var(--ink-faint);
+  }
+  .record li.set {
+    background: color-mix(in srgb, var(--accent) 7%, var(--surface));
+  }
+  .record li.set var {
+    font-weight: 560;
+  }
+
+  .notice {
+    background: var(--notice-bg);
+    color: var(--notice);
+    border: 1px solid color-mix(in srgb, var(--notice) 30%, transparent);
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 0.76rem;
+  }
+
+  .facts {
+    margin: 12px 0 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 7px;
+    font-size: 0.79rem;
+    color: var(--ink-soft);
+  }
+  .facts li {
+    display: grid;
+    grid-template-columns: 1.1rem minmax(0, 1fr);
+    gap: 8px;
+  }
+  .facts b {
+    color: var(--ink);
+    font-weight: 590;
+  }
+  .tick {
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .cross {
+    color: var(--ink-faint);
+    font-weight: 700;
+  }
+  code {
+    font-family: var(--mono);
+    font-size: 0.88em;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 0.5px 4px;
+  }
+  footer {
+    margin-top: 26px;
+    padding-top: 14px;
+    border-top: 1px solid var(--line);
+    color: var(--ink-faint);
+    font-size: 0.74rem;
+  }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <h1 class="mark">Sold<span>&nbsp;Direct</span></h1>
+    <span class="eyebrow">Seller onboarding · live simulator</span>
+    <p>
+      The WhatsApp listing flow, running the production conversation code in
+      your browser. Type <code>list</code> to begin — everything after that is
+      taps.
+    </p>
+  </header>
+
+  <div class="stage">
+    <div class="frame">
+      <section class="phone" aria-label="WhatsApp conversation">
+        <div class="bar">
+          <div class="glyph" aria-hidden="true">SD</div>
+          <div class="who">
+            <b>Sold Direct</b>
+            <span id="presence">online</span>
+          </div>
+          <button id="reset" type="button">Restart</button>
+        </div>
+
+        <div class="thread" id="thread" role="log" aria-live="polite"></div>
+
+        <form class="composer" id="composer">
+          <input
+            id="entry"
+            autocomplete="off"
+            placeholder="Type a message"
+            aria-label="Message"
+          />
+          <button id="send" type="submit" aria-label="Send">➤</button>
+        </form>
+      </section>
+
+      <div class="sheet-scrim" id="scrim" hidden>
+        <div
+          class="sheet"
+          id="sheet"
+          role="dialog"
+          aria-label="Choose an option"
+        ></div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <section class="card">
+        <div class="cardhead">
+          <h2>Listing record</h2>
+          <span class="chip" id="step">no conversation</span>
+        </div>
+        <p class="lede">
+          The typed record the state machine builds as the chat progresses —
+          this is what the dashboard and the portals read.
+        </p>
+        <ul class="record" id="record"></ul>
+      </section>
+
+      <section class="card">
+        <h2>What's real here</h2>
+        <ul class="facts">
+          <li>
+            <span class="tick" aria-hidden="true">✓</span>
+            <span
+              ><b>The conversation logic is the production build.</b>
+              <code>intake.ts</code> and the welcome copy are compiled straight
+              from the repo — same prompts, same menus, same validation.</span
+            >
+          </li>
+          <li>
+            <span class="tick" aria-hidden="true">✓</span>
+            <span
+              ><b>Price guidance uses the demo valuation adapter</b> — the same
+              deterministic stand-in the server runs until LOOM is
+              connected.</span
+            >
+          </li>
+          <li>
+            <span class="cross" aria-hidden="true">×</span>
+            <span
+              ><b>No database and no WhatsApp.</b> The conversation lives in
+              memory and resets on reload; the server build persists to Postgres
+              and sends through the BSP.</span
+            >
+          </li>
+          <li>
+            <span class="cross" aria-hidden="true">×</span>
+            <span
+              ><b>The AI layer runs server-side, so it is not in this page.</b>
+              Two parts of the product call Claude from the API: the
+              <b>description writer</b>, which drafts your listing copy for you
+              to approve, and the <b>concierge</b>, which answers off-script
+              questions — "how long does transfer take?", "who pays the rates
+              clearance?" — in the same thread, and hands over to a registered
+              practitioner when it should. Both need an API key, which has no
+              business in a public web page. Run the API to see them live.</span
+            >
+          </li>
+        </ul>
+        <p class="lede" style="margin-top: 14px">
+          The scripted flow above is deliberately independent of all that: if
+          the model is unavailable, every question here still works.
+        </p>
+      </section>
+
+      <p class="notice">
+        Simulator for demonstration. Price ranges are illustrative, not a
+        valuation, and nothing entered here is stored.
+      </p>
+    </div>
+  </div>
+
+  <footer>Sold Direct · 0% commission · Cape Town</footer>
+</div>
+
+<script>
+  "use strict";var SoldDirectFlow=(()=>{var x=Object.defineProperty;var Q=Object.getOwnPropertyDescriptor;var tt=Object.getOwnPropertyNames;var et=Object.prototype.hasOwnProperty;var nt=(t,e)=>{for(var n in e)x(t,n,{get:e[n],enumerable:!0})},it=(t,e,n,r)=>{if(e&&typeof e=="object"||typeof e=="function")for(let i of tt(e))!et.call(t,i)&&i!==n&&x(t,i,{get:()=>e[i],enumerable:!(r=Q(e,i))||r.enumerable});return t};var rt=t=>it(x({},"__esModule",{value:!0}),t);var Ot={};nt(Ot,{createFlow:()=>Lt});var E=["house","apartment","townhouse","estate","land","other"];function w(t){let e=Math.round(t),n=e<0?"-":"",r=String(Math.abs(e));return`${n}R${r.replace(/\B(?=(\d{3})+(?!\d))/g," ")}`}var T=[{id:"atlantic",title:"Atlantic Seaboard",hint:"Sea Point, Camps Bay, Hout Bay",suburbs:["Sea Point","Green Point","Bantry Bay","Clifton","Camps Bay","Fresnaye","Llandudno","Hout Bay"]},{id:"citybowl",title:"City Bowl",hint:"CBD, Gardens, Woodstock",suburbs:["Cape Town CBD","Gardens","Oranjezicht","Tamboerskloof","Vredehoek","Bo-Kaap","De Waterkant","Woodstock"]},{id:"southern",title:"Southern Suburbs",hint:"Observatory through to Tokai",suburbs:["Observatory","Mowbray","Rondebosch","Newlands","Claremont","Kenilworth","Wynberg","Constantia"]},{id:"northern",title:"Northern Suburbs",hint:"Durbanville, Bellville, Tygervalley",suburbs:["Durbanville","Bellville","Brackenfell","Kraaifontein","Kuils River","Parow","Goodwood","Plattekloof"]},{id:"falsebay",title:"False Bay & South",hint:"Muizenberg down to Simon\u2019s Town",suburbs:["Muizenberg","Kalk Bay","Fish Hoek","Noordhoek","Kommetjie","Simon\u2019s Town","Lakeside","Sun Valley"]},{id:"westcoast",title:"West Coast",hint:"Blouberg, Table View, Milnerton",suburbs:["Table View","Bloubergstrand","Milnerton","Century City","Parklands","Sunningdale","Big Bay","Melkbosstrand"]}];function S(t){let e=t.trim().toLowerCase();return T.find(n=>n.id===e)}var F=["propertyType","suburb","priceZar","bedrooms","bathrooms","exclusivityTermDays"],ot={propertyType:"awaiting_property_type",suburb:"awaiting_suburb",priceZar:"awaiting_price",bedrooms:"awaiting_bedrooms",bathrooms:"awaiting_bathrooms",exclusivityTermDays:"awaiting_exclusivity"},at={awaiting_property_type:"propertyType",awaiting_suburb:"suburb",awaiting_suburb_pick:"suburb",awaiting_price:"priceZar",awaiting_bedrooms:"bedrooms",awaiting_bathrooms:"bathrooms",awaiting_exclusivity:"exclusivityTermDays"},c={awaiting_property_type:"Let\u2019s list your property \u2014 0% commission. What kind of home is it?",awaiting_title:'What headline should buyers see? (e.g. "Sunny 2-bed with mountain views")',awaiting_suburb:"Which part of Cape Town is it in? Pick a region \u2014 or just type the suburb.",awaiting_suburb_pick:"And which suburb?",awaiting_address:"What's the street address? \u{1F512} Kept private \u2014 buyers never see it; we use it for accurate price guidance and portal syndication. Reply SKIP to leave it out.",awaiting_price:"What's the asking price in Rand? (digits only, e.g. 2100000)",awaiting_bedrooms:"How many bedrooms?",awaiting_bathrooms:"How many bathrooms?",awaiting_exclusivity:"How long should the exclusive listing term run? 90 days is the South African norm.",awaiting_confirm:'Tap Publish now to go live, or Change something to edit. (You can also just type a correction, e.g. "price 4500000".)',awaiting_edit_choice:"What would you like to change?"},st={awaiting_property_type:"Please pick the kind of home from the list.",awaiting_title:"Please give a short headline (at least 3 characters).",awaiting_suburb:"Please tell me the suburb.",awaiting_suburb_pick:"Please pick a suburb, or type its name.",awaiting_address:"Please send the street address (e.g. 12 Milner Road), or reply SKIP.",awaiting_price:"Please send the price as digits in Rand, e.g. 2100000.",awaiting_bedrooms:"How many bedrooms? Please reply with a number.",awaiting_bathrooms:"How many bathrooms? Please reply with a number.",awaiting_exclusivity:"Please choose 60, 90 or 120 days.",awaiting_edit_choice:"Please pick one of the fields from the list."},lt={kind:"buttons",options:[{id:"DRAFT",title:"\u270D\uFE0F Write it for me"},{id:"TYPE",title:"I\u2019ll write it"},{id:"SKIP",title:"Skip for now"}]},ut=/^\s*(yes|y|yeah|yep|ok|okay|sure|👍)\b/i,pt=/^\s*edit\s*$/i,dt=/^\s*cancel\b/i,ct=/^\s*back\s*$/i,mt=/^\s*edit:([a-z]+)\s*$/i,gt=/^\s*region:([a-z]+)\s*$/i,bt=/^\s*other\s*$/i,yt=/^\s*(skip|no|nope|later)\b/i;function N(t){if(typeof t!="string")return null;let e=t.trim();return e.length>=3?e:null}function P(t){if(typeof t!="string")return null;let e=t.trim();return e.length>=5&&e.length<=200?e:null}function ft(t){let e=t.replace(/[\s,rR]/g,"");return/^\d+$/.test(e)?Number.parseInt(e,10):null}function m(t,e){switch(t){case"suburb":{if(typeof e!="string")return null;let n=e.trim();return n.length>=2?n:null}case"priceZar":{let n=typeof e=="number"?e:NaN;return Number.isInteger(n)&&n>=1e5?n:null}case"bedrooms":case"bathrooms":{let n=typeof e=="number"?e:NaN;return Number.isInteger(n)&&n>=0&&n<=20?n:null}case"exclusivityTermDays":return e===60||e===90||e===120?e:null;case"propertyType":{if(typeof e!="string")return null;let n=e.trim().toLowerCase();return E.includes(n)?n:null}}}var ht={house:"house",apartment:"apartment",townhouse:"townhouse",estate:"home in a secure estate",land:"vacant land",other:"property"},B={house:"House",apartment:"Apartment / flat",townhouse:"Townhouse / duplex",estate:"Secure estate",land:"Vacant land / plot",other:"Something else"};function W(t){let{propertyType:e,suburb:n,bedrooms:r}=t;if(!e||!n)return;let i=ht[e],a=` in ${n}`;return e==="land"?`Vacant land${a}`:r===void 0?`${wt(i)}${a}`:r===0?`Studio ${i}${a}`:`${r}-bed ${i}${a}`}function wt(t){return t.charAt(0).toUpperCase()+t.slice(1)}function y(t){if(t.title!==void 0)return t;let e=W(t);return e===void 0?t:{...t,title:e}}function _t(t){return F.filter(e=>t[e]===void 0)}function g(t){let e=_t(t);return t.address===void 0&&(e.length===0||e[0]==="priceZar")?"awaiting_address":e.length===0?"awaiting_confirm":ot[e[0]]}function b(t,e,n={}){let r={...t},i=[];for(let p of F){let f=e[p];if(f===void 0||!n.overwrite&&r[p]!==void 0)continue;let h=m(p,f);h!==null&&(n.overwrite&&r[p]===h||(r[p]=h,i.push(p)))}let a=P(e.address);a!==null&&r.address!==a&&(n.overwrite||r.address===void 0||r.address===null)&&(r.address=a,i.push("address"));let l=N(e.title);return l!==null&&r.title!==l&&(n.overwrite||r.title===void 0)&&(r.title=l,i.push("title")),{data:r,applied:i}}function R(t){return w(t)}function I(t,e){switch(t){case"title":return`"${e.title??W(e)??""}"`;case"propertyType":return e.propertyType?B[e.propertyType].toLowerCase():"";case"suburb":return e.suburb??"";case"address":return e.address??"";case"priceZar":return R(e.priceZar??0);case"bedrooms":return`${e.bedrooms} bedroom${e.bedrooms===1?"":"s"}`;case"bathrooms":return`${e.bathrooms} bathroom${e.bathrooms===1?"":"s"}`;case"exclusivityTermDays":return`${e.exclusivityTermDays}-day term`}}var M=[{id:"priceZar",label:"Asking price"},{id:"bedrooms",label:"Bedrooms"},{id:"bathrooms",label:"Bathrooms"},{id:"suburb",label:"Suburb"},{id:"address",label:"Street address"},{id:"propertyType",label:"Property type"},{id:"title",label:"Headline"},{id:"exclusivityTermDays",label:"Exclusive term"}];function kt(t){let e=t.toLowerCase();return M.find(n=>n.id.toLowerCase()===e)?.id}function C(t,e){let n=[...e.studio?[{id:"0",title:"Studio"}]:[],...Array.from({length:6},(r,i)=>({id:String(i+1),title:`${i+1} ${e.noun}${i===0?"":"s"}`})),{id:"7",title:"7 or more",description:"Pick this, then type the exact number"}];return{kind:"list",button:"Choose",sections:[{title:t,rows:n}]}}function Rt(t){let e=r=>Math.max(1e5,Math.round(r/5e4)*5e4),n=[...new Set([e(t.lowZar),e((t.lowZar+t.highZar)/2),e(t.highZar)])].slice(0,3);if(n.length!==0)return{kind:"buttons",options:n.map(r=>({id:String(r),title:R(r)})),footer:"Or type any amount"}}function d(t,e){switch(t){case"awaiting_property_type":return{kind:"list",button:"Choose",sections:[{title:"Property type",rows:E.map(n=>({id:n,title:B[n]}))}]};case"awaiting_suburb":return{kind:"list",button:"Pick a region",sections:[{title:"Cape Town",rows:[...T.map(n=>({id:`REGION:${n.id}`,title:n.title,description:n.hint})),{id:"OTHER",title:"Other \u2014 type it"}]}]};case"awaiting_suburb_pick":{let n=S(e.pending?.region??"");return n?{kind:"list",button:"Pick a suburb",sections:[{title:n.title,rows:[...n.suburbs.map(r=>({id:r,title:r})),{id:"OTHER",title:"Other \u2014 type it"},{id:"REGION:back",title:"\u2190 Another region"}]}]}:void 0}case"awaiting_address":return{kind:"buttons",options:[{id:"SKIP",title:"Skip \u2014 not now"}]};case"awaiting_price":return e.estimate?Rt(e.estimate):void 0;case"awaiting_bedrooms":return C("Bedrooms",{studio:!0,noun:"bedroom"});case"awaiting_bathrooms":return C("Bathrooms",{noun:"bathroom"});case"awaiting_exclusivity":return{kind:"buttons",options:[{id:"60",title:"60 days"},{id:"90",title:"90 days \u2605"},{id:"120",title:"120 days"}],footer:"\u2605 recommended"};case"awaiting_confirm":return{kind:"buttons",options:[{id:"YES",title:"\u2705 Publish now"},{id:"EDIT",title:"Change something"},{id:"CANCEL",title:"Cancel listing"}]};case"awaiting_edit_choice":return{kind:"list",button:"Pick a field",sections:[{title:"Change",rows:[...M.map(n=>({id:`EDIT:${n.id}`,title:n.label,...e.data[n.id]!==void 0&&e.data[n.id]!==null?{description:I(n.id,e.data)}:{}})),{id:"BACK",title:"\u2190 Never mind"}]}]};default:return}}function xt(t,e){return t.length===0?"":`Got it \u2014 ${t.map(n=>I(n,e)).join(", ")}.
+`}function L(t){return`Here's your listing:
+\u{1F3E0} "${t.title}"
+\u{1F4CD} ${t.suburb}, Cape Town
+`+(t.address?`\u{1F4EB} ${t.address} (kept private)
+`:"")+`\u{1F4B0} ${R(t.priceZar)}
+\u{1F6CF} ${t.bedrooms} bed \xB7 \u{1F6C1} ${t.bathrooms} bath
+\u{1F4C6} ${t.exclusivityTermDays}-day exclusive term`}function Et(t){return`Perfect \u2014 your listing "${t.title}" in ${t.suburb} at ${R(t.priceZar)} is confirmed!
+
+\u{1F4DD} Optional: a short description buyers will read. I can draft one from your details \u2014 you approve it before anything is saved.
+\u{1F4F8} Then send 5\u201310 photos whenever you're ready \u2014 your listing goes live the moment your first photo arrives.`}function _(t,e){let n=xt(e,t.data),r=d(t.step,t);if(t.step==="awaiting_confirm"){let i=L(y(t.data));return{state:t,reply:`${n}${i}
+
+${c.awaiting_confirm}`,options:r}}return{state:t,reply:`${n}${c[t.step]}`,options:r}}function A(t){let e={...t,step:"awaiting_confirm"};return{state:e,reply:`${L(y(e.data))}
+
+${c.awaiting_confirm}`,options:d("awaiting_confirm",e)}}function k(t,e){return{state:t,reply:e??st[t.step],options:d(t.step,t)}}function Z(t){let{data:e,applied:n}=b({tier:"free"},t??{}),r={step:g(e),data:e};return r.step==="awaiting_title"&&n.length===0?{state:r,reply:c.awaiting_title,options:d(r.step,r)}:_(r,n)}function K(t,e,n){let r=e.trim(),i={...t.data},a=n??{};if(t.step==="completed")return{state:t,reply:'Your listing is already in. Reply "list" to add another property.'};if(t.step==="awaiting_suburb"||t.step==="awaiting_suburb_pick"){let s=gt.exec(r)?.[1];if(s!==void 0){let o=S(s),u=o?{...t,step:"awaiting_suburb_pick",data:i,pending:{region:o.id}}:{...t,step:"awaiting_suburb",data:i,pending:void 0};return{state:u,reply:c[u.step],options:d(u.step,u)}}if(bt.test(r))return{state:{...t,data:i},reply:"No problem \u2014 what\u2019s the suburb called?"}}if(t.step==="awaiting_edit_choice"){if(ct.test(r))return A(t);let s=mt.exec(r),o=s?kt(s[1]):void 0;if(!o)return k(t);delete i[o];let u=o==="title"?"awaiting_title":g(i);return _({...t,step:u,data:i},[])}if(t.step==="awaiting_confirm"){if(ut.test(r)){let o=y(i),u=o;return{state:{step:"completed",data:o},reply:Et(u),options:lt,completed:u}}if(pt.test(r)){let o={...t,step:"awaiting_edit_choice"};return{state:o,reply:c.awaiting_edit_choice,options:d("awaiting_edit_choice",o)}}if(dt.test(r))return{state:t,reply:`No problem \u2014 that draft is discarded. Reply "list" whenever you're ready to start again.`,cancelled:!0};let s=b(i,a,{overwrite:!0});if(s.applied.length>0){let o={...t,step:g(s.data),data:s.data},u=`Updated \u2014 ${s.applied.map(J=>I(J,s.data)).join(", ")}.
+`,$=d(o.step,o);return o.step==="awaiting_confirm"?{state:o,reply:`${u}${L(y(s.data))}
+
+${c.awaiting_confirm}`,options:$}:{state:o,reply:`${u}${c[o.step]}`,options:$}}return A({...t,data:i})}if(t.step==="awaiting_title"){let s=N(r);if(s===null)return k(t);i.title=s;let o=b(i,a);return _({...t,step:g(o.data),data:o.data},o.applied.filter(u=>u!=="title"))}if(t.step==="awaiting_address"){if(yt.test(r))i.address=null;else{let o=P(a.address)??P(r);if(o===null){let u=b(i,a);return k({...t,data:u.data})}i.address=o}let s=b(i,a);return _({...t,step:g(s.data),data:s.data},s.applied.filter(o=>o!=="address"))}let l=at[t.step],p=!1;switch(l){case"propertyType":{let s=m("propertyType",r)??m("propertyType",a.propertyType);s!==null&&(i.propertyType=s,p=!0);break}case"suburb":{let s=m("suburb",a.suburb),o=m("suburb",r),u=s??o;u!==null&&(i.suburb=u,p=!0);break}default:{let o=m(l,ft(r))??m(l,a[l]);o!==null&&(i[l]=o,p=!0)}}let f=b(i,a);i=f.data;let h=f.applied.filter(s=>s!==l);return!p&&i[l]===void 0?k({...t,data:i}):_({...t,step:g(i),data:i},h)}var O=/^(list|sell)\b/i,D=/^(list|sell)\b[\s:,-]*(my\s+|our\s+|the\s+)?/i,Tt=/^(start|begin)\b/i;function H(t){let e=t.trim();return Tt.test(e)?!0:O.test(e)?e.replace(D,"").trim().length>=3:!1}var Y=`\u{1F44B} Welcome to Sold Direct \u2014 sell your Cape Town home with 0% commission.
+
+How it works:
+1\uFE0F\u20E3 You build your listing right here \u2014 a few taps, no forms.
+2\uFE0F\u20E3 We syndicate it and send buyer enquiries straight to you.
+3\uFE0F\u20E3 Buyers pre-qualify for a bond in the chat, so you know who\u2019s real.
+4\uFE0F\u20E3 Our registered property practitioners and WhatsApp concierge handle the offer, FICA and transfer admin with you.
+
+What would you like to do?`;function V(){return{kind:"list",button:"Choose an option",sections:[{title:"Sold Direct",rows:[{id:"START",title:"List my property",description:"Build your listing in a few taps \u2014 live today."},{id:"HOW",title:"How it works",description:"The full journey, from listing to transfer."},{id:"COST",title:"What it costs",description:"How 0% commission works, and when it applies."},{id:"CONSULT",title:"Talk to our team",description:"A registered practitioner calls you back."}]}]}}var G=/^\s*how\s*$/i,U=`Here\u2019s how Sold Direct works:
+
+1\uFE0F\u20E3 You list your property here on WhatsApp \u2014 a few taps, no forms.
+2\uFE0F\u20E3 We syndicate it and route buyer enquiries straight to you.
+3\uFE0F\u20E3 Buyers get bond pre-qualification in the chat, so you know who\u2019s real.
+4\uFE0F\u20E3 Our registered property practitioners and WhatsApp concierge handle the offer, FICA and transfer admin with you.
+
+It costs you 0% commission when you sell through our partners \u2014 on a R2.1m home, what a full-service sale (5\u20137% + VAT) would have cost is roughly R120 000\u2013R170 000. Prefer a full-service agent? That\u2019s a great choice too \u2014 we\u2019re built for sellers who want to do it themselves.
+
+Reply "list" whenever you\u2019re ready.`,j=/^\s*cost\s*$/i,z=`What Sold Direct costs you:
+
+\u{1F7E2} *0% commission* when you list exclusively with us for the agreed term and transact through our bond and legal partners. The bank pays us an origination fee on the buyer\u2019s bond, so you pay nothing.
+\u{1F535} *Flex \u2014 1%* of the sale price if you\u2019d rather keep full freedom, agreed upfront.
+
+For context, on a R2.1m home what a full-service sale (5\u20137% + VAT) would have cost is roughly R120 000\u2013R170 000. A full-service agent is a great choice for many sellers \u2014 we\u2019re built for those who want to sell direct themselves, with our practitioners handling the admin.
+
+No listing fee, no monthly fee, no lock-in beyond the term you choose.`;function q(){return{async estimate(t){let e=[...t.suburb.toLowerCase()].reduce((a,l)=>a+l.charCodeAt(0),0)+(t.bedrooms??2)*7,n=15e5+e%40*1e5+(t.bedrooms??2)*45e4,r=Math.round(n*.08),i=a=>Math.round(a/5e4)*5e4;return{lowZar:i(n-r),highZar:i(n+r),comparablesCount:8+e%7,source:"LOOM Property Insights"}}}}function X(t){return`\u{1F4A1} Price guidance: homes like yours recently sold for ${w(t.lowZar)}\u2013${w(t.highZar)} (based on confirmed sales via ${t.source}). The asking price is yours \u2014 reply CONSULT anytime for a free pricing chat with our team.`}var St=q(),Pt=/^\s*consult\s*$/i,It="\u{1F44D} Great \u2014 our team will WhatsApp you shortly for a free, no-obligation pricing chat about your home. The asking price is always yours; we bring the recent-sales data.",v={kind:"buttons",options:[{id:"START",title:"List my property"},{id:"HOW",title:"How it works"},{id:"COST",title:"What it costs"}]};function Lt(){let t=null;async function e(n,r){let i={...n.state};if(i.estimate===void 0&&r?.estimate!==void 0&&(i={...i,estimate:r.estimate}),n.completed||i.step!=="awaiting_price")return{...n,state:i,options:i.step==="awaiting_price"&&!n.completed?d(i.step,i):n.options};if(i.estimate===void 0){let l=null;try{l=await St.estimate({address:i.data.address,suburb:i.data.suburb??"",bedrooms:i.data.bedrooms,bathrooms:i.data.bathrooms})}catch{l=null}i={...i,estimate:l}}let a=i.estimate?X(i.estimate):"";return{...n,state:i,reply:a?`${n.reply}
+
+${a}`:n.reply,options:d(i.step,i)}}return{async send(n){let r=n.trim();if(!t){if(G.test(r))return{text:U,options:v};if(j.test(r))return{text:z,options:v};if(Pt.test(r))return{text:It,options:v};if(H(r)){let a=O.test(r)?{title:r.replace(D,"").trim()}:{},l=await e(Z(a));return t=l.state,{text:l.reply,options:l.options}}return{text:Y,options:V()}}let i=await e(K(t,r),t);return i.cancelled?(t=null,{text:i.reply}):i.completed?(t=null,{text:i.reply,options:i.options}):(t=i.state,{text:i.reply,options:i.options})},snapshot(){return t?{step:t.step,data:y(t.data)}:null},reset(){t=null}}}return rt(Ot);})();
+
+</script>
+
+<script>
+  (function () {
+    var flow = SoldDirectFlow.createFlow();
+
+    var thread = document.getElementById('thread');
+    var entry = document.getElementById('entry');
+    var sendBtn = document.getElementById('send');
+    var composer = document.getElementById('composer');
+    var scrim = document.getElementById('scrim');
+    var sheet = document.getElementById('sheet');
+    var recordEl = document.getElementById('record');
+    var stepEl = document.getElementById('step');
+    var presence = document.getElementById('presence');
+
+    var FIELDS = [
+      ['propertyType', 'Type'],
+      ['title', 'Headline'],
+      ['suburb', 'Suburb'],
+      ['address', 'Address'],
+      ['priceZar', 'Asking price'],
+      ['bedrooms', 'Bedrooms'],
+      ['bathrooms', 'Bathrooms'],
+      ['exclusivityTermDays', 'Term'],
+      ['tier', 'Tier'],
+    ];
+
+    var rand = null; // the newest reply's options, the only live ones
+    var busy = false;
+
+    function clockNow() {
+      var d = new Date();
+      return (
+        String(d.getHours()).padStart(2, '0') +
+        ':' +
+        String(d.getMinutes()).padStart(2, '0')
+      );
+    }
+
+    function el(tag, cls, text) {
+      var n = document.createElement(tag);
+      if (cls) n.className = cls;
+      if (text !== undefined) n.textContent = text;
+      return n;
+    }
+
+    function addBubble(dir, text) {
+      var turn = el('div', 'turn ' + (dir === 'in' ? 'me' : 'them'));
+      var b = el('div', 'bubble', text);
+      b.appendChild(el('span', 'stamp', clockNow()));
+      turn.appendChild(b);
+      thread.appendChild(turn);
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function showTyping() {
+      var turn = el('div', 'turn them typing');
+      turn.id = 'typing';
+      var b = el('div', 'bubble');
+      b.appendChild(el('i'));
+      b.appendChild(el('i'));
+      b.appendChild(el('i'));
+      turn.appendChild(b);
+      thread.appendChild(turn);
+      thread.scrollTop = thread.scrollHeight;
+      presence.textContent = 'typing…';
+    }
+
+    function clearTyping() {
+      var t = document.getElementById('typing');
+      if (t) t.remove();
+      presence.textContent = 'online';
+    }
+
+    function clearOptions() {
+      var stale = thread.querySelectorAll('.replies, .opener');
+      for (var i = 0; i < stale.length; i++) stale[i].remove();
+    }
+
+    function renderOptions(options) {
+      clearOptions();
+      rand = options || null;
+      if (!options) return;
+
+      if (options.kind === 'buttons') {
+        var wrap = el('div', 'replies');
+        options.options.forEach(function (o) {
+          var b = el('button', null, o.title);
+          b.type = 'button';
+          b.onclick = function () {
+            pick(o);
+          };
+          wrap.appendChild(b);
+        });
+        thread.appendChild(wrap);
+      } else {
+        var opener = el('button', 'opener');
+        opener.type = 'button';
+        opener.textContent = '☰  ' + (options.button || 'Choose');
+        opener.onclick = openSheet;
+        thread.appendChild(opener);
+      }
+      thread.scrollTop = thread.scrollHeight;
+    }
+
+    function openSheet() {
+      if (!rand || rand.kind !== 'list') return;
+      sheet.innerHTML = '';
+      var head = document.createElement('header');
+      head.appendChild(el('span', null, rand.button || 'Choose'));
+      var close = el('button', null, '✕');
+      close.type = 'button';
+      close.setAttribute('aria-label', 'Close');
+      close.onclick = closeSheet;
+      head.appendChild(close);
+      sheet.appendChild(head);
+
+      rand.sections.forEach(function (section) {
+        if (section.title) sheet.appendChild(el('div', 'group', section.title));
+        section.rows.forEach(function (row) {
+          var r = el('button', 'row');
+          r.type = 'button';
+          r.appendChild(el('b', null, row.title));
+          if (row.description) r.appendChild(el('span', null, row.description));
+          r.onclick = function () {
+            closeSheet();
+            pick(row);
+          };
+          sheet.appendChild(r);
+        });
+      });
+      scrim.hidden = false;
+      var first = sheet.querySelector('.row');
+      if (first) first.focus();
+    }
+
+    function closeSheet() {
+      scrim.hidden = true;
+    }
+
+    scrim.addEventListener('click', function (e) {
+      if (e.target === scrim) closeSheet();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') closeSheet();
+    });
+
+    /* A tap sends the option's id — exactly what WhatsApp delivers as
+       `replyId` — while the bubble shows the label the seller saw. */
+    function pick(option) {
+      turn(option.id, option.title);
+    }
+
+    function money(n) {
+      return 'R' + Number(n).toLocaleString('en-ZA').replace(/,/g, ' ');
+    }
+
+    function paint() {
+      var snap = flow.snapshot();
+      var data = (snap && snap.data) || {};
+      stepEl.textContent = snap
+        ? String(snap.step).replace(/_/g, ' ')
+        : 'no conversation';
+      stepEl.className = 'chip' + (snap ? ' on' : '');
+
+      recordEl.innerHTML = '';
+      FIELDS.forEach(function (pair) {
+        var key = pair[0];
+        var value = data[key];
+        var li = el('li');
+        var shown;
+        if (value === undefined || value === null || value === '') {
+          li.className = 'empty';
+          shown = '—';
+        } else {
+          li.className = 'set';
+          if (key === 'priceZar') shown = money(value);
+          else if (key === 'exclusivityTermDays') shown = value + ' days';
+          else shown = String(value);
+        }
+        li.appendChild(el('dfn', null, pair[1]));
+        li.appendChild(el('var', null, shown));
+        recordEl.appendChild(li);
+      });
+    }
+
+    async function turn(payload, label) {
+      if (busy) return;
+      busy = true;
+      sendBtn.disabled = true;
+      clearOptions();
+      addBubble('in', label !== undefined ? label : payload);
+
+      showTyping();
+      await new Promise(function (r) {
+        setTimeout(r, 420);
+      });
+
+      var reply;
+      try {
+        reply = await flow.send(payload);
+      } catch (err) {
+        reply = {
+          text: 'Something went wrong in the flow — tap Restart to begin again.',
+        };
+      }
+      clearTyping();
+      addBubble('out', reply.text);
+      renderOptions(reply.options);
+      paint();
+
+      busy = false;
+      sendBtn.disabled = false;
+      entry.focus();
+    }
+
+    composer.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var text = entry.value.trim();
+      if (!text) return;
+      entry.value = '';
+      turn(text);
+    });
+
+    document.getElementById('reset').addEventListener('click', function () {
+      flow.reset();
+      thread.innerHTML = '';
+      rand = null;
+      closeSheet();
+      paint();
+      entry.focus();
+      addBubble(
+        'out',
+        'Chat cleared. Send “list” to start the seller journey again.',
+      );
+    });
+
+    paint();
+    addBubble(
+      'out',
+      'This is the Sold Direct seller line. Send “list” to begin.',
+    );
+    entry.focus();
+  })();
+</script>
+</body>
+</html>

@@ -4,7 +4,12 @@ import {
   handleDescriptionMessage,
   handleInboundPhoto,
   handleListingIntakeMessage,
-  START_RE,
+  beginsIntake,
+  BEGIN_RE,
+  COST_RE,
+  COST_REPLY,
+  HOW_RE,
+  HOW_REPLY,
   type DescriptionDeps,
   type ListingIntakeDeps,
   type PhotoIntakeDeps,
@@ -35,6 +40,10 @@ const UPSELL_REPLIES: Record<string, string> = {
     '👍 Great — we’ll line up trusted, accredited inspectors for your compliance ' +
     'certificates and WhatsApp you the quotes shortly. Booking early is the single ' +
     'best way to avoid transfer delays.',
+  consult:
+    '👍 Great — our team will WhatsApp you shortly for a free, no-obligation ' +
+    'pricing chat about your home. The asking price is always yours; we bring ' +
+    'the recent-sales data.',
   cover:
     '👍 Great — our concierge will WhatsApp you competitive homeowners-insurance ' +
     'quotes shortly. No obligation; your bank just needs cover in place before ' +
@@ -42,8 +51,11 @@ const UPSELL_REPLIES: Record<string, string> = {
   move:
     '👍 Great — our concierge will WhatsApp you trusted quotes for movers, fibre ' +
     'and anything else you need for the big day. No obligation.',
+  nothing:
+    '👌 No problem — everything above stays one message away whenever you ' +
+    'need it.',
 };
-const UPSELL_RE = /^\s*(certs|cover|move)\b/i;
+const UPSELL_RE = /^\s*(certs|cover|move|consult|nothing)\b/i;
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
@@ -77,7 +89,7 @@ export interface Dispatcher {
  * Routes an inbound WhatsApp message to the right flow and sends the reply.
  *
  * Order (each returns before the next):
- *   1. Buyer awaiting pre-qual consent → YES/NO drives the ooba hand-off.
+ *   1. Buyer awaiting pre-qual consent → YES/NO drives the BetterBond hand-off.
  *   2. `ENQUIRE <listingId>` deep link → create buyer + enquiry deal, invite consent.
  *   3. Otherwise → listing intake (handles an active seller draft, the
  *      list/sell trigger, and the help fallback internally).
@@ -90,7 +102,11 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
 
   async function route(message: InboundMessage): Promise<void> {
     const phone = message.from;
-    const text = (message.text ?? '').trim();
+    // A tapped button/list row carries its id in `replyId` and its label in
+    // `text`. Routing keys off the id: option ids are chosen to be keywords
+    // the parsers below already accept, so a tap and the equivalent typed
+    // reply follow exactly the same path.
+    const text = (message.replyId ?? message.text ?? '').trim();
 
     // -1. Inbound media (a photo) — handled by code in every mode, above all
     //     other routing. An image has empty text so no keyword route could
@@ -98,7 +114,40 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     //     photo reply and can still answer the consent question next.
     if (message.media && deps.photoIntake) {
       const result = await handleInboundPhoto(deps.photoIntake, message);
-      await deps.notifier.send(phone, result.reply);
+      await deps.notifier.send(phone, result.reply, {
+        interactive: result.options,
+      });
+      return;
+    }
+
+    // 0. "How it works" from the welcome menu — a fixed explainer, so the
+    //    menu is answerable with the AI concierge off.
+    if (HOW_RE.test(text)) {
+      await deps.notifier.send(phone, HOW_REPLY, {
+        interactive: {
+          kind: 'buttons',
+          options: [
+            { id: 'START', title: 'List my property' },
+            { id: 'COST', title: 'What it costs' },
+            { id: 'CONSULT', title: 'Talk to us' },
+          ],
+        },
+      });
+      return;
+    }
+
+    // 0. "What it costs" from the welcome menu — same deal as HOW.
+    if (COST_RE.test(text)) {
+      await deps.notifier.send(phone, COST_REPLY, {
+        interactive: {
+          kind: 'buttons',
+          options: [
+            { id: 'START', title: 'List my property' },
+            { id: 'HOW', title: 'How it works' },
+            { id: 'CONSULT', title: 'Talk to us' },
+          ],
+        },
+      });
       return;
     }
 
@@ -156,7 +205,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
           log('agent enquiry turn failed', error); // fall through to canned
         }
       }
-      await deps.notifier.send(phone, result.reply);
+      await deps.notifier.send(phone, result.reply, {
+        interactive: result.options,
+      });
       return;
     }
 
@@ -171,19 +222,32 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         text,
       });
       if (result.handled && result.reply) {
-        await deps.notifier.send(phone, result.reply);
+        await deps.notifier.send(phone, result.reply, {
+          interactive: result.options,
+        });
         return;
       }
     }
 
-    // 3. Agent-led intake: when the AI concierge is LIVE it owns the listing
+    // 3. Agent-led intake: when the AI concierge is LIVE it can own a listing
     //    conversation (asks only for missing fields, natural wording). The
     //    scripted flow below remains the fallback if the agent turn fails,
     //    so the user is never stranded. Consent stays deterministic above.
-    if (
-      deps.agent?.mode === 'live' &&
-      (START_RE.test(text) || (await deps.intake.store.get(phone)) !== null)
-    ) {
+    //
+    //    Who gets the conversation is decided once, on the opening message,
+    //    and never revisited — both flows write to the same store, so without
+    //    this the agent would claim every turn of an in-progress tap sequence
+    //    and the one-click flow could never run with the concierge on.
+    //
+    //      · tapped "List my property" → the seller chose the guided flow
+    //      · typed "sell my 4 bed in Mowbray" → natural language, the agent's
+    //        strength, so it takes the opener
+    //      · already under way → whoever owns it keeps it
+    const active = await deps.intake.store.get(phone);
+    const agentOwnsIntake = active
+      ? active.owner === 'agent'
+      : beginsIntake(text) && !BEGIN_RE.test(text.trim());
+    if (deps.agent?.mode === 'live' && agentOwnsIntake) {
       try {
         const outcome = await deps.agent.handle({ phone, text });
         if (outcome.sent) return;
@@ -199,6 +263,27 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       text,
     });
 
+    // 4b. A seller mid-flow who asked us something rather than answering.
+    //     The concierge answers, then the re-ask below carries on from the
+    //     same step — the draft is never handed over, so the taps survive.
+    //     Live mode only: in shadow the agent would merely draft, and the
+    //     seller would be left with a bare "I didn't catch that".
+    if (result.askedQuestion && deps.agent?.mode === 'live') {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) {
+          // Their question is answered; put the question they were on back
+          // in front of them, options and all.
+          await deps.notifier.send(phone, result.reply, {
+            interactive: result.options,
+          });
+          return;
+        }
+      } catch (error) {
+        log('concierge aside failed', error); // fall through to the re-ask
+      }
+    }
+
     // 5. No scripted flow claimed the message → AI concierge, when enabled.
     //    (Shadow mode drafts here; the canned reply below still goes out.)
     if (result.fallback && deps.agent) {
@@ -210,7 +295,9 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       }
     }
 
-    await deps.notifier.send(phone, result.reply);
+    await deps.notifier.send(phone, result.reply, {
+      interactive: result.options,
+    });
   }
 
   return {

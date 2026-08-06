@@ -99,10 +99,23 @@ model Listing {
   sellerId            String
   seller              Seller        @relation(fields: [sellerId], references: [id])
   title               String
+  /// Tapped in the WhatsApp intake (house/apartment/townhouse/estate/land/
+  /// other) and used to compose the headline. Null on listings created
+  /// before the picker existed.
+  propertyType        String?
   description         String?
   priceZar            Decimal       @db.Decimal(12, 2)
   suburb              String?
   city                String        @default("Cape Town")
+  /// Street address — PRIVATE (POPIA: seller PII). Never shown to buyers;
+  /// used for price guidance (LOOM) and portal syndication only.
+  address             String?
+  /// Cached market-price estimate (via the ValuationAdapter, e.g. LOOM) —
+  /// one report per property; refreshed only by an explicit re-estimate.
+  estimateLowZar      Int?
+  estimateHighZar     Int?
+  estimatedAt         DateTime?
+  estimateSource      String?
   bedrooms            Int?
   bathrooms           Int?
   status              ListingStatus @default(draft)

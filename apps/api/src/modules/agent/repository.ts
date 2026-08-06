@@ -20,7 +20,10 @@ export function createPrismaAgentRepository(
         .reverse()
         .filter((row) => (row.body ?? '').trim() !== '')
         .map((row) => ({
-          role: row.direction === 'inbound' ? ('user' as const) : ('assistant' as const),
+          role:
+            row.direction === 'inbound'
+              ? ('user' as const)
+              : ('assistant' as const),
           content: row.body as string,
         }));
       // The Messages API requires the thread to start with a user turn.
@@ -93,10 +96,7 @@ export function createPrismaAgentDataSource(
     async dealsForPhone(phone): Promise<AgentDeal[]> {
       const deals = await prisma.deal.findMany({
         where: {
-          OR: [
-            { buyer: { phone } },
-            { listing: { seller: { phone } } },
-          ],
+          OR: [{ buyer: { phone } }, { listing: { seller: { phone } } }],
         },
         orderBy: { updatedAt: 'desc' },
         take: 10,
@@ -112,7 +112,8 @@ export function createPrismaAgentDataSource(
       });
       return deals.map((d) => ({
         id: d.id,
-        role: d.buyer.phone === phone ? ('buyer' as const) : ('seller' as const),
+        role:
+          d.buyer.phone === phone ? ('buyer' as const) : ('seller' as const),
         property: `${d.listing.title}${d.listing.suburb ? ` (${d.listing.suburb})` : ''}`,
         status: d.status,
         updatedAt: d.updatedAt,

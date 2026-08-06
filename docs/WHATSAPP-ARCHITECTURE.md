@@ -35,7 +35,7 @@ flowchart LR
   WH -. "MISSING ⛔" .-> DISP[Dispatcher / router]
   DISP -. .-> INT[listings/intake ✅]
   DISP -. .-> ENQ[enquiry ✅]
-  DISP -. .-> FIN[finance/ooba 🟡 stub]
+  DISP -. .-> FIN[finance/BetterBond 🟡 stub]
   DISP -. .-> DEAL[deals state machine ✅]
   INT & ENQ & FIN & DEAL --> DB[(Postgres / Prisma ✅)]
   DISP -. "send() never called ⛔" .-> AD
@@ -45,18 +45,18 @@ flowchart LR
 
 | Component | Path | Status | Notes |
 |---|---|---|---|
-| Messaging adapter interface | `apps/api/src/modules/messaging/types.ts` | ✅ | `MessagingAdapter`: `verifyChallenge`, `verifySignature`, `parseInbound`, `send`. `OutboundMessage` is **text-only**. |
-| WhatsApp Cloud adapter | `.../messaging/whatsapp-cloud.ts` | ✅ | Meta Graph API. HMAC-**SHA256** over raw body vs `x-hub-signature-256`. Sends **text only** to `graph.facebook.com/{ver}/{phoneId}/messages`. |
+| Messaging adapter interface | `apps/api/src/modules/messaging/types.ts` | ✅ | `MessagingAdapter`: `verifyChallenge`, `verifySignature`, `parseInbound`, `send`, `fetchMedia`. `OutboundMessage` carries optional **`interactive`** reply options (buttons / list menu, `messaging/interactive.ts`); `text` stays the body and the degraded fallback. `InboundMessage.replyId` carries a tapped option's id. |
+| WhatsApp Cloud adapter | `.../messaging/whatsapp-cloud.ts` | ✅ | Meta Graph API. HMAC-**SHA256** over raw body vs `x-hub-signature-256`. Sends `type: 'text'` or `type: 'interactive'` (button / list) to `graph.facebook.com/{ver}/{phoneId}/messages`; `parseInbound` reads text, images, and tapped buttons/list rows. |
 | Webhook routes | `.../messaging/routes.ts` | ✅ | `GET /api/webhooks/whatsapp` (challenge) + `POST` (verify → parse → persist → `200`). |
 | Message persistence | `.../messaging/repository.ts` | ✅ | Writes `messages`; idempotent on `waMessageId` (swallows Prisma `P2002`). `recordOutbound` exists but is **never called**. |
 | Server wiring + raw body | `apps/api/src/app.ts` | ✅ | Registers webhook, leads, dashboard; raw-body JSON parser feeds signature check; `GET /health`. |
-| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_title→suburb→price→bedrooms→bathrooms→exclusivity→completed`; trigger `^(list\|sell)`. **Wired via the dispatcher** (seller flow). |
+| Listing intake | `.../listings/intake.ts`, `service.ts`, `store.ts` | ✅ | Scripted state machine `awaiting_property_type→suburb(→suburb_pick)→address→price→bedrooms→bathrooms→exclusivity→confirm(→edit_choice)→completed`; trigger `^(list\|sell)`. Answers are **one-tap** (`optionsFor`); the headline is composed, not asked. **Wired via the dispatcher** (seller flow). |
 | Deal state machine | `.../deals/state-machine.ts`, `service.ts`, `routes.ts` | ✅ | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. **`POST /api/deals/:id/transition`** (internal-token guarded) advances a deal and fires the stage's WhatsApp template to buyer/seller (`stage-notifications.ts`). |
 | Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
-| Finance / ooba referral | `.../finance/ooba-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **ObaReferralStub logs only** (real ooba API pending). |
+| Finance / BetterBond referral | `.../finance/betterbond-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **BetterBondReferralStub logs only** (real BetterBond API pending). |
 | Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
 | Notifications | `.../notifications/index.ts` | ✅ | `Notifier` sends via the adapter and persists the outbound message. |
-| Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates). Select with `WHATSAPP_BSP=twilio`. |
+| Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates); reply options degrade to a keyword list, since Twilio's REST API has no session-level interactive message. Select with `WHATSAPP_BSP=twilio`. |
 
 **Deal stages (SA transfer journey):**
 `enquiry → offer_otp → bond_application → bond_granted → documents_fica → clearance → lodgement → registered` (plus `cancelled` from any non-terminal stage). Transitions are strictly forward one step; every change writes a timestamped, actor-stamped `deal_events` row. **Actor types today:** `seller | buyer | agent | system` — no external-party actor.
@@ -74,9 +74,9 @@ flowchart LR
 |---|---|---|---|---|
 | 1 | **Twilio WhatsApp (BSP)** | Send/receive WhatsApp; template hosting | ⛔ new adapter | add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID` (or `TWILIO_WHATSAPP_FROM`) |
 | 2 | **Meta Business verification** | Own the WhatsApp Business number / display name | ⛔ (via Twilio) | done inside Twilio console |
-| 3 | **ooba originator API** | Real bond pre-qual + application hand-off | 🟡 stub | `ORIGINATOR_REFERRAL_ENDPOINT`, `ORIGINATOR_API_KEY` (present, unused) |
+| 3 | **BetterBond originator API** | Real bond pre-qual + application hand-off | 🟡 stub | `ORIGINATOR_REFERRAL_ENDPOINT`, `ORIGINATOR_API_KEY` (present, unused) |
 | 4 | **Panel conveyancer(s)** | Transfer/bond/cancellation attorneys, FICA, clearance | ⛔ | new party model + adapter seam |
-| 5 | **Banks / lenders** | Bond application status (via ooba multi-bank) | ⛔ | new party model + `DealEvent` actor |
+| 5 | **Banks / lenders** | Bond application status (via BetterBond multi-bank) | ⛔ | new party model + `DealEvent` actor |
 | 6 | **Supabase Auth** | Dashboard login (replaces basic-auth) | 🟡 interface only | `SUPABASE_URL`, `SUPABASE_*_KEY`; `AuthProvider` seam |
 | 7 | **Supabase Storage** | Listing photos, FICA docs | 🟡 interface only | `StorageProvider` seam |
 | 8 | **Property24 / Private Property** | Listing syndication | ⛔ | new syndication adapter |
@@ -115,7 +115,7 @@ fundraising) — this section maps it to the backend.
 | Taps "Enquire on WhatsApp" (portal / link) | Buyer | — | — | wa.me link |
 | Availability + **POPIA consent** | System | TEMPLATE | creates **Deal @ `enquiry`** | `buyers` upsert |
 | Offer free ~2-min **bond pre-qual** → "Yes" | both | session | consent timestamp | POPIA gate |
-| Collect income/deposit + credit consent → **prequal card** | System | session | `bondPrequalified=true` | 🟡 ooba (stub today) |
+| Collect income/deposit + credit consent → **prequal card** | System | session | `bondPrequalified=true` | 🟡 BetterBond (stub today) |
 | Viewing booked | both | session | — | — |
 | "I'd like to make an offer" → **OTP** built + e-signed; seller counters; accept | both | session + link | `enquiry → offer_otp` | ⛔ e-sign |
 
@@ -123,7 +123,7 @@ fundraising) — this section maps it to the backend.
 These steps need **new party models, an external-party actor type, and their own templates.**
 | Step | Actor | Msg class | Stage / event | Integration |
 |---|---|---|---|---|
-| Multi-bank bond application → approved | ooba / bank | TEMPLATE (update) | `offer_otp → bond_application → bond_granted` | ⛔ ooba API, bank |
+| Multi-bank bond application → approved | BetterBond / bank | TEMPLATE (update) | `offer_otp → bond_application → bond_granted` | ⛔ BetterBond API, bank |
 | Assign 3 attorneys (transfer/bond/cancellation) | conveyancer | TEMPLATE | — | ⛔ conveyancer |
 | **FICA** both parties (ID, proof of residence, source of funds) | buyer/seller | session + upload | `bond_granted → documents_fica` | ⛔ FICA + Storage |
 | Title deed, rates clearance, transfer duty | conveyancer | TEMPLATE | `documents_fica → clearance` | ⛔ deeds / municipal / SARS |
@@ -136,7 +136,7 @@ sequenceDiagram
   participant S as Seller
   participant SD as Sold Direct (API)
   participant B as Buyer
-  participant O as ooba / Bank
+  participant O as BetterBond / Bank
   participant C as Conveyancer
   S->>SD: list (consent, intake, mandate)
   SD-->>S: listing live + syndicated
@@ -177,7 +177,7 @@ templates the journeys need:
 |---|---|---|---|
 | `welcome_consent` | seller/buyer starts | utility | {{name}} |
 | `prequal_invite` | after enquiry | utility | {{listing}} |
-| `prequal_result` | ooba responds | utility | {{amount}}, {{rate}} |
+| `prequal_result` | BetterBond responds | utility | {{amount}}, {{rate}} |
 | `otp_status` | offer sent/countered | utility | {{price}} |
 | `bond_approved` | bank approves | utility | {{bank}}, {{amount}} |
 | `fica_checklist` | enter documents stage | utility | {{party}} |
@@ -236,7 +236,7 @@ Each item maps to an existing seam, so it's incremental:
 3. **Notifications** — ✅ done (`notifications/index.ts`): sends via the adapter + persists outbound.
 4. **Approved templates** in Twilio (§5.2) — 🟡 drafted in `docs/whatsapp-templates.md`; submit for
    approval (needs the sender number, in progress).
-5. **Real ooba adapter** — replace `ObaReferralStub` using `ORIGINATOR_*` env. 🟡
+5. **Real BetterBond adapter** — replace `BetterBondReferralStub` using `ORIGINATOR_*` env. 🟡
 6. **Transfer-journey tracker** — ✅ done: `POST /api/deals/:id/transition` advances a deal through
    the SA stages and fires the stage's approved template (`otp_status`, `bond_approved`,
    `fica_checklist`, `compliance_certs`, `transfer_status`) to buyer + seller, with plain-text

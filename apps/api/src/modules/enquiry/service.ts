@@ -1,6 +1,7 @@
 import type { ProfileRepository } from '../profiles';
 import type { DealRepository } from '../deals';
 import type { FinanceReferralAdapter } from '../finance';
+import type { ReplyOptions } from '../messaging/interactive';
 
 export interface EnquiryDeps {
   profiles: ProfileRepository;
@@ -18,6 +19,8 @@ export interface EnquiryResult {
   buyerId: string;
   dealId: string;
   reply: string;
+  /** Consent buttons — the dispatcher reads YES/NO exactly as before. */
+  options?: ReplyOptions;
 }
 
 /**
@@ -36,15 +39,26 @@ export async function handleBuyerEnquiry(
   return {
     buyerId: buyer.id,
     dealId: deal.id,
-    // "prime − 0.67%" is our originator's achieved average, never a promise,
-    // and many first-time buyers qualify for 100% bonds — both verified
+    // "prime − 0.67%" comes from ooba's published oobarometer, NOT from our
+    // own partner's book — BetterBond is the originator, ooba publishes the
+    // dataset. Attributing it to "our partner" would be a performance claim
+    // we cannot support. It is an achieved average, never a promise
     // (docs/BOTTLENECKS.md §1.2–1.3). Keep that framing.
     reply:
       'Thanks for your interest! Want a free, no-obligation home-loan ' +
-      'pre-qualification right here? Buyers applying through our multi-bank ' +
-      'partner achieved an average rate of prime −0.67% last quarter, and ' +
-      'many first-time buyers qualify for 100% (zero-deposit) loans. ' +
-      'Reply YES and we’ll ask your consent before sharing anything.',
+      'pre-qualification right here? Buyers who applied to several banks at ' +
+      'once averaged prime −0.67% last quarter (published originator data), ' +
+      'and many first-time buyers qualify for 100% (zero-deposit) loans. ' +
+      'We’ll ask your consent before sharing anything.',
+    options: {
+      kind: 'buttons',
+      options: [
+        // `YES` matches the dispatcher's consent regex; anything else is a
+        // decline, exactly as a typed reply has always been.
+        { id: 'YES', title: 'Yes, pre-qualify me' },
+        { id: 'NO', title: 'Not now' },
+      ],
+    },
   };
 }
 

@@ -25,6 +25,8 @@ import {
 import {
   createAnthropicIntakeExtractor,
   createNoopExtractor,
+  createAnthropicDescriptionDrafter,
+  createNoopDescriptionDrafter,
   createPrismaConversationStore,
   createPrismaListingRepository,
   type ListingDraft,
@@ -39,7 +41,7 @@ import {
 } from './modules/deals';
 import { createPrismaDeadlineRepository } from './modules/deadlines';
 import { createPrismaProfileRepository } from './modules/profiles';
-import { ObaReferralStub } from './modules/finance';
+import { BetterBondReferralStub } from './modules/finance';
 import { registerDashboardRoutes } from './modules/dashboard';
 import {
   createAgentHandler,
@@ -66,6 +68,12 @@ import {
 } from './modules/storage';
 import { Property24SyndicationStub } from './modules/syndication';
 import {
+  createDemoValuationAdapter,
+  createValuationAdapter,
+  type PriceEstimate,
+  type ValuationAdapter,
+} from './modules/valuation';
+import {
   createPrismaOnboardingStore,
   type DescriptionDeps,
   type PhotoIntakeDeps,
@@ -79,6 +87,8 @@ export type ServerDeps = MessagingRouteDeps & {
   agent?: AgentHandler;
   /** Test seam: inject a fake storage provider. */
   storage?: StorageProvider;
+  /** Test seam: inject a fake valuation adapter. */
+  valuation?: ValuationAdapter;
   internalToken?: string;
 };
 
@@ -131,7 +141,33 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   );
 
   app.get('/health', async () => {
-    return { status: 'ok', service: APP_NAME };
+    // The deployed commit, so "is the live API running the code I just
+    // merged?" is answerable from a browser instead of the host's dashboard.
+    // Railway/Render/Vercel each expose the SHA under their own name; unset
+    // (a local run) reports "unknown" rather than an empty string.
+    const commit =
+      process.env.RAILWAY_GIT_COMMIT_SHA ??
+      process.env.RENDER_GIT_COMMIT ??
+      process.env.VERCEL_GIT_COMMIT_SHA ??
+      process.env.GIT_COMMIT_SHA;
+    return {
+      status: 'ok',
+      service: APP_NAME,
+      commit: commit ? commit.slice(0, 7) : 'unknown',
+      // Whether the AI layer is actually switched on — the single most
+      // common deploy surprise (see DEPLOYMENT.md step 5).
+      features: {
+        concierge:
+          process.env.AGENT_ENABLED === 'true' &&
+          !!process.env.ANTHROPIC_API_KEY,
+        descriptionWriter:
+          !!process.env.ANTHROPIC_API_KEY &&
+          process.env.DESCRIPTION_DRAFTING !== 'false',
+        fieldExtraction:
+          !!process.env.ANTHROPIC_API_KEY &&
+          process.env.INTAKE_EXTRACTION !== 'false',
+      },
+    };
   });
 
   const adapter = deps?.adapter ?? createMessagingAdapter();
@@ -158,9 +194,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const createListing = (phone: string, draft: ListingDraft) =>
     listingRepository.createFromDraft(phone, draft);
   const onboardingStore = createPrismaOnboardingStore(prisma);
-  const syndication = new Property24SyndicationStub((msg) =>
-    app.log.info(msg),
-  );
+  const syndication = new Property24SyndicationStub((msg) => app.log.info(msg));
   const extractor =
     process.env.ANTHROPIC_API_KEY && process.env.INTAKE_EXTRACTION !== 'false'
       ? createAnthropicIntakeExtractor({
@@ -168,15 +202,38 @@ export function buildServer(deps?: Partial<ServerDeps>) {
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : createNoopExtractor();
+  // Price guidance (LOOM when configured; silent noop otherwise — no
+  // fabricated ranges ever reach a real seller). The demo dispatcher gets a
+  // clearly-mock adapter below so the guidance experience stays playable.
+  const valuation =
+    deps?.valuation ??
+    createValuationAdapter((msg, err) => app.log.warn({ err }, msg));
+  const saveEstimate = (id: string, estimate: PriceEstimate) =>
+    listingRepository.saveEstimate(id, estimate);
   const intakeDeps = {
     store: conversationStore,
     createListing,
     extractor,
     onboarding: onboardingStore,
+    valuation,
+    saveEstimate,
   };
+  // "Write it for me": drafts the optional description from the listing's
+  // own facts, for the seller to approve. Degrades to a noop without an API
+  // key (the button then simply invites them to type one).
+  const drafter =
+    process.env.ANTHROPIC_API_KEY &&
+    process.env.DESCRIPTION_DRAFTING !== 'false'
+      ? createAnthropicDescriptionDrafter({
+          model: process.env.DESCRIPTION_DRAFTER_MODEL,
+          log: (msg, err) => app.log.warn({ err }, msg),
+        })
+      : createNoopDescriptionDrafter();
   const description: DescriptionDeps = {
     onboarding: onboardingStore,
     setDescription: (id, text) => listingRepository.setDescription(id, text),
+    drafter,
+    listingFacts: (id) => listingRepository.getFacts(id),
   };
   const makePhotoIntake = (
     fetchMedia: PhotoIntakeDeps['fetchMedia'],
@@ -207,12 +264,14 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const makeAgent = (
     agentNotifier: Notifier,
     mode: AgentMode,
+    agentValuation: typeof valuation,
   ): AgentHandler | undefined =>
     agentEnabled
       ? createAgentHandler({
           model: createAnthropicAgentModel({
             model: process.env.AGENT_MODEL,
-            effort: process.env.AGENT_EFFORT as 'low' | 'medium' | 'high' | undefined,
+            effort: process.env.AGENT_EFFORT as
+              'low' | 'medium' | 'high' | undefined,
           }),
           repository: agentRepository,
           data: createPrismaAgentDataSource(prisma),
@@ -226,10 +285,11 @@ export function buildServer(deps?: Partial<ServerDeps>) {
             onboarding: onboardingStore,
             listings: listingRepository,
           },
+          valuation: agentValuation,
           log: (msg, err) => app.log.warn({ err }, msg),
         })
       : undefined;
-  const agent = deps?.agent ?? makeAgent(notifier, agentMode);
+  const agent = deps?.agent ?? makeAgent(notifier, agentMode, valuation);
 
   // Wire the conversation dispatcher unless a test injected its own (or opted
   // out by passing an explicit `dispatcher`). Flows reply via the notifier.
@@ -240,7 +300,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
-        finance: new ObaReferralStub((msg) => app.log.info(msg)),
+        finance: new BetterBondReferralStub((msg) => app.log.info(msg)),
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier,
@@ -281,12 +341,15 @@ export function buildServer(deps?: Partial<ServerDeps>) {
     // everything downstream (storage, DB, activation, syndication) is the
     // production path.
     const demoMedia = createDemoMediaStore();
+    // The demo gets a deterministic MOCK estimate adapter so price guidance
+    // is playable — mock numbers can never leak to production flows.
+    const demoValuation = createDemoValuationAdapter();
     const demoDispatcher = createDispatcher({
-      intake: intakeDeps,
+      intake: { ...intakeDeps, valuation: demoValuation },
       enquiry: {
         profiles: createPrismaProfileRepository(prisma),
         deals: createPrismaDealRepository(prisma),
-        finance: new ObaReferralStub((msg) => app.log.info(msg)),
+        finance: new BetterBondReferralStub((msg) => app.log.info(msg)),
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier: demoNotifier,
@@ -296,7 +359,8 @@ export function buildServer(deps?: Partial<ServerDeps>) {
         return item;
       }),
       description,
-      agent: deps?.agent ?? makeAgent(demoNotifier, demoAgentMode),
+      agent:
+        deps?.agent ?? makeAgent(demoNotifier, demoAgentMode, demoValuation),
       log: (msg, err) => app.log.error({ err }, msg),
     });
     registerDemoRoutes(app, {

@@ -39,7 +39,6 @@ export default async function ListingsPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
                       {l.photos?.[0]?.url ? (
-                        // eslint-disable-next-line @next/next/no-img-element
                         <img
                           src={l.photos[0].url}
                           alt=""
@@ -53,7 +52,9 @@ export default async function ListingsPage() {
                       <div>
                         <div className="font-medium">{l.title}</div>
                         <div className="text-slate-500">
-                          {[l.suburb, l.city].filter(Boolean).join(', ')}
+                          {[l.propertyType, l.address, l.suburb, l.city]
+                            .filter(Boolean)
+                            .join(', ')}
                           {l.bedrooms != null ? ` · ${l.bedrooms} bed` : ''}
                           {` · ${l._count?.photos ?? 0} photo${(l._count?.photos ?? 0) === 1 ? '' : 's'}`}
                           {` · description ${l.description ? '✓' : '–'}`}

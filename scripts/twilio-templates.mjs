@@ -63,7 +63,7 @@ const TEMPLATES = [
     variables: { 1: 'R6 200 000', 2: 'Prime -0.50%', 3: '20' },
     text:
       "✅ You're pre-qualified up to {{1}} at approximately {{2}} over {{3}} years " +
-      '(indicative, via our partner ooba). Reply VIEW to book a viewing or ask me anything.',
+      '(indicative, via our partner BetterBond). Reply VIEW to book a viewing or ask me anything.',
   },
   {
     key: 'otp_status',

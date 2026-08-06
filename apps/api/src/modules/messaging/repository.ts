@@ -53,8 +53,16 @@ export function createPrismaMessageRepository(
           waMessageId: message.waMessageId ?? null,
           fromPhone: message.from,
           toPhone: message.to,
-          type: 'text',
+          type: message.interactive ? 'interactive' : 'text',
           body: message.text,
+          // The options we offered, so the thread can be replayed with its
+          // buttons (the demo simulator renders from this). POPIA-safe: ids
+          // and titles are static copy, never personal data.
+          raw: message.interactive
+            ? ({
+                interactive: message.interactive,
+              } as unknown as Prisma.InputJsonValue)
+            : Prisma.JsonNull,
         },
       });
     },
