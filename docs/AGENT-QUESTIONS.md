@@ -3,9 +3,14 @@
 The agent's knowledge base (`apps/api/src/modules/agent/knowledge.ts`)
 covers everything the repo's research answers. The topics below are
 questions real sellers and buyers WILL ask that no document answered —
-**Johannes answered round 1 on 2026-07-10**; answered items are folded into
-the prompt, TBC items stay on the agent's honest "I'll get our concierge to
-confirm" list.
+**Johannes answered round 1 on 2026-07-10**, and **re-confirmed every one of
+those answers on 2026-08-06** before they were folded in. Answered items go
+into the prompt; TBC items stay on the agent's honest "I'll get our concierge
+to confirm" list.
+
+These answers are what the concierge states to real customers as fact —
+several are effectively pricing or coverage policy. Re-read them whenever
+the commercial model moves, and re-date the confirmation above when you do.
 
 **How to answer the remaining ones:** fill in / update the **Answer:**
 line, send the file back or paste in chat. Each answer gets folded into the
