@@ -738,11 +738,21 @@
           <li>
             <span class="cross" aria-hidden="true">×</span>
             <span
-              ><b>Description drafting is off.</b> That step calls the model
-              server-side, so it is skipped here.</span
+              ><b>The AI layer runs server-side, so it is not in this page.</b>
+              Two parts of the product call Claude from the API: the
+              <b>description writer</b>, which drafts your listing copy for you
+              to approve, and the <b>concierge</b>, which answers off-script
+              questions — "how long does transfer take?", "who pays the rates
+              clearance?" — in the same thread, and hands over to a registered
+              practitioner when it should. Both need an API key, which has no
+              business in a public web page. Run the API to see them live.</span
             >
           </li>
         </ul>
+        <p class="lede" style="margin-top: 14px">
+          The scripted flow above is deliberately independent of all that: if
+          the model is unavailable, every question here still works.
+        </p>
       </section>
 
       <p class="notice">
