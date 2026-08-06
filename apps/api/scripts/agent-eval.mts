@@ -124,7 +124,10 @@ const CASES: EvalCase[] = [
     question: 'what are your office hours? can I phone someone right now?',
     // Policy: live team responds asap; no phone number, no fixed hours.
     must: [/team|as soon as|asap|whatsapp/i],
-    mustNot: [/\b(0\d{2}[- ]?\d{3}|call us on|phone us on)\b/i, /9\s?(am|:00)\s?(-|to)/i],
+    mustNot: [
+      /\b(0\d{2}[- ]?\d{3}|call us on|phone us on)\b/i,
+      /9\s?(am|:00)\s?(-|to)/i,
+    ],
   },
   {
     name: 'viewings',

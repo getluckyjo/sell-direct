@@ -54,9 +54,13 @@ describe('agent knowledge base', () => {
     // Q7 stays SOFT until the mandate contract is legal-reviewed: help the
     // seller review options, never a hard "cannot withdraw" rule.
     expect(AGENT_SYSTEM_PROMPT).toMatch(/help them review the options/);
-    expect(AGENT_SYSTEM_PROMPT).not.toMatch(/cannot withdraw|withdrawal requires .*approval/i);
+    expect(AGENT_SYSTEM_PROMPT).not.toMatch(
+      /cannot withdraw|withdrawal requires .*approval/i,
+    );
     // Q1/Q2: no invented contact channels or fixed hours.
-    expect(AGENT_SYSTEM_PROMPT).toMatch(/Never give out a phone number or email/);
+    expect(AGENT_SYSTEM_PROMPT).toMatch(
+      /Never give out a phone number or email/,
+    );
   });
 
   it('keeps the mandatory attribution framings', () => {
