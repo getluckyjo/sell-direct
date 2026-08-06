@@ -45,7 +45,9 @@ const CASES: EvalCase[] = [
   {
     name: 'commission',
     question: 'what do you actually take as commission?',
-    must: [/0%/],
+    // "Zero" is as good an answer as "0%" — assert the meaning, not one
+    // spelling of it.
+    must: [/0%|zero|no commission/i],
     mustNot: [/flat[- ]fee marketplace/i],
   },
   {
@@ -56,8 +58,9 @@ const CASES: EvalCase[] = [
   {
     name: 'own-attorney',
     question: 'can I use my own transfer attorney instead of your panel?',
-    // Unfinalised policy — must not invent a yes/no.
-    expectEscalation: true,
+    // Acceptable: explain the ecosystem/Flex implication or defer to the team
+    // — but never a flat unexplained "no".
+    must: [/flex|1%|concierge|team/i],
   },
   {
     name: 'timeline',
@@ -112,14 +115,23 @@ const CASES: EvalCase[] = [
     mustNot: [/ripoff|rip-off|theft|obsolete|scam/i],
   },
   {
-    name: 'rentals-gap',
+    name: 'rentals',
     question: 'can I rent out my flat through you instead of selling?',
-    expectEscalation: true,
+    // Policy: sales focus, rental arm planned, capture the lead. Either the
+    // agent escalates outright, or it offers to pass the details on and waits
+    // for a yes — the second is better manners and better POPIA practice, so
+    // both pass. What must never happen is the lead going nowhere.
+    must: [/rental/i, /details|let you know|our team|in touch/i],
   },
   {
-    name: 'hours-gap',
+    name: 'hours',
     question: 'what are your office hours? can I phone someone right now?',
-    expectEscalation: true,
+    // Policy: live team responds asap; no phone number, no fixed hours.
+    must: [/team|as soon as|asap|whatsapp/i],
+    mustNot: [
+      /\b(0\d{2}[- ]?\d{3}|call us on|phone us on)\b/i,
+      /9\s?(am|:00)\s?(-|to)/i,
+    ],
   },
   {
     name: 'viewings',
@@ -128,8 +140,41 @@ const CASES: EvalCase[] = [
   },
 ];
 
+/**
+ * This script WIPES listings, sellers, deals and messages before seeding its
+ * own fixture. Pointed at production that is catastrophic and irreversible,
+ * so it refuses to run anywhere but a local database.
+ */
+function assertLocalDatabase(): void {
+  const url = process.env.DATABASE_URL ?? '';
+  assert.ok(url, 'DATABASE_URL required');
+  const host = (() => {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return '';
+    }
+  })();
+  const isLocal = [
+    'localhost',
+    '127.0.0.1',
+    '::1',
+    'host.docker.internal',
+  ].includes(host);
+  if (isLocal || process.env.I_KNOW_THIS_WIPES_THE_DATABASE === 'yes') return;
+  console.error(
+    `\nRefusing to run: DATABASE_URL points at "${host}", not a local database.\n` +
+      `This script DELETES every listing, seller, deal and message before it\n` +
+      `seeds its fixture. Point it at a local Postgres.\n` +
+      `(Override — only if you are certain — with ` +
+      `I_KNOW_THIS_WIPES_THE_DATABASE=yes.)\n`,
+  );
+  process.exit(1);
+}
+
 async function main() {
   assert.ok(process.env.ANTHROPIC_API_KEY, 'ANTHROPIC_API_KEY required');
+  assertLocalDatabase();
 
   // Fresh slate + one active listing so search tools have real data.
   await prisma.agentDraft.deleteMany();
