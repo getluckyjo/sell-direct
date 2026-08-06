@@ -141,7 +141,33 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   );
 
   app.get('/health', async () => {
-    return { status: 'ok', service: APP_NAME };
+    // The deployed commit, so "is the live API running the code I just
+    // merged?" is answerable from a browser instead of the host's dashboard.
+    // Railway/Render/Vercel each expose the SHA under their own name; unset
+    // (a local run) reports "unknown" rather than an empty string.
+    const commit =
+      process.env.RAILWAY_GIT_COMMIT_SHA ??
+      process.env.RENDER_GIT_COMMIT ??
+      process.env.VERCEL_GIT_COMMIT_SHA ??
+      process.env.GIT_COMMIT_SHA;
+    return {
+      status: 'ok',
+      service: APP_NAME,
+      commit: commit ? commit.slice(0, 7) : 'unknown',
+      // Whether the AI layer is actually switched on — the single most
+      // common deploy surprise (see DEPLOYMENT.md step 5).
+      features: {
+        concierge:
+          process.env.AGENT_ENABLED === 'true' &&
+          !!process.env.ANTHROPIC_API_KEY,
+        descriptionWriter:
+          !!process.env.ANTHROPIC_API_KEY &&
+          process.env.DESCRIPTION_DRAFTING !== 'false',
+        fieldExtraction:
+          !!process.env.ANTHROPIC_API_KEY &&
+          process.env.INTAKE_EXTRACTION !== 'false',
+      },
+    };
   });
 
   const adapter = deps?.adapter ?? createMessagingAdapter();
