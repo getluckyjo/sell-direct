@@ -55,11 +55,32 @@ build, migrate and start commands and a `/health` healthcheck. You only set the
      `WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_APP_SECRET`
    - `FIELD_ENCRYPTION_KEY` (for later, when sensitive PII is added)
    - Railway sets `PORT` automatically — the server already reads it.
-5. **Deploy.** The start command runs `prisma migrate deploy` (creates the
+5. **AI variables — set these or the AI layer stays off.** Everything works
+   without them (the intake is fully scripted), but three features are silently
+   disabled, which is easy to mistake for "the AI isn't built":
+   - `ANTHROPIC_API_KEY` — turns on the **description writer** (drafts listing
+     copy for the seller to approve) and **field extraction** (so "4 bedroom
+     home in Mowbray" fills three fields at once instead of asking three
+     questions).
+   - `AGENT_ENABLED=true` — turns on the **concierge**, which answers
+     off-script questions in the thread.
+   - `AGENT_MODE` — `shadow` (default: the concierge only drafts, a human
+     approves) or `live` (it replies directly). Start on `shadow` for real
+     traffic.
+   - `DEMO_AGENT_MODE` — governs `/demo` only, and defaults to `live` so the
+     simulator is playable. Set `shadow` to demo the approval flow instead.
+6. **Deploy.** The start command runs `prisma migrate deploy` (creates the
    tables) then boots the server. Under **Settings → Networking** click
    **Generate Domain** to get a public URL.
-6. Visit `https://<your-api>.up.railway.app/health` → it should return
+7. Visit `https://<your-api>.up.railway.app/health` → it should return
    `{"status":"ok","service":"Sold Direct"}`.
+8. **The playable demo** lives at `https://<your-api>.up.railway.app/demo` —
+   the seller journey against the real pipeline. If you set
+   `INTERNAL_API_TOKEN`, the page asks for it once and keeps it in the
+   browser, so have it to hand before showing anyone. Demo conversations are
+   locked to the reserved `+2700…` number range and can never touch a real
+   seller's thread. Set `DEMO_ENABLED=false` to switch the route off once real
+   traffic matters.
 
 > Render is equivalent: a Web Service with Root Directory `apps/api`, same
 > install/build/start commands (copy them from `railway.json`).
