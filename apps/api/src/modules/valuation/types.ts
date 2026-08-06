@@ -1,3 +1,4 @@
+import { formatZar } from '@sell-direct/shared';
 /**
  * Valuation seam. Price guidance comes from a market-data partner (LOOM
  * Property Insights) behind this interface — swappable, best-effort, and
@@ -38,10 +39,9 @@ export interface ValuationAdapter {
 
 /** Render the user-facing guidance line — one place, one framing. */
 export function renderEstimateLine(estimate: PriceEstimate): string {
-  const fmt = (n: number) => `R${n.toLocaleString('en-ZA')}`;
   return (
     `💡 Price guidance: homes like yours recently sold for ` +
-    `${fmt(estimate.lowZar)}–${fmt(estimate.highZar)} (based on confirmed ` +
+    `${formatZar(estimate.lowZar)}–${formatZar(estimate.highZar)} (based on confirmed ` +
     `sales via ${estimate.source}). The asking price is yours — reply ` +
     `CONSULT anytime for a free pricing chat with our team.`
   );

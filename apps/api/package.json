@@ -17,7 +17,8 @@
     "db:deploy": "prisma migrate deploy",
     "db:studio": "prisma studio",
     "postinstall": "prisma generate",
-    "start": "tsx src/server.ts"
+    "start": "tsx src/server.ts",
+    "build:demo": "node scripts/build-standalone-demo.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
@@ -29,6 +30,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
+    "esbuild": "^0.28.1",
     "vitest": "^2.1.8"
   }
 }

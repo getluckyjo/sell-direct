@@ -39,3 +39,18 @@ export const PROPERTY_TYPES = [
 ] as const;
 
 export type PropertyType = (typeof PROPERTY_TYPES)[number];
+
+/**
+ * Rand, formatted the South African way: "R2 100 000".
+ *
+ * Deliberately NOT `toLocaleString('en-ZA')` — that depends on the host's ICU
+ * build, so the same price renders "R2 100 000" on a full-ICU Node and
+ * "R2,100,000" in a browser or a small-ICU runtime. Sellers see these numbers
+ * in WhatsApp messages, so the grouping is pinned here instead of inherited.
+ */
+export function formatZar(amount: number): string {
+  const rounded = Math.round(amount);
+  const sign = rounded < 0 ? '-' : '';
+  const digits = String(Math.abs(rounded));
+  return `${sign}R${digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')}`;
+}

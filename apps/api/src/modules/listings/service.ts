@@ -11,6 +11,13 @@ import {
   type ListingDraft,
 } from './intake';
 import { createNoopExtractor, type IntakeFieldExtractor } from './extractor';
+import {
+  BEGIN_RE,
+  START_RE,
+  TRIGGER_PREFIX_RE,
+  WELCOME_REPLY,
+  welcomeMenu,
+} from './welcome';
 import type { ReplyOptions } from '../messaging/interactive';
 import type { ConversationStore } from './store';
 import type { OnboardingStore } from './onboarding';
@@ -65,83 +72,6 @@ export interface IntakeReply {
    * the AI concierge instead.
    */
   fallback?: boolean;
-}
-
-export const START_RE = /^(list|sell)\b/i;
-/** Trigger words + filler to strip when the trigger message carries a headline. */
-const TRIGGER_PREFIX_RE = /^(list|sell)\b[\s:,-]*(my\s+|our\s+|the\s+)?/i;
-
-/**
- * "List my property" on the welcome menu. A bare "list" now opens the welcome
- * (bio + menu) rather than the first question, so the menu row needs its own
- * keyword to *begin* the intake — otherwise tapping it would re-open the menu
- * it was tapped from.
- */
-export const BEGIN_RE = /^(start|begin)\b/i;
-
-/**
- * True when a message should *begin* the guided intake: the menu's START row,
- * or a trigger that already carries detail ("sell my 4 bed in Mowbray").
- *
- * A bare "list" is deliberately excluded — it opens the welcome menu, which
- * stays deterministic (and answerable with the AI concierge switched off).
- */
-export function beginsIntake(text: string): boolean {
-  const trimmed = text.trim();
-  if (BEGIN_RE.test(trimmed)) return true;
-  if (!START_RE.test(trimmed)) return false;
-  return trimmed.replace(TRIGGER_PREFIX_RE, '').trim().length >= 3;
-}
-
-/**
- * The opening most sellers see. "list" is the advertised entry word, so it
- * leads with a short how-it-works bio and a dropdown menu instead of jumping
- * straight into the first question — a cold opener needs orientation before
- * it needs a form.
- */
-export const WELCOME_REPLY =
-  '👋 Welcome to Sold Direct — sell your Cape Town home with 0% commission.\n\n' +
-  'How it works:\n' +
-  '1️⃣ You build your listing right here — a few taps, no forms.\n' +
-  '2️⃣ We syndicate it and send buyer enquiries straight to you.\n' +
-  '3️⃣ Buyers pre-qualify for a bond in the chat, so you know who’s real.\n' +
-  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
-  'the offer, FICA and transfer admin with you.\n\n' +
-  'What would you like to do?';
-
-/** The welcome dropdown. Row ids are keywords the dispatcher already parses. */
-export function welcomeMenu(): ReplyOptions {
-  return {
-    kind: 'list',
-    button: 'Choose an option',
-    sections: [
-      {
-        title: 'Sold Direct',
-        rows: [
-          {
-            id: 'START',
-            title: 'List my property',
-            description: 'Build your listing in a few taps — live today.',
-          },
-          {
-            id: 'HOW',
-            title: 'How it works',
-            description: 'The full journey, from listing to transfer.',
-          },
-          {
-            id: 'COST',
-            title: 'What it costs',
-            description: 'How 0% commission works, and when it applies.',
-          },
-          {
-            id: 'CONSULT',
-            title: 'Talk to our team',
-            description: 'A registered practitioner calls you back.',
-          },
-        ],
-      },
-    ],
-  };
 }
 
 /**
