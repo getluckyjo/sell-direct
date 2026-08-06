@@ -147,6 +147,61 @@ describe('dispatcher × AI concierge', () => {
     expect(d.sent).toHaveLength(0); // agent replied itself
   });
 
+  it('live agent: a question mid-flow is answered, then the step is re-asked', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 'Kenilworth', tier: 'free' },
+      owner: 'scripted',
+    });
+
+    await d.dispatcher.handle(inbound('how much do you charge?'));
+
+    // The concierge takes the aside...
+    expect(agent.handle).toHaveBeenCalledWith({
+      phone: PHONE,
+      text: 'how much do you charge?',
+    });
+    // ...and the seller is put back on the question they were answering,
+    // options intact, rather than left with "I didn't catch that".
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toMatch(/price/i);
+    // The draft stays scripted — an aside never hands the flow to the agent.
+    expect((await d.intakeStore.get(PHONE))?.owner).toBe('scripted');
+    expect((await d.intakeStore.get(PHONE))?.step).toBe('awaiting_price');
+  });
+
+  it('a botched answer mid-flow is not treated as a question', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', tier: 'free' },
+      owner: 'scripted',
+    });
+
+    await d.dispatcher.handle(inbound('3.5'));
+
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent[0].text).toMatch(/didn.t catch/i);
+  });
+
+  it('without a live agent, a mid-flow question just re-asks', async () => {
+    const d = makeDeps(undefined);
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', tier: 'free' },
+      owner: 'scripted',
+    });
+
+    await d.dispatcher.handle(inbound('how much do you charge?'));
+
+    // Deterministic floor: no model, but the seller is never stranded.
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toMatch(/didn.t catch/i);
+  });
+
   it('live agent: a bare "list" stays deterministic — the menu, not the agent', async () => {
     const agent = fakeAgent('live');
     const d = makeDeps(agent);

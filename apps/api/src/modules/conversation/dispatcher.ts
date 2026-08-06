@@ -263,6 +263,27 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       text,
     });
 
+    // 4b. A seller mid-flow who asked us something rather than answering.
+    //     The concierge answers, then the re-ask below carries on from the
+    //     same step — the draft is never handed over, so the taps survive.
+    //     Live mode only: in shadow the agent would merely draft, and the
+    //     seller would be left with a bare "I didn't catch that".
+    if (result.askedQuestion && deps.agent?.mode === 'live') {
+      try {
+        const outcome = await deps.agent.handle({ phone, text });
+        if (outcome.sent) {
+          // Their question is answered; put the question they were on back
+          // in front of them, options and all.
+          await deps.notifier.send(phone, result.reply, {
+            interactive: result.options,
+          });
+          return;
+        }
+      } catch (error) {
+        log('concierge aside failed', error); // fall through to the re-ask
+      }
+    }
+
     // 5. No scripted flow claimed the message → AI concierge, when enabled.
     //    (Shadow mode drafts here; the canned reply below still goes out.)
     if (result.fallback && deps.agent) {

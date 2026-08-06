@@ -43,15 +43,15 @@ export AGENT_ENABLED=true
 export PORT=4100
 pnpm --filter @sell-direct/api start
 
-# 3. In another terminal — RUN_ID must be one you have not used before
-RUN_ID=a pnpm --filter @sell-direct/api sim
+# 3. In another terminal — RUN_ID must be 1–5 digits, and one you have not used before
+RUN_ID=42 pnpm --filter @sell-direct/api sim
 ```
 
 There is no `.env` loading in this app, so those `export`s are load-bearing.
 
 ### RUN_ID
 
-Personas use deterministic phone numbers (`+2700<RUN_ID><nnnnnn>`, inside the
+Personas use deterministic phone numbers (`+2700<run id, 5 digits><persona, 2 digits>`, inside the
 reserved demo range that can never reach a real seller). Re-using a `RUN_ID`
 would resume the previous run's conversations mid-flow and the output would
 look like product bugs that aren't there — so the script **refuses to start**

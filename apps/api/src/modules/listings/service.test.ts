@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
-import { handleListingIntakeMessage } from './service';
+import { handleListingIntakeMessage, looksLikeAQuestion } from './service';
 import { createInMemoryConversationStore } from './store';
 import type { IntakeFieldExtractor } from './extractor';
 import type { ExtractedListingFields } from './intake';
@@ -348,5 +348,70 @@ describe('listing intake orchestrator', () => {
       kind: 'buttons',
       options: [{ id: 'DRAFT' }, { id: 'TYPE' }, { id: 'SKIP' }],
     });
+  });
+});
+
+describe('a question asked mid-flow', () => {
+  it('flags a question so the concierge can answer it', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009999';
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    await handleListingIntakeMessage(deps, { phone, text: 'house' });
+    await handleListingIntakeMessage(deps, { phone, text: 'Newlands' });
+    await handleListingIntakeMessage(deps, { phone, text: 'SKIP' });
+
+    const res = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'how much do you charge?',
+    });
+
+    expect(res.askedQuestion).toBe(true);
+    // The step is held, so the re-ask puts them back where they were.
+    expect((await store.get(phone))?.step).toBe('awaiting_price');
+  });
+
+  it('does not flag a fat-fingered answer as a question', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009998';
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    await handleListingIntakeMessage(deps, { phone, text: 'house' });
+    await handleListingIntakeMessage(deps, { phone, text: 'Newlands' });
+    await handleListingIntakeMessage(deps, { phone, text: 'SKIP' });
+
+    const res = await handleListingIntakeMessage(deps, { phone, text: 'abc' });
+
+    expect(res.askedQuestion).toBeUndefined();
+  });
+
+  it('never flags a message that actually answered the question', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009997';
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    const res = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'house',
+    });
+    expect(res.askedQuestion).toBeUndefined();
+  });
+});
+
+describe('looksLikeAQuestion', () => {
+  it('recognises questions', () => {
+    expect(looksLikeAQuestion('how much do you charge?')).toBe(true);
+    expect(looksLikeAQuestion('what happens after I publish')).toBe(true);
+    expect(looksLikeAQuestion('is the address really private?')).toBe(true);
+    expect(looksLikeAQuestion('can I change the price later')).toBe(true);
+  });
+
+  it('does not mistake a botched answer for a question', () => {
+    // These are all things a seller types AT a question, not instead of one.
+    expect(looksLikeAQuestion('3.5')).toBe(false);
+    expect(looksLikeAQuestion('abc')).toBe(false);
+    expect(looksLikeAQuestion('R2m')).toBe(false);
+    expect(looksLikeAQuestion('how')).toBe(false); // too short to be a sentence
+    expect(looksLikeAQuestion('')).toBe(false);
   });
 });

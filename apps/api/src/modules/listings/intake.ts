@@ -137,6 +137,11 @@ export interface IntakeResult {
   options?: ReplyOptions;
   /** Set when the seller cancelled — the orchestrator clears the draft. */
   cancelled?: true;
+  /**
+   * The reply did not answer the current question, so the step is unchanged.
+   * Not an error — a seller may simply have asked something instead.
+   */
+  rejected?: true;
 }
 
 const FIELD_STEP: Record<
@@ -749,6 +754,9 @@ function reask(state: IntakeState, message?: string): IntakeResult {
     state,
     reply: message ?? REASKS[state.step]!,
     options: optionsFor(state.step, state),
+    // The message answered nothing. The orchestrator uses this to notice a
+    // seller who asked a question mid-flow instead of answering one.
+    rejected: true,
   };
 }
 
