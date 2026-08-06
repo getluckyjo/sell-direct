@@ -92,7 +92,10 @@ export async function handleListingIntakeMessage(
     // "List my property" from the welcome menu — skip the bio, ask question 1.
     if (BEGIN_RE.test(text)) {
       const started = await withPriceGuidance(deps, startIntake({}));
-      await deps.store.set(message.phone, started.state);
+      await deps.store.set(message.phone, {
+        ...started.state,
+        owner: 'scripted',
+      });
       return { reply: started.reply, options: started.options };
     }
     if (START_RE.test(text)) {
@@ -112,7 +115,10 @@ export async function handleListingIntakeMessage(
         extracted.title = remainder;
       }
       const started = await withPriceGuidance(deps, startIntake(extracted));
-      await deps.store.set(message.phone, started.state);
+      await deps.store.set(message.phone, {
+        ...started.state,
+        owner: 'scripted',
+      });
       return { reply: started.reply, options: started.options };
     }
     return {
@@ -163,7 +169,10 @@ export async function handleListingIntakeMessage(
     };
   }
 
-  await deps.store.set(message.phone, result.state);
+  await deps.store.set(message.phone, {
+    ...result.state,
+    owner: existing.owner ?? 'scripted',
+  });
   return { reply: result.reply, options: result.options };
 }
 

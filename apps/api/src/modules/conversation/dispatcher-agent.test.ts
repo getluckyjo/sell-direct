@@ -23,6 +23,11 @@ function inbound(text: string): InboundMessage {
   };
 }
 
+/** A tapped button/list row: the id travels in replyId, the label in text. */
+function tap(id: string, label: string): InboundMessage {
+  return { ...inbound(label), type: 'interactive', replyId: id };
+}
+
 /** The ids offered with a reply, in display order. */
 function optionIds(opts?: SendOptions): string[] {
   const o = opts?.interactive;
@@ -155,18 +160,65 @@ describe('dispatcher × AI concierge', () => {
     expect(optionIds(d.sent[0].opts)).toContain('START');
   });
 
-  it('live agent: an active intake draft routes mid-flow messages to the agent', async () => {
+  it('live agent: an agent-owned draft routes mid-flow messages to the agent', async () => {
     const agent = fakeAgent('live');
     const d = makeDeps(agent);
     await d.intakeStore.set(PHONE, {
       step: 'awaiting_price',
       data: { title: 't', suburb: 's', tier: 'free' },
+      owner: 'agent',
     });
 
     await d.dispatcher.handle(inbound('R5m sounds right'));
 
     expect(agent.handle).toHaveBeenCalled();
     expect(d.sent).toHaveLength(0);
+  });
+
+  it('live agent: a tapped "List my property" runs the scripted flow, not the agent', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+
+    // The regression this guards: with the concierge live the agent used to
+    // claim the menu tap, so the seller asked for taps and got an open
+    // question instead — the one-click flow could never run.
+    await d.dispatcher.handle(tap('START', 'List my property'));
+
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent[0].text).toContain('kind of home');
+    expect(optionIds(d.sent[0].opts)).toContain('house');
+  });
+
+  it('live agent: a scripted draft keeps its turns, mid-flow', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', tier: 'free' },
+      owner: 'scripted',
+    });
+
+    await d.dispatcher.handle(inbound('5000000'));
+
+    // Whoever answered the opening message keeps the conversation — the
+    // seller must never be handed between flows part-way through.
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent).toHaveLength(1);
+  });
+
+  it('live agent: a draft with no owner is treated as scripted', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+    // Rows written before ownership was tracked: degrade to deterministic
+    // questions rather than silently hand an old thread to the model.
+    await d.intakeStore.set(PHONE, {
+      step: 'awaiting_price',
+      data: { title: 't', suburb: 's', tier: 'free' },
+    });
+
+    await d.dispatcher.handle(inbound('5000000'));
+
+    expect(agent.handle).not.toHaveBeenCalled();
   });
 
   it('live agent failure on "list" falls back to the scripted flow', async () => {

@@ -464,7 +464,13 @@ function buildIntakeWriteTools(
             `address=${JSON.stringify(provided.address)} rejected (too short — a street address needs a number and street name)`,
           );
         }
-        await intake.store.set(phone, { step: nextStep(data), data });
+        // Mark the conversation agent-led so the dispatcher keeps routing it
+        // here instead of dropping the seller into the scripted questions.
+        await intake.store.set(phone, {
+          step: nextStep(data),
+          data,
+          owner: 'agent',
+        });
         const rejectedNote = rejected.length ? `${rejected.join('\n')}\n` : '';
         return `${rejectedNote}${draftStatus(data)}`;
       },

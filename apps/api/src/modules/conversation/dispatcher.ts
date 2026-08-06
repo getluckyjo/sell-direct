@@ -5,6 +5,7 @@ import {
   handleInboundPhoto,
   handleListingIntakeMessage,
   beginsIntake,
+  BEGIN_RE,
   COST_RE,
   COST_REPLY,
   HOW_RE,
@@ -228,14 +229,25 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       }
     }
 
-    // 3. Agent-led intake: when the AI concierge is LIVE it owns the listing
+    // 3. Agent-led intake: when the AI concierge is LIVE it can own a listing
     //    conversation (asks only for missing fields, natural wording). The
     //    scripted flow below remains the fallback if the agent turn fails,
     //    so the user is never stranded. Consent stays deterministic above.
-    if (
-      deps.agent?.mode === 'live' &&
-      (beginsIntake(text) || (await deps.intake.store.get(phone)) !== null)
-    ) {
+    //
+    //    Who gets the conversation is decided once, on the opening message,
+    //    and never revisited — both flows write to the same store, so without
+    //    this the agent would claim every turn of an in-progress tap sequence
+    //    and the one-click flow could never run with the concierge on.
+    //
+    //      · tapped "List my property" → the seller chose the guided flow
+    //      · typed "sell my 4 bed in Mowbray" → natural language, the agent's
+    //        strength, so it takes the opener
+    //      · already under way → whoever owns it keeps it
+    const active = await deps.intake.store.get(phone);
+    const agentOwnsIntake = active
+      ? active.owner === 'agent'
+      : beginsIntake(text) && !BEGIN_RE.test(text.trim());
+    if (deps.agent?.mode === 'live' && agentOwnsIntake) {
       try {
         const outcome = await deps.agent.handle({ phone, text });
         if (outcome.sent) return;
