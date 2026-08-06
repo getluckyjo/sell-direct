@@ -136,8 +136,41 @@ const CASES: EvalCase[] = [
   },
 ];
 
+/**
+ * This script WIPES listings, sellers, deals and messages before seeding its
+ * own fixture. Pointed at production that is catastrophic and irreversible,
+ * so it refuses to run anywhere but a local database.
+ */
+function assertLocalDatabase(): void {
+  const url = process.env.DATABASE_URL ?? '';
+  assert.ok(url, 'DATABASE_URL required');
+  const host = (() => {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return '';
+    }
+  })();
+  const isLocal = [
+    'localhost',
+    '127.0.0.1',
+    '::1',
+    'host.docker.internal',
+  ].includes(host);
+  if (isLocal || process.env.I_KNOW_THIS_WIPES_THE_DATABASE === 'yes') return;
+  console.error(
+    `\nRefusing to run: DATABASE_URL points at "${host}", not a local database.\n` +
+      `This script DELETES every listing, seller, deal and message before it\n` +
+      `seeds its fixture. Point it at a local Postgres.\n` +
+      `(Override — only if you are certain — with ` +
+      `I_KNOW_THIS_WIPES_THE_DATABASE=yes.)\n`,
+  );
+  process.exit(1);
+}
+
 async function main() {
   assert.ok(process.env.ANTHROPIC_API_KEY, 'ANTHROPIC_API_KEY required');
+  assertLocalDatabase();
 
   // Fresh slate + one active listing so search tools have real data.
   await prisma.agentDraft.deleteMany();
