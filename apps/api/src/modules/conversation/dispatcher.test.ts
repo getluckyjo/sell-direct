@@ -88,14 +88,23 @@ function makeDeps(overrides: { notifierThrows?: boolean } = {}) {
 }
 
 describe('conversation dispatcher', () => {
-  it('starts listing intake on the "list" trigger', async () => {
+  it('answers the "list" opener with the bio and the dropdown menu', async () => {
     const d = makeDeps();
     await d.dispatcher.handle(inbound('list'));
 
     expect(d.notifier.send).toHaveBeenCalledOnce();
     expect(d.sent[0].to).toBe(PHONE);
-    expect(d.sent[0].text.length).toBeGreaterThan(0);
-    // an intake conversation now exists for this phone
+    expect(d.sent[0].text).toMatch(/how it works/i);
+    expect(d.sent[0].opts?.interactive).toMatchObject({ kind: 'list' });
+    // Orientation only — no draft is opened until they tap "List my property".
+    expect(await d.intakeStore.get(PHONE)).toBeNull();
+  });
+
+  it('starts listing intake on START from the menu', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(tap('START', 'List my property'));
+
+    expect(d.sent[0].text).toMatch(/kind of home/i);
     expect(await d.intakeStore.get(PHONE)).not.toBeNull();
   });
 
@@ -104,8 +113,17 @@ describe('conversation dispatcher', () => {
     await d.dispatcher.handle(inbound('hello there'));
     expect(d.sent[0].text).toMatch(/0% commission/i);
     expect(d.sent[0].opts?.interactive).toMatchObject({
-      kind: 'buttons',
-      options: [{ id: 'list' }, { id: 'HOW' }, { id: 'CONSULT' }],
+      kind: 'list',
+      sections: [
+        {
+          rows: [
+            { id: 'START' },
+            { id: 'HOW' },
+            { id: 'COST' },
+            { id: 'CONSULT' },
+          ],
+        },
+      ],
     });
   });
 
@@ -181,9 +199,9 @@ describe('conversation dispatcher', () => {
     expect(d.sent[0].text).not.toMatch(/reply "list"/i);
   });
 
-  it('starts intake from a tapped welcome button', async () => {
+  it('starts intake from a tapped welcome row', async () => {
     const d = makeDeps();
-    await d.dispatcher.handle(tap('list', 'List my property'));
+    await d.dispatcher.handle(tap('START', 'List my property'));
     expect(await d.intakeStore.get(PHONE)).not.toBeNull();
   });
 
@@ -199,7 +217,7 @@ describe('conversation dispatcher', () => {
 describe('dispatcher option threading', () => {
   it('sends the intake step options along with the reply', async () => {
     const d = makeDeps();
-    await d.dispatcher.handle(inbound('list'));
+    await d.dispatcher.handle(tap('START', 'List my property'));
     await d.dispatcher.handle(tap('house', 'House'));
     await d.dispatcher.handle(tap('Newlands', 'Newlands'));
     // The address step offers a one-tap skip.

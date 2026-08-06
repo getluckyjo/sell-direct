@@ -72,6 +72,79 @@ export const START_RE = /^(list|sell)\b/i;
 const TRIGGER_PREFIX_RE = /^(list|sell)\b[\s:,-]*(my\s+|our\s+|the\s+)?/i;
 
 /**
+ * "List my property" on the welcome menu. A bare "list" now opens the welcome
+ * (bio + menu) rather than the first question, so the menu row needs its own
+ * keyword to *begin* the intake — otherwise tapping it would re-open the menu
+ * it was tapped from.
+ */
+export const BEGIN_RE = /^(start|begin)\b/i;
+
+/**
+ * True when a message should *begin* the guided intake: the menu's START row,
+ * or a trigger that already carries detail ("sell my 4 bed in Mowbray").
+ *
+ * A bare "list" is deliberately excluded — it opens the welcome menu, which
+ * stays deterministic (and answerable with the AI concierge switched off).
+ */
+export function beginsIntake(text: string): boolean {
+  const trimmed = text.trim();
+  if (BEGIN_RE.test(trimmed)) return true;
+  if (!START_RE.test(trimmed)) return false;
+  return trimmed.replace(TRIGGER_PREFIX_RE, '').trim().length >= 3;
+}
+
+/**
+ * The opening most sellers see. "list" is the advertised entry word, so it
+ * leads with a short how-it-works bio and a dropdown menu instead of jumping
+ * straight into the first question — a cold opener needs orientation before
+ * it needs a form.
+ */
+export const WELCOME_REPLY =
+  '👋 Welcome to Sold Direct — sell your Cape Town home with 0% commission.\n\n' +
+  'How it works:\n' +
+  '1️⃣ You build your listing right here — a few taps, no forms.\n' +
+  '2️⃣ We syndicate it and send buyer enquiries straight to you.\n' +
+  '3️⃣ Buyers pre-qualify for a bond in the chat, so you know who’s real.\n' +
+  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
+  'the offer, FICA and transfer admin with you.\n\n' +
+  'What would you like to do?';
+
+/** The welcome dropdown. Row ids are keywords the dispatcher already parses. */
+export function welcomeMenu(): ReplyOptions {
+  return {
+    kind: 'list',
+    button: 'Choose an option',
+    sections: [
+      {
+        title: 'Sold Direct',
+        rows: [
+          {
+            id: 'START',
+            title: 'List my property',
+            description: 'Build your listing in a few taps — live today.',
+          },
+          {
+            id: 'HOW',
+            title: 'How it works',
+            description: 'The full journey, from listing to transfer.',
+          },
+          {
+            id: 'COST',
+            title: 'What it costs',
+            description: 'How 0% commission works, and when it applies.',
+          },
+          {
+            id: 'CONSULT',
+            title: 'Talk to our team',
+            description: 'A registered practitioner calls you back.',
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/**
  * Orchestrate one inbound message through the listing-intake flow: look up the
  * conversation, extract any fields the message already contains, advance the
  * data-first state machine, persist the new state, and on confirmation create
@@ -86,15 +159,26 @@ export async function handleListingIntakeMessage(
   const existing = await deps.store.get(message.phone);
 
   if (!existing) {
+    // "List my property" from the welcome menu — skip the bio, ask question 1.
+    if (BEGIN_RE.test(text)) {
+      const started = await withPriceGuidance(deps, startIntake({}));
+      await deps.store.set(message.phone, started.state);
+      return { reply: started.reply, options: started.options };
+    }
     if (START_RE.test(text)) {
       // "sell my 4 bed in Mowbray" — the trigger message itself may carry
-      // fields, and its remainder may be a perfectly good headline.
+      // fields, and its remainder may be a perfectly good headline. A seller
+      // who already told us something should never be sent back to a menu.
       const remainder = text.replace(TRIGGER_PREFIX_RE, '').trim();
+      if (remainder.length < 3) {
+        // Bare "list" — the advertised opener. Orient first, then the menu.
+        return { reply: WELCOME_REPLY, options: welcomeMenu() };
+      }
       const extracted = await safeExtract(extractor, text, [
         ...FIELD_ORDER,
         'address',
       ]);
-      if (remainder.length >= 3 && extracted.title === undefined) {
+      if (extracted.title === undefined) {
         extracted.title = remainder;
       }
       const started = await withPriceGuidance(deps, startIntake(extracted));
@@ -102,19 +186,10 @@ export async function handleListingIntakeMessage(
       return { reply: started.reply, options: started.options };
     }
     return {
-      reply:
-        'Hi! I can put your property on the market with 0% commission — you ' +
-        'stay in control, our team handles the admin. What would you like to do?',
+      reply: WELCOME_REPLY,
+      options: welcomeMenu(),
       // `fallback` still lets the AI concierge claim the turn; when it does,
       // its own reply goes out instead of this menu.
-      options: {
-        kind: 'buttons',
-        options: [
-          { id: 'list', title: 'List my property' },
-          { id: 'HOW', title: 'How it works' },
-          { id: 'CONSULT', title: 'Talk to us' },
-        ],
-      },
       fallback: true,
     };
   }

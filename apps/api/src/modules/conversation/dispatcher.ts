@@ -4,7 +4,7 @@ import {
   handleDescriptionMessage,
   handleInboundPhoto,
   handleListingIntakeMessage,
-  START_RE,
+  beginsIntake,
   type DescriptionDeps,
   type ListingIntakeDeps,
   type PhotoIntakeDeps,
@@ -69,6 +69,24 @@ const HOW_REPLY =
   'roughly R120 000–R170 000. Prefer a full-service agent? That’s a great ' +
   'choice too — we’re built for sellers who want to do it themselves.\n\n' +
   'Reply "list" whenever you’re ready.';
+
+/**
+ * "What it costs", offered on the welcome menu. Like HOW_REPLY, deterministic
+ * so the menu is fully answerable with the AI concierge switched off.
+ */
+const COST_RE = /^\s*cost\s*$/i;
+const COST_REPLY =
+  'What Sold Direct costs you:\n\n' +
+  '🟢 *0% commission* when you list exclusively with us for the agreed term ' +
+  'and transact through our bond and legal partners. The bank pays us an ' +
+  'origination fee on the buyer’s bond, so you pay nothing.\n' +
+  '🔵 *Flex — 1%* of the sale price if you’d rather keep full freedom, agreed ' +
+  'upfront.\n\n' +
+  'For context, on a R2.1m home what a full-service sale (5–7% + VAT) would ' +
+  'have cost is roughly R120 000–R170 000. A full-service agent is a great ' +
+  'choice for many sellers — we’re built for those who want to sell direct ' +
+  'themselves, with our practitioners handling the admin.\n\n' +
+  'No listing fee, no monthly fee, no lock-in beyond the term you choose.';
 
 export interface DispatcherDeps {
   intake: ListingIntakeDeps;
@@ -140,7 +158,23 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
         interactive: {
           kind: 'buttons',
           options: [
-            { id: 'list', title: 'List my property' },
+            { id: 'START', title: 'List my property' },
+            { id: 'COST', title: 'What it costs' },
+            { id: 'CONSULT', title: 'Talk to us' },
+          ],
+        },
+      });
+      return;
+    }
+
+    // 0. "What it costs" from the welcome menu — same deal as HOW.
+    if (COST_RE.test(text)) {
+      await deps.notifier.send(phone, COST_REPLY, {
+        interactive: {
+          kind: 'buttons',
+          options: [
+            { id: 'START', title: 'List my property' },
+            { id: 'HOW', title: 'How it works' },
             { id: 'CONSULT', title: 'Talk to us' },
           ],
         },
@@ -232,7 +266,7 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     //    so the user is never stranded. Consent stays deterministic above.
     if (
       deps.agent?.mode === 'live' &&
-      (START_RE.test(text) || (await deps.intake.store.get(phone)) !== null)
+      (beginsIntake(text) || (await deps.intake.store.get(phone)) !== null)
     ) {
       try {
         const outcome = await deps.agent.handle({ phone, text });

@@ -113,23 +113,23 @@ describe('dispatcher × AI concierge', () => {
     expect(agent.handle).toHaveBeenCalled();
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toMatch(/0% commission/i);
-    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
+    expect(optionIds(d.sent[0].opts)).toContain('START'); // the welcome menu
   });
 
-  it('shadow agent: the "list" trigger stays with the scripted flow', async () => {
+  it('shadow agent: the START trigger stays with the scripted flow', async () => {
     const agent = fakeAgent(
       'shadow',
       vi.fn(async () => ({ sent: false })),
     );
     const d = makeDeps(agent);
 
-    await d.dispatcher.handle(inbound('list'));
+    await d.dispatcher.handle(inbound('START'));
 
     expect(agent.handle).not.toHaveBeenCalled();
     expect(d.sent[0].text).toContain('kind of home'); // scripted intake started
   });
 
-  it('live agent: the "list" trigger routes to agent-led intake', async () => {
+  it('live agent: a detail-carrying trigger routes to agent-led intake', async () => {
     const agent = fakeAgent('live');
     const d = makeDeps(agent);
 
@@ -140,6 +140,19 @@ describe('dispatcher × AI concierge', () => {
       text: 'list my 4 bed in Mowbray',
     });
     expect(d.sent).toHaveLength(0); // agent replied itself
+  });
+
+  it('live agent: a bare "list" stays deterministic — the menu, not the agent', async () => {
+    const agent = fakeAgent('live');
+    const d = makeDeps(agent);
+
+    await d.dispatcher.handle(inbound('list'));
+
+    // The advertised opener must render the same menu every time, whether or
+    // not the concierge is up.
+    expect(agent.handle).not.toHaveBeenCalled();
+    expect(d.sent[0].text).toMatch(/how it works/i);
+    expect(optionIds(d.sent[0].opts)).toContain('START');
   });
 
   it('live agent: an active intake draft routes mid-flow messages to the agent', async () => {
@@ -165,7 +178,7 @@ describe('dispatcher × AI concierge', () => {
     );
     const d = makeDeps(agent);
 
-    await d.dispatcher.handle(inbound('list'));
+    await d.dispatcher.handle(inbound('START'));
 
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toContain('kind of home'); // scripted intake took over
@@ -184,7 +197,7 @@ describe('dispatcher × AI concierge', () => {
 
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toMatch(/0% commission/i);
-    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
+    expect(optionIds(d.sent[0].opts)).toContain('START'); // the welcome menu
   });
 
   it('live agent composes the enquiry invite; deterministic work still runs', async () => {
@@ -228,7 +241,7 @@ describe('dispatcher × AI concierge', () => {
 
     expect(d.sent).toHaveLength(1);
     expect(d.sent[0].text).toMatch(/0% commission/i);
-    expect(optionIds(d.sent[0].opts)).toContain('list'); // the welcome menu
+    expect(optionIds(d.sent[0].opts)).toContain('START'); // the welcome menu
   });
 
   it('an inbound photo is handled by code even in live mode — never the agent', async () => {
