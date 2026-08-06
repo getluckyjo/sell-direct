@@ -110,6 +110,19 @@ export interface IntakeState {
    * Not part of the draft; persisted alongside it under a reserved key.
    */
   pending?: { region?: string };
+  /**
+   * Which flow owns this conversation. The scripted tap flow and the AI
+   * concierge share this one store, so without a marker the dispatcher cannot
+   * tell an in-progress tap sequence from an agent-led one — and in live mode
+   * the agent would claim both, so the taps could never run.
+   *
+   * Set when the conversation starts and never reassigned: whoever answered
+   * the seller's first message keeps the conversation to the end. Absent on
+   * rows written before this existed, which the dispatcher reads as
+   * `'scripted'` — the safe default, since it degrades to deterministic
+   * questions rather than silently handing an old thread to the model.
+   */
+  owner?: 'scripted' | 'agent';
 }
 
 export interface IntakeResult {

@@ -23,10 +23,8 @@ export function createPrismaConversationStore(
       // The cached price estimate and the picker's transient state ride
       // inside the JSON under reserved keys (the row has no separate
       // columns); strip them back out of the draft.
-      const { _estimate, _pending, ...draft } = (row.data ?? {}) as Record<
-        string,
-        unknown
-      >;
+      const { _estimate, _pending, _owner, ...draft } = (row.data ??
+        {}) as Record<string, unknown>;
       return {
         step: row.step as IntakeStep,
         data: draft as Partial<ListingDraft>,
@@ -36,6 +34,11 @@ export function createPrismaConversationStore(
         ...(_pending !== undefined
           ? { pending: _pending as IntakeState['pending'] }
           : {}),
+        // Rows written before ownership was tracked have no marker; the
+        // dispatcher treats a missing owner as scripted.
+        ...(_owner !== undefined
+          ? { owner: _owner as IntakeState['owner'] }
+          : {}),
       };
     },
     async set(phone, state) {
@@ -43,6 +46,7 @@ export function createPrismaConversationStore(
         ...state.data,
         ...(state.estimate !== undefined ? { _estimate: state.estimate } : {}),
         ...(state.pending !== undefined ? { _pending: state.pending } : {}),
+        ...(state.owner !== undefined ? { _owner: state.owner } : {}),
       } as Prisma.InputJsonValue;
       await prisma.conversationState.upsert({
         where: { phone },
