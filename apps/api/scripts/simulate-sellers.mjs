@@ -18,7 +18,12 @@
  * never collide with a real seller.
  */
 const BASE = process.env.BASE ?? 'http://localhost:4100';
-const RUN_ID = process.env.RUN_ID ?? '9';
+const RUN_ID = process.env.RUN_ID ?? '0';
+if (!/^\d{1,5}$/.test(RUN_ID)) {
+  // It lands inside a phone number, so it has to be digits.
+  console.error(`RUN_ID must be 1-5 digits (got ${JSON.stringify(RUN_ID)}).`);
+  process.exit(1);
+}
 const FORMAT = process.env.FORMAT ?? 'summary';
 
 /** t = tap (id, label). s = say (typed text). */
@@ -428,13 +433,15 @@ async function preflight(phones) {
     console.error(
       `\nRUN_ID=${RUN_ID} has already been used — ${used.length} of ` +
         `${phones.length} numbers already have history.\n` +
-        `Pick an unused RUN_ID (0-9, a-z), or reset the database first.\n`,
+        `Pick an unused RUN_ID (1-5 digits), or reset the database first.\n`,
     );
     process.exit(1);
   }
 }
 
-const phoneFor = (i) => `+2700${RUN_ID}${String(100 + i).padStart(6, '0')}`;
+// +2700 then exactly seven digits: the run id (5) and the persona (2).
+const phoneFor = (i) =>
+  `+2700${RUN_ID.padStart(5, '0')}${String(i).padStart(2, '0')}`;
 await preflight(PERSONAS.map((_, i) => phoneFor(i)));
 
 const results = [];

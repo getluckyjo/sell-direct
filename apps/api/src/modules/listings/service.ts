@@ -72,6 +72,12 @@ export interface IntakeReply {
    * the AI concierge instead.
    */
   fallback?: boolean;
+  /**
+   * Set when a mid-flow message answered nothing AND reads like a question.
+   * The seller wants to know something before they carry on — the dispatcher
+   * may let the concierge answer it, then send `reply` to re-ask.
+   */
+  askedQuestion?: boolean;
 }
 
 /**
@@ -173,7 +179,31 @@ export async function handleListingIntakeMessage(
     ...result.state,
     owner: existing.owner ?? 'scripted',
   });
-  return { reply: result.reply, options: result.options };
+  return {
+    reply: result.reply,
+    options: result.options,
+    ...(result.rejected && looksLikeAQuestion(text)
+      ? { askedQuestion: true }
+      : {}),
+  };
+}
+
+/**
+ * A seller mid-flow who types something we cannot parse has usually either
+ * fat-fingered an answer or asked us something. Only the second deserves the
+ * concierge, so the test is deliberately narrow: an explicit question mark, or
+ * an opening interrogative with enough words to be a real sentence.
+ *
+ * "3.5" is a botched price. "how much do you charge?" is a question.
+ */
+const INTERROGATIVE_RE =
+  /^\s*(how|what|why|when|who|where|which|can|could|do|does|did|is|are|will|would|should|must|may)\b/i;
+
+export function looksLikeAQuestion(text: string): boolean {
+  const trimmed = text.trim();
+  if (trimmed.length < 6) return false;
+  if (trimmed.includes('?')) return true;
+  return INTERROGATIVE_RE.test(trimmed) && trimmed.split(/\s+/).length >= 3;
 }
 
 /**
