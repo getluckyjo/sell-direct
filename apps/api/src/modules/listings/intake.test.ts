@@ -8,6 +8,7 @@ import {
   startIntake,
   composeTitle,
   formatPriceZar,
+  parseZarAmount,
   optionsFor,
   validateField,
   withComposedTitle,
@@ -162,7 +163,10 @@ describe('listing intake state machine', () => {
     const r = advanceIntake(state, 'about two million');
     expect(r.state.step).toBe('awaiting_price');
     expect(r.completed).toBeUndefined();
-    expect(r.reply).toMatch(/digits/i);
+    // The re-ask must point at a way forward — the tappable amounts and an
+    // example — rather than just restating the rule.
+    expect(r.reply).toMatch(/tap one of the amounts/i);
+    expect(r.reply).toMatch(/2100000|R2\.1m/);
   });
 
   it('only accepts 60/90/120 for the exclusivity term', () => {
@@ -733,5 +737,44 @@ describe('rand formatting', () => {
 
   it('never emits a comma, which would read as a decimal point in en-ZA', () => {
     expect(formatPriceZar(5_600_000)).not.toContain(',');
+  });
+});
+
+describe('rand amounts, as sellers actually type them', () => {
+  it('accepts plain digits and the ways they get grouped', () => {
+    expect(parseZarAmount('2100000')).toBe(2_100_000);
+    expect(parseZarAmount('R3 500 000')).toBe(3_500_000);
+    expect(parseZarAmount('3,500,000')).toBe(3_500_000);
+    expect(parseZarAmount('  r2500000 ')).toBe(2_500_000);
+  });
+
+  it('accepts million and thousand shorthand', () => {
+    // The reported failure: a seller typed "3.5m" and was refused six times.
+    expect(parseZarAmount('3.5m')).toBe(3_500_000);
+    expect(parseZarAmount('R3.5m')).toBe(3_500_000);
+    expect(parseZarAmount('3.5 mil')).toBe(3_500_000);
+    expect(parseZarAmount('3.5 million')).toBe(3_500_000);
+    expect(parseZarAmount('2M')).toBe(2_000_000);
+    expect(parseZarAmount('950k')).toBe(950_000);
+    expect(parseZarAmount('R1 200 k')).toBe(1_200_000);
+  });
+
+  it('reads a comma as a decimal point only in front of a multiplier', () => {
+    // "3,5m" is three and a half million; "3,500,000" is the same number
+    // written with thousands separators. Both must survive.
+    expect(parseZarAmount('3,5m')).toBe(3_500_000);
+    expect(parseZarAmount('3,500,000')).toBe(3_500_000);
+  });
+
+  it('rejects what is not an amount', () => {
+    expect(parseZarAmount('how much do you charge?')).toBeNull();
+    expect(parseZarAmount('')).toBeNull();
+    expect(parseZarAmount('abc')).toBeNull();
+    expect(parseZarAmount('3.5.5m')).toBeNull();
+  });
+
+  it('rounds to whole rand', () => {
+    expect(parseZarAmount('1.2345m')).toBe(1_234_500);
+    expect(Number.isInteger(parseZarAmount('1.9999m'))).toBe(true);
   });
 });

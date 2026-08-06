@@ -8,4 +8,5 @@ export * from './description';
 export * from './photos';
 export * from './repository';
 export * from './service';
+export * from './reengagement';
 export * from './welcome';

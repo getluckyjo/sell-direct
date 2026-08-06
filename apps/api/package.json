@@ -19,7 +19,8 @@
     "postinstall": "prisma generate",
     "start": "tsx src/server.ts",
     "build:demo": "node scripts/build-standalone-demo.mjs",
-    "build:demo:marketing": "node scripts/build-standalone-demo.mjs ../marketing/public/demo.html"
+    "build:demo:marketing": "node scripts/build-standalone-demo.mjs ../marketing/public/demo.html",
+    "sim": "node scripts/simulate-sellers.mjs"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.110.0",
