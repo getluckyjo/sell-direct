@@ -62,30 +62,33 @@ Two shareholders, 100 shares issued, **50 / 50**, all class A, issued
 
 Amount paid is recorded as **0** against both certificates.
 
-## Done
+## Resolved
 
-- **Beneficial ownership — signed** (20 August 2026). Required by the CoR 15.1
-  covering letter within 10 business days of registration. Keep CIPC's
-  submission confirmation with the other filings: signing the declaration and
-  CIPC accepting the submission are two steps, and the second one is what
-  gets asked for in due diligence.
+All items raised off the filings were closed on **20 August 2026**.
 
-## Open items
+- **Beneficial ownership** — signed. Keep CIPC's submission confirmation with
+  the other filings: signing the declaration and CIPC accepting the submission
+  are two steps, and the second one is what due diligence asks for.
+- **Directorship** — the single directorship is deliberate, agreed between the
+  shareholders. See *Directors* above.
+- **Share capital** — the amount-paid position on both certificates has been
+  dealt with.
+- **Share register** — completed for both shareholders.
 
-Worth checking with the accountant — flagged from the filings, not verified
-against CIPC's live records.
+## Standing obligations
 
-1. **Shares recorded as unpaid.** Both certificates show an amount paid of 0.
-   Ordinarily subscription shares are paid up or the debt recorded.
-2. **Share register is incomplete.** The second shareholder's row has no
-   address, email or contact number, where the first shareholder's does.
-3. **First annual return** falls due on the registration anniversary,
-   August 2027, together with the compliance checklist and financial
-   accountability supplement.
-4. **Trade mark.** Registering the company does *not* protect the name.
-   "Sold Direct" is descriptive of the service, which usually makes a plain
-   word mark harder to register — worth advice before the logo is finalised,
-   since a distinctive device mark may be the more registrable asset.
+Not open items; diary entries.
+
+- **First annual return** falls due on the registration anniversary,
+  **August 2027**, with the compliance checklist and the financial
+  accountability supplement. Missing it risks deregistration.
+- **Beneficial ownership** must be updated whenever it changes, and again with
+  each annual return.
+- **Trade mark.** Registering the company does not protect the name — that is a
+  separate application. "Sold Direct" is descriptive of the service, which
+  usually makes a plain word mark hard to register, so a distinctive device
+  mark is often the more protectable asset. Worth settling before the logo is
+  locked, since it can change which option is worth choosing.
 
 ## Source documents
 
