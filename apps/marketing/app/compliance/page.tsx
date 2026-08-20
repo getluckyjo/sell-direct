@@ -65,7 +65,7 @@ export default function Compliance() {
 
       <section className="border-b border-slate-200/70 bg-slate-50">
         <div className="mx-auto max-w-6xl px-6 py-16">
-          <p className="mb-3 inline-flex rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 ring-1 ring-inset ring-brand-100">
+          <p className="mb-4 inline-flex rounded-full bg-brand-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.12em] text-brand-700 ring-1 ring-inset ring-brand-100">
             Our compliance
           </p>
           <h1 className="max-w-3xl text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
