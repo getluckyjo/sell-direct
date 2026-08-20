@@ -305,10 +305,7 @@ export default function Home() {
               <ul className="mt-6 grid gap-2.5 text-sm text-slate-600">
                 {tier.points.map((point) => (
                   <li key={point} className="flex gap-2">
-                    <span
-                      aria-hidden
-                      className="font-semibold text-brand-600"
-                    >
+                    <span aria-hidden className="font-semibold text-brand-600">
                       ✓
                     </span>
                     {point}
@@ -441,8 +438,7 @@ export default function Home() {
           <Logo className="text-lg" />
           <div className="mt-4 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400">
             <span>
-              © {new Date().getFullYear()} Sold Direct. Cape Town, South
-              Africa.
+              © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
             </span>
             <nav className="flex flex-wrap gap-5">
               <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white">

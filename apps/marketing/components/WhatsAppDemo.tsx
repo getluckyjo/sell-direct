@@ -170,9 +170,7 @@ export function WhatsAppDemo() {
                   {chapter.participant}
                 </p>
               </div>
-              <span className="ml-auto text-[11px] text-brand-100">
-                online
-              </span>
+              <span className="ml-auto text-[11px] text-brand-100">online</span>
             </div>
 
             {/* Chat */}
