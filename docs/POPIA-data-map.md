@@ -43,7 +43,7 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
   assertion. Published versions are never edited in place, since that would
   rewrite the proof attached to existing records.
 - **Inbound-first by design.** All marketing asks people to send LIST or
-  VALUATION to us, so the first message is theirs. That opens WhatsApp's
+  PRICE to us, so the first message is theirs. That opens WhatsApp's
   24-hour session window, inside which replies are free text and need no
   template and no prior opt-in. `whatsappConsentAt` governs the other
   direction — messages we start.

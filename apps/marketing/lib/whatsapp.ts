@@ -16,12 +16,12 @@ export interface WhatsAppCta {
 
 export interface WhatsAppCtas {
   list: WhatsAppCta;
-  valuation: WhatsAppCta;
+  price: WhatsAppCta;
 }
 
 /**
- * The two advertised routes into the channel — "send LIST" and "send
- * VALUATION" — as click-to-WhatsApp links with the word pre-filled.
+ * The two advertised routes into the channel — "send LIST" and "send PRICE"
+ * — as click-to-WhatsApp links with the word pre-filled.
  *
  * Returns **null until a sender number is configured**. The sender is pending
  * Meta approval (`docs/META-ONBOARDING.md`), so every caller falls back to the
@@ -33,10 +33,10 @@ export interface WhatsAppCtas {
  */
 export function whatsappCtas(): WhatsAppCtas | null {
   const list = whatsappDeepLink(SENDER, WHATSAPP_ENTRY_WORDS.list);
-  const valuation = whatsappDeepLink(SENDER, WHATSAPP_ENTRY_WORDS.valuation);
-  if (!list || !valuation) return null;
+  const price = whatsappDeepLink(SENDER, WHATSAPP_ENTRY_WORDS.price);
+  if (!list || !price) return null;
   return {
     list: { href: list, word: WHATSAPP_ENTRY_WORDS.list },
-    valuation: { href: valuation, word: WHATSAPP_ENTRY_WORDS.valuation },
+    price: { href: price, word: WHATSAPP_ENTRY_WORDS.price },
   };
 }

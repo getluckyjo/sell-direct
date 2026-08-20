@@ -15,9 +15,9 @@ import {
   COST_REPLY,
   HOW_RE,
   HOW_REPLY,
-  VALUATION_RE,
-  VALUATION_REPLY,
-  valuationOptions,
+  PRICE_GUIDANCE_RE,
+  PRICE_GUIDANCE_REPLY,
+  priceGuidanceOptions,
   type DescriptionDeps,
   type ListingIntakeDeps,
   type PhotoIntakeDeps,
@@ -182,13 +182,13 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       return;
     }
 
-    // 0. "VALUATION" — the second advertised entry word. All marketing sends
-    //    people here with LIST or VALUATION pre-filled, so this has to answer
-    //    a cold message with no context, like the welcome does. Kept above
-    //    the intake so it never falls through to "I didn't catch that".
-    if (VALUATION_RE.test(text)) {
-      await deps.notifier.send(phone, VALUATION_REPLY, {
-        interactive: valuationOptions(),
+    // 0. "PRICE" — the second advertised entry word. All marketing sends
+    //    people here with LIST or PRICE pre-filled, so this has to answer a
+    //    cold message with no context, like the welcome does. Kept above the
+    //    intake so it never falls through to "I didn't catch that".
+    if (PRICE_GUIDANCE_RE.test(text)) {
+      await deps.notifier.send(phone, PRICE_GUIDANCE_REPLY, {
+        interactive: priceGuidanceOptions(),
       });
       return;
     }

@@ -98,7 +98,7 @@ const FAQ = [
 ];
 
 export default function Home() {
-  // Every CTA sends people into WhatsApp with LIST or VALUATION pre-filled.
+  // Every CTA sends people into WhatsApp with LIST or PRICE pre-filled.
   // Null until the sender is approved (docs/META-ONBOARDING.md) — the
   // waitlist is the fallback until then.
   const wa = whatsappCtas();
@@ -171,10 +171,10 @@ export default function Home() {
             </a>
             {wa ? (
               <a
-                href={wa.valuation.href}
+                href={wa.price.href}
                 className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
               >
-                Send “VALUATION” — what’s my home worth?
+                Send “PRICE” — what’s my home worth?
               </a>
             ) : null}
             <a
@@ -448,10 +448,10 @@ export default function Home() {
               </a>{' '}
               or{' '}
               <a
-                href={wa.valuation.href}
+                href={wa.price.href}
                 className="font-semibold underline underline-offset-2"
               >
-                “VALUATION”
+                “PRICE”
               </a>{' '}
               to our WhatsApp and we’ll take it from there.
             </p>

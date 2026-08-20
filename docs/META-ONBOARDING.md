@@ -231,10 +231,11 @@ or end of a message or adjacent to another variable, quick-reply labels ≤ ~20 
 ### How people reach us
 
 **All marketing sends people into WhatsApp with a word pre-filled** — `LIST` to
-start a listing, `VALUATION` to find out what a home is worth. Both are defined
+start a listing, `PRICE` to find out what a home is worth. Both are defined
 once in `@sell-direct/shared` (`WHATSAPP_ENTRY_WORDS`) and answered by the
 dispatcher with no prior context, so a cold message never lands on "I didn't
-catch that".
+catch that". `VALUATION` stays accepted as an alias, since people will still
+say it.
 
 This shape is worth stating because it decides what we need from Meta: **the
 user messages first**, which opens WhatsApp's 24-hour session window. Inside
@@ -247,13 +248,17 @@ and **fall back to the waitlist form whenever `NEXT_PUBLIC_WHATSAPP_NUMBER` is
 unset** — so nothing points at a sender that doesn't exist yet. Set it once the
 sender is approved, and **redeploy**: `NEXT_PUBLIC_*` is inlined at build time.
 
-⚠️ **A note on the word "valuation".** Under the Property Valuers Profession Act
-only a registered valuer may perform a valuation, so the keyword is answered
-with *market-data price guidance from confirmed recent sales* and an offer of a
-pricing chat with a registered practitioner — never a promise of a valuation.
-The keyword is fine to advertise; the promise is what would not be. If we ever
-want to be further from the line, `PRICE` or `WORTH` is the safer word to
-advertise — say so and the constant changes in one place.
+⚠️ **Why `PRICE` and not `VALUATION`.** Under the Property Valuers Profession
+Act only a registered valuer may perform a valuation, so we advertise `PRICE`
+and answer it with *market-data price guidance from confirmed recent sales*
+plus an offer of a pricing chat with a registered practitioner — never a
+promise of a valuation. `VALUATION` is still accepted as an inbound alias
+(people say it, and answering costs nothing); it is simply not the word on the
+adverts.
+
+Matching is exact for `price` rather than prefixed, because "price" is also
+what intake asks a seller for — `/^price\b/` would pull someone out of their
+draft the moment they typed "price is 2.5m".
 
 ### The opt-in — done
 
@@ -337,7 +342,7 @@ proves routing only — it runs before our handler, so it says nothing about con
 - [ ] Messaging Service created; webhook + status callback pointed at the API (§3.5)
 - [ ] Config health endpoint reporting which env vars are present (§7)
 - [x] **WhatsApp-specific opt-in on the waitlist form + consent-proof fields on `Lead`** (§6)
-- [x] LIST / VALUATION answered by the dispatcher; marketing CTAs deep-link with them (§6)
+- [x] LIST / PRICE answered by the dispatcher; marketing CTAs deep-link with them (§6)
 - [x] STOP opt-out honoured on every outbound send (§6)
 - [ ] `NEXT_PUBLIC_WHATSAPP_NUMBER` set on the marketing deploy once the sender is approved — then **redeploy** (§6)
 - [ ] Railway env set from the subaccount, redeployed, `WHATSAPP_BSP=twilio` flipped (§4)

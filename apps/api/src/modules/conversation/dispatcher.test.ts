@@ -123,7 +123,7 @@ describe('conversation dispatcher', () => {
             { id: 'START' },
             { id: 'HOW' },
             { id: 'COST' },
-            { id: 'VALUATION' },
+            { id: 'PRICE' },
             { id: 'CONSULT' },
           ],
         },
@@ -161,9 +161,9 @@ describe('conversation dispatcher', () => {
     expect(await d.optOut.isOptedOut(PHONE)).toBe(false);
   });
 
-  it('answers the advertised VALUATION entry word without promising a valuation', async () => {
+  it('answers the advertised PRICE entry word without promising a valuation', async () => {
     const d = makeDeps();
-    await d.dispatcher.handle(inbound('VALUATION'));
+    await d.dispatcher.handle(inbound('PRICE'));
     // Price guidance from confirmed sales — never a formal valuation
     // (Property Valuers Profession Act: only a registered valuer may value).
     expect(d.sent[0].text).toMatch(/price guidance/i);
@@ -174,19 +174,28 @@ describe('conversation dispatcher', () => {
     });
   });
 
-  it('routes the VALUATION menu row the same way as the typed word', async () => {
+  it('routes the PRICE menu row the same way as the typed word', async () => {
     const d = makeDeps();
-    await d.dispatcher.handle(tap('VALUATION', 'What’s my home worth?'));
+    await d.dispatcher.handle(tap('PRICE', 'What’s my home worth?'));
     expect(d.sent[0].text).toMatch(/price guidance/i);
   });
 
-  it('never sends a valuation reply to a mid-intake answer', async () => {
-    // "value" and "price" are things a seller says mid-flow; only the
-    // advertised word may pull them out of their draft.
+  it('still answers "valuation" as an alias', async () => {
     const d = makeDeps();
-    await d.dispatcher.handle(inbound('what is the value'));
-    expect(d.sent[0].text).not.toMatch(/price guidance/i);
+    await d.dispatcher.handle(inbound('valuation'));
+    expect(d.sent[0].text).toMatch(/price guidance/i);
   });
+
+  it.each(['price is 2.5m', 'price?  R2 500 000', 'what is the value'])(
+    'does not hijack a mid-intake message like %j',
+    async (text) => {
+      // "price" is exactly what intake asks a seller for, so only the bare
+      // advertised word may pull them out of their draft.
+      const d = makeDeps();
+      await d.dispatcher.handle(inbound(text));
+      expect(d.sent[0].text).not.toMatch(/price guidance/i);
+    },
+  );
 
   it('handles a buyer enquiry deep link, then a YES consent → BetterBond hand-off', async () => {
     const d = makeDeps();

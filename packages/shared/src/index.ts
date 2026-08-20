@@ -115,8 +115,13 @@ export function consentWording(version: string): ConsentWording | null {
 export const WHATSAPP_ENTRY_WORDS = {
   /** Start a listing. */
   list: 'LIST',
-  /** Find out what a home is worth. */
-  valuation: 'VALUATION',
+  /**
+   * Find out what a home is worth. The word is deliberately PRICE rather
+   * than VALUATION: under the Property Valuers Profession Act only a
+   * registered valuer may perform a valuation, and we offer market-data
+   * price guidance from confirmed sales.
+   */
+  price: 'PRICE',
 } as const;
 
 export type WhatsAppEntryWord =
