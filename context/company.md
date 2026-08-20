@@ -60,26 +60,29 @@ Two shareholders, 100 shares issued, **50 / 50**, all class A, issued
 
 Amount paid is recorded as **0** against both certificates.
 
+## Done
+
+- **Beneficial ownership — signed** (20 August 2026). Required by the CoR 15.1
+  covering letter within 10 business days of registration. Keep CIPC's
+  submission confirmation with the other filings: signing the declaration and
+  CIPC accepting the submission are two steps, and the second one is what
+  gets asked for in due diligence.
+
 ## Open items
 
 Worth checking with the accountant — flagged from the filings, not verified
 against CIPC's live records.
 
-1. **Beneficial ownership filing.** The CoR 15.1 covering letter requires
-   beneficial ownership information to be submitted **within 10 business days
-   of registration**. Registered 3 August 2026, so that window closed around
-   17–18 August 2026 (allowing for the National Women's Day holiday). This
-   appears to be **overdue** — confirm whether it was filed.
-2. **Directorship.** Only one of the two 50/50 shareholders is a registered
+1. **Directorship.** Only one of the two 50/50 shareholders is a registered
    director. If that is not deliberate, a CoR 39 appointment is the fix.
-3. **Shares recorded as unpaid.** Both certificates show an amount paid of 0.
+2. **Shares recorded as unpaid.** Both certificates show an amount paid of 0.
    Ordinarily subscription shares are paid up or the debt recorded.
-4. **Share register is incomplete.** The second shareholder's row has no
+3. **Share register is incomplete.** The second shareholder's row has no
    address, email or contact number, where the first shareholder's does.
-5. **First annual return** falls due on the registration anniversary,
+4. **First annual return** falls due on the registration anniversary,
    August 2027, together with the compliance checklist and financial
    accountability supplement.
-6. **Trade mark.** Registering the company does *not* protect the name.
+5. **Trade mark.** Registering the company does *not* protect the name.
    "Sold Direct" is descriptive of the service, which usually makes a plain
    word mark harder to register — worth advice before the logo is finalised,
    since a distinctive device mark may be the more registrable asset.
