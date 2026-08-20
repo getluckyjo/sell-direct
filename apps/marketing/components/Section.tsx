@@ -34,8 +34,8 @@ export function Section({
         <p
           className={`mb-3 inline-flex rounded-full px-3 py-1 text-sm font-medium ${
             onDarkPhoto
-              ? 'bg-white/10 text-emerald-300 ring-1 ring-inset ring-white/20 backdrop-blur'
-              : 'bg-emerald-50 text-emerald-700 ring-1 ring-inset ring-emerald-100'
+              ? 'bg-white/10 text-brand-300 ring-1 ring-inset ring-white/20 backdrop-blur'
+              : 'bg-brand-50 text-brand-700 ring-1 ring-inset ring-brand-100'
           }`}
         >
           {eyebrow}

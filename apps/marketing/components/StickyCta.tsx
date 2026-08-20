@@ -45,7 +45,7 @@ export function StickyCta() {
       <a
         href="#waitlist"
         tabIndex={show ? 0 : -1}
-        className="inline-flex items-center gap-2 rounded-full bg-emerald-600 px-5 py-3 text-sm font-semibold text-white shadow-2xl shadow-emerald-600/25 transition hover:bg-emerald-700"
+        className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-2xl shadow-brand-600/25 transition hover:bg-brand-700"
       >
         Join the waitlist
         <span aria-hidden>→</span>
