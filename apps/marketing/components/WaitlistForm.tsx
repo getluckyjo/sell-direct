@@ -48,11 +48,11 @@ export function WaitlistForm() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-6 text-center">
-        <p className="text-lg font-semibold text-emerald-800">
+      <div className="rounded-2xl border border-brand-200 bg-brand-50 p-6 text-center">
+        <p className="text-lg font-semibold text-brand-800">
           You&apos;re on the list 🎉
         </p>
-        <p className="mt-1 text-sm text-emerald-700">
+        <p className="mt-1 text-sm text-brand-700">
           We&apos;ll be in touch as we open up Cape Town. Sell direct.
         </p>
       </div>
@@ -60,7 +60,7 @@ export function WaitlistForm() {
   }
 
   const field =
-    'rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-200';
+    'rounded-lg border border-slate-300 bg-white px-3 py-2 text-slate-900 placeholder-slate-400 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-200';
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
@@ -77,7 +77,7 @@ export function WaitlistForm() {
         </label>
         <label className="grid gap-1 text-sm">
           <span className="font-medium text-slate-700">
-            Email <span className="text-emerald-600">*</span>
+            Email <span className="text-brand-600">*</span>
           </span>
           <input
             name="email"
@@ -120,7 +120,7 @@ export function WaitlistForm() {
         <input
           name="consent"
           type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-200"
+          className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
         />
         <span>
           I agree to be contacted about Sold Direct and accept that my details
@@ -129,7 +129,7 @@ export function WaitlistForm() {
             href="/privacy"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-emerald-700 underline-offset-2 hover:underline"
+            className="font-medium text-brand-700 underline-offset-2 hover:underline"
           >
             POPIA privacy notice
           </a>
@@ -142,7 +142,7 @@ export function WaitlistForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex items-center justify-center rounded-lg bg-emerald-600 px-5 py-3 font-semibold text-white transition hover:bg-emerald-700 disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-lg bg-brand-600 px-5 py-3 font-semibold text-white transition hover:bg-brand-700 disabled:opacity-60"
       >
         {status === 'submitting' ? 'Joining…' : 'Join the waitlist'}
       </button>

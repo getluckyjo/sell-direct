@@ -13,7 +13,7 @@ import {
 
 const TAG_STYLES: Record<Tag, string> = {
   POPIA: 'bg-blue-100 text-blue-700 ring-blue-200',
-  Finance: 'bg-emerald-100 text-emerald-700 ring-emerald-200',
+  Finance: 'bg-brand-100 text-brand-700 ring-brand-200',
   Legal: 'bg-amber-100 text-amber-800 ring-amber-200',
   Revenue: 'bg-purple-100 text-purple-700 ring-purple-200',
   Product: 'bg-slate-200 text-slate-700 ring-slate-300',
@@ -161,16 +161,16 @@ export function WhatsAppDemo() {
           <div className="overflow-hidden rounded-[2.2rem] border-[10px] border-slate-900 bg-slate-900 shadow-2xl">
             {/* WhatsApp header */}
             <div className="flex items-center gap-3 bg-[#075E54] px-4 py-3 text-white">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-400 text-sm font-bold text-emerald-950">
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-500 text-sm font-bold text-white">
                 SD
               </div>
               <div className="leading-tight">
                 <p className="text-sm font-semibold">Sold Direct</p>
-                <p className="text-[11px] text-emerald-100">
+                <p className="text-[11px] text-brand-100">
                   {chapter.participant}
                 </p>
               </div>
-              <span className="ml-auto text-[11px] text-emerald-100">
+              <span className="ml-auto text-[11px] text-brand-100">
                 online
               </span>
             </div>
@@ -232,7 +232,7 @@ export function WhatsAppDemo() {
                   setPlaying((p) => !p);
                 }
               }}
-              className="rounded-lg bg-emerald-600 px-5 py-2 text-sm font-semibold text-white hover:bg-emerald-700"
+              className="rounded-lg bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700"
             >
               {atEnd ? 'Replay' : playing ? '⏸ Pause' : '▶ Play'}
             </button>
@@ -265,7 +265,7 @@ export function WhatsAppDemo() {
                   onClick={() => jumpToChapter(c.n)}
                   className={`rounded-full px-3 py-1.5 text-sm font-medium transition ${
                     active
-                      ? 'bg-emerald-600 text-white'
+                      ? 'bg-brand-600 text-white'
                       : 'bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50'
                   }`}
                 >
@@ -289,9 +289,9 @@ export function WhatsAppDemo() {
                     <span
                       className={`flex h-6 w-6 items-center justify-center rounded-full text-[11px] font-bold ${
                         active
-                          ? 'bg-emerald-600 text-white ring-4 ring-emerald-100'
+                          ? 'bg-brand-600 text-white ring-4 ring-brand-100'
                           : done
-                            ? 'bg-emerald-500 text-white'
+                            ? 'bg-brand-500 text-white'
                             : 'bg-slate-100 text-slate-400'
                       }`}
                     >
@@ -444,7 +444,7 @@ function BubbleBody({ scene }: { scene: Scene }) {
             className="h-28 w-full object-cover"
           />
           <div className="p-2.5">
-            <p className="text-base font-bold text-emerald-700">{l.price}</p>
+            <p className="text-base font-bold text-brand-700">{l.price}</p>
             <p className="text-[13px] font-medium text-slate-800">
               {l.address}
             </p>
@@ -455,7 +455,7 @@ function BubbleBody({ scene }: { scene: Scene }) {
               <span>📐 {l.erf}</span>
               <span>🏠 {l.type}</span>
             </div>
-            <span className="mt-2 inline-flex rounded bg-emerald-50 px-1.5 py-0.5 text-[10px] font-semibold text-emerald-700">
+            <span className="mt-2 inline-flex rounded bg-brand-50 px-1.5 py-0.5 text-[10px] font-semibold text-brand-700">
               0% commission · Free tier
             </span>
           </div>
@@ -466,11 +466,11 @@ function BubbleBody({ scene }: { scene: Scene }) {
     case 'prequal': {
       const p = scene.prequal!;
       return (
-        <div className="w-60 rounded-lg border border-emerald-100 bg-emerald-50/60 p-3">
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-emerald-700">
+        <div className="w-60 rounded-lg border border-brand-100 bg-brand-50/60 p-3">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-brand-700">
             Pre-qualified ✅ · via BetterBond
           </p>
-          <p className="mt-1 text-xl font-extrabold text-emerald-800">
+          <p className="mt-1 text-xl font-extrabold text-brand-800">
             {p.amount}
           </p>
           <dl className="mt-2 space-y-1 text-[12px] text-slate-600">
@@ -515,9 +515,9 @@ function BubbleBody({ scene }: { scene: Scene }) {
       const s = scene.status!;
       const tone =
         s.tone === 'win'
-          ? 'border-emerald-300 bg-emerald-50'
+          ? 'border-brand-300 bg-brand-50'
           : s.tone === 'good'
-            ? 'border-emerald-100 bg-emerald-50/60'
+            ? 'border-brand-100 bg-brand-50/60'
             : 'border-slate-200 bg-slate-50';
       return (
         <div className={`w-60 rounded-lg border p-3 ${tone}`}>
@@ -540,7 +540,7 @@ function BubbleBody({ scene }: { scene: Scene }) {
           <ul className="mt-2 space-y-2">
             {scene.checklist!.map((item) => (
               <li key={item.label} className="flex gap-2">
-                <span className="mt-0.5 text-emerald-600">▸</span>
+                <span className="mt-0.5 text-brand-600">▸</span>
                 <span>
                   <span className="text-[12px] font-medium text-slate-800">
                     {item.label}

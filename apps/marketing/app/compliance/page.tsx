@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 
 export const metadata: Metadata = {
   title: 'Our compliance — Sold Direct',
@@ -43,18 +44,18 @@ const PILLARS = [
 export default function Compliance() {
   return (
     <div>
-      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/85 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <Link href="/" className="text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-600">Direct</span>
+          <Link href="/">
+            <Logo className="text-lg" />
           </Link>
-          <nav className="flex items-center gap-6 text-sm font-medium text-slate-600">
-            <Link href="/" className="hover:text-slate-900">
+          <nav className="flex items-center gap-6 text-sm font-medium text-slate-300">
+            <Link href="/" className="hover:text-white">
               Home
             </Link>
             <Link
               href="/#waitlist"
-              className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white shadow-sm hover:bg-emerald-700"
+              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white shadow-sm hover:bg-brand-700"
             >
               Join waitlist
             </Link>
@@ -64,7 +65,7 @@ export default function Compliance() {
 
       <section className="border-b border-slate-200/70 bg-slate-50">
         <div className="mx-auto max-w-6xl px-6 py-16">
-          <p className="mb-3 inline-flex rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700 ring-1 ring-inset ring-emerald-100">
+          <p className="mb-3 inline-flex rounded-full bg-brand-50 px-3 py-1 text-sm font-medium text-brand-700 ring-1 ring-inset ring-brand-100">
             Our compliance
           </p>
           <h1 className="max-w-3xl text-3xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
@@ -85,7 +86,7 @@ export default function Compliance() {
               key={p.title}
               className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm"
             >
-              <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+              <span className="text-xs font-semibold uppercase tracking-wide text-brand-700">
                 {p.tag}
               </span>
               <h2 className="mt-2 font-semibold text-slate-900">{p.title}</h2>
@@ -108,8 +109,8 @@ export default function Compliance() {
         </div>
       </section>
 
-      <footer className="border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <footer className="bg-navy">
+        <div className="mx-auto flex max-w-6xl flex-col gap-2 px-6 py-10 text-sm text-slate-400 sm:flex-row sm:items-center sm:justify-between">
           <span>
             © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
           </span>

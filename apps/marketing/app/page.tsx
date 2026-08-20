@@ -1,14 +1,12 @@
 import Image from 'next/image';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 import { Section } from '@/components/Section';
 import { StickyCta } from '@/components/StickyCta';
 import { WaitlistForm } from '@/components/WaitlistForm';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
-
-const RIBBON =
-  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront.';
 
 const STEPS = [
   {
@@ -101,38 +99,29 @@ const FAQ = [
 export default function Home() {
   return (
     <div>
-      <div
-        role="note"
-        className="bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
-      >
-        {RIBBON}
-      </div>
-
       {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-slate-200/70 bg-white/85 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-          <span className="text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-600">Direct</span>
-          </span>
-          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-600 sm:flex">
-            <a href="#how" className="hover:text-slate-900">
+          <Logo className="text-lg" />
+          <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 sm:flex">
+            <a href="#how" className="hover:text-white">
               How it works
             </a>
-            <a href="#pricing" className="hover:text-slate-900">
+            <a href="#pricing" className="hover:text-white">
               Pricing
             </a>
-            <a href="#journey" className="hover:text-slate-900">
+            <a href="#journey" className="hover:text-white">
               See it work
             </a>
-            <a href="#faq" className="hover:text-slate-900">
+            <a href="#faq" className="hover:text-white">
               FAQ
             </a>
-            <Link href="/compliance" className="hover:text-slate-900">
+            <Link href="/compliance" className="hover:text-white">
               Compliance
             </Link>
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-emerald-700"
+              className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-brand-700"
             >
               Join waitlist
             </a>
@@ -160,7 +149,7 @@ export default function Home() {
           </p>
           <h1 className="max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
             Sell your home direct.{' '}
-            <span className="text-emerald-300">Keep your money.</span>
+            <span className="text-brand-300">Keep your money.</span>
           </h1>
           <p className="mt-6 max-w-2xl text-lg text-slate-100">
             Sell privately, guided end-to-end on WhatsApp — with our concierge
@@ -170,7 +159,7 @@ export default function Home() {
           <div className="mt-8 flex flex-wrap gap-3">
             <a
               href="#waitlist"
-              className="rounded-lg bg-emerald-600 px-6 py-3 font-semibold text-white shadow-lg shadow-emerald-950/20 transition hover:bg-emerald-500"
+              className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white shadow-lg shadow-brand-950/20 transition hover:bg-brand-500"
             >
               Join the waitlist
             </a>
@@ -200,19 +189,19 @@ export default function Home() {
             </p>
             <ul className="grid gap-3 text-slate-600">
               <li className="flex gap-3">
-                <span aria-hidden className="font-semibold text-emerald-600">
+                <span aria-hidden className="font-semibold text-brand-600">
                   ✓
                 </span>
                 You host the viewings — we do the paperwork
               </li>
               <li className="flex gap-3">
-                <span aria-hidden className="font-semibold text-emerald-600">
+                <span aria-hidden className="font-semibold text-brand-600">
                   ✓
                 </span>
                 A WhatsApp concierge from mandate to registration
               </li>
               <li className="flex gap-3">
-                <span aria-hidden className="font-semibold text-emerald-600">
+                <span aria-hidden className="font-semibold text-brand-600">
                   ✓
                 </span>
                 On the major property portals — doors normally closed to private
@@ -223,7 +212,7 @@ export default function Home() {
               Our team includes PPRA-registered property practitioners.{' '}
               <Link
                 href="/compliance"
-                className="font-medium text-emerald-700 underline-offset-2 hover:underline"
+                className="font-medium text-brand-700 underline-offset-2 hover:underline"
               >
                 How we keep it compliant →
               </Link>
@@ -237,7 +226,7 @@ export default function Home() {
               ~R414k
             </p>
             <p className="mt-6 text-sm text-slate-500">With Sold Direct</p>
-            <p className="mt-1 text-5xl font-extrabold text-emerald-600">R0</p>
+            <p className="mt-1 text-5xl font-extrabold text-brand-600">R0</p>
           </div>
         </div>
       </Section>
@@ -259,7 +248,7 @@ export default function Home() {
               key={step.title}
               className="rounded-2xl border border-white/50 bg-white/90 p-6 shadow-lg backdrop-blur"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-600 font-bold text-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-600 font-bold text-white">
                 {i + 1}
               </span>
               <h3 className="mt-4 font-semibold text-slate-900">
@@ -297,7 +286,7 @@ export default function Home() {
               key={tier.name}
               className={`flex flex-col rounded-2xl border p-8 ${
                 tier.highlight
-                  ? 'border-emerald-300 bg-white shadow-lg ring-2 ring-emerald-200'
+                  ? 'border-brand-300 bg-white shadow-lg ring-2 ring-brand-200'
                   : 'border-slate-200 bg-white shadow-sm'
               }`}
             >
@@ -305,7 +294,7 @@ export default function Home() {
                 <h3 className="text-lg font-bold text-slate-900">
                   {tier.name}
                 </h3>
-                <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700">
+                <span className="text-xs font-semibold uppercase tracking-wide text-brand-700">
                   {tier.tagline}
                 </span>
               </div>
@@ -318,7 +307,7 @@ export default function Home() {
                   <li key={point} className="flex gap-2">
                     <span
                       aria-hidden
-                      className="font-semibold text-emerald-600"
+                      className="font-semibold text-brand-600"
                     >
                       ✓
                     </span>
@@ -335,8 +324,8 @@ export default function Home() {
         </div>
         <p className="mx-auto mt-8 max-w-4xl text-center text-sm text-slate-600">
           On a R6m home, that&apos;s{' '}
-          <span className="font-semibold text-emerald-700">R0</span> or{' '}
-          <span className="font-semibold text-emerald-700">R60k</span> — versus
+          <span className="font-semibold text-brand-700">R0</span> or{' '}
+          <span className="font-semibold text-brand-700">R60k</span> — versus
           ~R414k for a typical full-service commission (6% + VAT).
         </p>
         <p className="mx-auto mt-3 max-w-4xl text-center text-xs text-slate-400">
@@ -363,7 +352,7 @@ export default function Home() {
               key={a.title}
               className="rounded-2xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur"
             >
-              <h3 className="font-semibold text-emerald-700">{a.title}</h3>
+              <h3 className="font-semibold text-brand-700">{a.title}</h3>
               <p className="mt-2 text-sm text-slate-600">{a.body}</p>
             </div>
           ))}
@@ -380,10 +369,10 @@ export default function Home() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm open:border-emerald-300"
+              className="group rounded-2xl border border-slate-200 bg-white p-5 shadow-sm open:border-brand-300"
             >
               <summary className="cursor-pointer list-none font-semibold text-slate-900 marker:content-none">
-                <span className="mr-2 text-emerald-600">＋</span>
+                <span className="mr-2 text-brand-600">＋</span>
                 {item.q}
               </summary>
               <p className="mt-3 text-sm text-slate-600">{item.a}</p>
@@ -438,7 +427,7 @@ export default function Home() {
             Prefer email?{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="font-medium text-emerald-700 hover:text-emerald-600"
+              className="font-medium text-brand-700 hover:text-brand-600"
             >
               {CONTACT_EMAIL}
             </a>
@@ -447,28 +436,29 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="border-t border-slate-200 bg-slate-50">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-10 text-sm text-slate-500">
-          <span>
-            © {new Date().getFullYear()} Sold Direct. Cape Town, South Africa.
-          </span>
-          <nav className="flex flex-wrap gap-5">
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="hover:text-slate-700"
-            >
-              {CONTACT_EMAIL}
-            </a>
-            <Link href="/onepager" className="hover:text-slate-700">
-              One-pager
-            </Link>
-            <Link href="/privacy" className="hover:text-slate-700">
-              Privacy notice
-            </Link>
-            <Link href="/compliance" className="hover:text-slate-700">
-              Compliance
-            </Link>
-          </nav>
+      <footer className="bg-navy">
+        <div className="mx-auto max-w-6xl px-6 py-10">
+          <Logo className="text-lg" />
+          <div className="mt-4 flex flex-wrap items-center justify-between gap-4 text-sm text-slate-400">
+            <span>
+              © {new Date().getFullYear()} Sold Direct. Cape Town, South
+              Africa.
+            </span>
+            <nav className="flex flex-wrap gap-5">
+              <a href={`mailto:${CONTACT_EMAIL}`} className="hover:text-white">
+                {CONTACT_EMAIL}
+              </a>
+              <Link href="/onepager" className="hover:text-white">
+                One-pager
+              </Link>
+              <Link href="/privacy" className="hover:text-white">
+                Privacy notice
+              </Link>
+              <Link href="/compliance" className="hover:text-white">
+                Compliance
+              </Link>
+            </nav>
+          </div>
         </div>
       </footer>
 

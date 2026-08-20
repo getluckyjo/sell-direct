@@ -14,7 +14,7 @@ export default function Privacy() {
     <div className="mx-auto max-w-3xl px-6 py-16">
       <Link
         href="/"
-        className="text-sm font-medium text-emerald-700 hover:text-emerald-600"
+        className="text-sm font-medium text-brand-700 hover:text-brand-600"
       >
         ← Back to Sold Direct
       </Link>
@@ -34,7 +34,7 @@ export default function Privacy() {
             personal information collected through this website. Contact:{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-700 hover:text-emerald-600"
+              className="text-brand-700 hover:text-brand-600"
             >
               {CONTACT_EMAIL}
             </a>
@@ -92,7 +92,7 @@ export default function Privacy() {
             your personal information, and you may object to processing. Email{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-700 hover:text-emerald-600"
+              className="text-brand-700 hover:text-brand-600"
             >
               {CONTACT_EMAIL}
             </a>{' '}
@@ -102,7 +102,7 @@ export default function Privacy() {
             keep the sale itself compliant, see our{' '}
             <Link
               href="/compliance"
-              className="text-emerald-700 hover:text-emerald-600"
+              className="text-brand-700 hover:text-brand-600"
             >
               compliance page
             </Link>
