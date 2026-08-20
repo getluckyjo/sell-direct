@@ -11,6 +11,11 @@
  * duplicated. Prints TEMPLATE_<KEY>=<ContentSid> lines to paste into your env.
  *
  * Needs only Node 18+ (global fetch). No secrets are stored — creds come from env.
+ *
+ * Use Sold Direct's Twilio SUBACCOUNT SID + auth token. content.twilio.com is a
+ * Twilio subdomain, where parent-account credentials are denied on subaccount
+ * resources — parent keys would attach these templates to the wrong WABA.
+ * See docs/META-ONBOARDING.md §5.
  */
 
 const DRY_RUN = process.argv.includes('--dry-run');

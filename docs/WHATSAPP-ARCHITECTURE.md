@@ -73,7 +73,7 @@ flowchart LR
 | # | Integration | Purpose | Status | Env keys / seam |
 |---|---|---|---|---|
 | 1 | **Twilio WhatsApp (BSP)** | Send/receive WhatsApp; template hosting | ⛔ new adapter | add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID` (or `TWILIO_WHATSAPP_FROM`) |
-| 2 | **Meta Business verification** | Own the WhatsApp Business number / display name | ⛔ (via Twilio) | done inside Twilio console |
+| 2 | **Meta Business verification** | Own the WhatsApp Business number / display name | ⛔ (via Twilio) | own Meta Business Portfolio + own Twilio **subaccount** — runbook: `docs/META-ONBOARDING.md` |
 | 3 | **BetterBond originator API** | Real bond pre-qual + application hand-off | 🟡 stub | `ORIGINATOR_REFERRAL_ENDPOINT`, `ORIGINATOR_API_KEY` (present, unused) |
 | 4 | **Panel conveyancer(s)** | Transfer/bond/cancellation attorneys, FICA, clearance | ⛔ | new party model + adapter seam |
 | 5 | **Banks / lenders** | Bond application status (via BetterBond multi-bank) | ⛔ | new party model + `DealEvent` actor |
@@ -251,5 +251,6 @@ moment the **sender number is approved** and the **templates are approved** — 
 
 ---
 
-*See also: `README.md` (architecture overview), `DEPLOYMENT.md §4` (webhook setup),
+*See also: `docs/META-ONBOARDING.md` (Meta Business + Twilio sender runbook),
+`README.md` (architecture overview), `DEPLOYMENT.md §4` (webhook setup),
 `docs/POPIA-data-map.md` (PII inventory), `SECURITY.md` (consent/audit rules).*

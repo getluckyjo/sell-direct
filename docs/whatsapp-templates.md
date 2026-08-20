@@ -30,9 +30,14 @@ reused, not duplicated) and needs only Node 18+.
 # preview exactly what will be sent — no account needed:
 node scripts/twilio-templates.mjs --dry-run
 
-# then, with your Console → Account Info keys (never commit these):
+# then, with the SUBACCOUNT's Account Info keys (never commit these):
 TWILIO_ACCOUNT_SID=AC... TWILIO_AUTH_TOKEN=... node scripts/twilio-templates.mjs
 ```
+
+> **Use Sold Direct's Twilio subaccount credentials, not the parent account's.** Templates live on
+> `content.twilio.com`, a Twilio subdomain where parent-account keys are denied on subaccount
+> resources — parent keys would attach these templates to a different business's WABA.
+> See `docs/META-ONBOARDING.md §5`.
 
 It prints `TEMPLATE_<KEY>=HX…` lines — paste those into your API env (Railway / `.env`). Watch
 approval status in **Console → Messaging → Content Template Builder**.
