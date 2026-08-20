@@ -3,6 +3,7 @@ import type { MessageRepository } from '../messaging';
 import type { ReplyOptions } from '../messaging';
 
 export * from './templates';
+export * from './opt-out';
 
 export interface SendOptions {
   /** Send an approved template (Twilio Content SID / Meta template name). */

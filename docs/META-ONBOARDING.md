@@ -226,32 +226,67 @@ or end of a message or adjacent to another variable, quick-reply labels ≤ ~20 
 
 ---
 
-## 6. Phase 5 — opt-in, which is what actually blocks go-live
+## 6. Phase 5 — opt-in and the two entry words
 
-**Open gap.** `apps/marketing/components/WaitlistForm.tsx` captures one consent checkbox:
+### How people reach us
 
-> *"I agree to be contacted about Sold Direct and accept that my details are processed per the
-> POPIA privacy notice."*
+**All marketing sends people into WhatsApp with a word pre-filled** — `LIST` to
+start a listing, `VALUATION` to find out what a home is worth. Both are defined
+once in `@sell-direct/shared` (`WHATSAPP_ENTRY_WORDS`) and answered by the
+dispatcher with no prior context, so a cold message never lands on "I didn't
+catch that".
 
-That satisfies POPIA but **not Meta**. Meta requires the WhatsApp channel to be **named explicitly**
-in the opt-in. Widening the existing wording is the wrong fix — it merges two consents that a person
-must be able to give separately.
+This shape is worth stating because it decides what we need from Meta: **the
+user messages first**, which opens WhatsApp's 24-hour session window. Inside
+that window replies are free text — no approved template, and no prior opt-in
+required to answer. Templates (§5) and the opt-in below are for the *other*
+direction: messages we start, days later.
 
-Required change before any business-initiated WhatsApp message is sent:
+Marketing CTAs render as `wa.me` deep links via `apps/marketing/lib/whatsapp.ts`
+and **fall back to the waitlist form whenever `NEXT_PUBLIC_WHATSAPP_NUMBER` is
+unset** — so nothing points at a sender that doesn't exist yet. Set it once the
+sender is approved, and **redeploy**: `NEXT_PUBLIC_*` is inlined at build time.
 
-1. A **separate, unticked, optional** checkbox naming WhatsApp — e.g. *"Yes, Sold Direct may message
-   me on WhatsApp about my listing or enquiry."* Never bundled with the submit action or made a
-   condition of joining the waitlist; consent that is a condition of the primary action is not
-   freely given and is worthless.
-2. Store **proof, not assertion**: the exact wording shown and a form version, travelling with the
-   record. This needs a `whatsappConsentAt` + `consentWording` + `consentFormVersion` on `Lead`
-   (today there is only a single `consentAt`). Define the wording next to the code that renders it
-   so the two cannot drift.
-3. Promise only what is actually delivered — the gap between what a message promises and what a
-   person receives is what generates complaints, and complaints become account restrictions.
+⚠️ **A note on the word "valuation".** Under the Property Valuers Profession Act
+only a registered valuer may perform a valuation, so the keyword is answered
+with *market-data price guidance from confirmed recent sales* and an offer of a
+pricing chat with a registered practitioner — never a promise of a valuation.
+The keyword is fine to advertise; the promise is what would not be. If we ever
+want to be further from the line, `PRICE` or `WORTH` is the safer word to
+advertise — say so and the constant changes in one place.
 
-This is a code change, tracked separately; it is the last thing standing between an approved sender
-and a legitimate first outbound message.
+### The opt-in — done
+
+Meta requires the WhatsApp channel to be **named explicitly** in the opt-in, so
+`apps/marketing/components/WaitlistForm.tsx` now carries two checkboxes:
+
+1. The POPIA processing consent — required to submit.
+2. **A separate, unticked, optional WhatsApp opt-in**, never bundled with the
+   submit action. Declining it still joins the waitlist; a consent that gates
+   the primary action is not freely given and is worthless.
+
+**Proof, not assertion.** The form sends only the *version* of the copy it
+displayed (`CONSENT_FORM_VERSION`); the API resolves the exact wording from the
+shared registry and stores it on the lead (`consentWording`,
+`consentFormVersion`, `whatsappConsentAt`). A record can therefore never claim
+wording that was never on screen, and an unknown version is rejected with a
+`400 unknown_consent_version` rather than stored as unprovable consent — which
+is what makes a form deploy drifting ahead of the API fail loudly.
+
+When the copy changes, **add a new version key; never edit a published one** —
+editing in place would silently rewrite the proof attached to existing records.
+
+### STOP — because the wording promises it
+
+The opt-in says "I can reply STOP at any time", so STOP is handled before any
+flow can claim the message: acknowledged once, then recorded in
+`whatsapp_opt_outs`. The guard sits on the **notifier**
+(`notifications/opt-out.ts`), so stage updates, re-engagement nudges and
+conversational replies are all covered in one place — a flow cannot forget it,
+and `DispatcherDeps.optOut` is required, so a construction site that omits it
+fails to compile. A later inbound from that number clears the opt-out: they
+messaged us, so contact is re-initiated. `CANCEL` is deliberately not an
+opt-out — intake uses it to drop a draft.
 
 ---
 
@@ -301,5 +336,8 @@ proves routing only — it runs before our handler, so it says nothing about con
 - [ ] Full loop proven end-to-end against the Twilio sandbox (§4)
 - [ ] Messaging Service created; webhook + status callback pointed at the API (§3.5)
 - [ ] Config health endpoint reporting which env vars are present (§7)
-- [ ] **WhatsApp-specific opt-in on the waitlist form + consent-proof fields on `Lead`** (§6)
+- [x] **WhatsApp-specific opt-in on the waitlist form + consent-proof fields on `Lead`** (§6)
+- [x] LIST / VALUATION answered by the dispatcher; marketing CTAs deep-link with them (§6)
+- [x] STOP opt-out honoured on every outbound send (§6)
+- [ ] `NEXT_PUBLIC_WHATSAPP_NUMBER` set on the marketing deploy once the sender is approved — then **redeploy** (§6)
 - [ ] Railway env set from the subaccount, redeployed, `WHATSAPP_BSP=twilio` flipped (§4)

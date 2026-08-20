@@ -75,6 +75,11 @@ export function welcomeMenu(): ReplyOptions {
             description: 'How 0% commission works, and when it applies.',
           },
           {
+            id: 'VALUATION',
+            title: 'What’s my home worth?',
+            description: 'Free price guidance from recent nearby sales.',
+          },
+          {
             id: 'CONSULT',
             title: 'Talk to our team',
             description: 'A registered practitioner calls you back.',
@@ -117,3 +122,40 @@ export const COST_REPLY =
   'choice for many sellers — we’re built for those who want to sell direct ' +
   'themselves, with our practitioners handling the admin.\n\n' +
   'No listing fee, no monthly fee, no lock-in beyond the term you choose.';
+
+/**
+ * "VALUATION" — the second advertised entry word. All marketing sends people
+ * here with LIST or VALUATION pre-filled (`WHATSAPP_ENTRY_WORDS`), so this
+ * must answer a cold, context-free message just as `list` does.
+ *
+ * Framing is deliberate and legally load-bearing. Under the Property Valuers
+ * Profession Act only a registered valuer may perform a valuation, so the
+ * reply never promises one: we offer market-data *price guidance* from
+ * confirmed recent sales, and a pricing chat with a registered property
+ * practitioner. Same rule as `valuation/types.ts` — the asking price is
+ * always the seller's.
+ */
+export const VALUATION_RE = /^\s*(valuation|valuate)\b/i;
+
+export const VALUATION_REPLY =
+  '👋 Welcome to Sold Direct — happy to help you work out what your Cape ' +
+  'Town home could be worth.\n\n' +
+  'Two free ways, no obligation:\n\n' +
+  '📊 *Price guidance in this chat* — a few quick questions about the home, ' +
+  'then we show you what comparable homes nearby actually sold for, from ' +
+  'confirmed sales data. That’s market guidance, not a formal valuation.\n\n' +
+  '📞 *A pricing chat with our team* — one of our registered property ' +
+  'practitioners talks you through it.\n\n' +
+  'The asking price is always yours.';
+
+/** The three ways on from the valuation reply. */
+export function valuationOptions(): ReplyOptions {
+  return {
+    kind: 'buttons',
+    options: [
+      { id: 'START', title: 'Get price guidance' },
+      { id: 'CONSULT', title: 'Talk to our team' },
+      { id: 'HOW', title: 'How it works' },
+    ],
+  };
+}

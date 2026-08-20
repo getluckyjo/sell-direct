@@ -235,6 +235,17 @@ model Lead {
   source    String?
   /// POPIA: timestamp of the explicit consent given on the form.
   consentAt DateTime
+  /// Meta requires WhatsApp to be named explicitly in the opt-in, so it is a
+  /// SEPARATE optional consent — someone may accept email and decline
+  /// WhatsApp. Null means no WhatsApp consent: never business-initiate a
+  /// WhatsApp message to this lead.
+  whatsappConsentAt DateTime?
+  /// Proof, not assertion: the exact consent wording shown on the form, and
+  /// the version it came from (`CONSENT_FORM_VERSION` in @sell-direct/shared).
+  /// Resolved server-side from the version — never taken from the client.
+  /// Null on records captured before consent versioning.
+  consentWording     String?
+  consentFormVersion String?
   createdAt DateTime  @default(now())
 
   @@index([kind, createdAt])
@@ -311,4 +322,17 @@ model Deadline {
   @@index([dueAt])
   @@index([dealId, kind])
   @@map("deadlines")
+}
+
+/// A phone number that asked us to stop messaging (replied STOP on WhatsApp).
+/// Presence of a row is the opt-out: every outbound send is refused for it.
+/// POPIA + WhatsApp Business policy both require honouring this, and our
+/// consent wording promises it explicitly.
+model WhatsAppOptOut {
+  phone      String   @id
+  optedOutAt DateTime @default(now())
+  /// The inbound message that asked for it — proof of the request.
+  waMessageId String?
+
+  @@map("whatsapp_opt_outs")
 }

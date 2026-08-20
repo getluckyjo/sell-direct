@@ -22,6 +22,7 @@ describe('listing intake orchestrator', () => {
             { id: 'START' },
             { id: 'HOW' },
             { id: 'COST' },
+            { id: 'VALUATION' },
             { id: 'CONSULT' },
           ],
         },

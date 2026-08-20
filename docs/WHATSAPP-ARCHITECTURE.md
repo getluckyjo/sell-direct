@@ -54,7 +54,7 @@ flowchart LR
 | Deal state machine | `.../deals/state-machine.ts`, `service.ts`, `routes.ts` | ✅ | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. **`POST /api/deals/:id/transition`** (internal-token guarded) advances a deal and fires the stage's WhatsApp template to buyer/seller (`stage-notifications.ts`). |
 | Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
 | Finance / BetterBond referral | `.../finance/betterbond-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **BetterBondReferralStub logs only** (real BetterBond API pending). |
-| Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
+| Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. Answers both advertised entry words — **LIST** and **VALUATION** (`WHATSAPP_ENTRY_WORDS`) — with no prior context, since every marketing CTA deep-links one of them. |
 | Notifications | `.../notifications/index.ts` | ✅ | `Notifier` sends via the adapter and persists the outbound message. |
 | Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates); reply options degrade to a keyword list, since Twilio's REST API has no session-level interactive message. Select with `WHATSAPP_BSP=twilio`. |
 

@@ -1,5 +1,10 @@
 import type { InboundMessage } from '../messaging';
-import type { Notifier } from '../notifications';
+import {
+  STOP_RE,
+  STOP_REPLY,
+  type Notifier,
+  type OptOutStore,
+} from '../notifications';
 import {
   handleDescriptionMessage,
   handleInboundPhoto,
@@ -10,6 +15,9 @@ import {
   COST_REPLY,
   HOW_RE,
   HOW_REPLY,
+  VALUATION_RE,
+  VALUATION_REPLY,
+  valuationOptions,
   type DescriptionDeps,
   type ListingIntakeDeps,
   type PhotoIntakeDeps,
@@ -63,6 +71,12 @@ export interface DispatcherDeps {
   prequalStore: PrequalStore;
   notifier: Notifier;
   /**
+   * Opt-out list. Required, not optional: "reply STOP at any time" is
+   * promised in our consent wording, so a construction site that forgets it
+   * should fail to compile rather than quietly ignore an opt-out.
+   */
+  optOut: OptOutStore;
+  /**
    * Optional inbound-photo handling: downloads, stores and attaches seller
    * photos to their pending/active listing. Deterministic code in ALL modes
    * — the model never touches bytes.
@@ -108,6 +122,23 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
     // reply follow exactly the same path.
     const text = (message.replyId ?? message.text ?? '').trim();
 
+    // -2. "STOP" — the opt-out promised in every consent line, handled before
+    //     anything else (media included) so no flow can swallow it.
+    //     The acknowledgement is sent BEFORE the opt-out is recorded, so the
+    //     notifier's own guard never suppresses the confirmation itself.
+    if (STOP_RE.test(text)) {
+      await deps.notifier.send(phone, STOP_REPLY);
+      await deps.optOut.optOut(phone, message.waMessageId);
+      return;
+    }
+
+    // -1.5 They messaged us, so contact is re-initiated: clear any earlier
+    //      opt-out, or the guard would silently swallow the reply we now owe
+    //      them. Read first — a write per inbound message would be wasteful.
+    if (await deps.optOut.isOptedOut(phone)) {
+      await deps.optOut.optIn(phone);
+    }
+
     // -1. Inbound media (a photo) — handled by code in every mode, above all
     //     other routing. An image has empty text so no keyword route could
     //     claim it anyway; a buyer mid-prequal who sends a photo gets a sane
@@ -147,6 +178,17 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
             { id: 'CONSULT', title: 'Talk to us' },
           ],
         },
+      });
+      return;
+    }
+
+    // 0. "VALUATION" — the second advertised entry word. All marketing sends
+    //    people here with LIST or VALUATION pre-filled, so this has to answer
+    //    a cold message with no context, like the welcome does. Kept above
+    //    the intake so it never falls through to "I didn't catch that".
+    if (VALUATION_RE.test(text)) {
+      await deps.notifier.send(phone, VALUATION_REPLY, {
+        interactive: valuationOptions(),
       });
       return;
     }
