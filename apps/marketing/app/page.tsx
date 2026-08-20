@@ -8,9 +8,6 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
 
-const RIBBON =
-  '0% commission — the banks pay us, not you. No bond in your sale? A simple 1%, agreed upfront.';
-
 const STEPS = [
   {
     title: 'List on WhatsApp',
@@ -102,15 +99,8 @@ const FAQ = [
 export default function Home() {
   return (
     <div>
-      <div
-        role="note"
-        className="bg-navy-950 px-6 py-2 text-center text-sm font-semibold text-brand-300"
-      >
-        {RIBBON}
-      </div>
-
       {/* Nav */}
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy/95 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Logo className="text-lg" />
           <nav className="hidden items-center gap-6 text-sm font-medium text-slate-300 sm:flex">

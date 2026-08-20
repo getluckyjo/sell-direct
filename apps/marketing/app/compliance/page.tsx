@@ -44,7 +44,7 @@ const PILLARS = [
 export default function Compliance() {
   return (
     <div>
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy/95 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/">
             <Logo className="text-lg" />
