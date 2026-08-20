@@ -5,20 +5,21 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // SoldDirect. brand — navy card + speech-bubble green from the logo
-        navy: { DEFAULT: '#1A2238', 950: '#131A2C' },
+        // SoldDirect. brand — exact values sampled from the master artwork
+        // (SoldDirect.ai): navy #0B172B, bubble green #36B44A. See DESIGN.md.
+        navy: { DEFAULT: '#0B172B', 950: '#060D1A' },
         brand: {
-          50: '#EEF7EE',
-          100: '#DCEFDD',
-          200: '#C8E6C9',
-          300: '#A5D6A7',
-          400: '#81C784',
-          500: '#4CAF50',
-          600: '#43A047',
-          700: '#388E3C',
-          800: '#2E7D32',
-          900: '#1B5E20',
-          950: '#0F3D13',
+          50: '#EAF7EC',
+          100: '#D3EFD9',
+          200: '#ABE2B6',
+          300: '#82D492',
+          400: '#57C468',
+          500: '#36B44A', // the logo bubble green
+          600: '#2C9940', // CTA surface — white text ≥ 3:1
+          700: '#27873A', // links / small text on white ≥ 4.5:1
+          800: '#217A32',
+          900: '#1E6E2E',
+          950: '#0F3D1A',
         },
       },
     },
