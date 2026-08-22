@@ -88,7 +88,8 @@ Not open items; diary entries.
   separate application. "Sold Direct" is descriptive of the service, which
   usually makes a plain word mark hard to register, so a distinctive device
   mark is often the more protectable asset. Worth settling before the logo is
-  locked, since it can change which option is worth choosing.
+  locked, since it can change which option is worth choosing. What to file, in
+  what order and at what cost: `context/trade-mark.md`.
 
 ## Source documents
 
