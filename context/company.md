@@ -45,8 +45,10 @@ explains why older documents in `context/` refer to "sold-direct".
 | --- | --- | --- |
 | Dean Kruger | Director | 3 August 2026 |
 
-**Johannes le Roux is a shareholder but is not recorded as a director.** See
-*Open items*.
+**Johannes le Roux is a shareholder but is deliberately not a director.**
+Agreed between the shareholders (confirmed 20 August 2026) — the single
+directorship is intentional, not an oversight. Worth restating whenever
+someone reads the CIPC record cold and assumes it is a filing error.
 
 ## Shareholding
 
@@ -60,29 +62,33 @@ Two shareholders, 100 shares issued, **50 / 50**, all class A, issued
 
 Amount paid is recorded as **0** against both certificates.
 
-## Open items
+## Resolved
 
-Worth checking with the accountant — flagged from the filings, not verified
-against CIPC's live records.
+All items raised off the filings were closed on **20 August 2026**.
 
-1. **Beneficial ownership filing.** The CoR 15.1 covering letter requires
-   beneficial ownership information to be submitted **within 10 business days
-   of registration**. Registered 3 August 2026, so that window closed around
-   17–18 August 2026 (allowing for the National Women's Day holiday). This
-   appears to be **overdue** — confirm whether it was filed.
-2. **Directorship.** Only one of the two 50/50 shareholders is a registered
-   director. If that is not deliberate, a CoR 39 appointment is the fix.
-3. **Shares recorded as unpaid.** Both certificates show an amount paid of 0.
-   Ordinarily subscription shares are paid up or the debt recorded.
-4. **Share register is incomplete.** The second shareholder's row has no
-   address, email or contact number, where the first shareholder's does.
-5. **First annual return** falls due on the registration anniversary,
-   August 2027, together with the compliance checklist and financial
-   accountability supplement.
-6. **Trade mark.** Registering the company does *not* protect the name.
-   "Sold Direct" is descriptive of the service, which usually makes a plain
-   word mark harder to register — worth advice before the logo is finalised,
-   since a distinctive device mark may be the more registrable asset.
+- **Beneficial ownership** — signed. Keep CIPC's submission confirmation with
+  the other filings: signing the declaration and CIPC accepting the submission
+  are two steps, and the second one is what due diligence asks for.
+- **Directorship** — the single directorship is deliberate, agreed between the
+  shareholders. See *Directors* above.
+- **Share capital** — the amount-paid position on both certificates has been
+  dealt with.
+- **Share register** — completed for both shareholders.
+
+## Standing obligations
+
+Not open items; diary entries.
+
+- **First annual return** falls due on the registration anniversary,
+  **August 2027**, with the compliance checklist and the financial
+  accountability supplement. Missing it risks deregistration.
+- **Beneficial ownership** must be updated whenever it changes, and again with
+  each annual return.
+- **Trade mark.** Registering the company does not protect the name — that is a
+  separate application. "Sold Direct" is descriptive of the service, which
+  usually makes a plain word mark hard to register, so a distinctive device
+  mark is often the more protectable asset. Worth settling before the logo is
+  locked, since it can change which option is worth choosing.
 
 ## Source documents
 
