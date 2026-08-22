@@ -8,6 +8,9 @@ import process from 'node:process';
 const apiBase = process.env.API_INTERNAL_URL;
 
 const nextConfig = {
+  // Transpile the workspace package so the app can import shared TS source
+  // (consent copy + the advertised WhatsApp entry words).
+  transpilePackages: ['@sell-direct/shared'],
   async rewrites() {
     if (!apiBase) return [];
     return [

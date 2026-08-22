@@ -4,6 +4,7 @@ import { Logo } from '@/components/Logo';
 import { Section } from '@/components/Section';
 import { StickyCta } from '@/components/StickyCta';
 import { WaitlistForm } from '@/components/WaitlistForm';
+import { whatsappCtas } from '@/lib/whatsapp';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 
 const CONTACT_EMAIL = 'johannes@solddirect.co.za';
@@ -97,6 +98,11 @@ const FAQ = [
 ];
 
 export default function Home() {
+  // Every CTA sends people into WhatsApp with LIST or PRICE pre-filled.
+  // Null until the sender is approved (docs/META-ONBOARDING.md) — the
+  // waitlist is the fallback until then.
+  const wa = whatsappCtas();
+
   return (
     <div>
       {/* Nav */}
@@ -120,10 +126,10 @@ export default function Home() {
               Compliance
             </Link>
             <a
-              href="#waitlist"
+              href={wa ? wa.list.href : '#waitlist'}
               className="rounded-lg bg-brand-600 px-4 py-2 font-semibold text-white shadow-sm transition hover:bg-brand-700"
             >
-              Join waitlist
+              {wa ? 'Send “LIST” on WhatsApp' : 'Join waitlist'}
             </a>
           </nav>
         </div>
@@ -158,11 +164,19 @@ export default function Home() {
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <a
-              href="#waitlist"
+              href={wa ? wa.list.href : '#waitlist'}
               className="rounded-lg bg-brand-600 px-6 py-3 font-semibold text-white shadow-lg shadow-brand-950/20 transition hover:bg-brand-500"
             >
-              Join the waitlist
+              {wa ? 'Send “LIST” on WhatsApp' : 'Join the waitlist'}
             </a>
+            {wa ? (
+              <a
+                href={wa.price.href}
+                className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
+              >
+                Send “PRICE” — what’s my home worth?
+              </a>
+            ) : null}
             <a
               href="#how"
               className="rounded-lg border border-white/40 bg-white/10 px-6 py-3 font-semibold text-white backdrop-blur transition hover:bg-white/20"
@@ -170,6 +184,12 @@ export default function Home() {
               See how it works
             </a>
           </div>
+          {wa ? (
+            <p className="mt-4 text-sm text-slate-200">
+              Two words, one chat. Everything happens on WhatsApp — no forms, no
+              logins.
+            </p>
+          ) : null}
         </div>
       </section>
 
@@ -417,6 +437,25 @@ export default function Home() {
             Join the first group of Cape Town sellers and buyers — we&apos;ll
             reach out as we go live.
           </p>
+          {wa ? (
+            <p className="mt-3 rounded-xl bg-brand-50 p-3 text-sm text-brand-800">
+              Ready now? Send{' '}
+              <a
+                href={wa.list.href}
+                className="font-semibold underline underline-offset-2"
+              >
+                “LIST”
+              </a>{' '}
+              or{' '}
+              <a
+                href={wa.price.href}
+                className="font-semibold underline underline-offset-2"
+              >
+                “PRICE”
+              </a>{' '}
+              to our WhatsApp and we’ll take it from there.
+            </p>
+          ) : null}
           <div className="mt-8">
             <WaitlistForm />
           </div>
