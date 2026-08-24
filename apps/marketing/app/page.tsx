@@ -224,8 +224,8 @@ export default function Home() {
                 <span aria-hidden className="font-semibold text-brand-600">
                   ✓
                 </span>
-                On the major property portals — doors normally closed to private
-                sellers
+                On the major property portals — as a full, agency-grade listing,
+                not a DIY ad
               </li>
             </ul>
             <p className="text-sm text-slate-500">

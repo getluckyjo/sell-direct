@@ -6,8 +6,9 @@
 
 > listing → buyer enquiry → in-WhatsApp bond pre-qualification → offer → tracked to property transfer.
 
-Go-to-market lives in `docs/LAUNCH-PLAN.md` — built around the portal-gap wedge (prime
-private sellers can't list on Property24; our practitioner status is the compliant bridge).
+Go-to-market lives in `docs/LAUNCH-PLAN.md` — built around the service-gap wedge (the
+portals sell private sellers a flat-fee listing that ends at the enquiry; our registered
+practitioners run the whole sale at 0% on the qualifying path, with agency-grade syndication).
 
 The repo is currently **empty** (fresh git repo, no commits). This document is the agreed end-to-end roadmap. Per the kickoff guidance we build in **small, reviewable chunks — one feature per PR** — and **no code is written until this roadmap is approved**. Each subsequent PR will still get its own short plan + approval before implementation.
 
