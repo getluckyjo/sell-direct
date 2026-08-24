@@ -7,17 +7,16 @@ ad-hoc hex values in pages.
 
 ## Logo
 
-The lockup is **"SoldDirect.™"** — one word, bold, with the "o" in "Sold"
-drawn as a green speech bubble (the WhatsApp nod), a trailing full stop, and
-the trade mark symbol. The wordmark is **outlined vector art, never typeset**:
-the exact paths live in `components/logo-paths.ts` (extracted from the master;
-regenerate from the .ai if the logo ever changes, don't edit by hand).
+The lockup is **"SoldDirect."** — one word, bold, with the "o" in "Sold"
+drawn as a green speech bubble (the WhatsApp nod) and a trailing full stop.
+The wordmark is **outlined vector art, never typeset**: the exact paths live
+in `components/logo-paths.ts` (extracted from the master; regenerate from the
+.ai if the logo ever changes, don't edit by hand).
 
-The ™ is **not** from the master artwork. It is drawn separately in
-`logo-paths.ts` as `TRADEMARK_PATH`, in straight-line geometry, so that it
-survives a regeneration of the wordmark and never depends on a font being
-available. `LOGO_VIEWBOX_TM` is the box for the lockup as shipped;
-`LOGO_VIEWBOX` is the bare master art.
+The lockup carries **no ™ or ®** — founder decision, Aug 2026 (a ™ shipped
+briefly and was removed). If that decision is ever revisited, ® still must
+not appear without a registration certificate; the application status lives
+in `context/trade-mark.md`.
 
 Variants — all rendered by `components/Logo.tsx`:
 
@@ -27,22 +26,15 @@ Variants — all rendered by `components/Logo.tsx`:
 | `dark` | navy | green | white/light surfaces — print one-pager, documents |
 
 The bubble-only mark (`BUBBLE_PATH`) is the avatar/favicon: `app/icon.svg`
-(bubble on navy rounded square). It carries **no ™** — there is no wordmark
-on it to mark, and the symbol would be illegible at favicon size.
-`public/logo.svg` is the shareable light lockup on transparent, with the ™
-baked in as vector so it survives being embedded anywhere.
+(bubble on navy rounded square). `public/logo.svg` is the shareable light
+lockup on transparent.
 
 Rules:
 
 - The bubble is **always** brand green (`#36B44A`), in both variants.
 - Never recolor, outline, add a space ("Sold Direct" is prose; the visual
   wordmark is "SoldDirect."), redraw the bubble, or drop the full stop.
-- **The ™ goes on every rendering of the lockup and must not be removed.**
-  The mark is not registered, so ™ is what asserts the claim in the meantime.
-- **Never change the ™ to ®** until a registration certificate exists — using
-  ® before registration is a misrepresentation with statutory consequences.
-  See `context/trade-mark.md` for where the application stands.
-- ™ marks the *logo*, not prose. Body copy says "Sold Direct" plainly.
+- No ™ or ® on the lockup (see above). Body copy says "Sold Direct" plainly.
 - Clear space: at least the height of the "S" on all sides. Minimum height
   ~16px on screen; below that use the bubble-only mark.
 - Size the component with font-size (`text-lg` etc.) — the lockup is 1em tall.
