@@ -144,7 +144,7 @@ export const MODEL_SECTION = {
 export const MARKET_SECTION = {
   heading: 'A R6.25bn-a-year market. We enter at the top.',
   intro:
-    'The portals are closed to prime private sellers — Property24\u2019s private channel caps at R500,000, and lifting it would put the portal at war with its paying agencies. As a registered practitioner, Sold Direct is the compliant bridge to the portal audience at 0%. We land at prime Cape Town (average transacting price R6.5m), then broaden into the national upper-market — tapering to R4.0m by Year 5.',
+    'The portals sell private sellers a flat-fee listing — Property24\u2019s own private tiers prove the demand — but a listing is not a sale: pricing, viewings, the offer, bond, FICA and transfer stay on the seller. Sold Direct runs that whole journey with registered practitioners at 0% on the qualifying path, syndicated to the portals as an agency-grade feed. We land at prime Cape Town (average transacting price R6.5m), then broaden into the national upper-market — tapering to R4.0m by Year 5.',
   stats: [
     {
       label: 'TAM',

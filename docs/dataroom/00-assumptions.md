@@ -161,7 +161,7 @@ fulfilment lift later years.
 | Feed / interoperability fee | Historically **R500/month per office** for third-party feeds; the Competition Commission ordered interoperability **at no fee**. | CompCom OIPMI 2023 / IOL | High |
 | Regulatory context | CompCom Online Intermediation Platforms Market Inquiry (Jul 2023) found **“exorbitant” fee increases** and volume-based price discrimination — small agencies paid **>300% more per listing** than large ones. Remedy: an **SIBP** for ≤30-lead users priced within **15% (later 10%) of the average per-listing/lead across all users**, expected to roughly **halve SME fees**. Volume-fair pricing is now the mandated norm. | CompCom final report / OnlineMarketplaces / Property Professional | High |
 | Pay-per-success precedent | Property24’s own **SBF model: R199 per sale registered at the Deeds Office**, no subscription (introductory rate; dated source — reconfirm). | GhostDigest | Low |
-| Private-listing gap | P24’s private self-service channel is **capped at homes ≤R500,000** — prime private sellers cannot list directly. Sold Direct (a registered practitioner) brings that inventory as a normal agency-grade feed. | property24.com private-listing pages | Medium |
+| Private-listing offering | **Supersedes the earlier "capped at ≤R500,000" claim (Jul 2026 snippet), which is wrong or outdated.** P24 sells a flat-fee private-listing suite — **Self-Service, Self-Service Reduced, Assisted, Featured** (~6-month listing, no commission, photographer on Assisted/Featured). What P24 sells is a *listing*; the seller still runs pricing, viewings, OTP, bond, FICA and transfer alone. Sold Direct's wedge is the **service gap**: a practitioner-run journey at 0% on the qualifying path, syndicated as a normal agency-grade feed. | property24.com/private-listing/sell-my-property + how-it-works pages (researched Aug 2026; prices not yet captured) | Medium |
 
 **Reconciliation with the model (against the actual 2026 card).** At ~70% sell-through the
 listing pool is ~70 (Y1) → ~4,100 (Y5); with ~90-day time-on-market and ~5 leads/listing/month,
@@ -206,6 +206,9 @@ tiers at agreed lead milestones, and optionally a success-based component on the
 7. **In-house origination:** the **~1.5% commission we can capture direct**, the **bank
    aggregation terms**, and the **FAIS/FSP accreditation cost/timeline** — confirm against a real
    bank term sheet before relying on the Y2 switch.
+8. **Property24 private-listing prices and terms** — capture the current fee for each tier
+   (Self-Service / Self-Service Reduced / Assisted / Featured), listing duration and any
+   restrictions from the live pages, so the competitive comparison quotes their offer exactly.
 
 All five search angles and the verification verdicts are preserved in the workflow
 transcripts (`subagents/workflows/wf_18f95307-779/`).

@@ -17,12 +17,14 @@ model-grade (see sourcing caveats in each document).
 | [`partner-brief-paysoft.html`](./partner-brief-paysoft.html) | Print-ready technology-partnership brief for Paysoft |
 | [`partner-brief-property24.html`](./partner-brief-property24.html) | Print-ready syndication brief for Property24 — the incremental-inventory case and the rate structure we're negotiating for (research in `00-assumptions.md` §D) |
 
-## Strategy: the portal-gap wedge · land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
+## Strategy: the service-gap wedge · land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
 
-**The wedge:** SA's portals are closed to prime private sellers — Property24's private
-self-service channel caps at **R500,000** (structural: it protects agency-subscription
-revenue), so above that only a registered practitioner reaches portal buyers. **Sold Direct
-is that practitioner at 0%** — the launch plan is built on this gap (`docs/LAUNCH-PLAN.md`).
+**The wedge:** the portals sell private sellers a *listing*, not a *sale*. Property24's own
+flat-fee private-listing tiers (Self-Service → Featured) prove the demand — but after the
+enquiry the seller is alone with pricing, viewings, the OTP, bond, FICA and transfer.
+**Sold Direct runs the whole journey with registered practitioners at 0% on the qualifying
+path**, syndicated to the portals as a normal agency-grade feed — the launch plan is built
+on this service gap (`docs/LAUNCH-PLAN.md`; P24 offering research in `00-assumptions.md` §D).
 
 **We serve the private-sale segment** — sellers who choose to sell direct and do the work
 themselves — assisted by our **own employed, registered property practitioners (PPRA/FFC)** and
