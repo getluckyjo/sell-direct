@@ -237,17 +237,37 @@ export const TRACTION_SECTION = {
 
 // source: docs/dataroom/02-capital-and-valuation.md §3
 export const TEAM_SECTION = {
-  heading: 'Two founders, all in. One clean cap table.',
+  heading: 'The people behind the platform',
   intro:
-    'Two working founders, a committed technology partner, and a reserved seat for a strategic non-executive board member.',
-  capTable: [
-    { holder: 'Johannes — Marketing Director', stake: 30 },
-    { holder: 'Dean — Managing Director', stake: 30 },
-    { holder: 'Seed investor (R10m)', stake: 25 },
-    { holder: 'Paysoft — technology partner (vesting)', stake: 10 },
-    { holder: 'Board seat (reserved, non-executive)', stake: 5 },
+    'Two working founders, a technology partner carrying the CTO function, and a reserved seat for strategic weight. Full cap table and terms are in the data room.',
+  // photo: drop a headshot at public/team/<file>.jpg and set it here —
+  // the card falls back to branded initials until then.
+  people: [
+    {
+      name: 'Johannes le Roux',
+      role: 'Co-founder · Marketing Director',
+      initials: 'JR',
+      bio: 'Property Studies at UCT. Built and sold three consumer brands, and now leads brand, growth and the seller funnel — the seed’s biggest spend, run by a founder who has done it with his own companies.',
+    },
+    {
+      name: 'Dean',
+      role: 'Co-founder · Managing Director',
+      initials: 'D',
+      bio: 'Architecture at UCT. A proven commercial architect — lead on the Babylonstoren development, one of the Cape’s landmark estates. Runs delivery, partnerships and the transfer operation.',
+    },
+    {
+      name: 'Paysoft',
+      role: 'Technology Partner · CTO function',
+      initials: 'PS',
+      bio: 'Carries the CTO role: engineering delivery of the AI agent and the WhatsApp platform at preferred development rates, with equity vesting only as that value is delivered.',
+    },
+    {
+      name: 'Board seat',
+      role: 'Reserved · Non-executive',
+      initials: '+',
+      bio: 'A reserved allocation for a strategic non-executive director — property, banking or consumer-brand weight to open doors ahead of the Series A.',
+    },
   ],
-  note: 'Paysoft’s stake vests against preferred development rates plus a free-development allocation to an agreed value. Post-Series-A holdings and exit maths are in the data room.',
 } as const;
 
 // source: docs/dataroom/02-capital-and-valuation.md §1–2 (Use of Funds tab)
