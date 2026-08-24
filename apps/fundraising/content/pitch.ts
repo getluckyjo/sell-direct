@@ -24,11 +24,10 @@ export const ASK = {
 
 export const HERO = {
   eyebrow: 'Private placement · Cape Town · WhatsApp-first',
-  // The AI agent is built and working today (founder-confirmed).
-  title: 'We built an AI real-estate agent.',
+  title: 'Invest in the future of real estate.',
   // The 0%* token is rendered between these two parts as a tap-to-resolve note.
-  titleAccentPre: 'It powers ',
-  titleAccentPost: '-commission private property sales on WhatsApp.',
+  titleAccentPre: '',
+  titleAccentPost: '-commission private sales, on WhatsApp.',
   sub: 'Trained on 50 years of South African property, legal and bond data, it does the admin of a sale at near-zero cost. We earn from the banks as bond originators — not from the consumer.',
   ctaPrimary: 'Request the data room',
   ctaSecondary: 'See the numbers',
