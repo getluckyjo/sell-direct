@@ -11,6 +11,7 @@ model-grade (see sourcing caveats in each document).
 | [`01-financial-model.md`](./01-financial-model.md) | 5-year P&L + cashflow, three scenarios (conservative / base / aggressive), the per-deal revenue engine, volume ramp, and sensitivities |
 | [`02-capital-and-valuation.md`](./02-capital-and-valuation.md) | Bottom-up capital requirement, the R10m seed at R30m pre-money (25%), valuation, **cap table** (2 working founders + technology partner + board + strategic funder at inception) and runway check |
 | [`03-market-sizing.md`](./03-market-sizing.md) | TAM/SAM/SOM, the implied upper-market share (stress test + positioning), and consumer commission saved |
+| [`04-indicative-term-sheet.md`](./04-indicative-term-sheet.md) | **Indicative seed terms (one-pager)** — R10m for 25% with investor-friendly structure (tranched against milestones, 1× non-participating preference, lead board seat, founder reverse-vesting), cap table at closing, and the team (founders + Paysoft in the CTO role) |
 | [`sold-direct-model.xlsx`](./sold-direct-model.xlsx) | **Live Excel model (CA-reviewed)** — 12 linked tabs (Home · Assumptions · P&L · COGS Build · Scenarios · Market Sizing · Capital & Valuation · Use of Funds · Cap Table · Competitive Landscape · Ancillary Revenue · Notes). Edit the amber input cells and everything recalculates. |
 | [`model.csv`](./model.csv) | Flat snapshot of the numbers (the `.xlsx` is the working model) |
 | [`partner-brief-paysoft.html`](./partner-brief-paysoft.html) | Print-ready technology-partnership brief for Paysoft |
