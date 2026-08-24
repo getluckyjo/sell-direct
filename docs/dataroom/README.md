@@ -20,8 +20,9 @@ model-grade (see sourcing caveats in each document).
 ## Strategy: the service-gap wedge · land at prime · taper down-market · own the origination · AI-lean · ecosystem revenue
 
 **The wedge:** the portals sell private sellers a *listing*, not a *sale*. Property24's own
-flat-fee private-listing tiers (Self-Service → Featured) prove the demand — but after the
-enquiry the seller is alone with pricing, viewings, the OTP, bond, FICA and transfer.
+flat-fee private-listing tiers (R499–R4,999, Self Service Lite → Featured) prove the demand —
+but after the enquiry the seller is alone with pricing, viewings, the OTP, bond, FICA and
+transfer.
 **Sold Direct runs the whole journey with registered practitioners at 0% on the qualifying
 path**, syndicated to the portals as a normal agency-grade feed — the launch plan is built
 on this service gap (`docs/LAUNCH-PLAN.md`; P24 offering research in `00-assumptions.md` §D).

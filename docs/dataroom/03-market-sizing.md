@@ -57,9 +57,9 @@ upper-market** — a far more defensible ask. Sensitivity to the (estimated) poo
 | 50,000 | **5.8%** |
 
 **Positioning:**
-- **The service-gap wedge:** the portals sell private sellers a flat-fee *listing* (Property24’s
-  own private tiers prove the demand) — but nobody runs the *sale*: pricing, viewings, OTP,
-  bond, FICA and transfer stay on the seller. As registered practitioners we run that whole
+- **The service-gap wedge:** the portals sell private sellers a flat-fee *listing*
+  (Property24’s own private tiers, R499–R4,999, prove the demand) — but nobody runs the
+  *sale*: pricing, viewings, OTP, bond, FICA and transfer stay on the seller. As registered practitioners we run that whole
   journey at 0% on the qualifying path, with agency-grade portal syndication. That service
   gap is the “why act now” (see `docs/LAUNCH-PLAN.md`).
 - We **land at prime** (biggest rand savings + bond, lowest-CAC word-of-mouth) and **broaden down**

@@ -1,8 +1,9 @@
 # Sold Direct — Cape Town Launch Plan
 
 > **The core of this plan is one service gap:** South Africa's portals sell private sellers
-> a *listing*, not a *sale*. Property24's own flat-fee private-listing tiers (Self-Service →
-> Featured; see `docs/dataroom/00-assumptions.md` §D) prove the private-sale demand — but the
+> a *listing*, not a *sale*. Property24's own flat-fee private-listing tiers (R499–R4,999,
+> Self Service Lite → Featured; see `docs/dataroom/00-assumptions.md` §D) prove the
+> private-sale demand — but the
 > product ends at the enquiry. Pricing, viewings, the OTP, bond, FICA and transfer stay on
 > the seller. **Sold Direct — a PPRA-registered practitioner with a 0% model — runs that
 > whole journey, syndicated to the portals as an agency-grade feed.** Everything below is
@@ -12,7 +13,7 @@
 
 | | |
 |---|---|
-| **The gap** | A R6m Camps Bay owner who wants to sell privately can buy a flat-fee portal ad — and then runs a R6m transaction alone. Their choice today: mandate an agent (~R414k commission), or DIY everything after the enquiry. |
+| **The gap** | A R6m Camps Bay owner who wants to sell privately can buy a flat-fee portal ad (≤R4,999) — and then runs a R6m transaction alone. Their choice today: mandate an agent (~R414k commission), or DIY everything after the enquiry. |
 | **Why we fill it** | Practitioner status (PPRA, FFC) gives us agency-grade portal listings; the 0% model means the seller gives up nothing to get the full service; WhatsApp does the admin from mandate to registration. |
 | **Why it's defensible** | A copycat needs practitioner registration, origination economics to fund 0%, a portal agreement, and consumer trust — none of which is fast. The portals' own private products still charge the seller and leave them alone after the enquiry. |
 | **The message** | *"Your home on Property24, agency-grade — and the whole sale run for you at 0%."* |
@@ -68,7 +69,7 @@ The 0% story is what we *are*; the portal story is why a prime seller acts **tod
 | Risk | Mitigation |
 |---|---|
 | P24 declines or slow-walks the syndication agreement | Sign Private Property first (also bound by OIPMI interoperability); own listing pages + shareable WhatsApp links carry the interim; the CompCom remedies are the escalation backdrop, never the opening threat. |
-| P24 grows its private-listing products (more service, lower fees) | Their tiers still charge the seller and end at the enquiry. Our moat is the run sale: practitioners, origination-funded 0%, and the WhatsApp journey to registration — service depth a listings business is structurally unlikely to build against its paying agencies. Track their tiers quarterly (assumptions §F.8). |
+| P24 grows its private-listing products (more service, lower fees) | Their tiers still charge the seller and end at the enquiry. Our moat is the run sale: practitioners, origination-funded 0%, and the WhatsApp journey to registration — service depth a listings business is structurally unlikely to build against its paying agencies. Track their tiers quarterly (rate card in assumptions §D). |
 | Copycat practitioner-FSBO hybrids | Move fast, own the prime brand, and keep the WhatsApp product depth (state machine, bond rails) they'd have to rebuild. |
 
 ---
