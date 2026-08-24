@@ -178,11 +178,15 @@ export function WhatsAppDemo() {
                 and made the page jump mid-scroll. */}
             <div
               ref={chatRef}
-              className="h-[480px] space-y-2.5 overflow-y-auto overscroll-contain bg-[#ECE5DD] px-3 py-4"
+              className="flex h-[480px] flex-col overflow-y-auto overscroll-contain bg-[#ECE5DD] px-3 py-4"
             >
-              {visible.map((s, i) => (
-                <Bubble key={i} scene={s} isLast={i === visible.length - 1} />
-              ))}
+              {/* mt-auto pins the thread to the bottom of the phone, the way a
+                  real chat sits, so early steps don't look like an empty screen. */}
+              <div className="mt-auto space-y-2.5">
+                {visible.map((s, i) => (
+                  <Bubble key={i} scene={s} isLast={i === visible.length - 1} />
+                ))}
+              </div>
             </div>
 
             {/* Fake input bar */}
