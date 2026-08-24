@@ -161,7 +161,7 @@ fulfilment lift later years.
 | Feed / interoperability fee | Historically **R500/month per office** for third-party feeds; the Competition Commission ordered interoperability **at no fee**. | CompCom OIPMI 2023 / IOL | High |
 | Regulatory context | CompCom Online Intermediation Platforms Market Inquiry (Jul 2023) found **“exorbitant” fee increases** and volume-based price discrimination — small agencies paid **>300% more per listing** than large ones. Remedy: an **SIBP** for ≤30-lead users priced within **15% (later 10%) of the average per-listing/lead across all users**, expected to roughly **halve SME fees**. Volume-fair pricing is now the mandated norm. | CompCom final report / OnlineMarketplaces / Property Professional | High |
 | Pay-per-success precedent | Property24’s own **SBF model: R199 per sale registered at the Deeds Office**, no subscription (introductory rate; dated source — reconfirm). | GhostDigest | Low |
-| Private-listing offering | **Supersedes the earlier "capped at ≤R500,000" claim (Jul 2026 snippet), which is wrong or outdated.** P24 sells a flat-fee private-listing suite — **Self-Service, Self-Service Reduced, Assisted, Featured** (~6-month listing, no commission, photographer on Assisted/Featured). What P24 sells is a *listing*; the seller still runs pricing, viewings, OTP, bond, FICA and transfer alone. Sold Direct's wedge is the **service gap**: a practitioner-run journey at 0% on the qualifying path, syndicated as a normal agency-grade feed. | property24.com/private-listing/sell-my-property + how-it-works pages (researched Aug 2026; prices not yet captured) | Medium |
+| Private-listing offering | P24 sells a flat-fee private-listing suite, all with a **6-month listing**, unlimited photos, lead notifications, a virtual phone number and **OTP assistance (free template + no-obligation help from Snymans Attorneys)**; no refunds on early sale. Tiers: **Self Service Lite R499 (properties ≤R500,000 only — the origin of the earlier, wrong "channel caps at R500k" claim)** · **Self Service R2,299 (all prices; "most popular")** · **Assisted R3,999 (pros build the listing: aerial/walkthrough video, photography, description help, floorplans)** · **Featured R4,999 (Assisted + top-of-results placement, larger lead image, 7 days)**. What P24 sells is a *listing plus an OTP template*; pricing, viewings, buyer qualification, negotiation, bond, FICA and transfer stay on the seller. Sold Direct's wedge is that **service gap**: a practitioner-run journey at 0% on the qualifying path, syndicated as a normal agency-grade feed. | property24.com/private-listing/sell-my-property — full page captured 24 Aug 2026 (founder) | High |
 
 **Reconciliation with the model (against the actual 2026 card).** At ~70% sell-through the
 listing pool is ~70 (Y1) → ~4,100 (Y5); with ~90-day time-on-market and ~5 leads/listing/month,
@@ -206,9 +206,9 @@ tiers at agreed lead milestones, and optionally a success-based component on the
 7. **In-house origination:** the **~1.5% commission we can capture direct**, the **bank
    aggregation terms**, and the **FAIS/FSP accreditation cost/timeline** — confirm against a real
    bank term sheet before relying on the Y2 switch.
-8. **Property24 private-listing prices and terms** — capture the current fee for each tier
-   (Self-Service / Self-Service Reduced / Assisted / Featured), listing duration and any
-   restrictions from the live pages, so the competitive comparison quotes their offer exactly.
+8. ~~**Property24 private-listing prices and terms**~~ — **closed 24/08/2026**: full rate
+   card captured from the live page into §D (R499 Lite ≤R500k · R2,299 Self Service ·
+   R3,999 Assisted · R4,999 Featured; 6-month term; Snymans OTP template).
 
 All five search angles and the verification verdicts are preserved in the workflow
 transcripts (`subagents/workflows/wf_18f95307-779/`).
