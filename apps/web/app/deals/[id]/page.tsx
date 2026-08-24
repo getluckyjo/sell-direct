@@ -50,7 +50,7 @@ export default async function DealPage({
           <ol className="relative ml-3 border-l border-slate-200">
             {deal.events.map((e) => (
               <li key={e.id} className="mb-5 ml-4">
-                <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-emerald-500" />
+                <span className="absolute -left-1.5 mt-1.5 h-3 w-3 rounded-full bg-brand-600" />
                 <div className="text-sm font-medium">
                   {e.fromStatus ? `${e.fromStatus.replace(/_/g, ' ')} → ` : ''}
                   {e.toStatus.replace(/_/g, ' ')}

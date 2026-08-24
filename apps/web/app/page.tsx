@@ -32,14 +32,14 @@ export default async function Home() {
         <div className="grid gap-4 sm:grid-cols-2">
           <Link
             href="/listings"
-            className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-emerald-300"
+            className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-300"
           >
             <p className="text-sm text-slate-500">Listings</p>
             <p className="mt-1 text-4xl font-extrabold">{listings}</p>
           </Link>
           <Link
             href="/deals"
-            className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-emerald-300"
+            className="rounded-2xl border border-slate-200 bg-white p-6 hover:border-brand-300"
           >
             <p className="text-sm text-slate-500">Deals</p>
             <p className="mt-1 text-4xl font-extrabold">{deals}</p>

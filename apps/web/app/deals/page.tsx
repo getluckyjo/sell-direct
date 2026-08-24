@@ -28,7 +28,7 @@ export default async function DealsPage() {
             <li key={d.id}>
               <Link
                 href={`/deals/${d.id}`}
-                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 hover:border-emerald-300"
+                className="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-4 hover:border-brand-300"
               >
                 <div>
                   <div className="font-medium">{d.listing.title}</div>

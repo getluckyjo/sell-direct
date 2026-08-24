@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import Link from 'next/link';
+import { Logo } from '@/components/Logo';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -13,19 +14,19 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en-ZA">
       <body className="min-h-screen bg-slate-50 text-slate-900 antialiased">
-        <header className="border-b border-slate-200 bg-white">
+        <header className="border-b border-white/10 bg-navy">
           <div className="mx-auto flex max-w-5xl items-center gap-6 px-4 py-3">
-            <Link href="/" className="font-bold tracking-tight">
-              Sold <span className="text-emerald-600">Direct</span>
+            <Link href="/" className="inline-flex items-baseline">
+              <Logo className="text-base" />
               <span className="ml-2 text-xs font-normal text-slate-400">
                 control room
               </span>
             </Link>
-            <nav className="flex gap-4 text-sm text-slate-600">
-              <Link href="/listings" className="hover:text-slate-900">
+            <nav className="flex gap-4 text-sm text-slate-300">
+              <Link href="/listings" className="hover:text-white">
                 Listings
               </Link>
-              <Link href="/deals" className="hover:text-slate-900">
+              <Link href="/deals" className="hover:text-white">
                 Deals
               </Link>
             </nav>

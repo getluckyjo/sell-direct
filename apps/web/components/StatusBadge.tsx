@@ -6,7 +6,7 @@ const COLORS: Record<string, string> = {
   documents_fica: 'bg-purple-100 text-purple-800',
   clearance: 'bg-cyan-100 text-cyan-800',
   lodgement: 'bg-teal-100 text-teal-800',
-  registered: 'bg-emerald-100 text-emerald-800',
+  registered: 'bg-brand-100 text-brand-800',
   cancelled: 'bg-red-100 text-red-700',
 };
 
