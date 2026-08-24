@@ -16,7 +16,7 @@ export function StatGrid({
       {stats.map((s) => (
         <div
           key={s.label}
-          className="rounded-2xl border border-slate-800 bg-slate-950 p-5"
+          className="rounded-2xl border border-slate-800 bg-navy p-5"
         >
           <p className="text-sm font-medium text-slate-400">{s.label}</p>
           <p className="mt-1 text-3xl font-extrabold tracking-tight text-white">

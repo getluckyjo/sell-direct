@@ -33,7 +33,7 @@ export function Section({
   const inner = (
     <div className="mx-auto max-w-6xl scroll-mt-20 px-6 py-16" id={id}>
       {eyebrow ? (
-        <p className="mb-2 inline-flex rounded-full bg-emerald-500/10 px-3 py-1 text-sm font-medium text-emerald-300">
+        <p className="mb-2 inline-flex rounded-full bg-brand-500/10 px-3 py-1 text-sm font-medium text-brand-300">
           {eyebrow}
         </p>
       ) : null}
@@ -55,7 +55,7 @@ export function Section({
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-b from-slate-950/90 via-slate-950/65 to-slate-950/90"
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-navy/90 via-navy/65 to-navy/90"
         />
         {inner}
       </section>

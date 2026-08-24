@@ -48,11 +48,11 @@ export function InvestorForm() {
 
   if (status === 'success') {
     return (
-      <div className="rounded-2xl border border-emerald-500/30 bg-emerald-500/10 p-6 text-center">
-        <p className="text-lg font-semibold text-emerald-300">
+      <div className="rounded-2xl border border-brand-500/30 bg-brand-500/10 p-6 text-center">
+        <p className="text-lg font-semibold text-brand-300">
           Request received
         </p>
-        <p className="mt-1 text-sm text-emerald-200/80">
+        <p className="mt-1 text-sm text-brand-200/80">
           Thank you. We&apos;ll review and follow up with data-room access under
           NDA.
         </p>
@@ -61,7 +61,7 @@ export function InvestorForm() {
   }
 
   const field =
-    'rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 placeholder-slate-500 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30';
+    'rounded-lg border border-slate-700 bg-slate-900 px-3 py-2 text-slate-100 placeholder-slate-500 outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-500/30';
 
   return (
     <form onSubmit={onSubmit} className="grid gap-4">
@@ -77,7 +77,7 @@ export function InvestorForm() {
         </label>
         <label className="grid gap-1 text-sm">
           <span className="font-medium text-slate-300">
-            Email <span className="text-emerald-400">*</span>
+            Email <span className="text-brand-400">*</span>
           </span>
           <input
             name="email"
@@ -115,7 +115,7 @@ export function InvestorForm() {
         <input
           name="consent"
           type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-emerald-500 focus:ring-emerald-500/30"
+          className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-brand-500 focus:ring-brand-500/30"
         />
         <span>
           I agree to be contacted about this opportunity. My details are
@@ -124,7 +124,7 @@ export function InvestorForm() {
             href="/privacy"
             target="_blank"
             rel="noopener noreferrer"
-            className="font-medium text-emerald-400 underline-offset-2 hover:underline"
+            className="font-medium text-brand-400 underline-offset-2 hover:underline"
           >
             privacy notice
           </a>
@@ -137,7 +137,7 @@ export function InvestorForm() {
       <button
         type="submit"
         disabled={status === 'submitting'}
-        className="inline-flex items-center justify-center rounded-lg bg-emerald-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400 disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-lg bg-brand-500 px-5 py-3 font-semibold text-navy transition hover:bg-brand-400 disabled:opacity-60"
       >
         {status === 'submitting' ? 'Sending…' : 'Request data-room access'}
       </button>

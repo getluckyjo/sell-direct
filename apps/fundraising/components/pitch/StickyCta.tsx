@@ -45,7 +45,7 @@ export function StickyCta() {
       <a
         href="#access"
         tabIndex={show ? 0 : -1}
-        className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-5 py-3 text-sm font-semibold text-slate-950 shadow-2xl shadow-emerald-500/20 transition hover:bg-emerald-400"
+        className="inline-flex items-center gap-2 rounded-full bg-brand-500 px-5 py-3 text-sm font-semibold text-navy shadow-2xl shadow-brand-500/20 transition hover:bg-brand-400"
       >
         Request data room
         <span aria-hidden>→</span>

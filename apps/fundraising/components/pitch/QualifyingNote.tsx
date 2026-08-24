@@ -37,7 +37,7 @@ export function QualifyingNote() {
         aria-expanded={open}
         aria-label="0 percent — what qualifies?"
         onClick={() => setOpen((v) => !v)}
-        className="cursor-help underline decoration-emerald-400/60 decoration-dotted underline-offset-4 hover:decoration-emerald-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400/60"
+        className="cursor-help underline decoration-brand-400/60 decoration-dotted underline-offset-4 hover:decoration-brand-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-400/60"
       >
         0%*
       </button>
