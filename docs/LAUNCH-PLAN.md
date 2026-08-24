@@ -15,7 +15,7 @@
 |---|---|
 | **The gap** | A R6m Camps Bay owner who wants to sell privately can buy a flat-fee portal ad (≤R4,999) — and then runs a R6m transaction alone. Their choice today: mandate an agent (~R414k commission), or DIY everything after the enquiry. |
 | **Why we fill it** | Practitioner status (PPRA, FFC) gives us agency-grade portal listings; the 0% model means the seller gives up nothing to get the full service; WhatsApp does the admin from mandate to registration. |
-| **Why it's defensible** | A copycat needs practitioner registration, origination economics to fund 0%, a portal agreement, and consumer trust — none of which is fast. The portals' own private products still charge the seller and leave them alone after the enquiry. |
+| **Why it's defensible** | A copycat needs practitioner registration, origination economics to fund 0%, a portal agreement, and consumer trust — none of which is fast. The portals monetise us twice — retail tiers for DIY sellers, wholesale distribution for ours — which makes the partnership stable. |
 | **The message** | *"Your home on Property24, agency-grade — and the whole sale run for you at 0%."* |
 
 ## 2. Message hierarchy (every channel, this order)
@@ -29,7 +29,7 @@ The 0% story is what we *are*; the portal story is why a prime seller acts **tod
 ## 3. Sequence
 
 **P0 · Unlock the wedge (weeks 1–4) — nothing launches until this is signed**
-- Property24 syndication agreement — enter at SIBP (R656/m), step up published tiers at lead milestones (brief: `dataroom/partner-brief-property24.html`).
+- Property24 **wholesale distribution agreement** — complementary to their retail tiers (R2,299–R4,999 per listing, the anchor/ceiling): enter at SIBP (R656/m) or a volume per-listing wholesale rate, stepping up at lead milestones (brief: `dataroom/partner-brief-property24.html`).
 - Private Property as second portal (same OIPMI interoperability rights).
 - Confirm practitioner registration + FFC in the operating entity; BetterBond referral letter; panel-conveyancer subscription.
 
@@ -69,7 +69,7 @@ The 0% story is what we *are*; the portal story is why a prime seller acts **tod
 | Risk | Mitigation |
 |---|---|
 | P24 declines or slow-walks the syndication agreement | Sign Private Property first (also bound by OIPMI interoperability); own listing pages + shareable WhatsApp links carry the interim; the CompCom remedies are the escalation backdrop, never the opening threat. |
-| P24 grows its private-listing products (more service, lower fees) | Their tiers still charge the seller and end at the enquiry. Our moat is the run sale: practitioners, origination-funded 0%, and the WhatsApp journey to registration — service depth a listings business is structurally unlikely to build against its paying agencies. Track their tiers quarterly (rate card in assumptions §D). |
+| P24 grows its private-listing products (more service, lower fees) | Complementary by design: their tiers and ours grow the same private-sale audience, and we are a paying volume customer of their distribution. Our moat is the run sale — practitioners, origination-funded 0%, the WhatsApp journey to registration. Track their tiers quarterly (rate card in assumptions §D). |
 | Copycat practitioner-FSBO hybrids | Move fast, own the prime brand, and keep the WhatsApp product depth (state machine, bond rails) they'd have to rebuild. |
 
 ---

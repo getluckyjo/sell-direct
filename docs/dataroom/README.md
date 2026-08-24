@@ -24,8 +24,9 @@ flat-fee private-listing tiers (R499–R4,999, Self Service Lite → Featured) p
 but after the enquiry the seller is alone with pricing, viewings, the OTP, bond, FICA and
 transfer.
 **Sold Direct runs the whole journey with registered practitioners at 0% on the qualifying
-path**, syndicated to the portals as a normal agency-grade feed — the launch plan is built
-on this service gap (`docs/LAUNCH-PLAN.md`; P24 offering research in `00-assumptions.md` §D).
+path**, syndicated to the portals as a normal agency-grade feed — a wholesale distribution
+customer of the portals, not a competitor. The launch plan is built on this service gap
+(`docs/LAUNCH-PLAN.md`; P24 offering research + negotiation frame in `00-assumptions.md` §D).
 
 **We serve the private-sale segment** — sellers who choose to sell direct and do the work
 themselves — assisted by our **own employed, registered property practitioners (PPRA/FFC)** and
