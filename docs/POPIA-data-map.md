@@ -26,6 +26,9 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 | `leads`   | `email`              | Yes       | Contact a waitlist signup / investor enquiry from the public sites.         | Stored only with explicit consent (`consentAt`); not logged. |
 | `leads`   | `name` / `phone`     | Yes       | Personalise follow-up with a lead.                                          | Optional; consent-gated; not logged.                      |
 | `leads`   | `message`            | Maybe     | Free-text the lead chose to send.                                           | Consent-gated; not logged.                                |
+| `leads`   | `whatsappConsentAt`  | No        | Proof of the SEPARATE WhatsApp opt-in Meta requires before we business-initiate a WhatsApp message. | Null = never message this lead on WhatsApp. |
+| `leads`   | `consentWording` / `consentFormVersion` | No | Proof of exactly what the person agreed to, and which version of the form said it. | Resolved server-side from the version; never sent by the client. |
+| `whatsapp_opt_outs` | `phone` | Yes | Honour a STOP request — the number is refused by every outbound send. | Minimal by design: a phone number and a timestamp, nothing else. |
 | `conversation_states` | `phone` | Yes | Resume a guided WhatsApp flow (e.g. listing intake) for this number. | Cleared when the flow completes; not logged. |
 
 ## Rules applied in code (PR 2)
@@ -33,6 +36,25 @@ file in the same PR whenever a personal field is added, removed, or repurposed.
 - **Phone numbers are the contact key** and are therefore stored in plaintext
   (we must match inbound WhatsApp messages by number). They are treated as PII:
   never logged in full, never shared except through a consented partner hand-off.
+- **WhatsApp consent is its own field.** Meta requires the channel to be named
+  explicitly in the opt-in, so `whatsappConsentAt` is separate from `consentAt`
+  — a lead may accept contact and decline WhatsApp. The wording shown is stored
+  with its version (`CONSENT_FORM_VERSION` in `@sell-direct/shared`): proof, not
+  assertion. Published versions are never edited in place, since that would
+  rewrite the proof attached to existing records.
+- **Inbound-first by design.** All marketing asks people to send LIST or
+  PRICE to us, so the first message is theirs. That opens WhatsApp's
+  24-hour session window, inside which replies are free text and need no
+  template and no prior opt-in. `whatsappConsentAt` governs the other
+  direction — messages we start.
+- **STOP is real.** `STOP` / `UNSUBSCRIBE` / `OPT OUT` is matched before any
+  flow can claim the message, acknowledged once, and recorded in
+  `whatsapp_opt_outs`. The guard lives on the notifier
+  (`withOptOutGuard`), so stage updates, re-engagement nudges and
+  conversational replies are all covered in one place rather than in each
+  flow. A later inbound from that number clears the opt-out — they messaged
+  us, so contact is re-initiated. `CANCEL` is deliberately NOT an opt-out:
+  intake uses it to drop a draft.
 - **Consent before financial data:** `buyers.financialConsentAt` must be set
   before any bond/finance information is captured or shared (enforced in the
   finance flow, PR 5).

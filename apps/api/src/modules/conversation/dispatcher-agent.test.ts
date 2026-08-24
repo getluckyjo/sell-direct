@@ -8,7 +8,7 @@ import {
 import { BetterBondReferralStub } from '../finance';
 import type { AgentHandler, AgentMode } from '../agent';
 import type { InboundMessage } from '../messaging';
-import type { SendOptions } from '../notifications';
+import { createInMemoryOptOutStore, type SendOptions } from '../notifications';
 
 const PHONE = '+27820001111';
 
@@ -78,6 +78,7 @@ function makeDeps(agent?: AgentHandler, extra: Partial<DispatcherDeps> = {}) {
       finance: new BetterBondReferralStub(),
     },
     prequalStore,
+    optOut: createInMemoryOptOutStore(),
     notifier,
     agent,
     log: vi.fn(),

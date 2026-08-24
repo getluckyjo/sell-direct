@@ -54,7 +54,7 @@ flowchart LR
 | Deal state machine | `.../deals/state-machine.ts`, `service.ts`, `routes.ts` | ✅ | Stages below; atomic `transitionDeal` writes append-only `DealEvent`. **`POST /api/deals/:id/transition`** (internal-token guarded) advances a deal and fires the stage's WhatsApp template to buyer/seller (`stage-notifications.ts`). |
 | Buyer enquiry / profiles | `.../enquiry/service.ts`, `.../profiles/repository.ts` | ✅ | Buyer → deal at `enquiry`; consent-gated pre-qual. **Wired via the dispatcher** (buyer flow + YES/NO consent). |
 | Finance / BetterBond referral | `.../finance/betterbond-stub.ts`, `types.ts` | 🟡 | Seam + POPIA consent gate, **now invoked** by the pre-qual consent step; **BetterBondReferralStub logs only** (real BetterBond API pending). |
-| Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. |
+| Dispatcher / router | `.../conversation/dispatcher.ts` | ✅ | Routes inbound → intake / enquiry / pre-qual-consent; replies via the notifier; only new (non-duplicate) messages. Answers both advertised entry words — **LIST** and **PRICE** (`WHATSAPP_ENTRY_WORDS`) — with no prior context, since every marketing CTA deep-links one of them. |
 | Notifications | `.../notifications/index.ts` | ✅ | `Notifier` sends via the adapter and persists the outbound message. |
 | Twilio adapter | `.../messaging/twilio.ts` + `factory.ts` | ✅ | `X-Twilio-Signature` verify, form-payload `parseInbound`, `send` (text + templates); reply options degrade to a keyword list, since Twilio's REST API has no session-level interactive message. Select with `WHATSAPP_BSP=twilio`. |
 
@@ -73,7 +73,7 @@ flowchart LR
 | # | Integration | Purpose | Status | Env keys / seam |
 |---|---|---|---|---|
 | 1 | **Twilio WhatsApp (BSP)** | Send/receive WhatsApp; template hosting | ⛔ new adapter | add `TWILIO_ACCOUNT_SID`, `TWILIO_AUTH_TOKEN`, `TWILIO_MESSAGING_SERVICE_SID` (or `TWILIO_WHATSAPP_FROM`) |
-| 2 | **Meta Business verification** | Own the WhatsApp Business number / display name | ⛔ (via Twilio) | done inside Twilio console |
+| 2 | **Meta Business verification** | Own the WhatsApp Business number / display name | ⛔ (via Twilio) | own Meta Business Portfolio + own Twilio **subaccount** — runbook: `docs/META-ONBOARDING.md` |
 | 3 | **BetterBond originator API** | Real bond pre-qual + application hand-off | 🟡 stub | `ORIGINATOR_REFERRAL_ENDPOINT`, `ORIGINATOR_API_KEY` (present, unused) |
 | 4 | **Panel conveyancer(s)** | Transfer/bond/cancellation attorneys, FICA, clearance | ⛔ | new party model + adapter seam |
 | 5 | **Banks / lenders** | Bond application status (via BetterBond multi-bank) | ⛔ | new party model + `DealEvent` actor |
@@ -251,5 +251,6 @@ moment the **sender number is approved** and the **templates are approved** — 
 
 ---
 
-*See also: `README.md` (architecture overview), `DEPLOYMENT.md §4` (webhook setup),
+*See also: `docs/META-ONBOARDING.md` (Meta Business + Twilio sender runbook),
+`README.md` (architecture overview), `DEPLOYMENT.md §4` (webhook setup),
 `docs/POPIA-data-map.md` (PII inventory), `SECURITY.md` (consent/audit rules).*

@@ -10,6 +10,10 @@ interface WaitlistBody {
   phone?: string;
   role?: string;
   consent?: boolean;
+  /** Separate WhatsApp channel opt-in (optional — Meta requires it named). */
+  whatsappConsent?: boolean;
+  /** Version of the consent copy the form rendered. */
+  consentFormVersion?: string;
   /** Honeypot field — humans never see it; any value means a bot. */
   website?: string;
 }
@@ -62,6 +66,8 @@ export async function POST(request: NextRequest) {
         role: body.role,
         source: 'marketing:waitlist',
         consent: body.consent === true,
+        whatsappConsent: body.whatsappConsent === true,
+        consentFormVersion: body.consentFormVersion,
       }),
     });
 

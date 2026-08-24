@@ -12,3 +12,22 @@ the same way.
 
 To add a person, copy an existing file and change the name, title and email.
 Colors and rules come from `apps/marketing/DESIGN.md`.
+
+## Regenerating the logo PNG
+
+`signature-logo.png` is derived from `apps/marketing/public/logo.svg` — the
+light lockup, ™ included, fitted onto a navy `#0B172B` rounded rectangle:
+
+| | |
+| --- | --- |
+| Canvas | 440 × 128, corner radius 14 |
+| Lockup | 388 wide, 26px padding each side, vertically centred |
+
+**Keep the canvas at 440 × 128.** Signatures already pasted into people's mail
+clients hard-code `width="220" height="64"` against this same hosted URL, so
+changing the aspect ratio would distort every signature already installed. If
+the lockup grows wider, scale it down to fit rather than widening the canvas.
+
+Rasterised with `sharp` (already in the workspace via Next). Check the result
+at 220px wide, not just full size — that is where it actually renders, and it
+is where the ™ stops being legible first.

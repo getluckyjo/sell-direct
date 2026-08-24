@@ -1,6 +1,15 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { CONSENT_FORM_VERSION, CONSENT_WORDING } from '@sell-direct/shared';
+
+/**
+ * The exact wording rendered below. Shipped from the shared package with a
+ * version, and the server resolves the same version back to this text when it
+ * stores the lead — so the consent record can never claim wording that was
+ * never on screen.
+ */
+const WORDING = CONSENT_WORDING[CONSENT_FORM_VERSION];
 
 type Status = 'idle' | 'submitting' | 'success' | 'error';
 
@@ -20,6 +29,11 @@ export function WaitlistForm() {
       phone: String(form.get('phone') ?? '').trim() || undefined,
       role: String(form.get('role') ?? '') || undefined,
       consent: form.get('consent') === 'on',
+      // Separate WhatsApp opt-in: optional, and deliberately not part of the
+      // check below — Meta needs the channel named on its own, and a consent
+      // that gates the primary action is not freely given.
+      whatsappConsent: form.get('whatsappConsent') === 'on',
+      consentFormVersion: CONSENT_FORM_VERSION,
       // Honeypot — hidden from humans; bots that fill it are dropped silently.
       website: String(form.get('website') ?? '').trim() || undefined,
     };
@@ -116,26 +130,45 @@ export function WaitlistForm() {
         </label>
       </div>
 
-      <label className="flex items-start gap-2 text-sm text-slate-600">
-        <input
-          name="consent"
-          type="checkbox"
-          className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
-        />
-        <span>
-          I agree to be contacted about Sold Direct and accept that my details
-          are processed per the{' '}
-          <a
-            href="/privacy"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="font-medium text-brand-700 underline-offset-2 hover:underline"
-          >
-            POPIA privacy notice
-          </a>
-          .
-        </span>
-      </label>
+      <div className="grid gap-3">
+        <label className="flex items-start gap-2 text-sm text-slate-600">
+          <input
+            name="consent"
+            type="checkbox"
+            className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
+          />
+          <span>
+            {WORDING.processing}{' '}
+            <a
+              href="/privacy"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-brand-700 underline-offset-2 hover:underline"
+            >
+              Read the POPIA privacy notice
+            </a>
+            .
+          </span>
+        </label>
+
+        {/* WhatsApp is its own opt-in: unticked, optional, never bundled with
+            the submit action. Meta requires the channel to be named
+            explicitly, and someone must be able to join the waitlist while
+            declining WhatsApp. */}
+        <label className="flex items-start gap-2 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">
+          <input
+            name="whatsappConsent"
+            type="checkbox"
+            className="mt-1 h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-200"
+          />
+          <span>
+            {WORDING.whatsapp}{' '}
+            <span className="text-slate-500">
+              Optional — you can join the waitlist without it.
+            </span>
+          </span>
+        </label>
+      </div>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
 

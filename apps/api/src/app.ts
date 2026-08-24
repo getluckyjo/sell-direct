@@ -10,6 +10,8 @@ import {
 } from './modules/messaging';
 import {
   createNotifier,
+  createPrismaOptOutStore,
+  withOptOutGuard,
   loadTemplateConfigFromEnv,
   type Notifier,
 } from './modules/notifications';
@@ -173,7 +175,15 @@ export function buildServer(deps?: Partial<ServerDeps>) {
   const adapter = deps?.adapter ?? createMessagingAdapter();
   const repository = deps?.repository ?? createPrismaMessageRepository(prisma);
   // One notifier serves both the conversational replies and stage updates.
-  const notifier = createNotifier(adapter, repository, senderNumber());
+  // Every outbound send passes the opt-out guard — a stage update, a
+  // re-engagement nudge and a conversational reply all go through here, so
+  // the STOP list is honoured in one place instead of in each flow.
+  const optOutStore = createPrismaOptOutStore(prisma);
+  const notifier = withOptOutGuard(
+    createNotifier(adapter, repository, senderNumber()),
+    optOutStore,
+    (msg) => app.log.info(msg),
+  );
 
   // Storage: Supabase when configured, local filesystem otherwise (dev/demo)
   // — local objects are served from GET /api/storage/... on this API.
@@ -304,6 +314,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier,
+      optOut: optOutStore,
       photoIntake: makePhotoIntake((media) => adapter.fetchMedia(media)),
       description,
       agent,
@@ -353,6 +364,7 @@ export function buildServer(deps?: Partial<ServerDeps>) {
       },
       prequalStore: createPrismaPrequalStore(prisma),
       notifier: demoNotifier,
+      optOut: optOutStore,
       photoIntake: makePhotoIntake(async (media) => {
         const item = media.id ? demoMedia.get(media.id) : undefined;
         if (!item) throw new Error('demo media not found (restarted?)');

@@ -1,4 +1,5 @@
 import type { FastifyInstance } from 'fastify';
+import { consentWording } from '@sell-direct/shared';
 import type { LeadInput } from './types';
 import type { LeadRepository } from './repository';
 
@@ -26,6 +27,13 @@ const leadBodySchema = {
     source: { type: 'string', maxLength: 120 },
     // Consent must be explicitly true (POPIA).
     consent: { type: 'boolean', const: true },
+    // Separate WhatsApp channel opt-in — optional, and explicitly NOT
+    // required: Meta needs the channel named on its own, and a consent that
+    // is a condition of the primary action is not freely given.
+    whatsappConsent: { type: 'boolean' },
+    // The version of the consent copy the form displayed. The wording is
+    // resolved from it server-side — never sent by the client.
+    consentFormVersion: { type: 'string', maxLength: 40 },
   },
 } as const;
 
@@ -42,7 +50,13 @@ export function registerLeadRoutes(
     '/api/leads',
     { schema: { body: leadBodySchema } },
     async (request, reply) => {
-      const lead = await deps.repository.create(request.body as LeadInput);
+      const input = request.body as LeadInput;
+      // A version we can't resolve would store consent proof we cannot show,
+      // so fail loudly rather than silently recording an empty record. This
+      // fires when a form deploy drifts ahead of the API's shared copy.
+      if (input.consentFormVersion && !consentWording(input.consentFormVersion))
+        return reply.code(400).send({ error: 'unknown_consent_version' });
+      const lead = await deps.repository.create(input);
       return reply.code(201).send({ id: lead.id });
     },
   );

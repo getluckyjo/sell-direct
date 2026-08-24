@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { whatsappCtas } from '@/lib/whatsapp';
 
 /**
  * Floating "Join the waitlist" pill. Appears once the hero has scrolled
@@ -8,6 +9,9 @@ import { useEffect, useState } from 'react';
  * covers the thing it points to. Mirrors the investor site's StickyCta.
  */
 export function StickyCta() {
+  // Points into WhatsApp with LIST pre-filled once the sender is live;
+  // falls back to the waitlist anchor until then.
+  const wa = whatsappCtas();
   const [pastHero, setPastHero] = useState(false);
   const [waitlistVisible, setWaitlistVisible] = useState(false);
 
@@ -43,11 +47,11 @@ export function StickyCta() {
       }`}
     >
       <a
-        href="#waitlist"
+        href={wa ? wa.list.href : '#waitlist'}
         tabIndex={show ? 0 : -1}
         className="inline-flex items-center gap-2 rounded-full bg-brand-600 px-5 py-3 text-sm font-semibold text-white shadow-2xl shadow-brand-600/25 transition hover:bg-brand-700"
       >
-        Join the waitlist
+        {wa ? 'Send “LIST” on WhatsApp' : 'Join the waitlist'}
         <span aria-hidden>→</span>
       </a>
     </div>

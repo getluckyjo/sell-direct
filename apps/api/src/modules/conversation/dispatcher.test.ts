@@ -6,7 +6,7 @@ import { BetterBondReferralStub } from '../finance';
 import type { ProfileRepository } from '../profiles';
 import type { DealRepository } from '../deals';
 import type { InboundMessage } from '../messaging';
-import type { SendOptions } from '../notifications';
+import { createInMemoryOptOutStore, type SendOptions } from '../notifications';
 
 const PHONE = '+27820001111';
 
@@ -63,6 +63,7 @@ function makeDeps(overrides: { notifierThrows?: boolean } = {}) {
 
   const intakeStore = createInMemoryConversationStore();
   const prequalStore = createInMemoryPrequalStore();
+  const optOut = createInMemoryOptOutStore();
   const createListing = vi.fn(async () => ({ id: 'listing-1' }));
   const log = vi.fn();
 
@@ -71,12 +72,14 @@ function makeDeps(overrides: { notifierThrows?: boolean } = {}) {
     enquiry: { profiles, deals, finance: new BetterBondReferralStub() },
     prequalStore,
     notifier,
+    optOut,
     log,
   });
 
   return {
     dispatcher,
     notifier,
+    optOut,
     sent,
     profiles,
     deals,
@@ -120,12 +123,79 @@ describe('conversation dispatcher', () => {
             { id: 'START' },
             { id: 'HOW' },
             { id: 'COST' },
+            { id: 'PRICE' },
             { id: 'CONSULT' },
           ],
         },
       ],
     });
   });
+
+  it('honours STOP: acknowledges once, then records the opt-out', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('STOP'));
+
+    // The confirmation goes out BEFORE the opt-out is recorded, so the
+    // notifier's guard can never swallow the one message they need to see.
+    expect(d.sent).toHaveLength(1);
+    expect(d.sent[0].text).toMatch(/won’t message you again/i);
+    expect(await d.optOut.isOptedOut(PHONE)).toBe(true);
+  });
+
+  it('treats a later inbound as re-initiated contact and clears the opt-out', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('STOP'));
+    await d.dispatcher.handle(inbound('LIST'));
+
+    // They messaged us — replies are owed again, so the guard must not
+    // suppress them.
+    expect(await d.optOut.isOptedOut(PHONE)).toBe(false);
+    expect(d.sent).toHaveLength(2);
+  });
+
+  it('does not treat "cancel" as an opt-out', async () => {
+    // Intake uses CANCEL to drop a draft; abandoning a form is not a request
+    // to stop being messaged.
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('cancel'));
+    expect(await d.optOut.isOptedOut(PHONE)).toBe(false);
+  });
+
+  it('answers the advertised PRICE entry word without promising a valuation', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('PRICE'));
+    // Price guidance from confirmed sales — never a formal valuation
+    // (Property Valuers Profession Act: only a registered valuer may value).
+    expect(d.sent[0].text).toMatch(/price guidance/i);
+    expect(d.sent[0].text).toMatch(/not a formal valuation/i);
+    expect(d.sent[0].opts?.interactive).toMatchObject({
+      kind: 'buttons',
+      options: [{ id: 'START' }, { id: 'CONSULT' }, { id: 'HOW' }],
+    });
+  });
+
+  it('routes the PRICE menu row the same way as the typed word', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(tap('PRICE', 'What’s my home worth?'));
+    expect(d.sent[0].text).toMatch(/price guidance/i);
+  });
+
+  it('still answers "valuation" as an alias', async () => {
+    const d = makeDeps();
+    await d.dispatcher.handle(inbound('valuation'));
+    expect(d.sent[0].text).toMatch(/price guidance/i);
+  });
+
+  it.each(['price is 2.5m', 'price?  R2 500 000', 'what is the value'])(
+    'does not hijack a mid-intake message like %j',
+    async (text) => {
+      // "price" is exactly what intake asks a seller for, so only the bare
+      // advertised word may pull them out of their draft.
+      const d = makeDeps();
+      await d.dispatcher.handle(inbound(text));
+      expect(d.sent[0].text).not.toMatch(/price guidance/i);
+    },
+  );
 
   it('handles a buyer enquiry deep link, then a YES consent → BetterBond hand-off', async () => {
     const d = makeDeps();

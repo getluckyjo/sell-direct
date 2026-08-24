@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from 'vitest';
+import { CONSENT_FORM_VERSION } from '@sell-direct/shared';
 import { buildServer } from '../../app';
 import type { LeadRepository } from './repository';
 
@@ -39,6 +40,55 @@ describe('POST /api/leads', () => {
       email: 'thabo@example.co.za',
       role: 'seller',
     });
+  });
+
+  it('passes the separate WhatsApp opt-in and form version through', async () => {
+    const repository = fakeLeadRepository();
+    const res = await post(repository, {
+      kind: 'waitlist',
+      email: 'thabo@example.co.za',
+      consent: true,
+      whatsappConsent: true,
+      consentFormVersion: CONSENT_FORM_VERSION,
+    });
+
+    expect(res.statusCode).toBe(201);
+    expect(repository.create.mock.calls[0][0]).toMatchObject({
+      whatsappConsent: true,
+      consentFormVersion: CONSENT_FORM_VERSION,
+    });
+  });
+
+  it('accepts the POPIA consent while WhatsApp is declined', async () => {
+    // Meta requires the channel named separately; declining WhatsApp must
+    // never block the form, or the consent is not freely given.
+    const repository = fakeLeadRepository();
+    const res = await post(repository, {
+      kind: 'waitlist',
+      email: 'thabo@example.co.za',
+      consent: true,
+      whatsappConsent: false,
+      consentFormVersion: CONSENT_FORM_VERSION,
+    });
+
+    expect(res.statusCode).toBe(201);
+    expect(repository.create.mock.calls[0][0]).toMatchObject({
+      whatsappConsent: false,
+    });
+  });
+
+  it('rejects an unknown consent version (400) rather than storing unprovable consent', async () => {
+    const repository = fakeLeadRepository();
+    const res = await post(repository, {
+      kind: 'waitlist',
+      email: 'thabo@example.co.za',
+      consent: true,
+      consentFormVersion: '1999-01-01.9',
+    });
+
+    expect(res.statusCode).toBe(400);
+    expect(res.json()).toMatchObject({ error: 'unknown_consent_version' });
+    expect(repository.create).not.toHaveBeenCalled();
   });
 
   it('rejects a missing consent (400) and stores nothing', async () => {
