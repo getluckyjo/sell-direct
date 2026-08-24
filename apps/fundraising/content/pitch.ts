@@ -67,9 +67,9 @@ export const SUMMARY_STRIP = [
 
 // source: docs/dataroom/README.md (AI-lean strategy); founder-confirmed status
 export const AI_SECTION = {
-  heading: 'The IP: an AI super real-estate agent',
+  heading: 'One AI does the work of an agency.',
   intro:
-    'Built and working today — not a roadmap item. Trained on the last 50 years of South African property transactions, conveyancing law and bond data.',
+    'Built. Working. Trained on 50 years of South African property, conveyancing and bond data. Not a roadmap item — the IP you’re buying into.',
   cards: [
     {
       title: 'Knows the SA transfer, end to end',
@@ -92,7 +92,7 @@ export const AI_SECTION = {
 
 // source: docs/dataroom/01-financial-model.md §1–2
 export const MODEL_SECTION = {
-  heading: 'How we earn: the banks pay, not the consumer',
+  heading: 'The banks pay us. Not the consumer.',
   // Rendered around the 0%* tooltip token: pre + 0%* + post.
   introPre: 'Selling costs the consumer ',
   introPost:
@@ -142,7 +142,7 @@ export const MODEL_SECTION = {
 
 // source: docs/dataroom/03-market-sizing.md
 export const MARKET_SECTION = {
-  heading: 'A R6.25bn/yr market, entered where trust is won',
+  heading: 'A R6.25bn-a-year market. We enter at the top.',
   intro:
     'The portals are closed to prime private sellers — Property24\u2019s private channel caps at R500,000, and lifting it would put the portal at war with its paying agencies. As a registered practitioner, Sold Direct is the compliant bridge to the portal audience at 0%. We land at prime Cape Town (average transacting price R6.5m), then broaden into the national upper-market — tapering to R4.0m by Year 5.',
   stats: [
@@ -177,7 +177,7 @@ export const REVENUE_RAMP = [
 
 // source: docs/dataroom/01-financial-model.md, 02-capital-and-valuation.md
 export const FIN_SECTION = {
-  heading: 'R6.1m → R162.3m in five years',
+  heading: 'R6.1m to R162.3m in five years. Reviewed, not dreamed.',
   intro:
     'The base case from the chartered-accountant-reviewed model: 27% tax, delivery-realistic headcount, LPC-prohibited revenue removed. Full workbook in the data room.',
   stats: [
@@ -218,9 +218,9 @@ export const FIN_SECTION = {
 
 // source: docs/PROGRESS.md; partnerships founder-confirmed
 export const TRACTION_SECTION = {
-  heading: 'The AI real-estate agent is built and working today',
+  heading: 'Not a concept. A working product.',
   intro:
-    'This is not a concept raise — the product loop is live and the launch partnerships are in motion.',
+    'The loop runs today — list, qualify, offer, transfer — and the launch partnerships are signed up or in motion.',
   shipped: [
     'WhatsApp journey end-to-end: listing → enquiry → consented bond pre-qualification → offer → transfer tracking',
     'Deal state machine for the SA transfer: offer to purchase (OTP) → bond → FICA → clearance → lodgement → registration',
@@ -237,7 +237,7 @@ export const TRACTION_SECTION = {
 
 // source: docs/dataroom/02-capital-and-valuation.md §3
 export const TEAM_SECTION = {
-  heading: 'Team & ownership at inception',
+  heading: 'Two founders, all in. One clean cap table.',
   intro:
     'Two working founders, a committed technology partner, and a reserved seat for a strategic non-executive board member.',
   capTable: [
@@ -252,7 +252,7 @@ export const TEAM_SECTION = {
 
 // source: docs/dataroom/02-capital-and-valuation.md §1–2 (Use of Funds tab)
 export const ASK_SECTION = {
-  heading: 'The raise: R10m for 25% — ~16.9× modelled (base case)',
+  heading: 'R10m for 25%. Modelled at ~16.9×.',
   intro:
     'R10m at a R30m pre-money valuation. Bottom-up capital need to self-sustaining is ~R7.5m (base case, incl. buffer) — the raise covers the trough with headroom.',
   useOfFunds: [
@@ -313,7 +313,7 @@ export const FAQ = [
 ] as const;
 
 export const NEXT_STEPS = [
-  'Request access — data room shared under NDA',
+  'Request access — the data room opens under NDA',
   'Work through the CA-reviewed model and cap table',
   'Meet the founders; see the live WhatsApp product',
   'Reserve your allocation in the R10m round',
@@ -326,7 +326,7 @@ export const DEMO_SECTION = {
 } as const;
 
 export const ACCESS_SECTION = {
-  heading: 'Investor data room',
+  heading: 'Everything is in the data room.',
   intro:
     'The CA-reviewed model workbook, full assumptions with sources, cap table, scenarios and partner terms — shared under NDA.',
   reassurance:

@@ -271,7 +271,7 @@ export default function Investors() {
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
             <h2 className="max-w-2xl text-3xl font-extrabold tracking-tight text-white drop-shadow-md sm:text-5xl">
-              Landing at prime Cape Town, broadening nationally.
+              Cape Town first. Then the country.
             </h2>
             <p className="mt-3 max-w-xl text-lg text-slate-200 drop-shadow">
               High-value homes, near-universal WhatsApp adoption, and a finance
