@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { TRACKER } from '@/components/journey';
+import { Logo } from '@/components/Logo';
 import { PrintButton } from '@/components/PrintButton';
 
 export const metadata: Metadata = {
@@ -88,14 +89,14 @@ export default function OnePager() {
         {/* Header */}
         <header className="flex items-baseline justify-between border-b border-slate-200 pb-4">
           <div>
-            <h1 className="text-2xl font-extrabold tracking-tight">
-              Sold <span className="text-emerald-600">Direct</span>
+            <h1 className="text-2xl">
+              <Logo variant="dark" />
             </h1>
             <p className="mt-1 text-sm text-slate-500">
               The WhatsApp property journey — list to registered sale
             </p>
           </div>
-          <p className="text-right text-sm font-semibold text-emerald-700">
+          <p className="text-right text-sm font-semibold text-brand-700">
             0% commission
             <span className="block font-normal text-slate-400">
               solddirect.co.za
@@ -125,7 +126,7 @@ export default function OnePager() {
               className="rounded-xl border border-slate-200 p-4"
             >
               <div className="flex items-center gap-2">
-                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-600 text-xs font-bold text-white">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-brand-600 text-xs font-bold text-white">
                   {c.n}
                 </span>
                 <h2 className="text-sm font-bold text-slate-900">{c.title}</h2>
@@ -136,7 +137,7 @@ export default function OnePager() {
               <ul className="mt-3 space-y-1.5">
                 {c.points.map((p) => (
                   <li key={p} className="flex gap-2 text-[12px] text-slate-600">
-                    <span className="text-emerald-600">▸</span>
+                    <span className="text-brand-600">▸</span>
                     {p}
                   </li>
                 ))}

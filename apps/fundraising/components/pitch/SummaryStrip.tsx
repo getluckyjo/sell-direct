@@ -8,7 +8,7 @@ export function SummaryStrip() {
   return (
     <div
       id="summary"
-      className="mt-10 scroll-mt-24 rounded-2xl border border-slate-700/80 bg-slate-950/80 p-4 backdrop-blur sm:p-5"
+      className="mt-10 scroll-mt-24 rounded-2xl border border-slate-700/80 bg-navy/80 p-4 backdrop-blur sm:p-5"
     >
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-5">
         {SUMMARY_STRIP.map((s) => (

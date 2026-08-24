@@ -18,7 +18,7 @@ export function TicketCalculator() {
   const exitValue = amount * CALCULATOR.exitMultiple;
 
   return (
-    <div className="rounded-2xl border border-slate-800 bg-slate-950 p-6">
+    <div className="rounded-2xl border border-slate-800 bg-navy p-6">
       <h3 className="font-semibold text-white">{CALCULATOR.heading}</h3>
       <p className="mt-1 text-sm text-slate-400">{CALCULATOR.sub}</p>
 
@@ -31,7 +31,7 @@ export function TicketCalculator() {
           step={CALCULATOR.step}
           value={amount}
           onChange={(e) => setAmount(Number(e.currentTarget.value))}
-          className="w-full accent-emerald-500"
+          className="w-full accent-brand-500"
         />
       </label>
       <p className="mt-2 text-3xl font-extrabold tracking-tight text-white">
@@ -45,7 +45,7 @@ export function TicketCalculator() {
         </div>
         <div className="flex items-baseline justify-between gap-4">
           <dt className="text-slate-400">{CALCULATOR.exitLabel}</dt>
-          <dd className="font-semibold text-emerald-300">
+          <dd className="font-semibold text-brand-300">
             {zar(exitValue)}{' '}
             <span className="text-slate-400">
               (~{CALCULATOR.exitMultiple}×)

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import type { ReactNode } from 'react';
 import { InvestorForm } from '@/components/InvestorForm';
+import { Logo } from '@/components/Logo';
 import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 import { Section } from '@/components/pitch/Section';
 import { StatGrid } from '@/components/pitch/StatGrid';
@@ -48,14 +49,14 @@ export default function Investors() {
     <div>
       <div
         role="note"
-        className="border-b border-slate-800 bg-slate-900 px-6 py-2 text-center text-sm font-semibold text-emerald-300"
+        className="border-b border-white/10 bg-navy-950 px-6 py-2 text-center text-sm font-semibold text-brand-300"
       >
         {RIBBON}
       </div>
-      <header className="sticky top-0 z-10 border-b border-slate-800 bg-slate-950/80 backdrop-blur">
+      <header className="sticky top-0 z-10 border-b border-white/10 bg-navy">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
-          <span className="shrink-0 text-lg font-bold tracking-tight">
-            Sold <span className="text-emerald-400">Direct</span>
+          <span className="inline-flex shrink-0 items-baseline">
+            <Logo className="text-lg" />
             <span className="ml-2 hidden text-sm font-normal text-slate-400 sm:inline">
               Investors
             </span>
@@ -73,7 +74,7 @@ export default function Investors() {
           </nav>
           <a
             href="#access"
-            className="shrink-0 rounded-lg bg-emerald-500 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
+            className="shrink-0 rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-navy hover:bg-brand-400"
           >
             Request access
           </a>
@@ -92,7 +93,7 @@ export default function Investors() {
         />
         <div
           aria-hidden
-          className="absolute inset-0 -z-10 bg-gradient-to-br from-slate-950/90 via-slate-950/75 to-slate-900/45"
+          className="absolute inset-0 -z-10 bg-gradient-to-br from-navy/90 via-navy/75 to-slate-900/45"
         />
         <div className="mx-auto max-w-6xl px-6 pb-14 pt-16 sm:pb-20 sm:pt-24">
           <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -101,14 +102,14 @@ export default function Investors() {
             </p>
             <a
               href="#summary"
-              className="text-sm font-medium text-emerald-300 underline decoration-emerald-400/50 underline-offset-4 hover:text-emerald-200"
+              className="text-sm font-medium text-brand-300 underline decoration-brand-400/50 underline-offset-4 hover:text-brand-200"
             >
               {HERO.summaryAnchor}
             </a>
           </div>
           <h1 className="mt-4 max-w-3xl text-4xl font-extrabold leading-tight tracking-tight text-white drop-shadow-sm sm:text-6xl">
             {HERO.title}{' '}
-            <span className="text-emerald-400">
+            <span className="text-brand-400">
               {HERO.titleAccentPre}
               <QualifyingNote />
               {HERO.titleAccentPost}
@@ -121,7 +122,7 @@ export default function Investors() {
 
           <a
             href="#financials"
-            className="mt-4 inline-flex rounded-lg border border-slate-500 px-4 py-2 text-sm font-semibold text-white transition hover:border-emerald-400 hover:text-emerald-300"
+            className="mt-4 inline-flex rounded-lg border border-slate-500 px-4 py-2 text-sm font-semibold text-white transition hover:border-brand-400 hover:text-brand-300"
           >
             {HERO.ctaSecondary} ↓
           </a>
@@ -140,9 +141,9 @@ export default function Investors() {
           {AI_SECTION.cards.map((card) => (
             <div
               key={card.title}
-              className="rounded-2xl border border-slate-800 bg-slate-950 p-6"
+              className="rounded-2xl border border-slate-800 bg-navy p-6"
             >
-              <h3 className="font-semibold text-emerald-300">{card.title}</h3>
+              <h3 className="font-semibold text-brand-300">{card.title}</h3>
               <p className="mt-2 text-base text-slate-300">
                 {withZeroNote(card.body)}
               </p>
@@ -187,7 +188,7 @@ export default function Investors() {
               key={step.label}
               className={`rounded-2xl border p-6 ${
                 i === 1
-                  ? 'border-emerald-500/40 bg-emerald-500/5'
+                  ? 'border-brand-500/40 bg-brand-500/5'
                   : 'border-slate-800'
               }`}
             >
@@ -265,7 +266,7 @@ export default function Investors() {
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent"
+          className="absolute inset-0 bg-gradient-to-t from-navy via-navy/25 to-transparent"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
@@ -308,7 +309,7 @@ export default function Investors() {
         <ul className="mt-8 grid max-w-3xl gap-3 text-slate-300">
           {TRACTION_SECTION.shipped.map((item) => (
             <li key={item} className="flex gap-3 text-base">
-              <span aria-hidden className="text-emerald-400">
+              <span aria-hidden className="text-brand-400">
                 ✓
               </span>
               {item}
@@ -319,7 +320,7 @@ export default function Investors() {
           {TRACTION_SECTION.partners.map((partner) => (
             <div
               key={partner.name}
-              className="flex items-baseline gap-2 rounded-full border border-slate-700 bg-slate-950 px-5 py-2.5"
+              className="flex items-baseline gap-2 rounded-full border border-slate-700 bg-navy px-5 py-2.5"
             >
               <span className="font-semibold text-white">{partner.name}</span>
               <span className="text-sm text-slate-400">{partner.role}</span>
@@ -350,11 +351,11 @@ export default function Investors() {
         }}
       >
         <div className="mt-8 grid gap-6 md:grid-cols-[1fr_1.2fr]">
-          <div className="rounded-2xl border border-emerald-500/40 bg-emerald-500/5 p-6">
+          <div className="rounded-2xl border border-brand-500/40 bg-brand-500/5 p-6">
             <p className="text-sm font-medium text-slate-400">Seed round</p>
             <p className="mt-1 text-4xl font-extrabold tracking-tight text-white">
               {ASK.amount}{' '}
-              <span className="text-2xl text-emerald-300">for {ASK.stake}</span>
+              <span className="text-2xl text-brand-300">for {ASK.stake}</span>
             </p>
             <p className="mt-1 text-base text-slate-300">{ASK.preMoney}</p>
             <p className="mt-4 text-sm text-slate-400">{ASK.seriesA}</p>
@@ -364,7 +365,7 @@ export default function Investors() {
             <ul className="mt-3 grid gap-2 text-base text-slate-300">
               {ASK_SECTION.useOfFunds.map((item) => (
                 <li key={item} className="flex gap-3">
-                  <span aria-hidden className="text-emerald-400">
+                  <span aria-hidden className="text-brand-400">
                     →
                   </span>
                   {item}
@@ -382,7 +383,7 @@ export default function Investors() {
                 <li key={step} className="flex gap-3">
                   <span
                     aria-hidden
-                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-xs font-bold text-emerald-300"
+                    className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-brand-500/15 text-xs font-bold text-brand-300"
                   >
                     {i + 1}
                   </span>
@@ -392,7 +393,7 @@ export default function Investors() {
             </ol>
             <a
               href="#access"
-              className="mt-6 inline-flex rounded-lg bg-emerald-500 px-5 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+              className="mt-6 inline-flex rounded-lg bg-brand-500 px-5 py-2.5 text-sm font-semibold text-navy transition hover:bg-brand-400"
             >
               Request the data room
             </a>
@@ -406,13 +407,13 @@ export default function Investors() {
           {FAQ.map((item) => (
             <details
               key={item.q}
-              className="group rounded-2xl border border-slate-800 bg-slate-950 p-5 open:border-emerald-500/40"
+              className="group rounded-2xl border border-slate-800 bg-navy p-5 open:border-brand-500/40"
             >
               <summary className="cursor-pointer list-none font-semibold text-slate-100 marker:content-none">
-                <span className="mr-2 text-emerald-400 group-open:hidden">
+                <span className="mr-2 text-brand-400 group-open:hidden">
                   +
                 </span>
-                <span className="mr-2 hidden text-emerald-400 group-open:inline">
+                <span className="mr-2 hidden text-brand-400 group-open:inline">
                   −
                 </span>
                 {item.q}
@@ -437,7 +438,7 @@ export default function Investors() {
         />
         <div
           aria-hidden
-          className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-slate-950/20"
+          className="absolute inset-0 bg-gradient-to-t from-navy via-navy/40 to-navy/20"
         />
         <div className="absolute inset-0 flex items-end">
           <div className="mx-auto w-full max-w-6xl px-6 pb-12">
@@ -446,7 +447,7 @@ export default function Investors() {
             </h2>
             <a
               href="#access"
-              className="mt-5 inline-flex rounded-lg bg-emerald-500 px-6 py-3 font-semibold text-slate-950 transition hover:bg-emerald-400"
+              className="mt-5 inline-flex rounded-lg bg-brand-500 px-6 py-3 font-semibold text-navy transition hover:bg-brand-400"
             >
               Request the data room
             </a>
@@ -473,7 +474,7 @@ export default function Investors() {
             Prefer email?{' '}
             <a
               href="mailto:johannes@solddirect.co.za"
-              className="font-medium text-emerald-400 hover:text-emerald-300"
+              className="font-medium text-brand-400 hover:text-brand-300"
             >
               johannes@solddirect.co.za
             </a>

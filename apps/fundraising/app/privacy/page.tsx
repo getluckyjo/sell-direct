@@ -14,7 +14,7 @@ export default function Privacy() {
     <div className="mx-auto max-w-3xl px-6 py-16">
       <Link
         href="/"
-        className="text-sm font-medium text-emerald-400 hover:text-emerald-300"
+        className="text-sm font-medium text-brand-400 hover:text-brand-300"
       >
         ← Back to investors
       </Link>
@@ -33,7 +33,7 @@ export default function Privacy() {
             personal information collected through this investor site. Contact:{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-brand-400 hover:text-brand-300"
             >
               {CONTACT_EMAIL}
             </a>
@@ -91,7 +91,7 @@ export default function Privacy() {
             your personal information, and you may object to processing. Email{' '}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="text-emerald-400 hover:text-emerald-300"
+              className="text-brand-400 hover:text-brand-300"
             >
               {CONTACT_EMAIL}
             </a>{' '}

@@ -18,7 +18,7 @@ export function CapTable() {
           <div className="flex items-center gap-3">
             <div className="h-4 flex-1 rounded bg-slate-900">
               <div
-                className="h-4 rounded bg-emerald-500/80"
+                className="h-4 rounded bg-brand-500/80"
                 style={{ width: `${(row.stake / max) * 100}%` }}
               />
             </div>

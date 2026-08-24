@@ -29,12 +29,12 @@ export function RevenueBars() {
                 R{d.revenue.toFixed(1)}m
               </p>
               {ebitdaPositive ? (
-                <p className="mb-1 hidden text-[11px] font-medium text-emerald-300 sm:block">
+                <p className="mb-1 hidden text-[11px] font-medium text-brand-300 sm:block">
                   EBITDA-positive
                 </p>
               ) : null}
               <div
-                className="w-full rounded-t bg-emerald-500 transition-colors group-hover:bg-emerald-400"
+                className="w-full rounded-t bg-brand-500 transition-colors group-hover:bg-brand-400"
                 style={{
                   height: `${Math.max((d.revenue / MAX) * 100, 2)}%`,
                 }}
