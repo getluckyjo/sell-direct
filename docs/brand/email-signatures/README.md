@@ -16,7 +16,7 @@ Colors and rules come from `apps/marketing/DESIGN.md`.
 ## Regenerating the logo PNG
 
 `signature-logo.png` is derived from `apps/marketing/public/logo.svg` — the
-light lockup, ™ included, fitted onto a navy `#0B172B` rounded rectangle:
+light lockup fitted onto a navy `#0B172B` rounded rectangle:
 
 | | |
 | --- | --- |
@@ -29,5 +29,5 @@ changing the aspect ratio would distort every signature already installed. If
 the lockup grows wider, scale it down to fit rather than widening the canvas.
 
 Rasterised with `sharp` (already in the workspace via Next). Check the result
-at 220px wide, not just full size — that is where it actually renders, and it
-is where the ™ stops being legible first.
+at 220px wide, not just full size — that is where it actually renders, and
+fine detail drops out there first.
