@@ -33,7 +33,7 @@ agreements. Figures ZAR; numbers tie to `01-financial-model.md` and `02-capital-
 
 ## The team
 
-**Dean — co-founder, Managing Director.** Property studies at UCT. A proven commercial
+**Dean — co-founder, Managing Director.** Architecture at UCT. A proven commercial
 architect: lead on the **Babylonstoren** development, one of the Cape's landmark estate
 projects. Brings the property, development and delivery discipline the transfer journey runs on.
 
