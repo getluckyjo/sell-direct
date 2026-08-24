@@ -7,7 +7,7 @@ import { WhatsAppDemo } from '@/components/WhatsAppDemo';
 import { Section } from '@/components/pitch/Section';
 import { StatGrid } from '@/components/pitch/StatGrid';
 import { RevenueBars } from '@/components/pitch/RevenueBars';
-import { CapTable } from '@/components/pitch/CapTable';
+import { TeamGrid } from '@/components/pitch/TeamGrid';
 import { TicketCalculator } from '@/components/pitch/TicketCalculator';
 import { SummaryStrip } from '@/components/pitch/SummaryStrip';
 import { QualifyingNote } from '@/components/pitch/QualifyingNote';
@@ -332,11 +332,11 @@ export default function Investors() {
       {/* Team & cap table */}
       <Section
         id="team"
-        eyebrow="Team & ownership"
+        eyebrow="Team"
         heading={TEAM_SECTION.heading}
         intro={TEAM_SECTION.intro}
       >
-        <CapTable />
+        <TeamGrid />
       </Section>
 
       {/* The Raise */}
