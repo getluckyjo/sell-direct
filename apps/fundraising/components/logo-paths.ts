@@ -2,12 +2,6 @@
 // Do not edit by hand — regenerate from the master file if the logo changes.
 export const LOGO_VIEWBOX = '0 0 680.5 105.3';
 
-/**
- * The lockup as we actually ship it: the master artwork plus the trade mark
- * symbol, which sits outside the master's own box. Use this viewBox wherever
- * TRADEMARK_PATH is drawn; use LOGO_VIEWBOX for the bare master art.
- */
-export const LOGO_VIEWBOX_TM = '0 0 746 105.3';
 
 /** "SoldDirect." wordmark (everything except the bubble). Fill with currentColor. */
 export const WORDMARK_PATH =
@@ -17,23 +11,3 @@ export const WORDMARK_PATH =
 export const BUBBLE_PATH =
   'M129.27 84.59C118.06 84.59 108.98 75.51 108.98 64.3C108.98 53.1 118.06 44.01 129.27 44.01C140.47 44.01 149.56 53.1 149.56 64.3C149.56 75.51 140.47 84.59 129.27 84.59M129.27 25.88C108.08 25.88 90.85 43.12 90.85 64.3C90.85 71.76 92.96 78.9 96.97 85.11L91.41 102.53L110.13 97.61C115.95 100.96 122.52 102.72 129.27 102.72C150.45 102.72 167.68 85.49 167.68 64.3C167.68 43.12 150.45 25.88 129.27 25.88Z';
 
-/**
- * The ™ symbol. NOT from the master artwork — deliberately drawn here as
- * straight-line geometry so it survives a regeneration of the wordmark, and
- * so the ™ never depends on a font being available (the lockup is outlined
- * vector art; a <text> element would render differently everywhere).
- *
- * Why it is here at all: "Sold Direct" is descriptive of the service, so the
- * device mark is the protectable asset and it is not registered yet. ™ marks
- * an unregistered claim and may be used from today; ® must NOT appear until
- * a registration certificate exists. See context/trade-mark.md.
- *
- * Set at ascender height, one third of the lockup, trailing the full stop.
- * Fill with currentColor so it follows the wordmark in both variants.
- */
-export const TRADEMARK_PATH =
-  // T
-  'M694 3H712V8H705.5V37H700.5V8H694Z' +
-  // M — stems, top V and two open counters, sized to stay legible where the
-  // lockup renders smallest (the 220px-wide email signature).
-  'M716 3H722L729 21L736 3H742V37H737V14L731.5 27H726.5L721 14V37H716Z';
