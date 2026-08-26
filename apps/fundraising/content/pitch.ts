@@ -81,7 +81,7 @@ export const AI_SECTION = {
     },
     {
       title: 'People stay in the loop',
-      body: 'Our employed practitioners — registered with the Property Practitioners Regulatory Authority (PPRA), holding Fidelity Fund Certificates — assist both parties. Full-service agents remain a great choice for those who want them.',
+      body: 'Practitioners registered with the Property Practitioners Regulatory Authority (PPRA), holding Fidelity Fund Certificates, assist both parties. Registration and an FFC are a precondition to taking any mandate — see the risk register. Full-service agents remain a great choice for those who want them.',
     },
     {
       title: 'A structurally lean cost base',
@@ -308,7 +308,7 @@ export const FAQ = [
   },
   {
     q: 'Are you against estate agents?',
-    a: 'No — we are complementary, not adversarial. Full-service agents remain a great choice for the majority who want full service; we serve sellers who choose to do it themselves, assisted by our own employed, PPRA-registered practitioners.',
+    a: 'No — we are complementary, not adversarial. Full-service agents remain a great choice for the majority who want full service; we serve sellers who choose to do it themselves, assisted by PPRA-registered practitioners.',
   },
   {
     q: 'What exactly is the AI agent?',
