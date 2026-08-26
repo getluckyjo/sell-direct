@@ -46,7 +46,7 @@ export const WELCOME_REPLY =
   '1️⃣ You build your listing right here — a few taps, no forms.\n' +
   '2️⃣ We syndicate it and send buyer enquiries straight to you.\n' +
   '3️⃣ Buyers pre-qualify for a bond in the chat, so you know who’s real.\n' +
-  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
+  '4️⃣ A registered property practitioner and our WhatsApp concierge handle ' +
   'the offer, FICA and transfer admin with you.\n\n' +
   'What would you like to do?';
 
@@ -82,7 +82,7 @@ export function welcomeMenu(): ReplyOptions {
           {
             id: 'CONSULT',
             title: 'Talk to our team',
-            description: 'A registered practitioner calls you back.',
+            description: 'A member of our team calls you back.',
           },
         ],
       },
@@ -100,7 +100,7 @@ export const HOW_REPLY =
   '1️⃣ You list your property here on WhatsApp — a few taps, no forms.\n' +
   '2️⃣ We syndicate it and route buyer enquiries straight to you.\n' +
   '3️⃣ Buyers get bond pre-qualification in the chat, so you know who’s real.\n' +
-  '4️⃣ Our registered property practitioners and WhatsApp concierge handle ' +
+  '4️⃣ A registered property practitioner and our WhatsApp concierge handle ' +
   'the offer, FICA and transfer admin with you.\n\n' +
   'It costs you 0% commission when you sell through our partners — on a ' +
   'R2.1m home, what a full-service sale (5–7% + VAT) would have cost is ' +

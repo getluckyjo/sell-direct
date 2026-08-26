@@ -67,7 +67,7 @@ const REVENUE = [
 
 const COMPLIANCE = [
   'POPIA consent captured before any data — encrypted sensitive fields',
-  'Our employed, registered property practitioners (PPRA, Fidelity Fund Certificate) assist both parties throughout',
+  'Registered property practitioners (PPRA, Fidelity Fund Certificate) assist both parties throughout — registration is a precondition to taking any mandate',
   'FICA on both parties via the conveyancer',
   'Compliance certificates: electrical, plumbing, gas, fence, beetle',
 ];

@@ -410,9 +410,7 @@ export default function Investors() {
               className="group rounded-2xl border border-slate-800 bg-navy p-5 open:border-brand-500/40"
             >
               <summary className="cursor-pointer list-none font-semibold text-slate-100 marker:content-none">
-                <span className="mr-2 text-brand-400 group-open:hidden">
-                  +
-                </span>
+                <span className="mr-2 text-brand-400 group-open:hidden">+</span>
                 <span className="mr-2 hidden text-brand-400 group-open:inline">
                   −
                 </span>

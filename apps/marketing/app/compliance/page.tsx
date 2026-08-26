@@ -5,14 +5,14 @@ import { Logo } from '@/components/Logo';
 export const metadata: Metadata = {
   title: 'Our compliance — Sold Direct',
   description:
-    'How Sold Direct keeps private property sales safe and compliant: registered property practitioners (PPRA), POPIA privacy-by-design, fair mandates, licensed finance partners and attorney trust accounts.',
+    'How Sold Direct keeps private property sales safe and compliant: PPRA-regulated practice, POPIA privacy-by-design, fair mandates, licensed finance partners and attorney trust accounts.',
 };
 
 const PILLARS = [
   {
     title: 'Registered property practitioners',
-    body: 'Sold Direct operates as a registered property practitioner under the Property Practitioners Act, with a valid Fidelity Fund Certificate (FFC). Your mandate and offer documents are proper, regulated instruments — not informal templates. Registration details are available on request.',
-    tag: 'PPRA · FFC',
+    body: 'Sold Direct is completing its registration as a property practitioner under the Property Practitioners Act. We will not accept a mandate or handle an offer until that registration and a valid Fidelity Fund Certificate (FFC) are in place — every mandate and offer document is a proper, regulated instrument, not an informal template. Our current registration status is available on request.',
+    tag: 'PPRA · FFC in progress',
   },
   {
     title: 'Your data, protected (POPIA)',
@@ -36,7 +36,7 @@ const PILLARS = [
   },
   {
     title: 'Working alongside the industry',
-    body: 'Estate agents play a valuable role in South African property, and full service is the right choice for many sellers. We serve those who choose to sell privately — assisted by our own employed, registered practitioners — and we hold ourselves to the same professional standards.',
+    body: 'Estate agents play a valuable role in South African property, and full service is the right choice for many sellers. We serve those who choose to sell privately — assisted by the registered practitioners who will hold every mandate — and we hold ourselves to the same professional standards.',
     tag: 'Industry',
   },
 ];
@@ -102,9 +102,9 @@ export default function Compliance() {
           <p className="mt-2 max-w-2xl text-sm text-slate-600">
             We take compliance questions seriously and answer them quickly.
             Message us on WhatsApp or write to us and a member of our team —
-            including our registered practitioners — will respond. If we ever
-            fall short, you may also contact the Property Practitioners
-            Regulatory Authority (PPRA), the body that regulates our industry.
+            including our practitioners — will respond. If we ever fall short,
+            you may also contact the Property Practitioners Regulatory Authority
+            (PPRA), the body that regulates our industry.
           </p>
         </div>
       </section>
@@ -116,7 +116,7 @@ export default function Compliance() {
           </span>
           <span>
             0% commission — the banks pay us, not you · POPIA-compliant ·
-            PPRA-registered practitioners.
+            PPRA-regulated practice.
           </span>
         </div>
       </footer>

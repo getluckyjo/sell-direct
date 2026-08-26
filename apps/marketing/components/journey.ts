@@ -176,11 +176,11 @@ export const SCENES: Scene[] = [
     track: 0,
     from: 'bot',
     kind: 'text',
-    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). Our employed, registered property practitioners handle the mandate — a proper, regulated process.",
+    text: "Perfect. I'll prepare a sole mandate for you to e-sign (required for the free tier). A registered property practitioner handles the mandate — a proper, regulated process.",
     note: {
       tag: 'Legal',
       title: 'Sole mandate & PPRA',
-      body: 'Sold Direct operates as (or under) a registered property practitioner with a valid Fidelity Fund Certificate, so it can lawfully hold a mandate and handle offers.',
+      body: 'A mandate may only be held by a registered property practitioner with a valid Fidelity Fund Certificate. Sold Direct is completing that registration and will not take a mandate until it is in place.',
     },
   },
   {

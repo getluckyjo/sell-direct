@@ -85,11 +85,11 @@ const FAQ = [
   },
   {
     q: 'What does the exclusive mandate involve? Can I cancel?',
-    a: 'A fixed-term exclusive mandate with plain-language terms, e-signed on WhatsApp and handled by our registered practitioners. Cancellation follows its notice terms — or choose Flex, with no exclusivity.',
+    a: 'A fixed-term exclusive mandate with plain-language terms, e-signed on WhatsApp and handled by a registered practitioner. Cancellation follows its notice terms — or choose Flex, with no exclusivity.',
   },
   {
     q: 'Are you against estate agents?',
-    a: 'No. Full-service agents are the right choice for many sellers — we employ registered practitioners ourselves. We simply serve those who choose to sell privately.',
+    a: 'No. Full-service agents are the right choice for many sellers — we work with registered practitioners ourselves. We simply serve those who choose to sell privately.',
   },
   {
     q: 'Is my information safe?',
@@ -229,7 +229,8 @@ export default function Home() {
               </li>
             </ul>
             <p className="text-sm text-slate-500">
-              Our team includes PPRA-registered property practitioners.{' '}
+              Every mandate will be held by a PPRA-registered property
+              practitioner.{' '}
               <Link
                 href="/compliance"
                 className="font-medium text-brand-700 underline-offset-2 hover:underline"
