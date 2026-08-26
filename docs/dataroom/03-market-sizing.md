@@ -15,7 +15,8 @@ segment-pool count is the weakest input and must be confirmed.
 
 > **Positioning:** full-service agents continue to serve the majority who want full service; Sold
 > Direct serves the segment who **choose to sell privately** and do the work themselves — with our
-> own employed, registered practitioners assisting. Complementary, not adversarial.
+> registered practitioners assisting (registration in progress — see `05-regulatory-status.md`).
+> Complementary, not adversarial.
 
 ## 2. TAM — addressable revenue pool
 
