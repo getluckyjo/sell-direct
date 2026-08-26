@@ -66,8 +66,9 @@ steering).
 
 > **Segment positioning:** Sold Direct is **complementary to, not competing with, full-service
 > agents** — we serve sellers who choose to sell privately and do the work themselves, assisted by
-> our **own employed, registered property practitioners (PPRA/FFC)** and WhatsApp concierge. No
-> anti-agent marketing; zero friction with the PPRA by design.
+> **registered property practitioners (PPRA/FFC)** and a WhatsApp concierge. No anti-agent
+> marketing; zero friction with the PPRA by design. ⚠ Registration and the FFC are **not yet
+> held** — see `05-regulatory-status.md`.
 
 > ⚠️ **Why not a single-bank prerequisite:** making one bank a condition of the 0% is legally grey
 > (consumer-steering, competition, PPRA). Replaced by the bank-agnostic referral/origination above +
@@ -163,6 +164,7 @@ fulfilment lift later years.
 | Pay-per-success precedent | Property24’s own **SBF model: R199 per sale registered at the Deeds Office**, no subscription (introductory rate; dated source — reconfirm). | GhostDigest | Low |
 | Private-listing offering | P24 sells a flat-fee private-listing suite, all with a **6-month listing**, unlimited photos, lead notifications, a virtual phone number and **OTP assistance (free template + no-obligation help from Snymans Attorneys)**; no refunds on early sale. Tiers: **Self Service Lite R499 (properties ≤R500,000 only — the origin of the earlier, wrong "channel caps at R500k" claim)** · **Self Service R2,299 (all prices; "most popular")** · **Assisted R3,999 (pros build the listing: aerial/walkthrough video, photography, description help, floorplans)** · **Featured R4,999 (Assisted + top-of-results placement, larger lead image, 7 days)**. What P24 sells is a *listing plus an OTP template*; pricing, viewings, buyer qualification, negotiation, bond, FICA and transfer stay on the seller. Sold Direct's wedge is that **service gap**: a practitioner-run journey at 0% on the qualifying path, syndicated as a normal agency-grade feed. | property24.com/private-listing/sell-my-property — full page captured 24 Aug 2026 (founder) | High |
 | Negotiation frame (strategy) | **Complementary, not competing — we buy distribution wholesale.** P24's retail tiers serve DIY sellers; Sold Direct brings committed monthly volume through one practitioner account. Anchors: retail per-listing prices are the **ceiling (R2,299–R4,999)**, SIBP is the **floor (R656/m)**; the COGS syndication line (~R2,900–R3,600/deal) already sits inside that band. Wholesale/volume rates are a **negotiation target, not signed terms**. | Founder strategy, Aug 2026 (brief: partner-brief-property24.html) | n/a — positioning |
+| Subscription terms (2026) | Clause 2(a) permits **unlimited** listings *"provided the Subscriber possesses a mandate to market each property"* — our model is contractually permitted, no special deal required. Pricing is **per Portal Lead × median price bracket**, monthly in advance, ex VAT; fees adjust each 1 April; either party may terminate on one month's notice. ⚠ **Clause 10 prices a subscription per "front door" OR area agent** — written confirmation of a single subscription for one entity is outstanding and a per-area reading would multiply portal COGS. **Annexure P ("Package")** overrides pricing and termination but was not supplied; requested. | Property24 Subscription Agreement 2026 + annexures, received 26 Aug 2026 | High |
 
 **Reconciliation with the model (against the actual 2026 card).** At ~70% sell-through the
 listing pool is ~70 (Y1) → ~4,100 (Y5); with ~90-day time-on-market and ~5 leads/listing/month,

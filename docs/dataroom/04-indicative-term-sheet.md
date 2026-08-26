@@ -26,14 +26,15 @@ agreements. Figures ZAR; numbers tie to `01-financial-model.md` and `02-capital-
 | Holder | Stake |
 |---|---:|
 | Johannes le Roux — co-founder, Marketing Director | 30% |
-| Dean — co-founder, Managing Director | 30% |
+| Dean Kruger — co-founder, Managing Director | 30% |
 | Seed investor (R10m) | **25%** |
 | Paysoft — technology partner (vesting) | 10% |
-| Board seat (reserved, non-executive) | 5% |
+| Option pool (reserved, unissued) | 4% |
+| Board seat (reserved, non-executive) | 1% |
 
 ## The team
 
-**Dean — co-founder, Managing Director.** Architecture at UCT. A proven commercial
+**Dean Kruger — co-founder, Managing Director.** Architecture at UCT. A proven commercial
 architect: lead on the **Babylonstoren** development, one of the Cape's landmark estate
 projects. Brings the property, development and delivery discipline the transfer journey runs on.
 

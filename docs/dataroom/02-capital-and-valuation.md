@@ -65,13 +65,19 @@ to an agreed value:
 
 | Holder | At Seed (inception) | Post-Series A |
 |---|---:|---:|
-| Johannes — Marketing Director | 30.0% | 25.0% |
-| Dean — Managing Director | 30.0% | 25.0% |
+| Johannes le Roux — Marketing Director | 30.0% | 25.0% |
+| Dean Kruger — Managing Director | 30.0% | 25.0% |
 | Paysoft — Technology Partner | 10.0% | 8.3% |
-| Board seat (reserved — non-executive strategic) | 5.0% | 4.2% |
+| Option pool (reserved, unissued) | 4.0% | 3.3% |
+| Board seat (reserved — non-executive strategic) | 1.0% | 0.8% |
 | Strategic Funder / Seed Investor (R10m) | **25.0%** | 20.8% |
 | Series A Investor (R50m) | — | 16.7% |
 | **Total** | **100%** | **100%** |
+
+The board allocation was **reduced from 5.0% to 1.0% in Aug 2026**. A seed-stage
+non-executive seat prices at 0.25–1.5% on market terms; the balance moved to an **option
+pool** for the early team — including the principal property practitioner who enables the
+firm's Fidelity Fund Certificate (see `05-regulatory-status.md`).
 
 ### Value at the base-case exit (~R811m EV, 5× Y5 revenue)
 
@@ -79,7 +85,8 @@ to an agreed value:
 |---|---:|---:|---:|
 | Each working founder (×2) | sweat | **~R203m** | — |
 | Paysoft | dev delivery (vesting) | ~R68m | — |
-| Board seat (reserved) | board | ~R34m | — |
+| Option pool (reserved) | team | ~R27m | — |
+| Board seat (reserved) | board | ~R7m | — |
 | Strategic Funder / Seed | R10m | **~R169m** | **~16.9×** |
 | Series A | R50m | ~R135m | ~2.7× |
 
