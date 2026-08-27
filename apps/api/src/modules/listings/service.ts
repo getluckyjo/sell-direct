@@ -179,14 +179,22 @@ export async function handleListingIntakeMessage(
     };
   }
 
+  // `reask` returns the same state object it was given, so the previous
+  // count would otherwise ride along — always write this explicitly.
+  const rejections = result.rejected ? (existing.rejections ?? 0) + 1 : 0;
+
   await deps.store.set(message.phone, {
     ...result.state,
     owner: existing.owner ?? 'scripted',
+    rejections,
   });
   return {
     reply: result.reply,
     options: result.options,
-    ...(result.rejected && (looksLikeAQuestion(text) || soundsStuck(text))
+    ...(result.rejected &&
+    (looksLikeAQuestion(text) ||
+      soundsStuck(text) ||
+      rejections >= REPEATED_REJECTION_LIMIT)
       ? { needsConcierge: true }
       : {}),
   };
@@ -209,6 +217,14 @@ export function looksLikeAQuestion(text: string): boolean {
   if (trimmed.includes('?')) return true;
   return INTERROGATIVE_RE.test(trimmed) && trimmed.split(/\s+/).length >= 3;
 }
+
+/**
+ * Consecutive misses at one step before the concierge is brought in whatever
+ * the seller typed. Three is the point at which the step, not the answer, is
+ * the likely problem — and a fourth identical re-ask is how a seller decides
+ * the product is broken.
+ */
+export const REPEATED_REJECTION_LIMIT = 3;
 
 /**
  * Frustration and hand-over signals. A seller who says "this is confusing" or

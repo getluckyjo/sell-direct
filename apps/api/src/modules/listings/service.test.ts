@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   handleListingIntakeMessage,
   looksLikeAQuestion,
+  REPEATED_REJECTION_LIMIT,
   soundsStuck,
 } from './service';
 import { createInMemoryConversationStore } from './store';
@@ -419,6 +420,85 @@ describe('a message mid-flow the script cannot serve', () => {
       text: 'house',
     });
     expect(res.needsConcierge).toBeUndefined();
+  });
+});
+
+describe('repeated rejections at the same step', () => {
+  const toPriceStep = async (
+    deps: Parameters<typeof handleListingIntakeMessage>[0],
+    phone: string,
+  ) => {
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    await handleListingIntakeMessage(deps, { phone, text: 'house' });
+    await handleListingIntakeMessage(deps, { phone, text: 'Newlands' });
+    await handleListingIntakeMessage(deps, { phone, text: 'SKIP' });
+  };
+
+  it('hands over once the same step has been missed three times', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009995';
+    await toPriceStep(deps, phone);
+
+    // None of these looks like a question or sounds stuck — the count alone
+    // is what escalates, because a fourth identical re-ask helps nobody.
+    const first = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'abc',
+    });
+    const second = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'abc',
+    });
+    const third = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'abc',
+    });
+
+    expect(first.needsConcierge).toBeUndefined();
+    expect(second.needsConcierge).toBeUndefined();
+    expect(third.needsConcierge).toBe(true);
+    expect((await store.get(phone))?.rejections).toBe(REPEATED_REJECTION_LIMIT);
+    // Still held at the step, so the concierge picks up in context.
+    expect((await store.get(phone))?.step).toBe('awaiting_price');
+  });
+
+  it('counts up across the flow rather than resetting each turn', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009994';
+    await toPriceStep(deps, phone);
+
+    await handleListingIntakeMessage(deps, { phone, text: 'abc' });
+    expect((await store.get(phone))?.rejections).toBe(1);
+    await handleListingIntakeMessage(deps, { phone, text: 'abc' });
+    expect((await store.get(phone))?.rejections).toBe(2);
+  });
+
+  it('resets the count as soon as the seller answers', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009993';
+    await toPriceStep(deps, phone);
+
+    await handleListingIntakeMessage(deps, { phone, text: 'abc' });
+    await handleListingIntakeMessage(deps, { phone, text: 'abc' });
+
+    // A real answer moves the flow on, so the two misses are forgiven.
+    const answered = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'R2 500 000',
+    });
+    expect(answered.needsConcierge).toBeUndefined();
+    expect((await store.get(phone))?.rejections).toBe(0);
+
+    // The next miss therefore starts from one, not three.
+    const missed = await handleListingIntakeMessage(deps, {
+      phone,
+      text: 'abc',
+    });
+    expect(missed.needsConcierge).toBeUndefined();
+    expect((await store.get(phone))?.rejections).toBe(1);
   });
 });
 
