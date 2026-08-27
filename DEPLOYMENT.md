@@ -32,15 +32,18 @@ What we deploy:
 
 ## 2. Backend — Railway
 
-The repo ships `apps/api/railway.json`, so Railway auto-configures the install,
-build, migrate and start commands and a `/health` healthcheck. You only set the
-**Root Directory** and the **environment variables**.
+The repo ships `railway.json` **at the repo root**, so Railway auto-configures the
+install, build, migrate and start commands and a `/health` healthcheck. You only
+set the **environment variables**.
 
 1. **New Project → Deploy from GitHub repo** → pick `getluckyjo/sell-direct`.
-2. Open the service → **Settings → Source** → set **Root Directory** to
-   `apps/api`. (That's where `railway.json` lives; it `cd`s to the repo root so
-   the pnpm workspace resolves.) Leave the build/start commands blank — they
-   come from `railway.json`.
+2. Open the service → **Settings → Source** → leave **Root Directory blank**
+   (i.e. the repo root). Two reasons, both fatal if you get this wrong:
+   `railway.json` lives at the root and is ignored if the root directory points
+   elsewhere; and the API depends on `@sell-direct/shared` via `workspace:*`,
+   which only resolves when pnpm installs from the workspace root. A root
+   directory of `apps/api` fails to install and the service never starts.
+   Leave the build/start commands blank — they come from `railway.json`.
 3. **Add a database.** Easiest path: in the same project click **New → Database
    → Add PostgreSQL**. Railway provisions it and exposes `DATABASE_URL`.
    - In the **API service → Variables**, add `DATABASE_URL` and `DIRECT_URL`

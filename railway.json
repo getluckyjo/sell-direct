@@ -1,5 +1,8 @@
 {
   "$schema": "https://railway.app/railway.schema.json",
+  "build": {
+    "buildCommand": "pnpm install --frozen-lockfile && pnpm --filter @sell-direct/api run db:generate"
+  },
   "deploy": {
     "startCommand": "pnpm --filter @sell-direct/api run db:deploy && pnpm --filter @sell-direct/api run start",
     "healthcheckPath": "/health",
