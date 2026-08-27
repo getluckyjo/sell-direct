@@ -123,6 +123,18 @@ export interface IntakeState {
    * questions rather than silently handing an old thread to the model.
    */
   owner?: 'scripted' | 'agent';
+  /**
+   * Consecutive messages that answered nothing at the current step. Reset to 0
+   * the moment one lands. Managed by the orchestrator (service.ts) — the pure
+   * machine ignores it, and `reask` hands back the same state object, so the
+   * orchestrator always writes this explicitly rather than letting a stale
+   * count ride along.
+   *
+   * Past a threshold the seller is escalated to the concierge whatever they
+   * typed: if the same step has been missed three times, the step is the
+   * problem and a fourth re-ask will not fix it.
+   */
+  rejections?: number;
 }
 
 export interface IntakeResult {
