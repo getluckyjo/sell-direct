@@ -73,11 +73,15 @@ export interface IntakeReply {
    */
   fallback?: boolean;
   /**
-   * Set when a mid-flow message answered nothing AND reads like a question.
-   * The seller wants to know something before they carry on — the dispatcher
-   * may let the concierge answer it, then send `reply` to re-ask.
+   * Set when a mid-flow message answered nothing AND the script has nothing
+   * useful to say to it — the seller asked us something, or told us they are
+   * stuck, frustrated, or want a person. The dispatcher may let the concierge
+   * respond, then send `reply` to re-ask the step they were on.
+   *
+   * Deliberately NOT set for a fat-fingered answer ("3.5"), where re-asking is
+   * exactly the right reply.
    */
-  askedQuestion?: boolean;
+  needsConcierge?: boolean;
 }
 
 /**
@@ -182,8 +186,8 @@ export async function handleListingIntakeMessage(
   return {
     reply: result.reply,
     options: result.options,
-    ...(result.rejected && looksLikeAQuestion(text)
-      ? { askedQuestion: true }
+    ...(result.rejected && (looksLikeAQuestion(text) || soundsStuck(text))
+      ? { needsConcierge: true }
       : {}),
   };
 }
@@ -204,6 +208,64 @@ export function looksLikeAQuestion(text: string): boolean {
   if (trimmed.length < 6) return false;
   if (trimmed.includes('?')) return true;
   return INTERROGATIVE_RE.test(trimmed) && trimmed.split(/\s+/).length >= 3;
+}
+
+/**
+ * Frustration and hand-over signals. A seller who says "this is confusing" or
+ * "speak to a human" has not asked a question, so the test above misses them —
+ * and re-asking the step they are already stuck on is the worst possible
+ * reply. These go to the concierge instead.
+ *
+ * Matched on whole words so a legitimate answer is never caught: a suburb
+ * called "Helderberg" must not trip the "help" signal.
+ */
+const STUCK_RE = new RegExp(
+  `\\b(?:${[
+    // frustration
+    'angry',
+    'annoyed',
+    'frustrat\\w*',
+    'useless',
+    'ridiculous',
+    'rubbish',
+    'nonsense',
+    'stupid',
+    'terrible',
+    'awful',
+    'hate this',
+    'giving up',
+    'give up',
+    'fed up',
+    'waste of time',
+    // stuck / not understanding
+    'confus\\w*',
+    'stuck',
+    'makes no sense',
+    'does ?n.?t make sense',
+    'don.?t understand',
+    'not understanding',
+    'does ?n.?t work',
+    'not working',
+    'won.?t work',
+    'not helping',
+    'does ?n.?t help',
+    // wants a person
+    'speak to (a|someone|a real)',
+    'talk to (a|someone|a real)',
+    'real person',
+    'human',
+    'agent please',
+    'call me',
+    'phone me',
+    'help me',
+  ].join('|')})\\b`,
+  'i',
+);
+
+export function soundsStuck(text: string): boolean {
+  const trimmed = text.trim();
+  if (trimmed.length < 4) return false;
+  return STUCK_RE.test(trimmed);
 }
 
 /**

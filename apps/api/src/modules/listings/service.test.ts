@@ -1,5 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
-import { handleListingIntakeMessage, looksLikeAQuestion } from './service';
+import {
+  handleListingIntakeMessage,
+  looksLikeAQuestion,
+  soundsStuck,
+} from './service';
 import { createInMemoryConversationStore } from './store';
 import type { IntakeFieldExtractor } from './extractor';
 import type { ExtractedListingFields } from './intake';
@@ -352,7 +356,7 @@ describe('listing intake orchestrator', () => {
   });
 });
 
-describe('a question asked mid-flow', () => {
+describe('a message mid-flow the script cannot serve', () => {
   it('flags a question so the concierge can answer it', async () => {
     const store = createInMemoryConversationStore();
     const deps = { store, createListing: vi.fn() };
@@ -367,7 +371,7 @@ describe('a question asked mid-flow', () => {
       text: 'how much do you charge?',
     });
 
-    expect(res.askedQuestion).toBe(true);
+    expect(res.needsConcierge).toBe(true);
     // The step is held, so the re-ask puts them back where they were.
     expect((await store.get(phone))?.step).toBe('awaiting_price');
   });
@@ -383,7 +387,26 @@ describe('a question asked mid-flow', () => {
 
     const res = await handleListingIntakeMessage(deps, { phone, text: 'abc' });
 
-    expect(res.askedQuestion).toBeUndefined();
+    expect(res.needsConcierge).toBeUndefined();
+  });
+
+  it('flags frustration so the concierge answers instead of re-asking', async () => {
+    const store = createInMemoryConversationStore();
+    const deps = { store, createListing: vi.fn() };
+    const phone = '27820009996';
+    await handleListingIntakeMessage(deps, { phone, text: 'START' });
+    await handleListingIntakeMessage(deps, { phone, text: 'house' });
+    await handleListingIntakeMessage(deps, { phone, text: 'Newlands' });
+    await handleListingIntakeMessage(deps, { phone, text: 'SKIP' });
+
+    const res = await handleListingIntakeMessage(deps, {
+      phone,
+      text: "I'm angry",
+    });
+
+    expect(res.needsConcierge).toBe(true);
+    // Still held at the same step, so the re-ask lands them where they were.
+    expect((await store.get(phone))?.step).toBe('awaiting_price');
   });
 
   it('never flags a message that actually answered the question', async () => {
@@ -395,7 +418,7 @@ describe('a question asked mid-flow', () => {
       phone,
       text: 'house',
     });
-    expect(res.askedQuestion).toBeUndefined();
+    expect(res.needsConcierge).toBeUndefined();
   });
 });
 
@@ -414,5 +437,40 @@ describe('looksLikeAQuestion', () => {
     expect(looksLikeAQuestion('R2m')).toBe(false);
     expect(looksLikeAQuestion('how')).toBe(false); // too short to be a sentence
     expect(looksLikeAQuestion('')).toBe(false);
+  });
+});
+
+describe('soundsStuck', () => {
+  it('recognises frustration', () => {
+    expect(soundsStuck("I'm angry")).toBe(true);
+    expect(soundsStuck('this is confusing')).toBe(true);
+    expect(soundsStuck('this is useless')).toBe(true);
+    expect(soundsStuck("this doesn't make sense")).toBe(true);
+    expect(soundsStuck('I am fed up')).toBe(true);
+    expect(soundsStuck('waste of time')).toBe(true);
+  });
+
+  it('recognises a request for a person', () => {
+    expect(soundsStuck('speak to a human')).toBe(true);
+    expect(soundsStuck('can I talk to someone')).toBe(true);
+    expect(soundsStuck('I want a real person')).toBe(true);
+    expect(soundsStuck('please call me')).toBe(true);
+    expect(soundsStuck('help me')).toBe(true);
+  });
+
+  it('does not fire on a botched answer', () => {
+    // The whole point: re-asking IS the right reply to these.
+    expect(soundsStuck('3.5')).toBe(false);
+    expect(soundsStuck('abc')).toBe(false);
+    expect(soundsStuck('R2m')).toBe(false);
+    expect(soundsStuck('')).toBe(false);
+  });
+
+  it('does not fire on a legitimate answer that merely contains a substring', () => {
+    // "Helderberg" contains "help"; "Humansdorp" contains "human". A suburb
+    // must never be mistaken for a cry for help.
+    expect(soundsStuck('Helderberg')).toBe(false);
+    expect(soundsStuck('Humansdorp')).toBe(false);
+    expect(soundsStuck('4 bedrooms')).toBe(false);
   });
 });

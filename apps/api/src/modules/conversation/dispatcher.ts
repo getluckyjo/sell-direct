@@ -305,17 +305,19 @@ export function createDispatcher(deps: DispatcherDeps): Dispatcher {
       text,
     });
 
-    // 4b. A seller mid-flow who asked us something rather than answering.
-    //     The concierge answers, then the re-ask below carries on from the
-    //     same step — the draft is never handed over, so the taps survive.
+    // 4b. A seller mid-flow the script cannot serve — they asked us something,
+    //     or told us they are stuck, frustrated, or want a person. The
+    //     concierge responds, then the re-ask below carries on from the same
+    //     step — the draft is never handed over, so the taps survive.
     //     Live mode only: in shadow the agent would merely draft, and the
-    //     seller would be left with a bare "I didn't catch that".
-    if (result.askedQuestion && deps.agent?.mode === 'live') {
+    //     seller would be left with a bare "I didn't catch that" — which is
+    //     precisely what they were complaining about.
+    if (result.needsConcierge && deps.agent?.mode === 'live') {
       try {
         const outcome = await deps.agent.handle({ phone, text });
         if (outcome.sent) {
-          // Their question is answered; put the question they were on back
-          // in front of them, options and all.
+          // They have been answered; put the step they were on back in front
+          // of them, options and all.
           await deps.notifier.send(phone, result.reply, {
             interactive: result.options,
           });
