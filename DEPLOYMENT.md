@@ -102,6 +102,16 @@ Create **three** Vercel projects from the same repo, each with a different
 For each: Framework **Next.js** (auto-detected), Install command `pnpm install`.
 Vercel handles the monorepo automatically once the Root Directory is set.
 
+> **Three projects — the API is not one of them.** `apps/api` is a long-running
+> Fastify server: it holds an open `listen()` and runs two `setInterval`
+> schedulers (transfer-deadline reminders and seller re-engagement). Vercel's
+> serverless functions are ephemeral, so those schedulers would never fire.
+> Pointing a Vercel project at `apps/api` also *looks* like it works — the build
+> script is `tsc --noEmit`, which type-checks, emits nothing, and exits 0, so
+> Vercel reports a green deploy for a service that serves nothing. If the API
+> ever has to leave Railway, choose another persistent host (Render, Fly) or
+> budget for replacing both schedulers with cron-triggered endpoints.
+
 After deploy you'll have three URLs (e.g. `dashboard.vercel.app`,
 `marketing.vercel.app`, `invest.vercel.app`). Point your real domains at them
 later.
