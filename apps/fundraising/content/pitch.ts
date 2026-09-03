@@ -28,7 +28,7 @@ export const HERO = {
   // The 0%* token is rendered between these two parts as a tap-to-resolve note.
   titleAccentPre: '',
   titleAccentPost: '-commission private sales, on WhatsApp.',
-  sub: 'Trained on 50 years of South African property, legal and bond data, it does the admin of a sale at near-zero cost. We earn from the banks as bond originators — not from the consumer.',
+  sub: 'Modern technology streamlines the sale process — listing, offer, bond, transfer — with registered practitioners guiding every step. We earn from the banks as bond originators — not from the consumer.',
   ctaPrimary: 'Request the data room',
   ctaSecondary: 'See the numbers',
   summaryAnchor: '60-second summary ↓',
@@ -61,13 +61,13 @@ export const SUMMARY_STRIP = [
   {
     label: 'Status',
     value: 'Built & working',
-    sub: 'AI agent + WhatsApp loop live',
+    sub: 'WhatsApp loop live · listing to registered sale',
   },
 ] satisfies Stat[];
 
 // source: docs/dataroom/README.md (AI-lean strategy); founder-confirmed status
 export const AI_SECTION = {
-  heading: 'One AI does the work of an agency.',
+  heading: 'Modern technology + registered practitioners run the sale.',
   intro:
     'Built. Working. Trained on 50 years of South African property, conveyancing and bond data. Not a roadmap item — the IP you’re buying into.',
   cards: [
@@ -76,8 +76,8 @@ export const AI_SECTION = {
       body: 'Offers to purchase (OTPs), suspensive conditions, Financial Intelligence Centre Act (FICA) checks, rates clearance, the Deeds Office — South Africa’s central property registry — and bank credit patterns.',
     },
     {
-      title: 'Does the admin at near-zero cost',
-      body: 'Listing intake, buyer qualification, offer assembly, document chasing, “where is my deal?” — the reason 0%* is sustainable, not a loss-leader.',
+      title: 'Streamlines the process at near-zero cost',
+      body: 'Listing intake, buyer qualification, offer assembly, document chasing, "where is my deal?" — done through modern tech and WhatsApp, with people in the loop. The reason 0%* is sustainable, not a loss-leader.',
     },
     {
       title: 'People stay in the loop',
@@ -85,7 +85,7 @@ export const AI_SECTION = {
     },
     {
       title: 'A structurally lean cost base',
-      body: 'The model runs a 50%-AI team: 8 heads in Year 1 to a delivery-realistic 96 by Year 5, reinvesting the ~88% gross margin into brand.',
+      body: 'Modern tech handles the repetitive steps; 8 heads in Year 1 to a delivery-realistic 96 by Year 5, mostly practitioners and support. Reinvest the ~88% gross margin into brand.',
     },
   ] satisfies Card[],
 } as const;
@@ -259,7 +259,7 @@ export const TEAM_SECTION = {
       name: 'Paysoft',
       role: 'Technology Partner · CTO function',
       initials: 'PS',
-      bio: 'Carries the CTO role: engineering delivery of the AI agent and the WhatsApp platform at preferred development rates, with equity vesting only as that value is delivered.',
+      bio: 'Carries the CTO role: engineering delivery of the WhatsApp platform and modern-tech backbone at preferred development rates, with equity vesting only as that value is delivered.',
     },
     {
       name: 'Board seat',
@@ -277,7 +277,7 @@ export const ASK_SECTION = {
     'R10m at a R30m pre-money valuation. Bottom-up capital need to self-sustaining is ~R7.5m (base case, incl. buffer) — the raise covers the trough with headroom.',
   useOfFunds: [
     'Cape Town launch + above-the-line brand campaign',
-    'The AI-augmented team (concierge + registered practitioners)',
+    'Modern tech + registered practitioners (concierge + PPRA-certified team)',
     'In-house origination accreditation (FAIS/FSP + bank aggregation agreements)',
     'Partner and platform integrations (WhatsApp BSP, BetterBond, conveyancers)',
   ],
@@ -304,7 +304,7 @@ export const CALCULATOR = {
 export const FAQ = [
   {
     q: 'Why is 0% commission sustainable?',
-    a: 'Because the bank pays us, not the consumer. Origination earns 0.5% of the bond via BetterBond in Year 1 and ~1.5% in-house from Year 2, while the AI keeps the cost of running a deal near zero. Non-qualifying deals pay a disclosed 1% fee.',
+    a: 'Because the bank pays us, not the consumer. Origination earns 0.5% of the bond via BetterBond in Year 1 and ~1.5% in-house from Year 2, while modern tech streamlines the process at near-zero cost. Non-qualifying deals pay a disclosed 1% fee.',
   },
   {
     q: 'Are you against estate agents?',
@@ -312,7 +312,7 @@ export const FAQ = [
   },
   {
     q: 'What exactly is the AI agent?',
-    a: 'An AI trained on 50 years of SA property transaction, legal and bond data — built and working today. It runs listing intake, buyer qualification, offer assembly and transfer tracking on WhatsApp; registered practitioners handle the human side of every deal.',
+    a: 'Modern technology trained on 50 years of SA property transaction, legal and bond data — built and working today. It streamlines listing intake, buyer qualification, offer assembly and transfer tracking on WhatsApp; registered practitioners guide the human side of every deal.',
   },
   {
     q: 'Is the conveyancer revenue line legal?',
@@ -320,7 +320,7 @@ export const FAQ = [
   },
   {
     q: 'What about Purplebricks?',
-    a: 'It is the cautionary comp we manage against. Purplebricks died of marketing-led acquisition costs and over-expansion; we land at prime Cape Town where demand is referral-driven, broaden only as the brand earns trust, and run an AI-lean cost base with delivery-realistic headcount.',
+    a: 'It is the cautionary comp we manage against. Purplebricks died of marketing-led acquisition costs and over-expansion; we land at prime Cape Town where demand is referral-driven, broaden only as the brand earns trust, and run a lean cost base with modern tech and delivery-realistic headcount.',
   },
   {
     q: 'What are the main risks?',
